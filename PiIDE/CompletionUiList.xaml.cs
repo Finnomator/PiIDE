@@ -23,8 +23,8 @@ namespace PiIDE {
             InitializeComponent();
         }
 
-        public void AddCompletions(List<Completion> completions) {
-            for (int i = 0; i < completions.Count; i++) {
+        public void AddCompletions(Completion[] completions) {
+            for (int i = 0; i < completions.Length; i++) {
                 Completion completion = completions[i];
                 CompletionUiListElement completionUiListElement = new(completion);
 

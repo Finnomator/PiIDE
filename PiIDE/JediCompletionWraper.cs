@@ -26,6 +26,8 @@ namespace PiIDE {
                 }
             };
             CompletionProcess.Start();
+            CompletionProcess.StandardInput.AutoFlush = true;
+
         }
 
         public static Dictionary<string, Completion> GetCompletion(string filePath, int row, int col) {

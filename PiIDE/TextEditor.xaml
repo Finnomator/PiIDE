@@ -19,6 +19,9 @@
         <ListBox x:Name="LineNumsListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
         <ListBox Grid.Column="2" x:Name="TextEditorListBox" VirtualizingStackPanel.VirtualizationMode="Recycling" IsHitTestVisible="False" Background="{x:Null}"/>
-        <TextBox x:Name="TextEditorTextBox" Grid.Column="2" Background="White" TextChanged="TextEditorTextBox_TextChanged"/>
+        <TextBox x:Name="TextEditorTextBox" Grid.Column="2" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True"/>
+        <Canvas Grid.Column="2" x:Name="CompletionsContainerCanvas">
+            <local:CompletionUiList x:Name="CompletionUiList"/>
+        </Canvas>
     </Grid>
 </UserControl>
