@@ -54,14 +54,25 @@ namespace PiIDE {
 
                 Dictionary<string, JsonElement> value = data[name];
 
+                int line;
+
+                try {
+                    line = value["line"].GetInt32();
+                } catch (InvalidOperationException) {
+                    line = -1;
+                }
+
                 completions[name] = new Completion(
-                    name,
-                    value["complete"].ToString(),
-                    value["description"].ToString(),
-                    value["docstring"].ToString(),
-                    value["is_keyword"].GetBoolean(),
-                    value["module_name"].ToString(),
-                    value["module_path"].ToString()
+                    name: name,
+                    complete: value["complete"].ToString(),
+                    description: value["description"].ToString(),
+                    docstring: value["docstring"].ToString(),
+                    isKeyword: value["is_keyword"].GetBoolean(),
+                    moduleName: value["module_name"].ToString(),
+                    modulePath: value["module_path"].ToString(),
+                    nameWithSymbols: value["name_with_symbols"].ToString(),
+                    type: value["type"].ToString(),
+                    line: line
                 );
             }
 
@@ -78,8 +89,11 @@ namespace PiIDE {
         public readonly bool IsKeyword;
         public readonly string ModuleName;
         public readonly string ModulePath;
+        public readonly string NameWithSymbols;
+        public readonly string Type;
+        public readonly int Line;
 
-        public Completion(string name, string complete, string description, string docstring, bool isKeyword, string moduleName, string modulePath) {
+        public Completion(string name, string complete, string description, string docstring, bool isKeyword, string moduleName, string modulePath, string nameWithSymbols, string type, int line) {
             Name = name;
             Complete = complete;
             Description = description;
@@ -87,6 +101,9 @@ namespace PiIDE {
             IsKeyword = isKeyword;
             ModuleName = moduleName;
             ModulePath = modulePath;
+            NameWithSymbols = nameWithSymbols;
+            Type = type;
+            Line = line;
         }
     }
 

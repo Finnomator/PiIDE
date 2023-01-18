@@ -11,13 +11,26 @@ namespace PiIDE {
             InitializeComponent();
         }
 
-        public Completion SelectedCompletion => ((CompletionUiListElement)CompletionsStackPanel.Children[SelectedCompletionIndex]).Completion;
+        public Completion SelectedCompletion => GetCompletion(SelectedCompletionIndex);
+        public CompletionUiListElement SelectedUiCompletion => GetUiCompletion(SelectedCompletionIndex);
+        public CompletionUiListElement HighlightedUiCompletion => GetUiCompletion(0);
+        public Completion HighlightedCompletion => HighlightedUiCompletion.Completion;
+        public int CompletionsCount => CompletionsStackPanel.Children.Count;
+
+        public Completion GetCompletion(int index) => GetUiCompletion(index).Completion;
+        public CompletionUiListElement GetUiCompletion(int index) => (CompletionUiListElement) CompletionsStackPanel.Children[index];
 
         public void AddCompletions(Completion[] completions) {
+            SelectedCompletionIndex = 0;
             for (int i = 0; i < completions.Length; ++i) {
                 Completion completion = completions[i];
                 CompletionUiListElement completionUiListElement = new(completion);
                 CompletionsStackPanel.Children.Add(completionUiListElement);
+            }
+
+            if (completions.Length < 10) {
+                HighlightedUiCompletion.Highlight();
+                SelectedCompletionIndex = 1;
             }
         }
 
@@ -28,21 +41,39 @@ namespace PiIDE {
         }
 
         public void MoveSelectedCompletionUp() {
+
+            HighlightedUiCompletion.Deselect();
+
+            if (SelectedCompletionIndex == 0) {
+                if (SelectedAnIndex)
+                    SelectedUiCompletion.Deselect();
+                SelectedCompletionIndex = CompletionsCount - 1;
+                MainScrollViewer.ScrollToTop();
+            } else if (SelectedAnIndex) {
+                SelectedUiCompletion.Deselect();
+                --SelectedCompletionIndex;
+            }
+            SelectedUiCompletion.Select();
+
             SelectedAnIndex = true;
-            if (SelectedCompletionIndex == 0)
-                SelectedCompletionIndex = CompletionsStackPanel.Children.Count;
-            ((CompletionUiListElement) CompletionsStackPanel.Children[SelectedCompletionIndex]).Deselect();
-            --SelectedCompletionIndex;
-            ((CompletionUiListElement) CompletionsStackPanel.Children[SelectedCompletionIndex]).Select();
         }
 
         public void MoveSelectedCompletionDown() {
+
+            HighlightedUiCompletion.Deselect();
+
+            if (SelectedCompletionIndex == CompletionsCount - 1) {
+                if (SelectedAnIndex)
+                    SelectedUiCompletion.Deselect();
+                SelectedCompletionIndex = 0;
+                MainScrollViewer.ScrollToTop();
+            } else if (SelectedAnIndex) {
+                SelectedUiCompletion.Deselect();
+                ++SelectedCompletionIndex;
+            }
+            SelectedUiCompletion.Select();
+
             SelectedAnIndex = true;
-            //if (SelectedCompletionIndex == CompletionsStackPanel.Children.Count - 1)
-             //   SelectedCompletionIndex = -1;
-            ((CompletionUiListElement) CompletionsStackPanel.Children[SelectedCompletionIndex]).Deselect();
-            ++SelectedCompletionIndex;
-            ((CompletionUiListElement) CompletionsStackPanel.Children[SelectedCompletionIndex]).Select();
         }
     }
 }

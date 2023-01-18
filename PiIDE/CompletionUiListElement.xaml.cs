@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Diagnostics;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace PiIDE {
@@ -9,6 +10,7 @@ namespace PiIDE {
         public bool IsSelected { get; private set; }
 
         private readonly Brush SelectedBrush = Tools.SelectedBrush;
+        private readonly Brush HighlightBrush = Tools.HighlightBrush;
         private readonly Brush UnselectedBrush = Tools.UnselectedBrush;
 
         public CompletionUiListElement(Completion completion) {
@@ -17,16 +19,23 @@ namespace PiIDE {
             Completion = completion;
 
             MainButton.Text = Completion.Name;
+
+            if (TypeColors.TypeToColorMap.ContainsKey(completion.Type))
+                MainButton.Foreground = TypeColors.TypeToColorMap[completion.Type];
+
+            Debug.WriteLine($"{completion.Name}: {completion.Type}");
         }
 
         public void Select() {
             IsSelected = true;
-            MainButton.Foreground = SelectedBrush;
+            MainButton.Background = SelectedBrush;
         }
 
         public void Deselect() {
             IsSelected = false;
-            MainButton.Foreground = UnselectedBrush;
+            MainButton.Background = UnselectedBrush;
         }
+
+        public void Highlight() => MainButton.Background = HighlightBrush;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -11,11 +10,13 @@ namespace PiIDE {
     public partial class TextEditor : UserControl {
 
         public readonly string FilePath;
+        private bool BlockCompletions = true;
 
         public TextEditor() {
             FilePath = "";
             InitializeComponent();
             LineNumsListBox.ItemsSource = GetLineNumbers(1);
+            BlockCompletions = false;
         }
 
         public TextEditor(string filePath) {
@@ -25,27 +26,73 @@ namespace PiIDE {
             string fileContent = File.ReadAllText(filePath);
             TextEditorTextBox.Text = fileContent;
             LineNumsListBox.ItemsSource = GetLineNumbers(fileLines.Length);
+            BlockCompletions = false;
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
+
             switch (e.Key) {
+
                 case Key.Down:
                     CompletionUiList.MoveSelectedCompletionDown();
                     e.Handled = true;
                     break;
                 case Key.Up:
-                    CompletionUiList.MoveSelectedCompletionUp();
-                    e.Handled = true;
+                    if (CompletionUiList.SelectedAnIndex) {
+                        CompletionUiList.MoveSelectedCompletionUp();
+                        e.Handled = true;
+                    }
                     break;
 
                 case Key.Enter:
 
                     if (CompletionUiList.SelectedAnIndex) {
-                        TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, CompletionUiList.SelectedCompletion.Complete);
+                        InsertAtCaretAndMoveCaret(CompletionUiList.SelectedCompletion.Complete);
+                        e.Handled = true;
+                    } else if (CompletionUiList.CompletionsCount > 0) {
+                        InsertAtCaretAndMoveCaret(CompletionUiList.HighlightedCompletion.Complete);
+                        e.Handled = true;
+                    }
+
+                    break;
+
+                case Key.Tab:
+
+                    if (CompletionUiList.SelectedAnIndex)
+                        InsertAtCaretAndMoveCaret(CompletionUiList.SelectedCompletion.Complete);
+                    else if (CompletionUiList.CompletionsCount > 0)
+                        InsertAtCaretAndMoveCaret(CompletionUiList.HighlightedCompletion.Complete);
+                    else
+                        InsertAtCaretAndMoveCaret("    ");
+
+                    e.Handled = true;
+                    break;
+
+                case Key.LeftCtrl:
+
+                    if (Tools.IsShortCutPressed(Key.LeftCtrl, Key.Space)) {
+                        DisplayCodeCompletions();
+                        e.Handled = true;
+                    }
+
+                    break;
+
+                case Key.Space:
+
+                    if (Tools.IsShortCutPressed(Key.LeftCtrl, Key.Space)) {
+                        e.Handled = true;
                     }
 
                     break;
             }
+        }
+
+        private void InsertAtCaretAndMoveCaret(string text) {
+            BlockCompletions = true;
+            int oldCaretIndex = TextEditorTextBox.CaretIndex;
+            TextEditorTextBox.Text = TextEditorTextBox.Text.Insert(oldCaretIndex, text);
+            TextEditorTextBox.CaretIndex = oldCaretIndex + text.Length;
+            BlockCompletions = false;
         }
 
         public static List<string> GetLineNumbers(int lines) {
@@ -55,14 +102,28 @@ namespace PiIDE {
             return items;
         }
 
-        private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-            File.WriteAllText(FilePath, TextEditorTextBox.Text);
+        private void DisplayCodeCompletions() {
+
+            if (BlockCompletions)
+                return;
 
             Dictionary<string, Completion> completions = JediCompletionWraper.GetCompletion(FilePath, GetCaretRow() + 1, GetCaretCol());
+
+            if (completions.Count <= 0)
+                return;
 
             CompletionUiList.ClearCompletions();
             CompletionUiList.AddCompletions(completions.Values.ToArray());
             CompletionUiList.Margin = MarginAtCaretPosition();
+        }
+
+        private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+
+            CompletionUiList.ClearCompletions();
+
+            File.WriteAllText(FilePath, TextEditorTextBox.Text);
+
+            DisplayCodeCompletions();
         }
 
         private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * 7.0, (GetCaretRow() + 1) * 14.0, 0, 0);

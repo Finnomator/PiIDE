@@ -1,3 +1,1 @@
-import time
-
-time.sleep
+import ti
