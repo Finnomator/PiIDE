@@ -8,6 +8,17 @@
              d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown">
 
     <Grid>
-        <ListBox x:Name="TextListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        
+        <ListBox x:Name="LineNumsListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <ListBox Grid.Column="2" x:Name="TextEditorListBox" VirtualizingStackPanel.VirtualizationMode="Recycling" IsHitTestVisible="False" Background="{x:Null}"/>
+        <TextBox x:Name="TextEditorTextBox" Grid.Column="2" Background="White" TextChanged="TextEditorTextBox_TextChanged"/>
     </Grid>
 </UserControl>

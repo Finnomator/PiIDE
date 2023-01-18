@@ -1,41 +1,59 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections;
 
 namespace PiIDE {
 
     public partial class TextEditor : UserControl {
 
-        public TextEditor() {
-            InitializeComponent();
+        public readonly string FilePath;
 
-            TextListBox.ItemsSource = GetDataSet();
+        public TextEditor() {
+            FilePath = "";
+            InitializeComponent();
+            LineNumsListBox.ItemsSource = GetLineNumbers(1);
+        }
+
+        public TextEditor(string filePath) {
+            FilePath = filePath;
+            InitializeComponent();
+            string[] fileLines = File.ReadAllLines(filePath);
+            string fileContent = File.ReadAllText(filePath);
+            TextEditorTextBox.Text = fileContent;
+            LineNumsListBox.ItemsSource = GetLineNumbers(fileLines.Length);
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
-
+            
         }
 
-        public ArrayList GetDataSet() {
-            ArrayList items = new ArrayList();
-            for (var count = 0; count < 1000000; ++count) {
-                items.Add(string.Format("Item {0}", count));
-            }
+        public List<string> GetLineNumbers(int lines) {
+            List<string> items = new();
+            for (int i = 1; i <= lines; ++i)
+                items.Add(i.ToString());
             return items;
         }
 
-        public Point CaretPosition() => new();
+        public int GetCaretLine() {
+            string[] lines = TextEditorTextBox.Text.Split("\n\r");
+            int totalLen = lines[0].Length;
+            int line = 0;
+            for (; TextEditorTextBox.CaretIndex > totalLen; line++) {
+                totalLen += lines[line].Length;
+            }
+            return line + 1;
+        }
+
+        public int CaretColumn => TextEditorTextBox.CaretIndex - TextEditorTextBox.GetCharacterIndexFromLineIndex(GetCaretLine() - 1) + 1;
+
+        private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+            File.WriteAllText(FilePath, TextEditorTextBox.Text);
+            Debug.WriteLine(JediCompletionWraper.GetCompletion(FilePath, GetCaretLine(), CaretColumn));
+        }
     }
 }

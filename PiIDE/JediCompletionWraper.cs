@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Windows.Shapes;
 
 namespace PiIDE {
     internal static class JediCompletionWraper {
@@ -26,20 +28,67 @@ namespace PiIDE {
             CompletionProcess.Start();
         }
 
-        public static string GetCompletion(string filePath, int row, int col) {
+        public static Dictionary<string, Completion> GetCompletion(string filePath, int row, int col) {
             CompletionProcess.StandardInput.WriteLine(filePath);
-            CompletionProcess.StandardInput.Flush();
             CompletionProcess.StandardInput.WriteLine(row.ToString());
-            CompletionProcess.StandardInput.Flush();
             CompletionProcess.StandardInput.WriteLine(col.ToString());
-            CompletionProcess.StandardInput.Flush();
+
             string? line = CompletionProcess.StandardOutput.ReadLine();
 
             if (line is null)
                 throw new NullReferenceException();
 
-            line = line.Substring(1);
-            return line;
+            line = line[1..];
+
+            var deserialized = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, JsonElement>>>(line);
+
+            if (deserialized is null)
+                throw new NullReferenceException();
+
+            return Convert(deserialized);
+        }
+
+        private static Dictionary<string, Completion> Convert(Dictionary<string, Dictionary<string, JsonElement>> data) {
+            Dictionary<string, Completion> completions = new();
+
+            foreach (string name in data.Keys) {
+
+                Dictionary<string, JsonElement> value = data[name];
+
+                completions[name] = new Completion(
+                    name,
+                    value["complete"].ToString(),
+                    value["description"].ToString(),
+                    value["docstring"].ToString(),
+                    value["is_keyword"].GetBoolean(),
+                    value["module_name"].ToString(),
+                    value["module_path"].ToString()
+                );
+            }
+
+            return completions;
         }
     }
+
+    public class Completion {
+
+        public readonly string Name;
+        public readonly string Complete;
+        public readonly string Description;
+        public readonly string Docstring;
+        public readonly bool IsKeyword;
+        public readonly string ModuleName;
+        public readonly string ModulePath;
+
+        public Completion(string name, string complete, string description, string docstring, bool isKeyword, string moduleName, string modulePath) {
+            Name = name;
+            Complete = complete;
+            Description = description;
+            Docstring = docstring;
+            IsKeyword = isKeyword;
+            ModuleName = moduleName;
+            ModulePath = modulePath;
+        }
+    }
+
 }

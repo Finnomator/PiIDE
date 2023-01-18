@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PiIDE"
         mc:Ignorable="d"
         Title="Pi IDE" Height="450" Width="800">
-    <Grid>
-        <local:TextEditor/>
+    <Grid x:Name="MainGrid">
+        
     </Grid>
 </Window>

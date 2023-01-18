@@ -19,6 +19,7 @@ namespace PiIDE {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+            MainGrid.Children.Add(new TextEditor("C:\\Users\\finnd\\Source\\Repos\\PiIDE\\PiIDE\\test_file.py"));
         }
     }
 }
