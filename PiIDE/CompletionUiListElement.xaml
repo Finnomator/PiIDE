@@ -5,7 +5,5 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d">
-    <Button x:Name="MainButton" Content="&lt;Completion>">
-        
-    </Button>
+    <TextBlock x:Name="MainButton" Text="&lt;Completion>"/>
 </UserControl>

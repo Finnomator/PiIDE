@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500"
-             MaxHeight="400" MaxWidth="500">
+             MaxHeight="400" MaxWidth="500"
+             Background="LightGray"
+             >
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <StackPanel x:Name="CompletionsStackPanel">
             

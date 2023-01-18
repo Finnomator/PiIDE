@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -31,7 +28,24 @@ namespace PiIDE {
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
-            
+            switch (e.Key) {
+                case Key.Down:
+                    CompletionUiList.MoveSelectedCompletionDown();
+                    e.Handled = true;
+                    break;
+                case Key.Up:
+                    CompletionUiList.MoveSelectedCompletionUp();
+                    e.Handled = true;
+                    break;
+
+                case Key.Enter:
+
+                    if (CompletionUiList.SelectedAnIndex) {
+                        TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, CompletionUiList.SelectedCompletion.Complete);
+                    }
+
+                    break;
+            }
         }
 
         public static List<string> GetLineNumbers(int lines) {
@@ -44,8 +58,6 @@ namespace PiIDE {
         private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
 
-            string text = TextEditorTextBox.Text;
-
             Dictionary<string, Completion> completions = JediCompletionWraper.GetCompletion(FilePath, GetCaretRow() + 1, GetCaretCol());
 
             CompletionUiList.ClearCompletions();
@@ -53,10 +65,30 @@ namespace PiIDE {
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
 
-        private int GetCaretRow() {
-            throw new NotImplementedException();
+        private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * 7.0, (GetCaretRow() + 1) * 14.0, 0, 0);
+
+        private int GetCaretCol() {
+            int caretLine = GetCaretRow();
+
+            int offset = 0;
+            string[] lines = TextEditorTextBox.Text.Split("\r\n");
+
+            for (int i = 0; i < caretLine; ++i)
+                offset += lines[i].Length + 2;
+
+            return TextEditorTextBox.CaretIndex - offset;
         }
 
-        private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * 7.0, GetCaretRow() * 16.0, 0, 0);
+        private int GetCaretRow() {
+
+            int offset = 0;
+            string[] lines = TextEditorTextBox.Text.Split("\r\n");
+            int line = 0;
+
+            for (; TextEditorTextBox.CaretIndex >= offset; ++line)
+                offset += lines[line].Length + 2;
+
+            return line - 1;
+        }
     }
 }

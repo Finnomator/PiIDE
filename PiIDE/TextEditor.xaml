@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
         
         
-        <ListBox x:Name="LineNumsListBox" VirtualizingStackPanel.VirtualizationMode="Recycling"/>
+        <ListBox x:Name="LineNumsListBox" VirtualizingStackPanel.VirtualizationMode="Recycling" FontFamily="Cascadia Code"/>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
         <ListBox Grid.Column="2" x:Name="TextEditorListBox" VirtualizingStackPanel.VirtualizationMode="Recycling" IsHitTestVisible="False" Background="{x:Null}"/>
         <TextBox x:Name="TextEditorTextBox" Grid.Column="2" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True"/>

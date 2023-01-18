@@ -1,12 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
-using System.Windows.Shapes;
 
 namespace PiIDE {
     internal static class JediCompletionWraper {
@@ -26,8 +21,6 @@ namespace PiIDE {
                 }
             };
             CompletionProcess.Start();
-            CompletionProcess.StandardInput.AutoFlush = true;
-
         }
 
         public static Dictionary<string, Completion> GetCompletion(string filePath, int row, int col) {
@@ -48,6 +41,10 @@ namespace PiIDE {
                 throw new NullReferenceException();
 
             return Convert(deserialized);
+        }
+
+        internal static Dictionary<string, Completion> GetCompletion(string filePath, int v1, double v2) {
+            throw new NotImplementedException();
         }
 
         private static Dictionary<string, Completion> Convert(Dictionary<string, Dictionary<string, JsonElement>> data) {

@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PiIDE {
 
@@ -20,18 +8,15 @@ namespace PiIDE {
         public readonly Completion Completion;
         public bool IsSelected { get; private set; }
 
-        private readonly Brush SelectedBrush;
-        private readonly Brush UnselectedBrush;
+        private readonly Brush SelectedBrush = Tools.SelectedBrush;
+        private readonly Brush UnselectedBrush = Tools.UnselectedBrush;
 
         public CompletionUiListElement(Completion completion) {
             InitializeComponent();
 
             Completion = completion;
 
-            SelectedBrush = Brushes.DarkGray;
-            UnselectedBrush = Brushes.Gray;
-
-            MainButton.Content = Completion.Name;
+            MainButton.Text = Completion.Name;
         }
 
         public void Select() {

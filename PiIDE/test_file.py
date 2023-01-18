@@ -1,1 +1,3 @@
-Ta
+import time
+
+time.sleep
