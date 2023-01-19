@@ -20,7 +20,7 @@
 
         <WebBrowser x:Name="HTMLContentPresenter" Grid.Column="2"/>
 
-        <Popup Grid.Column="2" AllowsTransparency="True" Placement="Top" PlacementTarget="{Binding ElementName=HTMLContentPresenter}" IsOpen="True">
+        <Popup Grid.Column="2" AllowsTransparency="True" Placement="Top" PlacementTarget="{Binding ElementName=HTMLContentPresenter}">
             <Canvas>
                 <Canvas Grid.Column="2" x:Name="CompletionsContainerCanvas"/>
                 <TextBox x:Name="TextEditorTextBox" Grid.Column="2" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True"/>
