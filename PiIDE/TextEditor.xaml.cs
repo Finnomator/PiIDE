@@ -9,11 +9,17 @@ namespace PiIDE {
 
     public partial class TextEditor : UserControl {
 
-        public readonly string FilePath;
+        private string _FilePath = "";
+        public string FilePath {
+            set {
+                if (string.IsNullOrEmpty(_FilePath))
+                    _FilePath = value;
+            }
+            get { return _FilePath; }
+        }
         private bool BlockCompletions = true;
 
         public TextEditor() {
-            FilePath = "";
             InitializeComponent();
             LineNumsListBox.ItemsSource = GetLineNumbers(1);
             BlockCompletions = false;
@@ -49,9 +55,6 @@ namespace PiIDE {
                     if (CompletionUiList.SelectedAnIndex) {
                         InsertAtCaretAndMoveCaret(CompletionUiList.SelectedCompletion.Complete);
                         e.Handled = true;
-                    } else if (CompletionUiList.CompletionsCount > 0) {
-                        InsertAtCaretAndMoveCaret(CompletionUiList.HighlightedCompletion.Complete);
-                        e.Handled = true;
                     }
 
                     break;
@@ -60,8 +63,6 @@ namespace PiIDE {
 
                     if (CompletionUiList.SelectedAnIndex)
                         InsertAtCaretAndMoveCaret(CompletionUiList.SelectedCompletion.Complete);
-                    else if (CompletionUiList.CompletionsCount > 0)
-                        InsertAtCaretAndMoveCaret(CompletionUiList.HighlightedCompletion.Complete);
                     else
                         InsertAtCaretAndMoveCaret("    ");
 
@@ -107,13 +108,13 @@ namespace PiIDE {
             if (BlockCompletions)
                 return;
 
-            Dictionary<string, Completion> completions = JediCompletionWraper.GetCompletion(FilePath, GetCaretRow() + 1, GetCaretCol());
-
-            if (completions.Count <= 0)
+            //Completion[] completions = JediCompletionWraper.GetCompletion(FilePath, GetCaretRow() + 1, GetCaretCol());
+            var completions = new Completion[0];
+            if (completions.Length == 0)
                 return;
 
             CompletionUiList.ClearCompletions();
-            CompletionUiList.AddCompletions(completions.Values.ToArray());
+            CompletionUiList.AddCompletions(completions);
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
 

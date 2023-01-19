@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PiIDE {
     internal static class JediCompletionWraper {
@@ -23,7 +24,7 @@ namespace PiIDE {
             CompletionProcess.Start();
         }
 
-        public static Dictionary<string, Completion> GetCompletion(string filePath, int row, int col) {
+        public static Completion[] GetCompletion(string filePath, int row, int col) {
             CompletionProcess.StandardInput.WriteLine(filePath);
             CompletionProcess.StandardInput.WriteLine(row.ToString());
             CompletionProcess.StandardInput.WriteLine(col.ToString());
@@ -35,76 +36,31 @@ namespace PiIDE {
 
             line = line[1..];
 
-            var deserialized = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, JsonElement>>>(line);
-
-            if (deserialized is null)
-                throw new NullReferenceException();
-
-            return Convert(deserialized);
-        }
-
-        internal static Dictionary<string, Completion> GetCompletion(string filePath, int v1, double v2) {
-            throw new NotImplementedException();
-        }
-
-        private static Dictionary<string, Completion> Convert(Dictionary<string, Dictionary<string, JsonElement>> data) {
-            Dictionary<string, Completion> completions = new();
-
-            foreach (string name in data.Keys) {
-
-                Dictionary<string, JsonElement> value = data[name];
-
-                int line;
-
-                try {
-                    line = value["line"].GetInt32();
-                } catch (InvalidOperationException) {
-                    line = -1;
-                }
-
-                completions[name] = new Completion(
-                    name: name,
-                    complete: value["complete"].ToString(),
-                    description: value["description"].ToString(),
-                    docstring: value["docstring"].ToString(),
-                    isKeyword: value["is_keyword"].GetBoolean(),
-                    moduleName: value["module_name"].ToString(),
-                    modulePath: value["module_path"].ToString(),
-                    nameWithSymbols: value["name_with_symbols"].ToString(),
-                    type: value["type"].ToString(),
-                    line: line
-                );
-            }
-
-            return completions;
+            return JsonSerializer.Deserialize<Completion[]>(line);
         }
     }
 
     public class Completion {
 
-        public readonly string Name;
-        public readonly string Complete;
-        public readonly string Description;
-        public readonly string Docstring;
-        public readonly bool IsKeyword;
-        public readonly string ModuleName;
-        public readonly string ModulePath;
-        public readonly string NameWithSymbols;
-        public readonly string Type;
-        public readonly int Line;
-
-        public Completion(string name, string complete, string description, string docstring, bool isKeyword, string moduleName, string modulePath, string nameWithSymbols, string type, int line) {
-            Name = name;
-            Complete = complete;
-            Description = description;
-            Docstring = docstring;
-            IsKeyword = isKeyword;
-            ModuleName = moduleName;
-            ModulePath = modulePath;
-            NameWithSymbols = nameWithSymbols;
-            Type = type;
-            Line = line;
-        }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = "";
+        [JsonPropertyName("complete")]
+        public string Complete { get; set; } = "";
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = "";
+        [JsonPropertyName("docstring")]
+        public string Docstring { get; set; } = "";
+        [JsonPropertyName("is_keyword")]
+        public bool IsKeyword { get; set; }
+        [JsonPropertyName("module_name")]
+        public string ModuleName { get; set; } = "";
+        [JsonPropertyName("module_path")]
+        public string ModulePath { get; set; } = "";
+        [JsonPropertyName("name_with_symbols")]
+        public string NameWithSymbols { get; set; } = "";
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = "";
+        [JsonPropertyName("line")]
+        public int Line { get; set; }
     }
-
 }

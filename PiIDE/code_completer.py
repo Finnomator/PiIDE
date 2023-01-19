@@ -18,20 +18,24 @@ while True:
 
     completions = script.complete(row, col)
 
-    data = {}
+    print(
+        orjson.dumps(
+            [
+                {
+                    "name": completions.name,
+                    "complete": completion.complete,
+                    "name_with_symbols": completion.name_with_symbols,
+                    "description": completion.description,
+                    "docstring": completion.docstring(),
+                    "is_keyword": completion.is_keyword,
+                    "module_name": completion.module_name,
+                    "module_path": str(completion.module_path),
+                    "type": completion.type,
+                    "line": completion.line,
+                }
+                for completion in completions
+            ]
+        ).decode("utf-8")
+    )
 
-    for completion in completions:
-        data[completion.name] = {
-            "complete": completion.complete,
-            "name_with_symbols": completion.name_with_symbols,
-            "description": completion.description,
-            "docstring": completion.docstring(),
-            "is_keyword": completion.is_keyword,
-            "module_name": completion.module_name,
-            "module_path": str(completion.module_path),
-            "type": completion.type,
-            "line": completion.line,
-        }
-
-    print(orjson.dumps(data).decode("utf-8"))
     stdout.flush()

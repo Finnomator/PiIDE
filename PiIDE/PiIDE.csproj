@@ -9,10 +9,14 @@
 
   <ItemGroup>
     <None Remove="Assets\Jedi\code_completer.exe" />
+    <None Remove="Assets\Lint\pylint.exe" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\Jedi\code_completer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Lint\pylint.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
