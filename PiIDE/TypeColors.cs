@@ -15,7 +15,8 @@ namespace PiIDE {
             { "class", Class },
             { "function", Function },
             { "instance", Instance },
-            { "statement", Statement }
+            { "statement", Statement },
+            { "module", Module },
         };
     }
 }

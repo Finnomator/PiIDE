@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,29 +9,30 @@ namespace PiIDE {
 
     public partial class TextEditor : UserControl {
 
-        private string _FilePath = "";
-        public string FilePath {
-            set {
-                if (string.IsNullOrEmpty(_FilePath))
-                    _FilePath = value;
-            }
-            get { return _FilePath; }
-        }
+        public readonly string FilePath;
         private bool BlockCompletions = true;
-
-        public TextEditor() {
-            InitializeComponent();
-            LineNumsListBox.ItemsSource = GetLineNumbers(1);
-            BlockCompletions = false;
-        }
+        private readonly CompletionUiList CompletionUiList;
+        private string OldTextEditorTextBoxText;
+        private const string PygmentizedHTMLPath = "C:\\Users\\finnd\\source\\repos\\PiIDE\\PiIDE\\test.html";
 
         public TextEditor(string filePath) {
-            FilePath = filePath;
+
             InitializeComponent();
-            string[] fileLines = File.ReadAllLines(filePath);
-            string fileContent = File.ReadAllText(filePath);
+            FilePath = filePath;
+
+            CompletionUiList = new(FilePath);
+
+            CompletionsContainerCanvas.Children.Add(CompletionUiList);
+
+            string[] fileLines = File.ReadAllLines(FilePath);
+            string fileContent = File.ReadAllText(FilePath);
+            OldTextEditorTextBoxText = fileContent;
             TextEditorTextBox.Text = fileContent;
+
             LineNumsListBox.ItemsSource = GetLineNumbers(fileLines.Length);
+
+            HTMLContentPresenter.NavigateToString(File.ReadAllText(PygmentizedHTMLPath));
+
             BlockCompletions = false;
         }
 
@@ -53,7 +54,8 @@ namespace PiIDE {
                 case Key.Enter:
 
                     if (CompletionUiList.SelectedAnIndex) {
-                        InsertAtCaretAndMoveCaret(CompletionUiList.SelectedCompletion.Complete);
+                        InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
+                        CompletionUiList.Close();
                         e.Handled = true;
                     }
 
@@ -61,9 +63,10 @@ namespace PiIDE {
 
                 case Key.Tab:
 
-                    if (CompletionUiList.SelectedAnIndex)
-                        InsertAtCaretAndMoveCaret(CompletionUiList.SelectedCompletion.Complete);
-                    else
+                    if (CompletionUiList.SelectedAnIndex) {
+                        InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
+                        CompletionUiList.Close();
+                    } else
                         InsertAtCaretAndMoveCaret("    ");
 
                     e.Handled = true;
@@ -85,7 +88,25 @@ namespace PiIDE {
                     }
 
                     break;
+
+                case Key.Escape:
+                    if (CompletionUiList.SelectedAnIndex) {
+                        CompletionUiList.Close();
+                        e.Handled = true;
+                    }
+
+                    break;
             }
+        }
+
+        private void InsertCompletionAtCaret(Completion completion) {
+            BlockCompletions = true;
+            int oldCaretIndex = TextEditorTextBox.CaretIndex;
+            int completionStart = oldCaretIndex - (completion.Name.Length - completion.Complete.Length);
+            TextEditorTextBox.Text = TextEditorTextBox.Text.Remove(completionStart, completion.Name.Length - completion.Complete.Length);
+            TextEditorTextBox.Text = TextEditorTextBox.Text.Insert(completionStart, completion.Name);
+            TextEditorTextBox.CaretIndex = oldCaretIndex + completion.Complete.Length;
+            BlockCompletions = false;
         }
 
         private void InsertAtCaretAndMoveCaret(string text) {
@@ -108,23 +129,29 @@ namespace PiIDE {
             if (BlockCompletions)
                 return;
 
-            //Completion[] completions = JediCompletionWraper.GetCompletion(FilePath, GetCaretRow() + 1, GetCaretCol());
-            var completions = new Completion[0];
-            if (completions.Length == 0)
-                return;
+            CompletionUiList.ReloadCompletions(GetCaretRow() + 1, GetCaretCol());
 
-            CompletionUiList.ClearCompletions();
-            CompletionUiList.AddCompletions(completions);
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
 
         private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
-            CompletionUiList.ClearCompletions();
+            if (FilePath == "" || OldTextEditorTextBoxText == "") {
+                OldTextEditorTextBoxText = TextEditorTextBox.Text;
+                return;
+            }
 
-            File.WriteAllText(FilePath, TextEditorTextBox.Text);
+            string textDifference = TextEditorTextBox.Text.Replace(OldTextEditorTextBoxText, "");
 
-            DisplayCodeCompletions();
+            if (!string.IsNullOrWhiteSpace(textDifference)) {
+
+                File.WriteAllText(FilePath, TextEditorTextBox.Text);
+
+                DisplayCodeCompletions();
+
+            }
+
+            OldTextEditorTextBoxText = TextEditorTextBox.Text;
         }
 
         private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * 7.0, (GetCaretRow() + 1) * 14.0, 0, 0);

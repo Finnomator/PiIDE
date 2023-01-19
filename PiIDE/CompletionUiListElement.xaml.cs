@@ -10,7 +10,6 @@ namespace PiIDE {
         public bool IsSelected { get; private set; }
 
         private readonly Brush SelectedBrush = Tools.SelectedBrush;
-        private readonly Brush HighlightBrush = Tools.HighlightBrush;
         private readonly Brush UnselectedBrush = Tools.UnselectedBrush;
 
         public CompletionUiListElement(Completion completion) {
@@ -35,7 +34,5 @@ namespace PiIDE {
             IsSelected = false;
             MainButton.Background = UnselectedBrush;
         }
-
-        public void Highlight() => MainButton.Background = HighlightBrush;
     }
 }

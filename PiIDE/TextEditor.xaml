@@ -14,14 +14,17 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        
-        
+
         <ListBox x:Name="LineNumsListBox" VirtualizingStackPanel.VirtualizationMode="Recycling" FontFamily="Cascadia Code"/>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <ListBox Grid.Column="2" x:Name="TextEditorListBox" VirtualizingStackPanel.VirtualizationMode="Recycling" IsHitTestVisible="False" Background="{x:Null}"/>
-        <TextBox x:Name="TextEditorTextBox" Grid.Column="2" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True"/>
-        <Canvas Grid.Column="2" x:Name="CompletionsContainerCanvas">
-            <local:CompletionUiList x:Name="CompletionUiList"/>
-        </Canvas>
+
+        <WebBrowser x:Name="HTMLContentPresenter" Grid.Column="2"/>
+
+        <Popup Grid.Column="2" AllowsTransparency="True" Placement="Top" PlacementTarget="{Binding ElementName=HTMLContentPresenter}" IsOpen="True">
+            <Canvas>
+                <Canvas Grid.Column="2" x:Name="CompletionsContainerCanvas"/>
+                <TextBox x:Name="TextEditorTextBox" Grid.Column="2" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True"/>
+            </Canvas>
+        </Popup>
     </Grid>
 </UserControl>

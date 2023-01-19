@@ -22,7 +22,7 @@ while True:
         orjson.dumps(
             [
                 {
-                    "name": completions.name,
+                    "name": completion.name,
                     "complete": completion.complete,
                     "name_with_symbols": completion.name_with_symbols,
                     "description": completion.description,

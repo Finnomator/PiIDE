@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace PiIDE {
     internal static class JediCompletionWraper {
-        public static readonly string CodeCompleterPath = "C:\\Users\\finnd\\source\\repos\\PiIDE\\PiIDE\\Assets\\Jedi\\code_completer.exe";
+        public const string CodeCompleterPath = "Assets/Jedi/code_completer.exe";
         private static readonly Process CompletionProcess;
 
         static JediCompletionWraper() {
             CompletionProcess = new Process() {
                 StartInfo = new ProcessStartInfo() {
-                    FileName = "cmd",
-                    Arguments = $"/c {CodeCompleterPath}",
+                    FileName = CodeCompleterPath,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -26,13 +23,10 @@ namespace PiIDE {
 
         public static Completion[] GetCompletion(string filePath, int row, int col) {
             CompletionProcess.StandardInput.WriteLine(filePath);
-            CompletionProcess.StandardInput.WriteLine(row.ToString());
-            CompletionProcess.StandardInput.WriteLine(col.ToString());
+            CompletionProcess.StandardInput.WriteLine(row);
+            CompletionProcess.StandardInput.WriteLine(col);
 
-            string? line = CompletionProcess.StandardOutput.ReadLine();
-
-            if (line is null)
-                throw new NullReferenceException();
+            string line = CompletionProcess.StandardOutput.ReadLine();
 
             line = line[1..];
 
@@ -61,6 +55,6 @@ namespace PiIDE {
         [JsonPropertyName("type")]
         public string Type { get; set; } = "";
         [JsonPropertyName("line")]
-        public int Line { get; set; }
+        public int? Line { get; set; }
     }
 }

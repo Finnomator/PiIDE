@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 namespace PiIDE {
     internal static class PylintWraper {
 
+        public const string PylintPath = "Assets/Lint/pylint.exe";
+
         public static async Task<PylintMessage[]> GetLintingAsync(string filePath) {
 
             Process pylintProcess = new() {
                 StartInfo = new ProcessStartInfo() {
                     UseShellExecute = false,
-                    FileName = "Assets/Lint/pylint.exe",
+                    FileName = PylintPath,
                     Arguments = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" {filePath}",
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true,
                 }
             };

@@ -4,38 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        
+             mc:Ignorable="d"
+             d:DesignWidth="800">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-
-            <Label Content="Type"/>
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-            <Label Grid.Column="2" Content="Message"/>
-            <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch"/>
-            <GridSplitter Grid.Column="5" HorizontalAlignment="Stretch"/>
-            <GridSplitter Grid.Column="7" HorizontalAlignment="Stretch"/>
-        </Grid>
-
-        
-        <StackPanel Grid.Row="1" x:Name="LintMessagesStackPanel"/>
-    </Grid>
+    <ListView d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView">
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                <GridViewColumn Header="Code" DisplayMemberBinding="{Binding MessageId}"/>
+                <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}"/>
+                <GridViewColumn Header="File" DisplayMemberBinding="{Binding Module}"/>
+                <GridViewColumn Header="Line" DisplayMemberBinding="{Binding Line}"/>
+            </GridView>
+        </ListView.View>
+    </ListView>
 </UserControl>

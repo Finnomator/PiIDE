@@ -1,15 +1,36 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace PiIDE {
 
     public partial class MainWindow : Window {
 
-        private readonly string FilePath = "C:\\Users\\finnd\\source\\repos\\PiIDE\\PiIDE\\test_file.py";
+        // private const string FilePath = @"C:\Users\finnd\source\repos\PiIDE\PiIDE\test_file.py";
+        private const string FilePath = @"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython\test.py";
+        private readonly TextEditor Editor;
 
         public MainWindow() {
             InitializeComponent();
-            Editor.FilePath = FilePath;
+
+            Editor = new(FilePath);
+            MainGrid.Children.Add(Editor);
+
+            Process process = new Process() {
+                StartInfo = new ProcessStartInfo() {
+                    FileName = "pygmentize",
+                    Arguments = FilePath,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow= true
+                }
+            
+            };
+
+            process.Start();
+            var e = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
             UpdateLintMessages();
         }
 

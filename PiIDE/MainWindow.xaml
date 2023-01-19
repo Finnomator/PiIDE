@@ -12,7 +12,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <local:TextEditor x:Name="Editor"/>
         <local:LintMessagesWindow Grid.Row="1" x:Name="MessagesWindow"/>
     </Grid>
 </Window>

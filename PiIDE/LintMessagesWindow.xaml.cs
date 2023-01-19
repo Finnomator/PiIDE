@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System;
+using System.Windows.Controls;
 
 namespace PiIDE {
 
@@ -8,13 +10,8 @@ namespace PiIDE {
             InitializeComponent();
         }
 
-        public void ClearLintMessages() => LintMessagesStackPanel.Children.Clear();
+        public void ClearLintMessages() => MainListView.ItemsSource = null;
 
-        public void AddLintMessages(PylintMessage[] messages) {
-            for (int i = 0; i < messages.Length; ++i) {
-                LintUiMessage lintUiMessage = new(messages[i]);
-                LintMessagesStackPanel.Children.Add(lintUiMessage);
-            }
-        }
+        public void AddLintMessages(PylintMessage[] messages) => MainListView.ItemsSource = messages;
     }
 }
