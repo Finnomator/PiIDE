@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -29,6 +30,12 @@ namespace PiIDE {
             string line = CompletionProcess.StandardOutput.ReadLine();
 
             line = line[1..];
+
+#if DEBUG
+            string err = CompletionProcess.StandardError.ReadToEnd();
+            if (!string.IsNullOrEmpty(err))
+                throw new Exception(err);
+#endif
 
             return JsonSerializer.Deserialize<Completion[]>(line);
         }

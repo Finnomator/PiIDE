@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,7 +15,6 @@ namespace PiIDE {
         private bool BlockCompletions = true;
         private readonly CompletionUiList CompletionUiList;
         private string OldTextEditorTextBoxText;
-        private const string PygmentizedHTMLPath = "C:\\Users\\finnd\\source\\repos\\PiIDE\\PiIDE\\test.html";
 
         public TextEditor(string filePath) {
 
@@ -31,7 +32,7 @@ namespace PiIDE {
 
             LineNumsListBox.ItemsSource = GetLineNumbers(fileLines.Length);
 
-            HTMLContentPresenter.NavigateToString(File.ReadAllText(PygmentizedHTMLPath));
+            UpdatePygmentize();
 
             BlockCompletions = false;
         }
@@ -178,6 +179,30 @@ namespace PiIDE {
                 offset += lines[line].Length + 2;
 
             return line - 1;
+        }
+
+        private async void UpdatePygmentize() {
+
+            while (true) {
+
+                await Task.Delay(500);
+
+                string newHtml = PygmentizerWraper.GetPygmentizedString(FilePath);
+
+                if (string.IsNullOrEmpty(newHtml))
+                    continue;
+
+                HTMLContentPresenter.NavigateToString(newHtml);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e) {
+            Window window = Window.GetWindow(HTMLContentPresenter);
+            window.LocationChanged += delegate (object sender, EventArgs e) {
+                double offset = OverlayingPopup.HorizontalOffset;
+                OverlayingPopup.HorizontalOffset = offset + 1;
+                OverlayingPopup.HorizontalOffset = offset;
+            };
         }
     }
 }

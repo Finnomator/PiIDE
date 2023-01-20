@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown">
+             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown" Loaded="Window_Loaded"
+             
+             >
 
     <Grid>
 
@@ -20,10 +22,9 @@
 
         <WebBrowser x:Name="HTMLContentPresenter" Grid.Column="2"/>
 
-        <Popup Grid.Column="2" AllowsTransparency="True" Placement="Top" PlacementTarget="{Binding ElementName=HTMLContentPresenter}">
-            <Canvas>
-                <Canvas Grid.Column="2" x:Name="CompletionsContainerCanvas"/>
-                <TextBox x:Name="TextEditorTextBox" Grid.Column="2" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True"/>
+        <Popup x:Name="OverlayingPopup" Grid.Column="2" Height="{Binding ActualHeight, ElementName=HTMLContentPresenter, Mode=OneWay}" Width="{Binding ActualWidth, ElementName=HTMLContentPresenter, Mode=OneWay}" AllowsTransparency="True" Placement="Center" PlacementTarget="{Binding ElementName=HTMLContentPresenter}" IsOpen="True">
+            <Canvas x:Name="CompletionsContainerCanvas" Margin="10, 20, 0, 0">
+                <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" FontFamily="Cascadia Code" AcceptsTab="True" AcceptsReturn="True" Foreground="#7F000000" Background="#02000000"/>
             </Canvas>
         </Popup>
     </Grid>

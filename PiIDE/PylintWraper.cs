@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -23,6 +24,11 @@ namespace PiIDE {
 
             pylintProcess.Start();
             string output = await pylintProcess.StandardOutput.ReadToEndAsync();
+#if DEBUG
+            string err = pylintProcess.StandardError.ReadToEnd();
+            if (!string.IsNullOrEmpty(err))
+                throw new Exception(err);
+#endif
             pylintProcess.WaitForExit();
             return JsonSerializer.Deserialize<PylintMessage[]>(output);
         }
