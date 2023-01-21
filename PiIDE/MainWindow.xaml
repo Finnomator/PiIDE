@@ -9,9 +9,11 @@
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <local:LintMessagesWindow Grid.Row="1" x:Name="MessagesWindow"/>
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Panel.ZIndex="1"/>
+        <local:LintMessagesWindow Grid.Row="2" x:Name="MessagesWindow" Panel.ZIndex="1"/>
     </Grid>
 </Window>

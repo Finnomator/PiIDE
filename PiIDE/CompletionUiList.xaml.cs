@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace PiIDE {
 
@@ -45,9 +46,9 @@ namespace PiIDE {
             SelectedCompletionIndex = 0;
         }
 
-        public void ReloadCompletions(int caretLine, int caretColumn) {
+        public async Task ReloadCompletionsAsync(int caretLine, int caretColumn) {
             ClearCompletions();
-            Completion[] completions = JediCompletionWraper.GetCompletion(FilePath, caretLine, caretColumn);
+            Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, caretLine, caretColumn);
 
             if (completions.Length == 0) {
                 Close();

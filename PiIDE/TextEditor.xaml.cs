@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace PiIDE {
 
@@ -15,6 +16,9 @@ namespace PiIDE {
         private bool BlockCompletions = true;
         private readonly CompletionUiList CompletionUiList;
         private string OldTextEditorTextBoxText;
+        private int CurrentAmountOfLines;
+        private Size TextEditorTextBoxCharacterSize;
+        private readonly SyntaxHighlighter Highlighter;
 
         public TextEditor(string filePath) {
 
@@ -30,7 +34,11 @@ namespace PiIDE {
             OldTextEditorTextBoxText = fileContent;
             TextEditorTextBox.Text = fileContent;
 
-            LineNumsListBox.ItemsSource = GetLineNumbers(fileLines.Length);
+            NumsTextBlock.Text = GetLineNumbers(fileLines.Length);
+            TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
+
+            Highlighter = new(TextEditorTextBoxCharacterSize);
+            TextEditorGrid.Children.Add(Highlighter);
 
             UpdatePygmentize();
 
@@ -76,7 +84,7 @@ namespace PiIDE {
                 case Key.LeftCtrl:
 
                     if (Tools.IsShortCutPressed(Key.LeftCtrl, Key.Space)) {
-                        DisplayCodeCompletions();
+                        DisplayCodeCompletionsAsync();
                         e.Handled = true;
                     }
 
@@ -118,24 +126,19 @@ namespace PiIDE {
             BlockCompletions = false;
         }
 
-        public static List<string> GetLineNumbers(int lines) {
-            List<string> items = new();
-            for (int i = 1; i <= lines; ++i)
-                items.Add(i.ToString());
-            return items;
-        }
+        public static string GetLineNumbers(int lines) => string.Join(Environment.NewLine, Enumerable.Range(1, lines));
 
-        private void DisplayCodeCompletions() {
+        private async Task DisplayCodeCompletionsAsync() {
 
             if (BlockCompletions)
                 return;
 
-            CompletionUiList.ReloadCompletions(GetCaretRow() + 1, GetCaretCol());
+            await CompletionUiList.ReloadCompletionsAsync(GetCaretRow() + 1, GetCaretCol());
 
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
 
-        private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+        private async void TextEditorTextBox_TextChangedAsync(object sender, TextChangedEventArgs e) {
 
             if (FilePath == "" || OldTextEditorTextBoxText == "") {
                 OldTextEditorTextBoxText = TextEditorTextBox.Text;
@@ -144,18 +147,37 @@ namespace PiIDE {
 
             string textDifference = TextEditorTextBox.Text.Replace(OldTextEditorTextBoxText, "");
 
-            if (!string.IsNullOrWhiteSpace(textDifference)) {
+            string[] textLines = TextEditorTextBox.Text.Split("\r\n");
+
+            if (textLines.Length != CurrentAmountOfLines) {
+                NumsTextBlock.Text = GetLineNumbers(textLines.Length);
+                CurrentAmountOfLines = textLines.Length;
+            }
+
+            if (!string.IsNullOrWhiteSpace(textDifference) && JediCompletionWraper.FinishedGettingCompletions) {
 
                 File.WriteAllText(FilePath, TextEditorTextBox.Text);
 
-                DisplayCodeCompletions();
-
+                await DisplayCodeCompletionsAsync();
             }
 
             OldTextEditorTextBoxText = TextEditorTextBox.Text;
         }
 
-        private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * 7.0, (GetCaretRow() + 1) * 14.0, 0, 0);
+        private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * TextEditorTextBoxCharacterSize.Width, (GetCaretRow() + 1) * TextEditorTextBoxCharacterSize.Height, 0, 0);
+
+        private Size MeasureTextBoxStringSize(string candidate) {
+            FormattedText formattedText = new(
+                candidate,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(TextEditorTextBox.FontFamily, TextEditorTextBox.FontStyle, TextEditorTextBox.FontWeight, TextEditorTextBox.FontStretch),
+                TextEditorTextBox.FontSize,
+                Brushes.Black,
+                new NumberSubstitution(),
+                VisualTreeHelper.GetDpi(TextEditorTextBox).PixelsPerDip);
+            return new Size(formattedText.Width, formattedText.Height);
+        }
 
         private int GetCaretCol() {
             int caretLine = GetCaretRow();
@@ -185,24 +207,11 @@ namespace PiIDE {
 
             while (true) {
 
-                await Task.Delay(500);
+                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FilePath);
 
-                string newHtml = PygmentizerWraper.GetPygmentizedString(FilePath);
+                await Task.Delay(50);
 
-                if (string.IsNullOrEmpty(newHtml))
-                    continue;
-
-                HTMLContentPresenter.NavigateToString(newHtml);
             }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e) {
-            Window window = Window.GetWindow(HTMLContentPresenter);
-            window.LocationChanged += delegate (object sender, EventArgs e) {
-                double offset = OverlayingPopup.HorizontalOffset;
-                OverlayingPopup.HorizontalOffset = offset + 1;
-                OverlayingPopup.HorizontalOffset = offset;
-            };
         }
     }
 }

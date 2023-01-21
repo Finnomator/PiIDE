@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 
 namespace PiIDE {
@@ -7,7 +6,8 @@ namespace PiIDE {
     public partial class MainWindow : Window {
 
         // private const string FilePath = @"C:\Users\finnd\source\repos\PiIDE\PiIDE\test_file.py";
-        private const string FilePath = @"C:\Users\finnd\Documents\Visual_Studio_Code\Micropython\Robi42\test.py";
+        // private const string FilePath = @"C:\Users\finnd\Documents\Visual_Studio_Code\Micropython\Robi42\test.py";
+        private const string FilePath = @"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython\test.py";
         private readonly TextEditor Editor;
 
         public MainWindow() {
@@ -15,21 +15,6 @@ namespace PiIDE {
 
             Editor = new(FilePath);
             MainGrid.Children.Add(Editor);
-
-            Process process = new Process() {
-                StartInfo = new ProcessStartInfo() {
-                    FileName = "Assets/Pygmentize/pygmentize.exe",
-                    Arguments = FilePath,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow= true
-                }
-            
-            };
-
-            process.Start();
-            var e = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
 
             UpdateLintMessages();
         }

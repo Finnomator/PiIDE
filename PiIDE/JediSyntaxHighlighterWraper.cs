@@ -1,0 +1,44 @@
+﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace PiIDE {
+    internal static class JediSyntaxHighlighterWraper {
+
+        private const string SyntaxHighlighterPath = "Assets/Jedi/syntax_highlighter.exe";
+        private readonly static Process process = new() {
+            StartInfo = new ProcessStartInfo() {
+                FileName = SyntaxHighlighterPath,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+            }
+        };
+
+        static JediSyntaxHighlighterWraper() {
+            process.Start();
+        }
+
+        public static async Task<JediSyntaxHighlightedWord[]> GetHighlightedWordsAsync(string filePath) {
+            process.StandardInput.WriteLine(filePath);
+            string line = await process.StandardOutput.ReadLineAsync();
+            return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line);
+        }
+    }
+
+    public class JediSyntaxHighlightedWord {
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = "";
+        [JsonPropertyName("line")]
+        public int Line { get; set; }
+        [JsonPropertyName("column")]
+        public int Column { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = "";
+
+    }
+}

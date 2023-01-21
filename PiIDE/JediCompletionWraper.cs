@@ -1,41 +1,42 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace PiIDE {
     internal static class JediCompletionWraper {
+
         public const string CodeCompleterPath = "Assets/Jedi/code_completer.exe";
-        private static readonly Process CompletionProcess;
+        public static bool FinishedGettingCompletions { get; private set; } = true;
+
+        private static readonly Process CompletionProcess = new() {
+            StartInfo = new ProcessStartInfo() {
+                FileName = CodeCompleterPath,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true,
+            },
+        };
 
         static JediCompletionWraper() {
-            CompletionProcess = new Process() {
-                StartInfo = new ProcessStartInfo() {
-                    FileName = CodeCompleterPath,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                }
-            };
             CompletionProcess.Start();
         }
 
-        public static Completion[] GetCompletion(string filePath, int row, int col) {
+        public static async Task<Completion[]> GetCompletionAsync(string filePath, int row, int col) {
+
+            FinishedGettingCompletions = false;
+
             CompletionProcess.StandardInput.WriteLine(filePath);
             CompletionProcess.StandardInput.WriteLine(row);
             CompletionProcess.StandardInput.WriteLine(col);
 
-            string line = CompletionProcess.StandardOutput.ReadLine();
+            string line = await CompletionProcess.StandardOutput.ReadLineAsync();
+
+            FinishedGettingCompletions = true;
 
             line = line[1..];
-
-#if DEBUG
-            string err = CompletionProcess.StandardError.ReadToEnd();
-            if (!string.IsNullOrEmpty(err))
-                throw new Exception(err);
-#endif
 
             return JsonSerializer.Deserialize<Completion[]>(line);
         }
