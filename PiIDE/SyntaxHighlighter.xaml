@@ -6,7 +6,5 @@
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Canvas x:Name="MainCanvas">
-        
-    </Canvas>
+    <Canvas x:Name="MainCanvas"/>
 </UserControl>

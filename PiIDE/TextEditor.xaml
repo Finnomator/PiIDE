@@ -14,13 +14,12 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer x:Name="NumsScrollViewer" VerticalScrollBarVisibility="Disabled">
+        <ScrollViewer x:Name="NumsScrollViewer" VerticalScrollBarVisibility="Hidden">
             <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code"/>
         </ScrollViewer>
-        
+
         <Grid x:Name="TextEditorGrid" Grid.Column="1">
-            <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChangedAsync" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14"/>
-            <Canvas x:Name="CompletionsContainerCanvas" Panel.ZIndex="1"/>
+            <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChangedAsync" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollViewer.ScrollChanged="TextEditorTextBox_ScrollChanged"/>
         </Grid>
     </Grid>
 </UserControl>

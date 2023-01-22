@@ -2,19 +2,20 @@
 
 import orjson
 import jedi
-from os import system
 from sys import stdout
 
 while True:
-    path = input()
+
+    file_path = input()
+
     row = int(input())
     col = int(input())
 
-    system("cls")
+    file_lines = int(input())
 
-    file_content = open(path).read()
-
-    script = jedi.Script(path=path)
+    file_content = "\r\n".join([input() for _ in range(file_lines)])
+    
+    script = jedi.Script(file_content, path=file_path)
 
     completions = script.complete(row, col)
 

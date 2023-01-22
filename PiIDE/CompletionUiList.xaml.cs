@@ -9,11 +9,13 @@ namespace PiIDE {
         public bool SelectedAnIndex { get; private set; }
         public bool IsOpen { get; private set; }
 
+        private const double CompletionUiListElementHeight = 15.96;
         private readonly string FilePath;
 
         public CompletionUiList(string filePath) {
             InitializeComponent();
             FilePath = filePath;
+            Close();
         }
 
         public Completion SelectedCompletion => GetCompletion(SelectedCompletionIndex);
@@ -46,9 +48,9 @@ namespace PiIDE {
             SelectedCompletionIndex = 0;
         }
 
-        public async Task ReloadCompletionsAsync(int caretLine, int caretColumn) {
+        public async Task ReloadCompletionsAsync(string fileContent, int caretLine, int caretColumn) {
             ClearCompletions();
-            Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, caretLine, caretColumn);
+            Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, caretLine, caretColumn);
 
             if (completions.Length == 0) {
                 Close();
@@ -62,11 +64,13 @@ namespace PiIDE {
 
         public void MoveSelectedCompletionUp() {
 
+            if (CompletionsStackPanel.Children.Count == 0)
+                return;
+
             if (SelectedCompletionIndex == 0) {
                 if (SelectedAnIndex)
                     SelectedUiCompletion.Deselect();
                 SelectedCompletionIndex = CompletionsCount - 1;
-                MainScrollViewer.ScrollToTop();
                 SelectedUiCompletion.Select();
             } else if (SelectedAnIndex) {
                 SelectedUiCompletion.Deselect();
@@ -74,22 +78,28 @@ namespace PiIDE {
                 SelectedUiCompletion.Select();
             }
 
+            MainScrollViewer.ScrollToVerticalOffset(SelectedCompletionIndex * CompletionUiListElementHeight);
+
             SelectedAnIndex = true;
         }
 
         public void MoveSelectedCompletionDown() {
 
+            if (CompletionsStackPanel.Children.Count == 0)
+                return;
+
             if (SelectedCompletionIndex == CompletionsCount - 1) {
                 if (SelectedAnIndex)
                     SelectedUiCompletion.Deselect();
                 SelectedCompletionIndex = 0;
-                MainScrollViewer.ScrollToTop();
                 SelectedUiCompletion.Select();
             } else if (SelectedAnIndex) {
                 SelectedUiCompletion.Deselect();
                 ++SelectedCompletionIndex;
                 SelectedUiCompletion.Select();
             }
+
+            MainScrollViewer.ScrollToVerticalOffset(SelectedCompletionIndex * CompletionUiListElementHeight);
 
             SelectedAnIndex = true;
         }

@@ -7,11 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500"
              MaxHeight="300" MaxWidth="500"
-             Background="LightGray"
+             Background="LightGray" HorizontalAlignment="Left" VerticalAlignment="Top"
              >
     <ScrollViewer x:Name="MainScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <StackPanel x:Name="CompletionsStackPanel">
-            
-        </StackPanel>
+        <StackPanel x:Name="CompletionsStackPanel"/>
     </ScrollViewer>
 </UserControl>

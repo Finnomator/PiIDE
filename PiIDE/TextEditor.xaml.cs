@@ -20,14 +20,16 @@ namespace PiIDE {
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
 
+        public event EventHandler? OnFileSaved;
+
         public TextEditor(string filePath) {
 
             InitializeComponent();
             FilePath = filePath;
 
             CompletionUiList = new(FilePath);
-
-            CompletionsContainerCanvas.Children.Add(CompletionUiList);
+            Panel.SetZIndex(CompletionUiList, 1);
+            TextEditorGrid.Children.Add(CompletionUiList);
 
             string[] fileLines = File.ReadAllLines(FilePath);
             string fileContent = File.ReadAllText(FilePath);
@@ -43,6 +45,11 @@ namespace PiIDE {
             UpdatePygmentize();
 
             BlockCompletions = false;
+        }
+
+        public void SaveFile() {
+            File.WriteAllText(FilePath, TextEditorTextBox.Text);
+            OnFileSaved?.Invoke(this, EventArgs.Empty);
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -81,10 +88,10 @@ namespace PiIDE {
                     e.Handled = true;
                     break;
 
-                case Key.LeftCtrl:
+                case Key.S:
 
-                    if (Tools.IsShortCutPressed(Key.LeftCtrl, Key.Space)) {
-                        DisplayCodeCompletionsAsync();
+                    if (Shortcuts.IsShortcutPressed(Shortcut.SaveFile)) {
+                        SaveFile();
                         e.Handled = true;
                     }
 
@@ -92,11 +99,12 @@ namespace PiIDE {
 
                 case Key.Space:
 
-                    if (Tools.IsShortCutPressed(Key.LeftCtrl, Key.Space)) {
+                    if (Shortcuts.IsShortcutPressed(Shortcut.OpenCompletionsList)) {
+                        DisplayCodeCompletionsAsync();
                         e.Handled = true;
                     }
-
                     break;
+
 
                 case Key.Escape:
                     if (CompletionUiList.SelectedAnIndex) {
@@ -133,7 +141,7 @@ namespace PiIDE {
             if (BlockCompletions)
                 return;
 
-            await CompletionUiList.ReloadCompletionsAsync(GetCaretRow() + 1, GetCaretCol());
+            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text, GetCaretRow() + 1, GetCaretCol());
 
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
@@ -155,9 +163,6 @@ namespace PiIDE {
             }
 
             if (!string.IsNullOrWhiteSpace(textDifference) && JediCompletionWraper.FinishedGettingCompletions) {
-
-                File.WriteAllText(FilePath, TextEditorTextBox.Text);
-
                 await DisplayCodeCompletionsAsync();
             }
 
@@ -213,5 +218,7 @@ namespace PiIDE {
 
             }
         }
+
+        private void TextEditorTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e) => NumsScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
     }
 }

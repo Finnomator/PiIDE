@@ -8,13 +8,15 @@ namespace PiIDE {
 
         public const string PylintPath = "Assets/Lint/pylint.exe";
 
-        public static async Task<PylintMessage[]> GetLintingAsync(string filePath) {
+        public static async Task<PylintMessage[]> GetLintingAsync(string[] filePaths) {
+
+            string args = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" -j 0 {string.Join(" ", filePaths)}";
 
             Process pylintProcess = new() {
                 StartInfo = new ProcessStartInfo() {
                     UseShellExecute = false,
                     FileName = PylintPath,
-                    Arguments = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" {filePath}",
+                    Arguments = args,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,

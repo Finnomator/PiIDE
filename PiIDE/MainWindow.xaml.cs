@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 
 namespace PiIDE {
@@ -9,25 +9,21 @@ namespace PiIDE {
         // private const string FilePath = @"C:\Users\finnd\Documents\Visual_Studio_Code\Micropython\Robi42\test.py";
         private const string FilePath = @"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython\test.py";
         private readonly TextEditor Editor;
+        private readonly List<string> FilesToLint = new() { FilePath, @"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython\test2.py" };
 
         public MainWindow() {
             InitializeComponent();
 
             Editor = new(FilePath);
+            Editor.OnFileSaved += Editor_OnFileSaved;
             MainGrid.Children.Add(Editor);
 
-            UpdateLintMessages();
+            MessagesWindow.UpdateLintMessages(FilesToLint.ToArray());
         }
 
-        private async void UpdateLintMessages() {
-            while (true) {
-                PylintMessage[] pylintMessages = await PylintWraper.GetLintingAsync(FilePath);
-
-                MessagesWindow.ClearLintMessages();
-                MessagesWindow.AddLintMessages(pylintMessages);
-
-                await Task.Delay(1000);
-            }
+        private void Editor_OnFileSaved(object? sender, System.EventArgs e) {
+            TextEditor textEditor = (TextEditor) sender;
+            MessagesWindow.UpdateLintMessages(FilesToLint.ToArray());
         }
     }
 }

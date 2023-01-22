@@ -24,19 +24,19 @@ namespace PiIDE {
             CompletionProcess.Start();
         }
 
-        public static async Task<Completion[]> GetCompletionAsync(string filePath, int row, int col) {
+        public static async Task<Completion[]> GetCompletionAsync(string filePath, string fileContent, int row, int col) {
 
             FinishedGettingCompletions = false;
 
             CompletionProcess.StandardInput.WriteLine(filePath);
             CompletionProcess.StandardInput.WriteLine(row);
             CompletionProcess.StandardInput.WriteLine(col);
+            CompletionProcess.StandardInput.WriteLine(fileContent.Split('\n').Length);
+            CompletionProcess.StandardInput.WriteLine(fileContent);
 
             string line = await CompletionProcess.StandardOutput.ReadLineAsync();
 
             FinishedGettingCompletions = true;
-
-            line = line[1..];
 
             return JsonSerializer.Deserialize<Completion[]>(line);
         }

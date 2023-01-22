@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d"
-             d:DesignWidth="800">
+             d:DesignWidth="800" Loaded="UserControl_Loaded">
 
     <ListView d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView">
         <ListView.View>
@@ -17,5 +17,15 @@
                 <GridViewColumn Header="Line" DisplayMemberBinding="{Binding Line}"/>
             </GridView>
         </ListView.View>
+
+        <ListView.GroupStyle>
+            <GroupStyle>
+                <GroupStyle.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock FontSize="16" Text="{Binding Name}"/>
+                    </DataTemplate>
+                </GroupStyle.HeaderTemplate>
+            </GroupStyle>
+        </ListView.GroupStyle>
     </ListView>
 </UserControl>
