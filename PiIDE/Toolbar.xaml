@@ -12,8 +12,7 @@
     <DockPanel>
         <ToolBarTray>
             <ToolBar>
-                <Button Content="New File" Click="CreateNewFileClick"/>
-                <Button Content="Open File" Click="OpenFileClick"/>
+                <Button Content="Options" Click="OptionsButton_Click"/>
             </ToolBar>
         </ToolBarTray>
     </DockPanel>

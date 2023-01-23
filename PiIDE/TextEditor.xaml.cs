@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,15 +20,17 @@ namespace PiIDE {
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
-        public bool DisablAllWrapers;
+        public bool DisableAllWrapers = true;
 
-        public event EventHandler? OnFileSaved;
+        private int FirstVisibleLineNum;
+        private int LastVisibleLineNum;
+
+        public event EventHandler<string>? OnFileSaved;
 
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
 
         public TextEditor(string filePath) {
-
             InitializeComponent();
             FilePath = filePath;
 
@@ -35,8 +38,8 @@ namespace PiIDE {
             Panel.SetZIndex(CompletionUiList, 1);
             TextEditorGrid.Children.Add(CompletionUiList);
 
-            string[] fileLines = File.ReadAllLines(FilePath);
             string fileContent = File.ReadAllText(FilePath);
+            string[] fileLines = fileContent.Split("\r\n");
             OldTextEditorTextBoxText = fileContent;
             TextEditorTextBox.Text = fileContent;
 
@@ -53,7 +56,7 @@ namespace PiIDE {
 
         public void SaveFile() {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
-            OnFileSaved?.Invoke(this, EventArgs.Empty);
+            OnFileSaved?.Invoke(this, FilePath);
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -216,15 +219,18 @@ namespace PiIDE {
 
             while (true) {
 
-                while (DisablAllWrapers)
+                while (DisableAllWrapers)
                     await Task.Delay(1000);
 
-                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FilePath);
+                Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, FirstVisibleLineNum, LastVisibleLineNum);
 
-                await Task.Delay(50);
+                await Task.Delay(500);
             }
         }
 
-        private void TextEditorTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e) => NumsScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
+        private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
+            FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+            LastVisibleLineNum = (int) ((e.VerticalOffset + TextEditorTextBox.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+        }
     }
 }

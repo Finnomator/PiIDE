@@ -7,19 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown">
 
-    <Grid>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+    <Border BorderThickness="1" BorderBrush="LightCyan">
+        <ScrollViewer ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-        <ScrollViewer x:Name="NumsScrollViewer" VerticalScrollBarVisibility="Hidden">
-            <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code"/>
+                <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code"/>
+
+                <Grid x:Name="TextEditorGrid" Grid.Column="2">
+                    <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChangedAsync" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14"/>
+                </Grid>
+            </Grid>
         </ScrollViewer>
-
-        <Grid x:Name="TextEditorGrid" Grid.Column="1">
-            <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChangedAsync" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollViewer.ScrollChanged="TextEditorTextBox_ScrollChanged"/>
-        </Grid>
-    </Grid>
+    </Border>
 </UserControl>

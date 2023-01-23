@@ -22,11 +22,11 @@ namespace PiIDE {
             process.Start();
         }
 
-        public static async Task<JediSyntaxHighlightedWord[]> GetHighlightedWordsAsync(string filePath, string fileContent) {
+        public static JediSyntaxHighlightedWord[] GetHighlightedWords(string filePath, string fileContent) {
             process.StandardInput.WriteLine(filePath);
             process.StandardInput.WriteLine(fileContent.Split('\n').Length);
             process.StandardInput.WriteLine(fileContent);
-            string line = await process.StandardOutput.ReadLineAsync();
+            string line = process.StandardOutput.ReadLine();
             return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line);
         }
     }

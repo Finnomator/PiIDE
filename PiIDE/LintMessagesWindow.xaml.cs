@@ -23,7 +23,6 @@ namespace PiIDE {
             PropertyGroupDescription groupDescription = new("Module");
             view.GroupDescriptions.Add(groupDescription);
 
-
             ListViewScrollViewer.ScrollToVerticalOffset(OldScrollState);
         }
 

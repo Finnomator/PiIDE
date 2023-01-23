@@ -44,11 +44,11 @@ namespace PiIDE {
             return line - 1;
         }
 
-        public async Task HighglightTextAsync(string text, string filePath) {
+        public void HighglightText(string text, string filePath, int startLine, int endLine) {
 
             NewChildren.Clear();
-            AddHighlightedKeywordsToChildren(text);
-            await AddHighlightedJediWordsToChildrenAsync(filePath, text);
+            AddHighlightedKeywordsToChildren(text, startLine, endLine);
+            AddHighlightedJediWordsToChildren(filePath, text, startLine, endLine);
 
             if (NewChildren.Count == 0) {
                 OldChildren.Clear();
@@ -73,7 +73,7 @@ namespace PiIDE {
             }
         }
 
-        private void AddHighlightedKeywordsToChildren(string text) {
+        private void AddHighlightedKeywordsToChildren(string text, int upperLineLimit, int lowerLineLimit) {
 
             foreach (Match match in FindKeywords(text)) {
 
@@ -81,9 +81,15 @@ namespace PiIDE {
                 string keyword = match.Value;
 
                 Point indexPoint = new(GetColOfIndex(text, startIndex), GetRowOfIndex(text, startIndex));
+
+                if (indexPoint.Y > lowerLineLimit)
+                    break;
+                else if (indexPoint.Y < upperLineLimit)
+                    continue;
+
                 NewChildren.Add(new() {
                     Text = keyword,
-                    Margin = new((indexPoint.X + 0.5) * FontSizes.Width - 1.5, indexPoint.Y * FontSizes.Height + 1.5, 0, 0),
+                    Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height + 0.3, 0, 0),
                     Foreground = TypeColors.Keyword,
                     //Background = System.Windows.Media.Brushes.White,
                     IsHitTestVisible = false,
@@ -93,9 +99,9 @@ namespace PiIDE {
             }
         }
 
-        private async Task AddHighlightedJediWordsToChildrenAsync(string filePath, string fileContent) {
+        private void AddHighlightedJediWordsToChildren(string filePath, string fileContent, int upperLineLimit, int lowerLineLimit) {
 
-            JediSyntaxHighlightedWord[] jediSyntaxHighlightedWords = await JediSyntaxHighlighterWraper.GetHighlightedWordsAsync(filePath, fileContent);
+            JediSyntaxHighlightedWord[] jediSyntaxHighlightedWords = JediSyntaxHighlighterWraper.GetHighlightedWords(filePath, fileContent);
 
             for (int i = 0; i < jediSyntaxHighlightedWords.Length; ++i) {
                 JediSyntaxHighlightedWord jediSyntaxHighlightedWord = jediSyntaxHighlightedWords[i];
@@ -105,9 +111,14 @@ namespace PiIDE {
                 string name = jediSyntaxHighlightedWord.Name;
                 string type = jediSyntaxHighlightedWord.Type;
 
+                if (row > lowerLineLimit)
+                    break;
+                else if (row < upperLineLimit)
+                    continue;
+
                 NewChildren.Add(new() {
                     Text = name,
-                    Margin = new((col + 0.5) * FontSizes.Width - 1.5, (row - 1) * FontSizes.Height + 1.5, 0, 0),
+                    Margin = new(col * FontSizes.Width + 2, (row - 1) * FontSizes.Height + 0.3, 0, 0),
                     Foreground = TypeColors.TypeToColorMap[type],
                     //Background = System.Windows.Media.Brushes.White,
                     IsHitTestVisible = false,
