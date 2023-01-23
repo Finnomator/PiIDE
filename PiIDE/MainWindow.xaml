@@ -8,12 +8,16 @@
         Title="Pi IDE" Height="450" Width="800">
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="120"/>
         </Grid.RowDefinitions>
 
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Panel.ZIndex="1"/>
-        <local:LintMessagesWindow Grid.Row="2" x:Name="MessagesWindow" Panel.ZIndex="1"/>
+
+        <local:Toolbar x:Name="toolbar"/>
+        <local:Tabbar x:Name="MainTabbar" Grid.Row="1"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Panel.ZIndex="1"/>
+        <local:LintMessagesWindow Grid.Row="3" x:Name="MessagesWindow" Panel.ZIndex="1"/>
     </Grid>
 </Window>

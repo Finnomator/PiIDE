@@ -19,8 +19,12 @@ namespace PiIDE {
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
+        public bool DisablAllWrapers;
 
         public event EventHandler? OnFileSaved;
+
+        public TextEditor() : this("TempFiles/temp_file1.py") {
+        }
 
         public TextEditor(string filePath) {
 
@@ -212,10 +216,12 @@ namespace PiIDE {
 
             while (true) {
 
+                while (DisablAllWrapers)
+                    await Task.Delay(1000);
+
                 await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FilePath);
 
                 await Task.Delay(50);
-
             }
         }
 

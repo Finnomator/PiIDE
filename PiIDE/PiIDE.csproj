@@ -12,6 +12,7 @@
     <None Remove="Assets\Jedi\code_completer.exe" />
     <None Remove="Assets\Jedi\syntax_highlighter.exe" />
     <None Remove="Assets\Lint\pylint.exe" />
+    <None Remove="TempFiles\temp_file1.py" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +23,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Lint\pylint.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TempFiles\temp_file1.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
