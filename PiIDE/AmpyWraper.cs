@@ -116,6 +116,8 @@ namespace PiIDE {
             process.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
             process.Exited += (s, e) => AmpyExited?.Invoke(s, e);
             process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
             await process.WaitForExitAsync();
             IsBusy = false;
         }
