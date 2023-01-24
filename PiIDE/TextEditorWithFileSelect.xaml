@@ -21,10 +21,22 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <TextBox IsReadOnly="True" x:Name="RootPathTextBox"/>
-            <local:FileViewItem x:Name="RootFileView"/>
-        </StackPanel>
+        <Grid Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBox IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap"/>
+            <local:FileViewItem Grid.Row="1" x:Name="RootFileView"/>
+            <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
+            <Button Grid.Row="3" Content="Sync" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
+            <local:BoardFileViewItem Grid.Row="4" x:Name="RootBoardFileView"/>
+        </Grid>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
 
@@ -37,10 +49,21 @@
         <StackPanel Grid.Column="2"  HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click"/>
             <Button Content="&#x1f4c4;" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click"/>
+            <Button Content="▷" x:Name="RunFileButton" Click="RunFileOnBoardButton_Click"/>
         </StackPanel>
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3"/>
 
-        <local:LintMessagesWindow Grid.ColumnSpan="3" Grid.Row="3" x:Name="MessagesWindow" Panel.ZIndex="1"/>
+        <TabControl Grid.ColumnSpan="3" Grid.Row="3" Panel.ZIndex="1">
+
+            <TabItem Header="Error List">
+                <local:LintMessagesWindow  x:Name="MessagesWindow" />
+            </TabItem>
+
+            <TabItem Header="Terminal">
+                <local:IntegratedTerminal x:Name="Terminal"/>
+            </TabItem>
+            
+        </TabControl>
     </Grid>
 </UserControl>

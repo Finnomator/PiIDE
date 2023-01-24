@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -23,13 +24,15 @@ namespace PiIDE {
             PropertyGroupDescription groupDescription = new("Module");
             view.GroupDescriptions.Add(groupDescription);
 
-            ListViewScrollViewer.ScrollToVerticalOffset(OldScrollState);
+            if (ListViewScrollViewer is not null)
+                ListViewScrollViewer.ScrollToVerticalOffset(OldScrollState);
         }
 
-        public async void UpdateLintMessages(string[] filesToLint) {
+        public async Task<PylintMessage[]> UpdateLintMessages(string[] filesToLint) {
             PylintMessage[] pylintMessages = await PylintWraper.GetLintingAsync(filesToLint);
             ClearLintMessages();
             AddLintMessages(pylintMessages);
+            return pylintMessages;
         }
 
         private ScrollViewer? FindScrollViewer(DependencyObject d) {

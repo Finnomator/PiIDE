@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace PiIDE {
@@ -19,10 +18,7 @@ namespace PiIDE {
 
             MainButton.Text = Completion.Name;
 
-            if (TypeColors.TypeToColorMap.ContainsKey(completion.Type))
-                MainButton.Foreground = TypeColors.TypeToColorMap[completion.Type];
-
-            Debug.WriteLine($"{completion.Name}: {completion.Type}");
+            MainButton.Foreground = TypeColors.TypeToColor(completion.Type);
         }
 
         public void Select() {

@@ -35,7 +35,7 @@ namespace PiIDE {
             Indent = indent;
             FileName = Path.GetFileName(filePath).Replace("_", "__");
 
-            string space = new string(' ', Indent * 2);
+            string space = new(' ', Indent * 2);
 
             if (isDir) {
                 MainButtonCollapsedContent = $"{space}{CollapsedChar} {FileName}";
@@ -81,7 +81,6 @@ namespace PiIDE {
                 IsExpanded = !IsExpanded;
                 return;
             }
-
             OnFileClick?.Invoke(sender, FilePath);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,49 +13,80 @@ namespace PiIDE {
     public partial class TextEditor : UserControl {
 
         public readonly string FilePath;
+        public readonly string FileName;
+        public readonly string FileExt;
+
+        public readonly bool IsPythonFile;
+        public readonly bool EnablePythonSyntaxhighlighting;
+        public readonly bool EnablePylinging;
+        public readonly bool EnableJediCompletions;
+        public readonly bool IsBoardFile;
+
+        public bool DisableAllWrapers = true;
+
         private bool BlockCompletions = true;
         private readonly CompletionUiList CompletionUiList;
         private string OldTextEditorTextBoxText;
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
-        public bool DisableAllWrapers = true;
+        private readonly BoardFileViewItem? BoardViewItem;
+        public readonly PylingUnderliner Underliner;
 
-        private int FirstVisibleLineNum;
-        private int LastVisibleLineNum;
+        public int FirstVisibleLineNum { get; private set; }
+        public int LastVisibleLineNum { get; private set; }
 
         public event EventHandler<string>? OnFileSaved;
 
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
 
-        public TextEditor(string filePath) {
+        public TextEditor(string filePath, BoardFileViewItem? boardViewItem = null) {
             InitializeComponent();
             FilePath = filePath;
+            IsBoardFile = boardViewItem is not null;
+            BoardViewItem = boardViewItem;
+            FileName = Path.GetFileName(filePath);
+            FileExt = Path.GetExtension(filePath);
+
+            IsPythonFile = Tools.IsPythonExt(FileExt);
+            EnablePylinging = IsPythonFile;
+            EnablePythonSyntaxhighlighting = IsPythonFile;
+            EnableJediCompletions = IsPythonFile;
 
             CompletionUiList = new(FilePath);
             Panel.SetZIndex(CompletionUiList, 1);
             TextEditorGrid.Children.Add(CompletionUiList);
 
-            string fileContent = File.ReadAllText(FilePath);
-            string[] fileLines = fileContent.Split("\r\n");
-            OldTextEditorTextBoxText = fileContent;
-            TextEditorTextBox.Text = fileContent;
+            ReloadFile();
 
-            NumsTextBlock.Text = GetLineNumbers(fileLines.Length);
             TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
 
             Highlighter = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Highlighter);
 
-            UpdatePygmentize();
+            Underliner = new(TextEditorTextBoxCharacterSize);
+            TextEditorGrid.Children.Add(Underliner);
+
+            if (EnablePythonSyntaxhighlighting)
+                UpdatePygmentize();
 
             BlockCompletions = false;
         }
 
         public void SaveFile() {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
+            if (IsBoardFile)
+                AmpyWraper.WriteToBoard(BoardViewItem.COMPort, FilePath, BoardViewItem.BoardFilePath);
             OnFileSaved?.Invoke(this, FilePath);
+        }
+
+        public void ReloadFile() {
+            string fileContent = File.ReadAllText(FilePath);
+            string[] fileLines = fileContent.Split("\r\n");
+            OldTextEditorTextBoxText = fileContent;
+            TextEditorTextBox.Text = fileContent;
+            NumsTextBlock.Text = GetLineNumbers(fileLines.Length);
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -145,7 +175,7 @@ namespace PiIDE {
 
         private async Task DisplayCodeCompletionsAsync() {
 
-            if (BlockCompletions)
+            if (BlockCompletions || !EnableJediCompletions)
                 return;
 
             await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text, GetCaretRow() + 1, GetCaretCol());
@@ -224,7 +254,7 @@ namespace PiIDE {
 
                 Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, FirstVisibleLineNum, LastVisibleLineNum);
 
-                await Task.Delay(500);
+                await Task.Delay((LastVisibleLineNum - FirstVisibleLineNum) * 10 + 50);
             }
         }
 

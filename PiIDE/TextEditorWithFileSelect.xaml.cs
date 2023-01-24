@@ -1,16 +1,21 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace PiIDE {
 
     public partial class TextEditorWithFileSelect : UserControl {
 
         private TabItem OpenTabItem;
-        private Dictionary<string, int> OpenFilesAndTheirTabindex = new();
+
+        private readonly Dictionary<string, int> OpenLocalFilesAndTheirTabindex = new();
+        private readonly List<string> PythonOnlyFilePaths = new();
+        private readonly List<TextEditor> OpenTextEditors = new();
+
+        public const string LocalBoardPath = "BoardFiles/";
 
         public TextEditorWithFileSelect() {
             InitializeComponent();
@@ -19,38 +24,64 @@ namespace PiIDE {
             MainTabControl.Items.Clear();
 
             RootFileView.OnFileClick += RootFileView_OnFileClick;
+            RootBoardFileView.OnFileClick += RootBoardFileView_OnFileClick;
 
             OpenFile("TempFiles/temp_file1.py");
 
             OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
+            OpenBoardDirectory();
+        }
+
+        private void RootBoardFileView_OnFileClick(object? sender, string e) {
+            BoardFileViewItem boardFileViewItem = (BoardFileViewItem) sender;
+            if (!boardFileViewItem.IsDir)
+                OpenFile(e, boardFileViewItem);
         }
 
         private void RootFileView_OnFileClick(object? sender, string e) => OpenFile(e);
 
-        public void OpenFile(string filePath) {
-            if (IsFileOpen(filePath))
-                MainTabControl.SelectedIndex = OpenFilesAndTheirTabindex[filePath];
-            else {
-                AddFile(filePath);
-                OpenFilesAndTheirTabindex[filePath] = MainTabControl.Items.Count - 1;
+        public void OpenFile(string filePath, BoardFileViewItem? boardItem = null) {
+
+            TextEditor newTextEditor;
+
+            if (IsFileOpen(filePath)) {
+                MainTabControl.SelectedIndex = OpenLocalFilesAndTheirTabindex[filePath];
+                newTextEditor = OpenTextEditors[MainTabControl.SelectedIndex];
+            } else {
+                newTextEditor = AddFile(filePath, boardItem);
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
             }
 
-            MessagesWindow.UpdateLintMessages(OpenFilesAndTheirTabindex.Keys.ToArray());
+            UpdatePylintMessages(newTextEditor);
         }
 
-        public bool IsFileOpen(string filePath) => OpenFilesAndTheirTabindex.ContainsKey(filePath);
+        public bool IsFileOpen(string filePath) => OpenLocalFilesAndTheirTabindex.ContainsKey(filePath);
 
-        private void AddFile(string filePath) {
-            TextEditor textEditor = new(filePath);
+        private TextEditor AddFile(string filePath, BoardFileViewItem? boardItem = null) {
+            TextEditor textEditor = new(filePath, boardItem);
             textEditor.OnFileSaved += TextEditor_OnFileSaved;
             MainTabControl.Items.Add(new TabItem() {
                 Header = Path.GetFileName(filePath).Replace("_", "__"),
                 Content = textEditor,
             });
+
+            if (textEditor.IsPythonFile)
+                PythonOnlyFilePaths.Add(filePath);
+
+            OpenLocalFilesAndTheirTabindex[filePath] = MainTabControl.Items.Count - 1;
+            OpenTextEditors.Add(textEditor);
+
+            return textEditor;
         }
 
-        private void TextEditor_OnFileSaved(object? sender, string filePath) => MessagesWindow.UpdateLintMessages(OpenFilesAndTheirTabindex.Keys.ToArray());
+        private async void UpdatePylintMessages(TextEditor textEditor) {
+            if (textEditor.EnablePylinging) {
+                PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray());
+                textEditor.Underliner.Underline(pylintMessages, textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
+            }
+        }
+
+        private void TextEditor_OnFileSaved(object? sender, string filePath) => UpdatePylintMessages((TextEditor) sender);
 
         public void AddTempFile() {
             string newFilePath = $"TempFiles/temp_file{Directory.GetFiles("TempFiles").Length + 1}.py";
@@ -79,6 +110,22 @@ namespace PiIDE {
         public void OpenDirectory(string directory) {
             RootPathTextBox.Text = directory;
             RootFileView.OpenDir(true, directory, 0);
+        }
+
+        public void OpenBoardDirectory(string directory = "") => RootBoardFileView.OpenDir(directory, LocalBoardPath, 9, 0);
+
+        private void SyncButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+            Debug.Assert(RootBoardFileView.IsRootDir);
+            RootBoardFileView.DownloadDirectory(LocalBoardPath);
+            for (int i = 0; i < OpenTextEditors.Count; i++) {
+                OpenTextEditors[i].ReloadFile();
+            }
+        }
+
+        private void RunFileOnBoardButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+            TextEditor openEditor = (TextEditor) OpenTabItem.Content;
+            openEditor.SaveFile();
+            AmpyWraper.RunFileOnBoardAsync(9, openEditor.FilePath);
         }
     }
 }

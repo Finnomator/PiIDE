@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,29 +19,7 @@ namespace PiIDE {
             FontSizes = fontSizes;
         }
 
-        private static int GetColOfIndex(string text, int index) {
-            int caretLine = GetRowOfIndex(text, index);
-
-            int offset = 0;
-            string[] lines = text.Split("\r\n");
-
-            for (int i = 0; i < caretLine; ++i)
-                offset += lines[i].Length + 2;
-
-            return index - offset;
-        }
-
-        private static int GetRowOfIndex(string text, int index) {
-
-            int offset = 0;
-            string[] lines = text.Split("\r\n");
-            int line = 0;
-
-            for (; index >= offset; ++line)
-                offset += lines[line].Length + 2;
-
-            return line - 1;
-        }
+        
 
         public void HighglightText(string text, string filePath, int startLine, int endLine) {
 
@@ -80,7 +57,7 @@ namespace PiIDE {
                 int startIndex = match.Index;
                 string keyword = match.Value;
 
-                Point indexPoint = new(GetColOfIndex(text, startIndex), GetRowOfIndex(text, startIndex));
+                Point indexPoint = new(Tools.GetColOfIndex(text, startIndex), Tools.GetRowOfIndex(text, startIndex));
 
                 if (indexPoint.Y > lowerLineLimit)
                     break;
@@ -119,7 +96,7 @@ namespace PiIDE {
                 NewChildren.Add(new() {
                     Text = name,
                     Margin = new(col * FontSizes.Width + 2, (row - 1) * FontSizes.Height + 0.3, 0, 0),
-                    Foreground = TypeColors.TypeToColorMap[type],
+                    Foreground = TypeColors.TypeToColor(type),
                     //Background = System.Windows.Media.Brushes.White,
                     IsHitTestVisible = false,
                     FontFamily = Tools.CascadiaCodeFont,
