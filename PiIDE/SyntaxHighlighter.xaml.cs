@@ -19,7 +19,7 @@ namespace PiIDE {
             FontSizes = fontSizes;
         }
 
-        
+
 
         public void HighglightText(string text, string filePath, int startLine, int endLine) {
 

@@ -5,11 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="500"
-             MaxHeight="300" MaxWidth="500"
-             Background="LightGray" HorizontalAlignment="Left" VerticalAlignment="Top"
+             d:DesignHeight="100"
+             d:DesignWidth="100"
+             MaxHeight="300" MaxWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top"
              >
-    <ScrollViewer x:Name="MainScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <StackPanel x:Name="CompletionsStackPanel"/>
-    </ScrollViewer>
+    <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Button Content="{Binding Name}" Click="Button_Click"/>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

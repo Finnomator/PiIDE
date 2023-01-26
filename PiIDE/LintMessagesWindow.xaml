@@ -7,14 +7,22 @@
              mc:Ignorable="d"
              d:DesignWidth="800" Loaded="UserControl_Loaded">
 
-    <ListView d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView">
+    <ListView d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">
+
         <ListView.View>
-            <GridView>
+            <GridView >
+                
                 <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
-                <GridViewColumn Header="Code" DisplayMemberBinding="{Binding MessageId}"/>
+                <GridViewColumn Header="Code">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding MessageId}"/>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
                 <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}"/>
                 <GridViewColumn Header="File" DisplayMemberBinding="{Binding Module}"/>
-                <GridViewColumn Header="Line" DisplayMemberBinding="{Binding Line}"/>
+                <GridViewColumn Header="Line"/>
             </GridView>
         </ListView.View>
 
@@ -22,10 +30,11 @@
             <GroupStyle>
                 <GroupStyle.HeaderTemplate>
                     <DataTemplate>
-                        <TextBlock FontSize="16" Text="{Binding Name}"/>
+                        <TextBlock FontSize="15" Text="{Binding Name}"/>
                     </DataTemplate>
                 </GroupStyle.HeaderTemplate>
             </GroupStyle>
         </ListView.GroupStyle>
+        
     </ListView>
 </UserControl>

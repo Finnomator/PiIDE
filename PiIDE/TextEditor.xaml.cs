@@ -10,6 +10,10 @@ using System.Windows.Media;
 
 namespace PiIDE {
 
+    // TODO: Fix tabitems stacking. Replace with scrollbar
+    // TODO: Add "Saved on Board/Local" identifier
+    // TODO: Automaticly insert indentation
+
     public partial class TextEditor : UserControl {
 
         public readonly string FilePath;
@@ -55,6 +59,7 @@ namespace PiIDE {
             EnableJediCompletions = IsPythonFile;
 
             CompletionUiList = new(FilePath);
+            CompletionUiList.CompletionClicked += CompletionUiList_CompletionClick;
             Panel.SetZIndex(CompletionUiList, 1);
             TextEditorGrid.Children.Add(CompletionUiList);
 
@@ -69,9 +74,13 @@ namespace PiIDE {
             TextEditorGrid.Children.Add(Underliner);
 
             if (EnablePythonSyntaxhighlighting)
-                UpdatePygmentize();
+                UpdateHighlighting();
 
             BlockCompletions = false;
+        }
+
+        private void CompletionUiList_CompletionClick(object? sender, Completion e) {
+            InsertCompletionAtCaret(e);
         }
 
         public void SaveFile() {
@@ -94,8 +103,10 @@ namespace PiIDE {
             switch (e.Key) {
 
                 case Key.Down:
-                    CompletionUiList.MoveSelectedCompletionDown();
-                    e.Handled = true;
+                    if (CompletionUiList.IsOpen) {
+                        CompletionUiList.MoveSelectedCompletionDown();
+                        e.Handled = true;
+                    }
                     break;
                 case Key.Up:
                     if (CompletionUiList.SelectedAnIndex) {
@@ -103,52 +114,38 @@ namespace PiIDE {
                         e.Handled = true;
                     }
                     break;
-
                 case Key.Enter:
-
                     if (CompletionUiList.SelectedAnIndex) {
                         InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
                         CompletionUiList.Close();
                         e.Handled = true;
                     }
-
                     break;
-
                 case Key.Tab:
-
                     if (CompletionUiList.SelectedAnIndex) {
                         InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
                         CompletionUiList.Close();
-                    } else
+                    } else // TODO: replace with a variable option
                         InsertAtCaretAndMoveCaret("    ");
-
                     e.Handled = true;
                     break;
-
                 case Key.S:
-
                     if (Shortcuts.IsShortcutPressed(Shortcut.SaveFile)) {
                         SaveFile();
                         e.Handled = true;
                     }
-
                     break;
-
                 case Key.Space:
-
                     if (Shortcuts.IsShortcutPressed(Shortcut.OpenCompletionsList)) {
                         DisplayCodeCompletionsAsync();
                         e.Handled = true;
                     }
                     break;
-
-
                 case Key.Escape:
                     if (CompletionUiList.SelectedAnIndex) {
                         CompletionUiList.Close();
                         e.Handled = true;
                     }
-
                     break;
             }
         }
@@ -184,6 +181,8 @@ namespace PiIDE {
         }
 
         private async void TextEditorTextBox_TextChangedAsync(object sender, TextChangedEventArgs e) {
+
+            // TODO: Improve Opening of Completions because it often gets in the way
 
             if (FilePath == "" || OldTextEditorTextBoxText == "") {
                 OldTextEditorTextBoxText = TextEditorTextBox.Text;
@@ -221,31 +220,10 @@ namespace PiIDE {
             return new Size(formattedText.Width, formattedText.Height);
         }
 
-        private int GetCaretCol() {
-            int caretLine = GetCaretRow();
+        private int GetCaretCol() => Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
+        private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
-            int offset = 0;
-            string[] lines = TextEditorTextBox.Text.Split("\r\n");
-
-            for (int i = 0; i < caretLine; ++i)
-                offset += lines[i].Length + 2;
-
-            return TextEditorTextBox.CaretIndex - offset;
-        }
-
-        private int GetCaretRow() {
-
-            int offset = 0;
-            string[] lines = TextEditorTextBox.Text.Split("\r\n");
-            int line = 0;
-
-            for (; TextEditorTextBox.CaretIndex >= offset; ++line)
-                offset += lines[line].Length + 2;
-
-            return line - 1;
-        }
-
-        private async void UpdatePygmentize() {
+        private async void UpdateHighlighting() {
 
             while (true) {
 
@@ -261,6 +239,23 @@ namespace PiIDE {
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
             FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
             LastVisibleLineNum = (int) ((e.VerticalOffset + TextEditorTextBox.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+        }
+
+        public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
+        public void ScrollToCaret() {
+            // TODO: Implement something to calculate col and row
+            double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
+            double horizontalOffset = Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Width;
+
+            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight * 0.5));
+            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight * 0.5));
+        }
+        public void ScrollToPosition(int line, int column) {
+            double verticalOffset = line * TextEditorTextBoxCharacterSize.Height;
+            double horizontalOffset = column * TextEditorTextBoxCharacterSize.Width;
+
+            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight * 0.5));
+            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight * 0.5));
         }
     }
 }

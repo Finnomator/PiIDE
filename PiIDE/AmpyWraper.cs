@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace PiIDE {
     internal static class AmpyWraper {
@@ -36,7 +35,7 @@ namespace PiIDE {
 
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
             return output;
         }
@@ -51,7 +50,7 @@ namespace PiIDE {
             process.StartInfo.Arguments = $"--port COM{comport} get {filePath} {destPath}";
             process.Start();
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
         }
 
@@ -65,7 +64,7 @@ namespace PiIDE {
             process.Start();
 
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
         }
 
@@ -79,7 +78,7 @@ namespace PiIDE {
             process.Start();
 
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
         }
 
@@ -94,7 +93,7 @@ namespace PiIDE {
 
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
 
             try {
@@ -106,20 +105,42 @@ namespace PiIDE {
             return output.Trim().Split("\r\n/");
         }
 
-        public static async Task RunFileOnBoardAsync(int comport, string filePath) {
-            Debug.Assert(!IsBusy);
-            IsBusy = true;
-            Process process = new() { StartInfo = AmpyDefaultStartInfo };
-            process.StartInfo.Arguments = $"--port COM{comport} run {filePath}";
-            process.EnableRaisingEvents = true;
-            process.OutputDataReceived += (s, e) => AmpyOutputDataReceived?.Invoke(s, e);
-            process.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
-            process.Exited += (s, e) => AmpyExited?.Invoke(s, e);
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            await process.WaitForExitAsync();
-            IsBusy = false;
+        public static class FileRunner {
+
+            private static Process? RunnerProcess;
+
+            public static async void RunFileOnBoardAsync(int comport, string filePath) {
+                Debug.Assert(!IsBusy);
+                IsBusy = true;
+                RunnerProcess = new() { StartInfo = AmpyDefaultStartInfo };
+                RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run {filePath}";
+                RunnerProcess.EnableRaisingEvents = true;
+                RunnerProcess.OutputDataReceived += (s, e) => AmpyOutputDataReceived?.Invoke(s, e);
+                RunnerProcess.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
+                RunnerProcess.Exited += (s, e) => AmpyExited?.Invoke(s, e);
+                RunnerProcess.Start();
+                RunnerProcess.BeginOutputReadLine();
+                RunnerProcess.BeginErrorReadLine();
+                await RunnerProcess.WaitForExitAsync();
+                RunnerProcess.Close();
+                RunnerProcess = null;
+                IsBusy = false;
+            }
+
+            public static void WriteLineToRunningFileInput(string text) {
+                if (IsBusy && RunnerProcess is not null)
+                    RunnerProcess.StandardInput.WriteLine(text);
+            }
+
+            public static void KillProcess() {
+                if (RunnerProcess is null)
+                    return;
+
+                RunnerProcess.Kill();
+                RunnerProcess.Close();
+                RunnerProcess = null;
+                IsBusy = false;
+            }
         }
 
         public static void RemoveFromBoard(int comport, string fileOrDirPath) {
@@ -130,7 +151,7 @@ namespace PiIDE {
             process.StartInfo.Arguments = $"--port COM{comport} rm {fileOrDirPath}";
             process.Start();
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
         }
 
@@ -142,7 +163,7 @@ namespace PiIDE {
             process.StartInfo.Arguments = $"--port COM{comport} reset";
             process.Start();
             process.WaitForExit();
-            process.StandardOutput.Close();
+            process.Close();
             IsBusy = false;
         }
 

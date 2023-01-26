@@ -46,5 +46,17 @@ namespace PiIDE {
                 this["TextEditorFontSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int SelectedCOMPort {
+            get {
+                return ((int)(this["SelectedCOMPort"]));
+            }
+            set {
+                this["SelectedCOMPort"] = value;
+            }
+        }
     }
 }

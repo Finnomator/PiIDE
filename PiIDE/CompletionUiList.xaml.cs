@@ -1,16 +1,14 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows;
+using System;
 
 namespace PiIDE {
 
     public partial class CompletionUiList : UserControl {
 
-        public int SelectedCompletionIndex { get; private set; }
-        public bool SelectedAnIndex { get; private set; }
-        public bool IsOpen { get; private set; }
-
-        private const double CompletionUiListElementHeight = 15.96;
         private readonly string FilePath;
+        public EventHandler<Completion>? CompletionClicked;
 
         public CompletionUiList(string filePath) {
             InitializeComponent();
@@ -18,34 +16,18 @@ namespace PiIDE {
             Close();
         }
 
-        public Completion SelectedCompletion => GetCompletion(SelectedCompletionIndex);
-        public CompletionUiListElement SelectedUiCompletion => GetUiCompletion(SelectedCompletionIndex);
-        public int CompletionsCount => CompletionsStackPanel.Children.Count;
-
-        public Completion GetCompletion(int index) => GetUiCompletion(index).Completion;
-        public CompletionUiListElement GetUiCompletion(int index) => (CompletionUiListElement) CompletionsStackPanel.Children[index];
+        public Completion SelectedCompletion => (Completion) MainListBox.SelectedItem;
+        public int CompletionsCount => MainListBox.Items.Count;
+        public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
+        public bool IsOpen => MainListBox.IsVisible;
 
         private void AddCompletions(Completion[] completions) {
-            SelectedCompletionIndex = 0;
-            for (int i = 0; i < completions.Length; ++i) {
-                Completion completion = completions[i];
-                CompletionUiListElement completionUiListElement = new(completion);
-                CompletionsStackPanel.Children.Add(completionUiListElement);
-            }
-
-            SelectFirstCompletion();
-        }
-
-        private void SelectFirstCompletion() {
-            SelectedCompletionIndex = 0;
-            SelectedAnIndex = true;
-            SelectedUiCompletion.Select();
+            MainListBox.ItemsSource = completions;
+            MainListBox.Visibility = Visibility.Visible;
         }
 
         private void ClearCompletions() {
-            CompletionsStackPanel.Children.Clear();
-            SelectedAnIndex = false;
-            SelectedCompletionIndex = 0;
+            MainListBox.ItemsSource = null;
         }
 
         public async Task ReloadCompletionsAsync(string fileContent, int caretLine, int caretColumn) {
@@ -60,48 +42,41 @@ namespace PiIDE {
             AddCompletions(completions);
         }
 
-        public void Close() => ClearCompletions();
+        public void Close() {
+            ClearCompletions();
+            MainListBox.Visibility = Visibility.Collapsed;
+        }
 
         public void MoveSelectedCompletionUp() {
 
-            if (CompletionsStackPanel.Children.Count == 0)
+            if (MainListBox.Items.Count == 0)
                 return;
 
-            if (SelectedCompletionIndex == 0) {
-                if (SelectedAnIndex)
-                    SelectedUiCompletion.Deselect();
-                SelectedCompletionIndex = CompletionsCount - 1;
-                SelectedUiCompletion.Select();
-            } else if (SelectedAnIndex) {
-                SelectedUiCompletion.Deselect();
-                --SelectedCompletionIndex;
-                SelectedUiCompletion.Select();
-            }
+            if (MainListBox.SelectedIndex == 0)
+                MainListBox.SelectedIndex = CompletionsCount - 1;
+            
+            --MainListBox.SelectedIndex;
 
-            MainScrollViewer.ScrollToVerticalOffset(SelectedCompletionIndex * CompletionUiListElementHeight);
-
-            SelectedAnIndex = true;
+            MainListBox.ScrollIntoView(SelectedCompletion);
         }
 
         public void MoveSelectedCompletionDown() {
 
-            if (CompletionsStackPanel.Children.Count == 0)
+            if (MainListBox.Items.Count == 0)
                 return;
 
-            if (SelectedCompletionIndex == CompletionsCount - 1) {
-                if (SelectedAnIndex)
-                    SelectedUiCompletion.Deselect();
-                SelectedCompletionIndex = 0;
-                SelectedUiCompletion.Select();
-            } else if (SelectedAnIndex) {
-                SelectedUiCompletion.Deselect();
-                ++SelectedCompletionIndex;
-                SelectedUiCompletion.Select();
-            }
+            if (MainListBox.SelectedIndex == CompletionsCount - 1)
+                MainListBox.SelectedIndex = 0;
+            
+            ++MainListBox.SelectedIndex;
 
-            MainScrollViewer.ScrollToVerticalOffset(SelectedCompletionIndex * CompletionUiListElementHeight);
+            MainListBox.ScrollIntoView(SelectedCompletion);
+        }
 
-            SelectedAnIndex = true;
+        private void Button_Click(object sender, RoutedEventArgs e) {
+            // TODO: make this work:
+            //CompletionClicked?.Invoke(sender, (Completion) MainListBox.Items[index]);
+            Close();
         }
     }
 }

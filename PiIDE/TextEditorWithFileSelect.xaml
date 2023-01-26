@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="800">
     <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="22"/>
             <RowDefinition/>
             <RowDefinition Height="5"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -25,7 +25,7 @@
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
@@ -40,28 +40,34 @@
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
 
-        <TabControl Grid.Column="2" Grid.RowSpan="2"  x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+        <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
             <TabItem x:Name="DefaultEditor" Header="&lt;new file>">
                 <local:TextEditor/>
             </TabItem>
         </TabControl>
 
         <StackPanel Grid.Column="2"  HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click"/>
-            <Button Content="&#x1f4c4;" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click"/>
-            <Button Content="▷" x:Name="RunFileButton" Click="RunFileOnBoardButton_Click"/>
+            <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3"/>
+            <Button Content="&#x1f4c4;" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3"/>
+            <Button Content="▷" x:Name="RunFileOnBoardButton" Click="RunFileOnBoardButton_Click" ToolTip="Upload to Board and run" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
+            <Button Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
+            <Button Content="⬛" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Background="Transparent" Foreground="Red" BorderThickness="0" Padding="3"/>
         </StackPanel>
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3"/>
 
-        <TabControl Grid.ColumnSpan="3" Grid.Row="3" Panel.ZIndex="1">
+        <TabControl x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3" Panel.ZIndex="1">
 
             <TabItem Header="Error List">
                 <local:LintMessagesWindow  x:Name="MessagesWindow" />
             </TabItem>
 
-            <TabItem Header="Terminal">
-                <local:IntegratedTerminal x:Name="Terminal"/>
+            <TabItem Header="Pi Terminal">
+                <local:BoardTerminal x:Name="PiTerminal"/>
+            </TabItem>
+
+            <TabItem Header="Python Terminal">
+                <local:PythonTerminal x:Name="PyTerminal"/>
             </TabItem>
             
         </TabControl>

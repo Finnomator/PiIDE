@@ -4,45 +4,49 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PiIDE {
-    public partial class IntegratedTerminal : UserControl {
+    public abstract partial class IntegratedTerminal : UserControl {
 
         public IntegratedTerminal() {
             InitializeComponent();
-            AmpyWraper.AmpyOutputDataReceived += Ampy_OutputDataReceived;
-            AmpyWraper.AmpyErrorDataReceived += Ampy_ErrorDataReceveid;
-            AmpyWraper.AmpyExited += Ampy_Exited;
         }
 
-        private void Ampy_Exited(object? sender, EventArgs e) {
+        protected void Exited(object? sender, EventArgs e) {
             Dispatcher.Invoke(() => {
-                OutputTextBox.Text += "\r\n--------------------\r\n";
+                OutputTextBox.Text += "-----------------------------\r\n";
+                OutputTextBox.ScrollToEnd();
             });
         }
 
-        private void Ampy_ErrorDataReceveid(object sender, DataReceivedEventArgs e) {
+        protected void ErrorDataReceveid(object sender, DataReceivedEventArgs e) {
             string? data = e.Data;
 
             if (data == null)
                 return;
 
+            data += "\r\n";
+
             Dispatcher.Invoke(() => {
                 OutputTextBox.Text += data;
+                OutputTextBox.ScrollToEnd();
             });
         }
 
-        private void Ampy_OutputDataReceived(object sender, DataReceivedEventArgs e) {
+        protected void OutputDataReceived(object sender, DataReceivedEventArgs e) {
+            // this will only be called when a newline is printed
+
             string? data = e.Data;
 
             if (data == null)
                 return;
 
+            data += "\r\n";
+
             Dispatcher.Invoke(() => {
                 OutputTextBox.Text += data;
+                OutputTextBox.ScrollToEnd();
             });
         }
 
-        private void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
-
-        }
+        protected abstract void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e);
     }
 }

@@ -1,0 +1,29 @@
+﻿<Window x:Class="PiIDE.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PiIDE"
+        mc:Ignorable="d"
+        Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
+    <TabControl>
+        <TabItem Header="General">
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Select COM Port: "/>
+                <ComboBox x:Name="COMPortComboBox" Grid.Column="1" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
+                    <TextBlock Text="&lt;None>"/>
+                </ComboBox>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>

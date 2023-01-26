@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Windows.Media;
 
@@ -31,7 +33,6 @@ namespace PiIDE {
 
             return index - offset;
         }
-
         public static int GetRowOfIndex(string text, int index) {
 
             int offset = 0;
@@ -43,5 +44,17 @@ namespace PiIDE {
 
             return line - 1;
         }
+        public static int GetIndexOfColRow(string text, int row, int col) {
+            // TODO: Check if this works proberly
+            string[] lines = text.Split("\r\n");
+            int index = 0;
+            for (int i = 0; i < row; ++i)
+                index += lines[i].Length;
+            index += col;
+            return index;
+        }
+
+        public static int[] GetCOMPorts() => SerialPort.GetPortNames().Select(x => int.Parse(x[3..])).ToArray();
+        public static bool IsValidCOMPort(int comPort) => GetCOMPorts().Contains(comPort);
     }
 }

@@ -53,7 +53,7 @@ namespace PiIDE {
                     X2 = endCol * FontSizes.Width + 1,
                     Y1 = line * FontSizes.Height,
                     Y2 = line * FontSizes.Height,
-                    Stroke = Brushes.Red,
+                    Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type),
                 });
             }
         }

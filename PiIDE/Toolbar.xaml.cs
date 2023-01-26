@@ -17,6 +17,10 @@ namespace PiIDE {
             e.CanExecute = true;
         }
 
-        private void OptionsButton_Click(object sender, RoutedEventArgs e) => OnOpenOptionsCLick?.Invoke(sender, e);
+        private void OptionsButton_Click(object sender, RoutedEventArgs e) {
+            OnOpenOptionsCLick?.Invoke(sender, e);
+            OptionsWindow optionsWindow = new();
+            optionsWindow.Show();
+        }
     }
 }

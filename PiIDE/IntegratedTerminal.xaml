@@ -23,8 +23,8 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Label Content=">" Background="White"/>
-                <TextBox Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown"/>
+                <Label Content="❯" Background="White" Padding="1,0,1,0" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True"/>
             </Grid>
         </Border>
     </Grid>

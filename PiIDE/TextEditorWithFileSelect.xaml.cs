@@ -1,15 +1,16 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Documents;
 
 namespace PiIDE {
 
     public partial class TextEditorWithFileSelect : UserControl {
 
-        private TabItem OpenTabItem;
+        private TextEditor OpenTextEditor;
 
         private readonly Dictionary<string, int> OpenLocalFilesAndTheirTabindex = new();
         private readonly List<string> PythonOnlyFilePaths = new();
@@ -19,18 +20,39 @@ namespace PiIDE {
 
         public TextEditorWithFileSelect() {
             InitializeComponent();
-            OpenTabItem = DefaultEditor;
+            OpenTextEditor = (TextEditor) DefaultEditor.Content;
 
             MainTabControl.Items.Clear();
 
             RootFileView.OnFileClick += RootFileView_OnFileClick;
             RootBoardFileView.OnFileClick += RootBoardFileView_OnFileClick;
+            MessagesWindow.SelectionChanged += MessagesWindow_SelectionChanged;
+
+            AmpyWraper.AmpyExited += Ampy_Exited;
+            PythonWraper.PythonExited += Python_Exited;
 
             OpenFile("TempFiles/temp_file1.py");
-
+            // TODO: Make these paths variable
             OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
-            OpenBoardDirectory();
+
+            // TODO: Reopen board directory when comport gets changed
+            if (GlobalSettings.Default.SelectedCOMPort >= 0)
+                OpenBoardDirectory();
         }
+
+        private void Ampy_Exited(object? sender, EventArgs e) {
+            Dispatcher.Invoke(() => {
+                RunFileOnBoardButton.IsEnabled = true;
+            });
+        }
+
+        private void Python_Exited(object? sender, EventArgs e) {
+            Dispatcher.Invoke(() => {
+                RunFileLocalButton.IsEnabled = true;
+            });
+        }
+
+        private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
         private void RootBoardFileView_OnFileClick(object? sender, string e) {
             BoardFileViewItem boardFileViewItem = (BoardFileViewItem) sender;
@@ -42,20 +64,16 @@ namespace PiIDE {
 
         public void OpenFile(string filePath, BoardFileViewItem? boardItem = null) {
 
-            TextEditor newTextEditor;
-
             if (IsFileOpen(filePath)) {
-                MainTabControl.SelectedIndex = OpenLocalFilesAndTheirTabindex[filePath];
-                newTextEditor = OpenTextEditors[MainTabControl.SelectedIndex];
+                MainTabControl.SelectedIndex = OpenLocalFilesAndTheirTabindex[Path.GetFullPath(filePath)];
             } else {
-                newTextEditor = AddFile(filePath, boardItem);
+                TextEditor newTextEditor = AddFile(filePath, boardItem);
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                UpdatePylintMessages(newTextEditor);
             }
-
-            UpdatePylintMessages(newTextEditor);
         }
 
-        public bool IsFileOpen(string filePath) => OpenLocalFilesAndTheirTabindex.ContainsKey(filePath);
+        public bool IsFileOpen(string filePath) => OpenLocalFilesAndTheirTabindex.Keys.Any(x => Path.GetFullPath(filePath) == Path.GetFullPath(x));
 
         private TextEditor AddFile(string filePath, BoardFileViewItem? boardItem = null) {
             TextEditor textEditor = new(filePath, boardItem);
@@ -68,7 +86,7 @@ namespace PiIDE {
             if (textEditor.IsPythonFile)
                 PythonOnlyFilePaths.Add(filePath);
 
-            OpenLocalFilesAndTheirTabindex[filePath] = MainTabControl.Items.Count - 1;
+            OpenLocalFilesAndTheirTabindex[Path.GetFullPath(filePath)] = MainTabControl.Items.Count - 1;
             OpenTextEditors.Add(textEditor);
 
             return textEditor;
@@ -77,7 +95,7 @@ namespace PiIDE {
         private async void UpdatePylintMessages(TextEditor textEditor) {
             if (textEditor.EnablePylinging) {
                 PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray());
-                textEditor.Underliner.Underline(pylintMessages, textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
+                textEditor.Underliner.Underline(pylintMessages.Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray(), textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
             }
         }
 
@@ -90,17 +108,13 @@ namespace PiIDE {
         }
 
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            TextEditor oldTextEditor = (TextEditor) OpenTabItem.Content;
-            oldTextEditor.DisableAllWrapers = true;
-
-            OpenTabItem = (TabItem) MainTabControl.SelectedItem;
-            TextEditor newTextEditor = (TextEditor) OpenTabItem.Content;
-            newTextEditor.DisableAllWrapers = false;
+            OpenTextEditor.DisableAllWrapers = true;
+            OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
+            OpenTextEditor.DisableAllWrapers = false;
         }
 
         private void OpenFileButton_Click(object sender, System.Windows.RoutedEventArgs e) {
             OpenFileDialog openFileDialog = new();
-
             if (openFileDialog.ShowDialog() == true)
                 AddFile(openFileDialog.FileName);
         }
@@ -112,7 +126,15 @@ namespace PiIDE {
             RootFileView.OpenDir(true, directory, 0);
         }
 
-        public void OpenBoardDirectory(string directory = "") => RootBoardFileView.OpenDir(directory, LocalBoardPath, 9, 0);
+        public void OpenBoardDirectory(string directory = "") {
+            // "" is the default path, do not use "/"!
+            if (GlobalSettings.Default.SelectedCOMPort < 0) {
+                ErrorMessager.PromptForCOMPort();
+                return;
+            }
+
+            RootBoardFileView.OpenDir(directory, LocalBoardPath, GlobalSettings.Default.SelectedCOMPort, 0);
+        }
 
         private void SyncButton_Click(object sender, System.Windows.RoutedEventArgs e) {
             Debug.Assert(RootBoardFileView.IsRootDir);
@@ -123,9 +145,39 @@ namespace PiIDE {
         }
 
         private void RunFileOnBoardButton_Click(object sender, System.Windows.RoutedEventArgs e) {
-            TextEditor openEditor = (TextEditor) OpenTabItem.Content;
-            openEditor.SaveFile();
-            AmpyWraper.RunFileOnBoardAsync(9, openEditor.FilePath);
+            RunFileOnBoardButton.IsEnabled = false;
+            OpenTextEditor.SaveFile();
+
+            int port = GlobalSettings.Default.SelectedCOMPort;
+
+            if (!Tools.IsValidCOMPort(port)) {
+                ErrorMessager.PromptForCOMPort();
+                return;
+            }
+
+            OutputTabControl.SelectedIndex = 1;
+
+            AmpyWraper.FileRunner.RunFileOnBoardAsync(port, OpenTextEditor.FilePath);
+        }
+
+        private void RunFileLocalButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+            RunFileLocalButton.IsEnabled = false;
+            OpenTextEditor.SaveFile();
+            OutputTabControl.SelectedIndex = 2;
+            PythonWraper.AsyncFileRunner.RunFileAsync(OpenTextEditor.FilePath);
+        }
+
+        private void StopAllRunningTasksButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+            PythonWraper.AsyncFileRunner.KillProcess();
+            AmpyWraper.FileRunner.KillProcess();
+            RunFileLocalButton.IsEnabled = true;
+            RunFileOnBoardButton.IsEnabled = true;
+        }
+
+        private void GoToPylintMessage(PylintMessage pylintMessage) {
+            OpenFile(pylintMessage.Path);
+            OpenTextEditor.SetCaretPositioin(pylintMessage.Line, pylintMessage.Column);
+            OpenTextEditor.ScrollToPosition(pylintMessage.Line, pylintMessage.Column);
         }
     }
 }
