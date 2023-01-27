@@ -53,8 +53,13 @@ namespace PiIDE {
             index += col;
             return index;
         }
+        public static int GetLengthOfLine(string text, int line) {
+            string[] lines = text.Split("\r\n");
+            return lines[line].Length;
+        }
 
         public static int[] GetCOMPorts() => SerialPort.GetPortNames().Select(x => int.Parse(x[3..])).ToArray();
         public static bool IsValidCOMPort(int comPort) => GetCOMPorts().Contains(comPort);
+
     }
 }

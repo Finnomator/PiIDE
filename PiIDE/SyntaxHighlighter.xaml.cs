@@ -9,6 +9,8 @@ namespace PiIDE {
 
     public partial class SyntaxHighlighter : UserControl {
 
+        // TODO: dont highlight keywords in comments and strings etc.
+
         private readonly Regex Rx = MyRegex();
         private readonly List<TextBlock> OldChildren = new();
         private readonly List<TextBlock> NewChildren = new();

@@ -69,6 +69,10 @@
             <TabItem Header="Python Terminal">
                 <local:PythonTerminal x:Name="PyTerminal"/>
             </TabItem>
+
+            <TabItem Header="Notepad">
+                <local:NotePad/>
+            </TabItem>
             
         </TabControl>
     </Grid>

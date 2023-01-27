@@ -30,7 +30,6 @@ namespace PiIDE {
 
         private bool BlockCompletions = true;
         private readonly CompletionUiList CompletionUiList;
-        private string OldTextEditorTextBoxText;
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
@@ -79,9 +78,7 @@ namespace PiIDE {
             BlockCompletions = false;
         }
 
-        private void CompletionUiList_CompletionClick(object? sender, Completion e) {
-            InsertCompletionAtCaret(e);
-        }
+        private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
 
         public void SaveFile() {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
@@ -93,7 +90,6 @@ namespace PiIDE {
         public void ReloadFile() {
             string fileContent = File.ReadAllText(FilePath);
             string[] fileLines = fileContent.Split("\r\n");
-            OldTextEditorTextBoxText = fileContent;
             TextEditorTextBox.Text = fileContent;
             NumsTextBlock.Text = GetLineNumbers(fileLines.Length);
         }
@@ -125,8 +121,14 @@ namespace PiIDE {
                     if (CompletionUiList.SelectedAnIndex) {
                         InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
                         CompletionUiList.Close();
-                    } else // TODO: replace with a variable option
-                        InsertAtCaretAndMoveCaret("    ");
+                    } else {
+                        // TODO: replace with a variable option
+                        int spaceToFillIndent = 4 - GetCaretCol() % 4;
+                        if (spaceToFillIndent == 0)
+                            spaceToFillIndent = 4;
+                        InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
+                    }
+
                     e.Handled = true;
                     break;
                 case Key.S:
@@ -142,21 +144,57 @@ namespace PiIDE {
                     }
                     break;
                 case Key.Escape:
-                    if (CompletionUiList.SelectedAnIndex) {
+                    if (CompletionUiList.IsOpen) {
                         CompletionUiList.Close();
                         e.Handled = true;
                     }
                     break;
             }
+
+            if (e.Handled)
+                return;
+
+            string keyString = e.Key.ToString();
+
+            if (keyString.Length != 1) {
+                CompletionUiList.Close();
+                return;
+            }
+
+            char keyChar = keyString[0];
+            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift)) {
+                keyChar = char.ToLower(keyChar);
+                keyString = keyString.ToLower();
+            }
+
+            if (!char.IsLetter(keyChar) || !JediCompletionWraper.FinishedGettingCompletions) {
+                CompletionUiList.Close();
+                return;
+            }
+
+            DisplayCodeCompletionsWithExtraTextAsync(keyString);
         }
 
         private void InsertCompletionAtCaret(Completion completion) {
+
+            // TODO: Fix that sometimes the completion is outdated
+
+            if (completion.Complete.Length == 0)
+                return;
+
             BlockCompletions = true;
+
             int oldCaretIndex = TextEditorTextBox.CaretIndex;
             int completionStart = oldCaretIndex - (completion.Name.Length - completion.Complete.Length);
-            TextEditorTextBox.Text = TextEditorTextBox.Text.Remove(completionStart, completion.Name.Length - completion.Complete.Length);
+            int toRemoveLen = completion.Name.Length - completion.Complete.Length;
+
+            TextEditorTextBox.Text = TextEditorTextBox.Text.Remove(completionStart, toRemoveLen);
             TextEditorTextBox.Text = TextEditorTextBox.Text.Insert(completionStart, completion.Name);
-            TextEditorTextBox.CaretIndex = oldCaretIndex + completion.Complete.Length;
+
+            int newIndex = oldCaretIndex + completion.Complete.Length;
+
+            TextEditorTextBox.CaretIndex = newIndex < 0 ? 0 : newIndex;
+
             BlockCompletions = false;
         }
 
@@ -170,26 +208,21 @@ namespace PiIDE {
 
         public static string GetLineNumbers(int lines) => string.Join(Environment.NewLine, Enumerable.Range(1, lines));
 
-        private async Task DisplayCodeCompletionsAsync() {
+        private void DisplayCodeCompletionsAsync() => DisplayCodeCompletionsWithExtraTextAsync("");
+
+        private async void DisplayCodeCompletionsWithExtraTextAsync(string extraText) {
+
+            // This method is intended to be used when the user presses a key and the input is not in textbox yet
 
             if (BlockCompletions || !EnableJediCompletions)
                 return;
 
-            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text, GetCaretRow() + 1, GetCaretCol());
-
+            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), GetCaretRow() + 1, GetCaretCol() + extraText.Length);
+            CompletionUiList.SelectFirst();
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
 
-        private async void TextEditorTextBox_TextChangedAsync(object sender, TextChangedEventArgs e) {
-
-            // TODO: Improve Opening of Completions because it often gets in the way
-
-            if (FilePath == "" || OldTextEditorTextBoxText == "") {
-                OldTextEditorTextBoxText = TextEditorTextBox.Text;
-                return;
-            }
-
-            string textDifference = TextEditorTextBox.Text.Replace(OldTextEditorTextBoxText, "");
+        private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             string[] textLines = TextEditorTextBox.Text.Split("\r\n");
 
@@ -197,12 +230,6 @@ namespace PiIDE {
                 NumsTextBlock.Text = GetLineNumbers(textLines.Length);
                 CurrentAmountOfLines = textLines.Length;
             }
-
-            if (!string.IsNullOrWhiteSpace(textDifference) && JediCompletionWraper.FinishedGettingCompletions) {
-                await DisplayCodeCompletionsAsync();
-            }
-
-            OldTextEditorTextBoxText = TextEditorTextBox.Text;
         }
 
         private Thickness MarginAtCaretPosition() => new((GetCaretCol() + 0.5) * TextEditorTextBoxCharacterSize.Width, (GetCaretRow() + 1) * TextEditorTextBoxCharacterSize.Height, 0, 0);
@@ -232,7 +259,7 @@ namespace PiIDE {
 
                 Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, FirstVisibleLineNum, LastVisibleLineNum);
 
-                await Task.Delay((LastVisibleLineNum - FirstVisibleLineNum) * 10 + 50);
+                await Task.Delay((LastVisibleLineNum - FirstVisibleLineNum) * 5 + 50);
             }
         }
 
@@ -257,5 +284,9 @@ namespace PiIDE {
             MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight * 0.5));
             MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight * 0.5));
         }
+
+        private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) => CompletionUiList.Close();
+
+        private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionUiList.Close();
     }
 }

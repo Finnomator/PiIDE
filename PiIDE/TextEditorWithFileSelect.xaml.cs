@@ -33,8 +33,8 @@ namespace PiIDE {
 
             OpenFile("TempFiles/temp_file1.py");
             // TODO: Make these paths variable
-            //OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
-            OpenDirectory("C:\\Users\\finnd\\Documents\\Visual_Studio_Code");
+            OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
+            //OpenDirectory("C:\\Users\\finnd\\Documents\\Visual_Studio_Code");
             // TODO: Reopen board directory when comport gets changed
             if (GlobalSettings.Default.SelectedCOMPort >= 0)
                 OpenBoardDirectory();

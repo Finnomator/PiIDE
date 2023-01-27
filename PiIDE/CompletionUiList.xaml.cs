@@ -52,8 +52,8 @@ namespace PiIDE {
 
             if (MainListBox.SelectedIndex == 0)
                 MainListBox.SelectedIndex = CompletionsCount - 1;
-            
-            --MainListBox.SelectedIndex;
+            else
+                --MainListBox.SelectedIndex;
 
             MainListBox.ScrollIntoView(SelectedCompletion);
         }
@@ -65,8 +65,8 @@ namespace PiIDE {
 
             if (MainListBox.SelectedIndex == CompletionsCount - 1)
                 MainListBox.SelectedIndex = 0;
-            
-            ++MainListBox.SelectedIndex;
+            else
+                ++MainListBox.SelectedIndex;
 
             MainListBox.ScrollIntoView(SelectedCompletion);
         }
@@ -74,6 +74,11 @@ namespace PiIDE {
         private void ListBox_MouseLeftButtonDown(object sender, RoutedEventArgs e) {
             CompletionClicked?.Invoke(sender, (Completion) ((ListBoxItem) sender).Content);
             Close();
+        }
+
+        public void SelectFirst() {
+            if (MainListBox.Items.Count > 0)
+                MainListBox.SelectedIndex = 0;
         }
     }
 }

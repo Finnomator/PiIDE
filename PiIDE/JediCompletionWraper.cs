@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -26,6 +27,9 @@ namespace PiIDE {
         }
 
         public static async Task<Completion[]> GetCompletionAsync(string filePath, string fileContent, int row, int col) {
+
+            if (!FinishedGettingCompletions)
+                return Array.Empty<Completion>();
 
             FinishedGettingCompletions = false;
 
@@ -63,6 +67,7 @@ namespace PiIDE {
         public string NameWithSymbols { get; set; } = "";
 
         private string _Type;
+
         [JsonPropertyName("type")]
         public string Type {
             get { return _Type; }
@@ -71,9 +76,10 @@ namespace PiIDE {
                 _Type = value;
             }
         }
+        public Brush ForegroundColor { get; set; }
+
         [JsonPropertyName("line")]
         public int? Line { get; set; }
 
-        public Brush ForegroundColor;
     }
 }

@@ -11,17 +11,23 @@ namespace PiIDE {
         }
 
         protected void Exited(object? sender, EventArgs e) {
+
+            // Happens when the cmd returns but not when all output is done
+
+            /*
             Dispatcher.Invoke(() => {
                 OutputTextBox.Text += "-----------------------------\r\n";
                 OutputTextBox.ScrollToEnd();
             });
+            */
         }
 
         protected void ErrorDataReceveid(object sender, DataReceivedEventArgs e) {
             string? data = e.Data;
 
-            if (data == null)
+            if (data == null) {
                 return;
+            }
 
             data += "\r\n";
 
@@ -36,13 +42,22 @@ namespace PiIDE {
 
             string? data = e.Data;
 
-            if (data == null)
+            if (data == null) {
+                PrintEndOfExecution();
                 return;
+            }
 
             data += "\r\n";
 
             Dispatcher.Invoke(() => {
                 OutputTextBox.Text += data;
+                OutputTextBox.ScrollToEnd();
+            });
+        }
+
+        protected void PrintEndOfExecution() {
+            Dispatcher.Invoke(() => {
+                OutputTextBox.Text += "-----------------------------\r\n";
                 OutputTextBox.ScrollToEnd();
             });
         }
