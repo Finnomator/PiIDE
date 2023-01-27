@@ -31,13 +31,11 @@ namespace PiIDE {
         }
 
         public async Task ReloadCompletionsAsync(string fileContent, int caretLine, int caretColumn) {
-            ClearCompletions();
+            Close();
             Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, caretLine, caretColumn);
 
-            if (completions.Length == 0) {
-                Close();
+            if (completions.Length == 0)
                 return;
-            }
 
             AddCompletions(completions);
         }
@@ -73,9 +71,8 @@ namespace PiIDE {
             MainListBox.ScrollIntoView(SelectedCompletion);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e) {
-            // TODO: make this work:
-            //CompletionClicked?.Invoke(sender, (Completion) MainListBox.Items[index]);
+        private void ListBox_MouseLeftButtonDown(object sender, RoutedEventArgs e) {
+            CompletionClicked?.Invoke(sender, (Completion) ((ListBoxItem) sender).Content);
             Close();
         }
     }

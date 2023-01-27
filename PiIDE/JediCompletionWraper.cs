@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace PiIDE {
     internal static class JediCompletionWraper {
@@ -60,9 +61,19 @@ namespace PiIDE {
         public string ModulePath { get; set; } = "";
         [JsonPropertyName("name_with_symbols")]
         public string NameWithSymbols { get; set; } = "";
+
+        private string _Type;
         [JsonPropertyName("type")]
-        public string Type { get; set; } = "";
+        public string Type {
+            get { return _Type; }
+            set {
+                ForegroundColor = TypeColors.TypeToColor(value);
+                _Type = value;
+            }
+        }
         [JsonPropertyName("line")]
         public int? Line { get; set; }
+
+        public Brush ForegroundColor;
     }
 }

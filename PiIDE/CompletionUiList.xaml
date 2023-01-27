@@ -12,8 +12,16 @@
     <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
         <ListBox.ItemTemplate>
             <DataTemplate>
-                <Button Content="{Binding Name}" Click="Button_Click"/>
+                <TextBlock Text="{Binding Name}" Foreground="{Binding ForegroundColor}"/>
             </DataTemplate>
         </ListBox.ItemTemplate>
+
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
+                <EventSetter
+                Event="PreviewMouseLeftButtonDown" 
+                Handler="ListBox_MouseLeftButtonDown" />
+            </Style>
+        </ListBox.ItemContainerStyle>
     </ListBox>
 </UserControl>

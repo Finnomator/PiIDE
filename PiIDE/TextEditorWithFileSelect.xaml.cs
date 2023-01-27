@@ -33,8 +33,8 @@ namespace PiIDE {
 
             OpenFile("TempFiles/temp_file1.py");
             // TODO: Make these paths variable
-            OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
-
+            //OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
+            OpenDirectory("C:\\Users\\finnd\\Documents\\Visual_Studio_Code");
             // TODO: Reopen board directory when comport gets changed
             if (GlobalSettings.Default.SelectedCOMPort >= 0)
                 OpenBoardDirectory();
@@ -137,6 +137,12 @@ namespace PiIDE {
         }
 
         private void SyncButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+
+            if (GlobalSettings.Default.SelectedCOMPort < 0) {
+                ErrorMessager.PromptForCOMPort();
+                return;
+            }
+
             Debug.Assert(RootBoardFileView.IsRootDir);
             RootBoardFileView.DownloadDirectory(LocalBoardPath);
             for (int i = 0; i < OpenTextEditors.Count; i++) {
