@@ -29,7 +29,6 @@ namespace PiIDE {
 
             MainTabControl.Items.Clear();
 
-            RootBoardFileView.OnFileClick += RootBoardFileView_OnFileClick;
             MessagesWindow.SelectionChanged += MessagesWindow_SelectionChanged;
 
             AmpyWraper.AmpyExited += Ampy_Exited;
@@ -61,8 +60,6 @@ namespace PiIDE {
             if (!boardFileViewItem.IsDir)
                 OpenFile(e, boardFileViewItem);
         }
-
-        private void RootFileView_OnFileClick(object? sender, string e) => OpenFile(e);
 
         public void OpenFile(string filePath, BoardFileViewItem? boardItem = null) {
 
@@ -135,9 +132,28 @@ namespace PiIDE {
         public void OpenDirectory(string directory) {
             RootPathTextBox.Text = directory;
             RootFileView = new(directory);
-            RootFileView.OnFileClick += RootFileView_OnFileClick;
+            RootFileView.OnFileClick += (s) => {
+                if (!s.IsDir)
+                    OpenFile(s.FilePath);
+            };
+            RootFileView.OnFileDeleted += (s, filePath) => {
+                if (!s.IsDir)
+                    CloseFile(filePath);
+            };
+            RootFileView.OnFileRenamed += (s, oldPath, newPath) => {
+                if (!s.IsDir) {
+                    CloseFile(oldPath);
+                    OpenFile(newPath);
+                }
+            };
             LocalDirectoryScrollViewer.Content = RootFileView;
             GlobalSettings.Default.OpenDirectoryPath = directory;
+        }
+
+        private void CloseFile(string filePath) {
+            if (IsFileOpen(filePath)) {
+                MainTabControl.Items.RemoveAt(OpenLocalFilesAndTheirTabindex[filePath]);
+            }
         }
 
         public void OpenBoardDirectory(string directory = "") {

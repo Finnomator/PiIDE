@@ -30,7 +30,7 @@ namespace PiIDE {
                     StartInfo = PythonDefaultStartInfo,
                     EnableRaisingEvents = true
                 };
-                process.StartInfo.Arguments = filePath;
+                process.StartInfo.Arguments = $"\"{filePath}\"";
 
                 process.OutputDataReceived += (s, e) => PythonOutputDataReceived?.Invoke(s, e);
                 process.ErrorDataReceived += (s, e) => PythonErrorDataReceived?.Invoke(s, e);

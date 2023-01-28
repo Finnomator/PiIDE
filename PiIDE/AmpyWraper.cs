@@ -30,7 +30,7 @@ namespace PiIDE {
 
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} get {filePath}";
+            process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath}\"";
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
@@ -47,7 +47,7 @@ namespace PiIDE {
 
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} get {filePath} {destPath}";
+            process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath}\" \"{destPath}\"";
             process.Start();
             process.WaitForExit();
             process.Close();
@@ -60,7 +60,7 @@ namespace PiIDE {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} put {fileOrDirPath} {destDir}";
+            process.StartInfo.Arguments = $"--port COM{comport} put \"{fileOrDirPath}\" \"{destDir}\"";
             process.Start();
 
             process.WaitForExit();
@@ -74,7 +74,7 @@ namespace PiIDE {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} mkdir {newDirPath}";
+            process.StartInfo.Arguments = $"--port COM{comport} mkdir \"{newDirPath}\"";
             process.Start();
 
             process.WaitForExit();
@@ -88,7 +88,7 @@ namespace PiIDE {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} ls {dirPath}";
+            process.StartInfo.Arguments = $"--port COM{comport} ls \"{dirPath}\"";
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
@@ -113,7 +113,7 @@ namespace PiIDE {
                 Debug.Assert(!IsBusy);
                 IsBusy = true;
                 RunnerProcess = new() { StartInfo = AmpyDefaultStartInfo };
-                RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run {filePath}";
+                RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath}\"";
                 RunnerProcess.EnableRaisingEvents = true;
                 RunnerProcess.OutputDataReceived += (s, e) => AmpyOutputDataReceived?.Invoke(s, e);
                 RunnerProcess.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
@@ -148,7 +148,7 @@ namespace PiIDE {
 
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
-            process.StartInfo.Arguments = $"--port COM{comport} rm {fileOrDirPath}";
+            process.StartInfo.Arguments = $"--port COM{comport} rm \"{fileOrDirPath}\"";
             process.Start();
             process.WaitForExit();
             process.Close();

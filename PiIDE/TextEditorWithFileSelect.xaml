@@ -28,7 +28,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="5"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
@@ -38,8 +37,12 @@
             </ScrollViewer>
 
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
-            <Button Grid.Row="3" Content="Sync" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
-            <local:BoardFileViewItem Grid.Row="4" x:Name="RootBoardFileView"/>
+
+            <StackPanel Grid.Row="3">
+                <Button Content="Sync" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
+                <local:BoardFileViewItem x:Name="RootBoardFileView"/>
+            </StackPanel>
+
         </Grid>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>

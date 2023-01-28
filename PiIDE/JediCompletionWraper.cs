@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace PiIDE {
@@ -33,13 +34,21 @@ namespace PiIDE {
 
             FinishedGettingCompletions = false;
 
-            CompletionProcess.StandardInput.WriteLine(filePath);
+            CompletionProcess.StandardInput.WriteLine($"{filePath}");
             CompletionProcess.StandardInput.WriteLine(row);
             CompletionProcess.StandardInput.WriteLine(col);
             CompletionProcess.StandardInput.WriteLine(fileContent.Split('\n').Length);
             CompletionProcess.StandardInput.WriteLine(fileContent);
 
-            string line = await CompletionProcess.StandardOutput.ReadLineAsync();
+            string? line = await CompletionProcess.StandardOutput.ReadLineAsync();
+
+            if (line is null) {
+# if DEBUG
+                throw new Exception(CompletionProcess.StandardError.ReadToEnd());
+# else
+                MessageBox.Show("The jedi language server failed to get completions for this file", "Jedi Error", MessageBoxButton.OK, MessageBoxImage.Error);
+# endif
+            }
 
             FinishedGettingCompletions = true;
 

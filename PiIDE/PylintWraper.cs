@@ -10,7 +10,7 @@ namespace PiIDE {
 
         public static async Task<PylintMessage[]> GetLintingAsync(string[] filePaths) {
 
-            string args = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" -j 0 {string.Join(" ", filePaths)}";
+            string args = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" -j 0 \"{string.Join("\" \"", filePaths)}\"";
 
             Process pylintProcess = new() {
                 StartInfo = new ProcessStartInfo() {

@@ -156,6 +156,8 @@ namespace PiIDE {
 
             string keyString = e.Key.ToString();
 
+            //TODO: dont open when key combos (like ctrl + a) are pressed
+
             if (keyString.Length != 1) {
                 CompletionUiList.Close();
                 return;
