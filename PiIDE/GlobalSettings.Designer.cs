@@ -58,5 +58,17 @@ namespace PiIDE {
                 this["SelectedCOMPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:/")]
+        public string OpenDirectoryPath {
+            get {
+                return ((string)(this["OpenDirectoryPath"]));
+            }
+            set {
+                this["OpenDirectoryPath"] = value;
+            }
+        }
     }
 }

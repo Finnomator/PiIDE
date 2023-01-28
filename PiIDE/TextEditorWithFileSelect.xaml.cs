@@ -1,10 +1,15 @@
 ﻿using Microsoft.Win32;
+using PiIDE;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace PiIDE {
 
@@ -24,7 +29,6 @@ namespace PiIDE {
 
             MainTabControl.Items.Clear();
 
-            RootFileView.OnFileClick += RootFileView_OnFileClick;
             RootBoardFileView.OnFileClick += RootBoardFileView_OnFileClick;
             MessagesWindow.SelectionChanged += MessagesWindow_SelectionChanged;
 
@@ -32,9 +36,7 @@ namespace PiIDE {
             PythonWraper.PythonExited += Python_Exited;
 
             OpenFile("TempFiles/temp_file1.py");
-            // TODO: Make these paths variable
-            OpenDirectory(@"E:\Users\finnd\Documents\Visual_Studio_Code\MicroPython");
-            //OpenDirectory("C:\\Users\\finnd\\Documents\\Visual_Studio_Code");
+            OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
             // TODO: Reopen board directory when comport gets changed
             if (GlobalSettings.Default.SelectedCOMPort >= 0)
                 OpenBoardDirectory();
@@ -78,7 +80,7 @@ namespace PiIDE {
         private TextEditor AddFile(string filePath, BoardFileViewItem? boardItem = null) {
             TextEditor textEditor = new(filePath, boardItem);
             textEditor.OnFileSaved += TextEditor_OnFileSaved;
-            MainTabControl.Items.Add(new TabItem() {
+            MainTabControl.Items.Add(new FileTabItem() {
                 Header = Path.GetFileName(filePath).Replace("_", "__"),
                 Content = textEditor,
             });
@@ -113,17 +115,29 @@ namespace PiIDE {
             OpenTextEditor.DisableAllWrapers = false;
         }
 
-        private void OpenFileButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+        private void OpenFileButton_Click(object sender, RoutedEventArgs e) {
             OpenFileDialog openFileDialog = new();
             if (openFileDialog.ShowDialog() == true)
-                AddFile(openFileDialog.FileName);
+                OpenFile(openFileDialog.FileName);
         }
 
-        private void CreateNewFileButton_Click(object sender, System.Windows.RoutedEventArgs e) => AddTempFile();
+        private void OpenDirectoryButton_Click(object sender, RoutedEventArgs e) {
+            using FolderBrowserDialog fbd = new();
+            DialogResult result = fbd.ShowDialog();
+
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath)) {
+                OpenDirectory(fbd.SelectedPath);
+            }
+        }
+
+        private void CreateNewFileButton_Click(object sender, RoutedEventArgs e) => AddTempFile();
 
         public void OpenDirectory(string directory) {
             RootPathTextBox.Text = directory;
-            RootFileView.OpenDir(true, directory, 0);
+            RootFileView = new(directory);
+            RootFileView.OnFileClick += RootFileView_OnFileClick;
+            LocalDirectoryScrollViewer.Content = RootFileView;
+            GlobalSettings.Default.OpenDirectoryPath = directory;
         }
 
         public void OpenBoardDirectory(string directory = "") {

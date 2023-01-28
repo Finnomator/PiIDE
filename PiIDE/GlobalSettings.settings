@@ -11,5 +11,8 @@
     <Setting Name="SelectedCOMPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
+    <Setting Name="OpenDirectoryPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:/</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

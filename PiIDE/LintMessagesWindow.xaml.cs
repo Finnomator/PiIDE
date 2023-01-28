@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace PiIDE {
@@ -11,6 +13,7 @@ namespace PiIDE {
 
         private double OldScrollState;
         private ScrollViewer ListViewScrollViewer;
+        private const string WikidotBaseUrl = "http://pylint-messages.wikidot.com/messages:";
 
         public EventHandler<PylintMessage>? SelectionChanged;
 
@@ -39,16 +42,17 @@ namespace PiIDE {
             return pylintMessages;
         }
 
-        private ScrollViewer? FindScrollViewer(DependencyObject d) {
-            if (d is ScrollViewer)
-                return d as ScrollViewer;
+        private ScrollViewer FindScrollViewer(DependencyObject d) {
+            if (d is ScrollViewer viewer)
+                return viewer;
 
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++) {
                 var sw = FindScrollViewer(VisualTreeHelper.GetChild(d, i));
                 if (sw != null)
                     return sw;
             }
-            return null;
+
+            throw new Exception("Scroll Viewer not found");
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e) {
@@ -62,6 +66,19 @@ namespace PiIDE {
             }
             // TODO: Maybe add a click effect
             MainListView.SelectedIndex = -1;
+        }
+
+        private void CodeHyperlink_Click(object sender, RoutedEventArgs e) {
+            Hyperlink hyperlink = (Hyperlink) sender;
+            string code = (string) hyperlink.Tag;
+            string errorUrl = WikidotBaseUrl + code;
+            try {
+                Process.Start(new ProcessStartInfo(errorUrl) { UseShellExecute = true });
+            } catch {
+#if DEBUG
+                throw;
+#endif
+            }
         }
     }
 }

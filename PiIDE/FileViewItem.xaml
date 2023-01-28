@@ -6,13 +6,39 @@
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Button x:Name="MainButton" Content="FileName" Click="MainButton_Click" HorizontalContentAlignment="Left" Padding="1,0,1,0" Background="#00DDDDDD" BorderThickness="0"/>
+        <Button x:Name="MainButton" Content="&lt;FILE NAME>" Click="MainButton_Click" HorizontalContentAlignment="Left" Padding="1,0,1,0" Background="#00DDDDDD" BorderThickness="0">
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy" Click="Copy_Click">
+                        <MenuItem.Icon>
+                            <Label Content="📋" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Cut" Click="Cut_Click">
+                        <MenuItem.Icon>
+                            <Label Content="✂" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Rename" Click="Rename_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Assets/Icons/rename.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Delete" Click="Delete_Click">
+                        <MenuItem.Icon>
+                            <Label Content="✖" Foreground="Red" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
         <StackPanel x:Name="MainStackPanel" Grid.Row="1"/>
     </Grid>
 </UserControl>

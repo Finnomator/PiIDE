@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800">
+
     <Grid>
 
         <Grid.RowDefinitions>
@@ -21,18 +22,21 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            
+        <Grid Grid.RowSpan="2">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
             <TextBox IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap"/>
-            <local:FileViewItem Grid.Row="1" x:Name="RootFileView"/>
+            <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <local:FileViewItem x:Name="RootFileView"/>
+            </ScrollViewer>
+
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
             <Button Grid.Row="3" Content="Sync" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
             <local:BoardFileViewItem Grid.Row="4" x:Name="RootBoardFileView"/>
@@ -41,12 +45,13 @@
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
 
         <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
-            <TabItem x:Name="DefaultEditor" Header="&lt;new file>">
+            <local:FileTabItem x:Name="DefaultEditor" Header="&lt;new file>">
                 <local:TextEditor/>
-            </TabItem>
+            </local:FileTabItem>
         </TabControl>
 
         <StackPanel Grid.Column="2"  HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="&#x1f4c1;" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" BorderThickness="0" Background="Transparent" Padding="3"/>
             <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3"/>
             <Button Content="&#x1f4c4;" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3"/>
             <Button Content="▷" x:Name="RunFileOnBoardButton" Click="RunFileOnBoardButton_Click" ToolTip="Upload to Board and run" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
@@ -73,7 +78,7 @@
             <TabItem Header="Notepad">
                 <local:NotePad/>
             </TabItem>
-            
+
         </TabControl>
     </Grid>
 </UserControl>
