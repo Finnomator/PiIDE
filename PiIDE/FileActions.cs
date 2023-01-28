@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -51,7 +52,15 @@ namespace PiIDE {
 
         public static void Cut(string Path) => Paste(Path, true);
 
-        private static void DeleteDirectory(string dirPath) {
+        public static void Move(string path, bool isDirectory) {
+            Debug.Assert(_copiedPath is not null);
+            if (isDirectory)
+                MoveDirectory(_copiedPath, path);
+            else
+                MoveFile(_copiedPath, path);
+        }
+
+        public static void DeleteDirectory(string dirPath) {
             try {
                 Directory.Delete(dirPath, true);
             } catch (Exception ex) {
@@ -59,6 +68,18 @@ namespace PiIDE {
                 throw;
 #else
                 MessageBox.Show($"Failed to delete directory '{dirPath}'\r\n{ex.Message}", "Failed to Delete Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+#endif
+            }
+        }
+
+        public static void DeleteFile(string filePath) {
+            try {
+                File.Delete(filePath);
+            } catch (Exception ex) {
+#if DEBUG
+                throw;
+#else
+                MessageBox.Show($"Failed to delete file '{filePath}'\r\n{ex.Message}", "Failed to Delete File", MessageBoxButton.OK, MessageBoxImage.Error);
 #endif
             }
         }
@@ -104,21 +125,9 @@ namespace PiIDE {
             }
         }
 
-        private static void DeleteFile(string filePath) {
+        public static void MoveDirectory(string oldDirPath, string newDirPath) {
             try {
-                File.Delete(filePath);
-            } catch (Exception ex) {
-#if DEBUG
-                throw;
-#else
-                MessageBox.Show($"Failed to delete file '{filePath}'\r\n{ex.Message}", "Failed to Delete File", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
-            }
-        }
-
-        private static void MoveDirectory(string newDirPath) {
-            try {
-                Directory.Move(_copiedPath, newDirPath);
+                Directory.Move(oldDirPath, newDirPath);
             } catch (Exception ex) {
 #if DEBUG
                 throw;
@@ -128,9 +137,9 @@ namespace PiIDE {
             }
         }
 
-        private static void MoveFile(string newFilePath) {
+        public static void MoveFile(string oldFilePath, string newFilePath) {
             try {
-                Directory.Move(_copiedPath, newFilePath);
+                Directory.Move(oldFilePath, newFilePath);
             } catch (Exception ex) {
 #if DEBUG
                 throw;
