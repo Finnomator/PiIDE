@@ -136,6 +136,7 @@ namespace PiIDE {
                 if (!s.IsDir)
                     OpenFile(s.FilePath);
             };
+            // TODO: These events are not working
             RootFileView.OnFileDeleted += (s, filePath) => {
                 if (!s.IsDir)
                     CloseFile(filePath);
