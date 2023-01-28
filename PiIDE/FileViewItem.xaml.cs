@@ -1,7 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace PiIDE {
 
@@ -53,10 +54,9 @@ namespace PiIDE {
                     IncludeSubdirectories = false,
                     EnableRaisingEvents = true,
                 };
-                _fileSystemWatcher.Changed += _fileSystemWatcher_Changed;
-                _fileSystemWatcher.Created += _fileSystemWatcher_Created;
-                _fileSystemWatcher.Deleted += _fileSystemWatcher_Deleted;
-                _fileSystemWatcher.Renamed += _fileSystemWatcher_Renamed;
+                _fileSystemWatcher.Created += (s, e) => Dispatcher.Invoke(ReloadContent);
+                _fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+                _fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
             }
 
             string buttonContent = Path.GetFileName(filePath).Replace("_", "__");
@@ -72,22 +72,19 @@ namespace PiIDE {
             }
         }
 
-        private void _fileSystemWatcher_Renamed(object sender, RenamedEventArgs e) {
-            OnFileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
-            Dispatcher.Invoke(ReloadContent);
+        private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e) {
+            Dispatcher.Invoke(() => {
+                ReloadContent();
+                OnFileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
+            });
         }
 
-        private void _fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e) {
-            OnFileDeleted?.Invoke(this, e.FullPath);
-            Dispatcher.Invoke(ReloadContent);
-        }
-
-        private void _fileSystemWatcher_Created(object sender, FileSystemEventArgs e) {
-            Dispatcher.Invoke(ReloadContent);
-        }
-
-        private void _fileSystemWatcher_Changed(object sender, FileSystemEventArgs e) {
-            Dispatcher.Invoke(ReloadContent);
+        private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e) {
+            Debug.WriteLine("Deleted " + e.FullPath + " from " + FilePath);
+            Dispatcher.Invoke(() => {
+                OnFileDeleted?.Invoke(this, e.FullPath);
+                ReloadContent();
+            });
         }
 
         private void Collapse() {
@@ -98,8 +95,17 @@ namespace PiIDE {
 
         private void Expand() {
             Debug.Assert(IsDir && MainStackPanel.Children.Count == 0);
-            string[] subDirPaths = Directory.GetDirectories(FilePath);
-            string[] subFilePaths = Directory.GetFiles(FilePath);
+
+            string[] subDirPaths;
+            string[] subFilePaths;
+
+            try {
+                // TODO: get rid of the catch statement (currently it throws when the parent dir of an open file gets deleted)
+                subDirPaths = Directory.GetDirectories(FilePath);
+                subFilePaths = Directory.GetFiles(FilePath);
+            } catch {
+                return;
+            }
 
             for (int i = 0; i < subDirPaths.Length; i++) {
                 FileViewItem fileViewItem = new(true, subDirPaths[i], Indent + 1, this);
@@ -120,13 +126,8 @@ namespace PiIDE {
             MainButton.Content = MainButtonExpandedContent;
         }
 
-        private void ReloadParentContent() {
-            // TODO: more efficient reload
-            Debug.Assert(ContainingParent is not null);
-            ContainingParent.ReloadContent();
-        }
-
         private void ReloadContent() {
+            // TODO: more efficient reload
             MainStackPanel.Children.Clear();
             Expand();
         }
@@ -142,20 +143,15 @@ namespace PiIDE {
             OnFileClick?.Invoke(this);
         }
 
-        private void Copy_Click(object sender, System.Windows.RoutedEventArgs e) {
-            FileCopier.Copy(FilePath, IsDir);
-        }
+        private void Copy_Click(object sender, System.Windows.RoutedEventArgs e) => FileCopier.Copy(FilePath, IsDir);
 
-        private void Cut_Click(object sender, System.Windows.RoutedEventArgs e) {
-            FileCopier.Cut(FilePath, IsDir);
-        }
+        private void Cut_Click(object sender, System.Windows.RoutedEventArgs e) => FileCopier.Cut(FilePath, IsDir);
 
         private void Rename_Click(object sender, System.Windows.RoutedEventArgs e) {
-            if (IsDir)
-                BasicFileActions.RenameDirectory(FilePath, "TestDir");
-            else
-                BasicFileActions.RenameFile(FilePath, "TestFile.asdf");
-            ReloadParentContent();
+            RenameTextBox.Text = (string) MainButton.Content;
+            RenameTextBox.Visibility = Visibility.Visible;
+            RenameTextBox.Focus();
+            RenameTextBox.SelectAll();
         }
 
         private void Delete_Click(object sender, System.Windows.RoutedEventArgs e) {
@@ -163,19 +159,60 @@ namespace PiIDE {
                 BasicFileActions.DeleteDirectory(FilePath);
             else
                 BasicFileActions.DeleteFile(FilePath);
-            ReloadParentContent();
         }
 
         private void Paste_Click(object sender, System.Windows.RoutedEventArgs e) {
             // TODO: when copying the folder into itself it copies itself twice
             if (IsDir) {
                 FileCopier.Paste(FilePath);
-                ReloadContent();
             } else if (ContainingParent is not null) {
                 FileCopier.Paste(ContainingParent.FilePath);
-                ReloadParentContent();
             } else
                 Debug.Assert(false, "ContainingParent was null");
+        }
+
+        private void RenameTextBox_LostFocus(object sender, System.Windows.RoutedEventArgs e) => RenameTextBox.Visibility = Visibility.Collapsed;
+
+        private void RenameTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+            switch (e.Key) {
+                case System.Windows.Input.Key.Enter:
+                    RenameTextBoxConfirmation();
+                    break;
+                case System.Windows.Input.Key.Escape:
+                    RenameTextBox.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        private void RenameTextBoxConfirmation() {
+
+            string oldName = (string) MainButton.Content;
+            string newName = RenameTextBox.Text;
+            string newPath = Path.Combine(FilePath[^newName.Length..], newName);
+
+            if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1) {
+                MessageBox.Show("Invalid characters in path", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                RenameTextBox.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            if (IsDir) {
+                if (Directory.Exists(newPath)) {
+                    MessageBox.Show("The directory already exists", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                } else if (oldName == newName) {
+                } else {
+                    BasicFileActions.RenameDirectory(FilePath, newName);
+                }
+            } else {
+                if (File.Exists(newPath)) {
+                    MessageBox.Show("The file already exists", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                } else if (oldName == newName) {
+                } else {
+                    BasicFileActions.RenameFile(FilePath, newName);
+                }
+            }
+
+            RenameTextBox.Visibility = Visibility.Collapsed;
         }
     }
 }

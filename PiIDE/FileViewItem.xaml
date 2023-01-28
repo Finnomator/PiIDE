@@ -44,6 +44,7 @@
                 </ContextMenu>
             </Button.ContextMenu>
         </Button>
+        <TextBox x:Name="RenameTextBox" Text="&lt;FILE NAME>" Visibility="Collapsed" LostFocus="RenameTextBox_LostFocus" PreviewKeyDown="RenameTextBox_PreviewKeyDown"/>
         <StackPanel x:Name="MainStackPanel" Grid.Row="1"/>
     </Grid>
 </UserControl>

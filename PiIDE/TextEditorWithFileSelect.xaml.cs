@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using PiIDE;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -55,32 +53,34 @@ namespace PiIDE {
 
         private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
-        private void RootBoardFileView_OnFileClick(object? sender, string e) {
-            BoardFileViewItem boardFileViewItem = (BoardFileViewItem) sender;
-            if (!boardFileViewItem.IsDir)
-                OpenFile(e, boardFileViewItem);
-        }
-
         public void OpenFile(string filePath, BoardFileViewItem? boardItem = null) {
 
             if (IsFileOpen(filePath)) {
                 MainTabControl.SelectedIndex = OpenLocalFilesAndTheirTabindex[Path.GetFullPath(filePath)];
             } else {
-                TextEditor newTextEditor = AddFile(filePath, boardItem);
+                TextEditor textEditor = AddFile(filePath, boardItem);
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-                UpdatePylintMessages(newTextEditor);
+                UpdatePylintMessages(textEditor);
             }
         }
 
         public bool IsFileOpen(string filePath) => OpenLocalFilesAndTheirTabindex.Keys.Any(x => Path.GetFullPath(filePath) == Path.GetFullPath(x));
 
-        private TextEditor AddFile(string filePath, BoardFileViewItem? boardItem = null) {
+        private TextEditor AddFile(string filePath, BoardFileViewItem? boardItem = null, int atIndex = -1) {
             TextEditor textEditor = new(filePath, boardItem);
             textEditor.OnFileSaved += TextEditor_OnFileSaved;
-            MainTabControl.Items.Add(new FileTabItem() {
-                Header = Path.GetFileName(filePath).Replace("_", "__"),
-                Content = textEditor,
-            });
+
+            if (atIndex >= 0) {
+                MainTabControl.Items.Insert(atIndex, new FileTabItem() {
+                    Header = Path.GetFileName(filePath).Replace("_", "__"),
+                    Content = textEditor,
+                });
+            } else {
+                MainTabControl.Items.Add(new FileTabItem() {
+                    Header = Path.GetFileName(filePath).Replace("_", "__"),
+                    Content = textEditor,
+                });
+            }
 
             if (textEditor.IsPythonFile)
                 PythonOnlyFilePaths.Add(filePath);
@@ -103,10 +103,14 @@ namespace PiIDE {
         public void AddTempFile() {
             string newFilePath = $"TempFiles/temp_file{Directory.GetFiles("TempFiles").Length + 1}.py";
             File.Create(newFilePath).Close();
-            AddFile(newFilePath);
+            OpenFile(newFilePath);
         }
 
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+
+            if (MainTabControl.SelectedItem is null)
+                return;
+
             OpenTextEditor.DisableAllWrapers = true;
             OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
             OpenTextEditor.DisableAllWrapers = false;
@@ -136,24 +140,30 @@ namespace PiIDE {
                 if (!s.IsDir)
                     OpenFile(s.FilePath);
             };
-            // TODO: These events are not working
             RootFileView.OnFileDeleted += (s, filePath) => {
-                if (!s.IsDir)
-                    CloseFile(filePath);
+                CloseFile(filePath);
             };
             RootFileView.OnFileRenamed += (s, oldPath, newPath) => {
-                if (!s.IsDir) {
-                    CloseFile(oldPath);
-                    OpenFile(newPath);
+                if (File.Exists(newPath)) {
+                    OpenRenamedFile(oldPath, newPath);
                 }
             };
             LocalDirectoryScrollViewer.Content = RootFileView;
             GlobalSettings.Default.OpenDirectoryPath = directory;
         }
 
+        private void OpenRenamedFile(string oldPath, string newPath) {
+            if (IsFileOpen(oldPath)) {
+                int index = OpenLocalFilesAndTheirTabindex[oldPath];
+                MainTabControl.Items.RemoveAt(index);
+                AddFile(newPath, atIndex: index);
+            }
+        }
+
         private void CloseFile(string filePath) {
             if (IsFileOpen(filePath)) {
                 MainTabControl.Items.RemoveAt(OpenLocalFilesAndTheirTabindex[filePath]);
+                OpenLocalFilesAndTheirTabindex.Remove(filePath);
             }
         }
 
