@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xrml="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <assemblyIdentity name="PiIDE.application" version="1.0.0.5" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <assemblyIdentity name="PiIDE.application" version="1.0.0.6" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <description asmv2:publisher="Finn Drünert" asmv2:product="PiIDE" asmv2:supportUrl="https://github.com/Finnomator/PiIDE/issues" co.v1:errorReportUrl="https://github.com/Finnomator/PiIDE/issues" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" mapFileExtensions="true" co.v1:createDesktopShortcut="true">
     <subscription>
@@ -8,20 +8,20 @@
         <beforeApplicationStartup />
       </update>
     </subscription>
-    <deploymentProvider codebase="https://raw.githubusercontent.com/Finnomator/PiIDE/master/published/PiIDE.application?token=GHSAT0AAAAAAB5FUZA72XYCPOGKU7PGNDXCY6VTFAQ/PiIDE.application" />
+    <deploymentProvider codebase="https://raw.githubusercontent.com/Finnomator/PiIDE/master/published/PiIDE.application" />
   </deployment>
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Application Files\PiIDE_1_0_0_5\PiIDE.dll.manifest" size="10462">
-      <assemblyIdentity name="PiIDE.exe" version="1.0.0.5" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" type="win32" />
+    <dependentAssembly dependencyType="install" codebase="Application Files\PiIDE_1_0_0_6\PiIDE.dll.manifest" size="10462">
+      <assemblyIdentity name="PiIDE.exe" version="1.0.0.6" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>7L7kHhVvO7Y4W5lMvgTvkrb3Yz/AMaVt5dXADZQs/cc=</dsig:DigestValue>
+        <dsig:DigestValue>jikRiS8Y16SXaZbJcZeBgWncElTWQ08OcJeTdWnujSs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
