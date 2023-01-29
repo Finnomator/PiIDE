@@ -72,7 +72,7 @@ namespace PiIDE {
             Underliner = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Underliner);
 
-            if (EnablePythonSyntaxhighlighting)
+            if (EnablePythonSyntaxhighlighting && GlobalSettings.Default.JediIsUsable)
                 UpdateHighlighting();
 
             BlockCompletions = false;
@@ -216,7 +216,7 @@ namespace PiIDE {
 
             // This method is intended to be used when the user presses a key and the input is not in textbox yet
 
-            if (BlockCompletions || !EnableJediCompletions)
+            if (BlockCompletions || !EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
             await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), GetCaretRow() + 1, GetCaretCol() + extraText.Length);

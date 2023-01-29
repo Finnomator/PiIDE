@@ -14,7 +14,16 @@
     <Setting Name="OpenDirectoryPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:/</Value>
     </Setting>
-    <Setting Name="PylintIsInstalledAndEnabled" Type="System.Boolean" Scope="User">
+    <Setting Name="PylintIsUsable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="JediIsUsable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="PythonIsInstalled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AmpyIsUsable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

@@ -74,12 +74,48 @@ namespace PiIDE {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PylintIsInstalledAndEnabled {
+        public bool PylintIsUsable {
             get {
-                return ((bool)(this["PylintIsInstalledAndEnabled"]));
+                return ((bool)(this["PylintIsUsable"]));
             }
             set {
-                this["PylintIsInstalledAndEnabled"] = value;
+                this["PylintIsUsable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool JediIsUsable {
+            get {
+                return ((bool)(this["JediIsUsable"]));
+            }
+            set {
+                this["JediIsUsable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PythonIsInstalled {
+            get {
+                return ((bool)(this["PythonIsInstalled"]));
+            }
+            set {
+                this["PythonIsInstalled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AmpyIsUsable {
+            get {
+                return ((bool)(this["AmpyIsUsable"]));
+            }
+            set {
+                this["AmpyIsUsable"] = value;
             }
         }
     }

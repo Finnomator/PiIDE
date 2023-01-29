@@ -35,8 +35,12 @@ namespace PiIDE {
             OpenFile("TempFiles/temp_file1.py");
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
             // TODO: Reopen board directory when comport gets changed
-            if (GlobalSettings.Default.SelectedCOMPort >= 0)
+            if (Tools.EnableBoardInteractions)
                 OpenBoardDirectory();
+            else
+                RunFileOnBoardButton.IsEnabled = false;
+
+            RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
         }
 
         private void Ampy_Exited(object? sender, EventArgs e) {
@@ -92,7 +96,7 @@ namespace PiIDE {
         }
 
         private async void UpdatePylintMessages(TextEditor textEditor) {
-            if (textEditor.EnablePylinging && GlobalSettings.Default.PylintIsInstalledAndEnabled) {
+            if (textEditor.EnablePylinging && GlobalSettings.Default.PylintIsUsable) {
                 PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray());
                 textEditor.Underliner.Underline(pylintMessages.Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray(), textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
             }
@@ -200,6 +204,11 @@ namespace PiIDE {
             if (!Tools.IsValidCOMPort(port)) {
                 ErrorMessager.PromptForCOMPort();
                 return;
+            } 
+            
+            if (!Tools.EnableBoardInteractions) {
+                Debug.Assert(false, "This should not happen");
+                return;
             }
 
             OutputTabControl.SelectedIndex = 1;
@@ -217,8 +226,8 @@ namespace PiIDE {
         private void StopAllRunningTasksButton_Click(object sender, System.Windows.RoutedEventArgs e) {
             PythonWraper.AsyncFileRunner.KillProcess();
             AmpyWraper.FileRunner.KillProcess();
-            RunFileLocalButton.IsEnabled = true;
-            RunFileOnBoardButton.IsEnabled = true;
+            RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
+            RunFileOnBoardButton.IsEnabled = Tools.EnableBoardInteractions;
         }
 
         private void GoToPylintMessage(PylintMessage pylintMessage) {

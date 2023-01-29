@@ -61,5 +61,6 @@ namespace PiIDE {
         public static int[] GetCOMPorts() => SerialPort.GetPortNames().Select(x => int.Parse(x[3..])).ToArray();
         public static bool IsValidCOMPort(int comPort) => GetCOMPorts().Contains(comPort);
 
+        public static bool EnableBoardInteractions => IsValidCOMPort(GlobalSettings.Default.SelectedCOMPort) && GlobalSettings.Default.AmpyIsUsable;
     }
 }
