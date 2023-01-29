@@ -138,7 +138,7 @@ namespace PiIDE {
         private void CreateNewFileButton_Click(object sender, RoutedEventArgs e) => AddTempFile();
 
         public void OpenDirectory(string directory) {
-            RootPathTextBox.Text = directory;
+            RootPathTextBox.Text = Path.GetFullPath(directory);
             RootFileView = new(directory);
             RootFileView.OnFileClick += (s) => {
                 if (!s.IsDir)

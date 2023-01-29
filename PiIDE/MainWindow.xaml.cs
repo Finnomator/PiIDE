@@ -6,6 +6,7 @@ namespace PiIDE {
 
         public MainWindow() {
             InitializeComponent();
+            MissingModulesChecker.CheckForUsableModules();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {

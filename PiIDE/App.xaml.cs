@@ -10,7 +10,6 @@ namespace PiIDE {
 
         public App() : base() {
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
-            CheckForUsableModules();
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
@@ -34,30 +33,6 @@ namespace PiIDE {
             fs.Write(new UTF8Encoding(true).GetBytes(fileContent));
         }
 
-        private static void CheckForUsableModules() {
-
-            GlobalSettings.Default.PylintIsUsable = false;
-            GlobalSettings.Default.PythonIsInstalled = false;
-            GlobalSettings.Default.AmpyIsUsable = false;
-
-            if (MissingModulesChecker.IsAmpyUsable()) {
-                GlobalSettings.Default.PythonIsInstalled = true;
-                GlobalSettings.Default.AmpyIsUsable = true;
-            } else {
-                if (MissingModulesChecker.IsPythonIstanlled())
-                    GlobalSettings.Default.PythonIsInstalled = true;
-                else
-                    ErrorMessager.ModuleIsNotInstalled("Python", "Python was not found", "Add Python to path or install from www.python.org");
-
-                ErrorMessager.ModuleIsNotInstalled("Ampy", "Python is not installed or Ampy was not found", "Add Ampy to path or install with pip install adafruit-ampy");
-            }
-
-            if (MissingModulesChecker.IsPylintUsable())
-                GlobalSettings.Default.PylintIsUsable = true;
-            else
-                ErrorMessager.ModuleIsNotInstalled("Pylint", "Python was not found", "Add Python to path or install from www.python.org");
-
-            GlobalSettings.Default.Save();
-        }
+        
     }
 }

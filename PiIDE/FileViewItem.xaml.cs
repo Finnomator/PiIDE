@@ -41,9 +41,9 @@ namespace PiIDE {
             Indent = indent;
             ContainingParent = parent;
 
-            
-
             string buttonContent = Path.GetFileName(filePath).Replace("_", "__");
+            if (string.IsNullOrEmpty(buttonContent))
+                buttonContent = filePath;
 
             string space = new(' ', Indent * 2);
 
