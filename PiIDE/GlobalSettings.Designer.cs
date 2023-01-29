@@ -70,5 +70,17 @@ namespace PiIDE {
                 this["OpenDirectoryPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PylintIsInstalledAndEnabled {
+            get {
+                return ((bool)(this["PylintIsInstalledAndEnabled"]));
+            }
+            set {
+                this["PylintIsInstalledAndEnabled"] = value;
+            }
+        }
     }
 }

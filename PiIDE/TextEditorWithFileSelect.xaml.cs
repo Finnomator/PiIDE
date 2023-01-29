@@ -92,7 +92,7 @@ namespace PiIDE {
         }
 
         private async void UpdatePylintMessages(TextEditor textEditor) {
-            if (textEditor.EnablePylinging) {
+            if (textEditor.EnablePylinging && GlobalSettings.Default.PylintIsInstalledAndEnabled) {
                 PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray());
                 textEditor.Underliner.Underline(pylintMessages.Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray(), textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
             }

@@ -23,7 +23,7 @@ namespace PiIDE {
         private const string ExpandedChar = "V";
         private const string CollapsedChar = ">";
         private readonly FileViewItem? ContainingParent;
-        private readonly FileSystemWatcher? _fileSystemWatcher;
+        private FileSystemWatcher? _fileSystemWatcher;
 
         private readonly string? MainButtonCollapsedContent;
         private readonly string? MainButtonExpandedContent;
@@ -41,23 +41,7 @@ namespace PiIDE {
             Indent = indent;
             ContainingParent = parent;
 
-            if (isDir) {
-                _fileSystemWatcher = new FileSystemWatcher(FilePath) {
-                    NotifyFilter = NotifyFilters.Attributes
-                                 | NotifyFilters.CreationTime
-                                 | NotifyFilters.DirectoryName
-                                 | NotifyFilters.FileName
-                                 | NotifyFilters.LastAccess
-                                 | NotifyFilters.LastWrite
-                                 | NotifyFilters.Security
-                                 | NotifyFilters.Size,
-                    IncludeSubdirectories = false,
-                    EnableRaisingEvents = true,
-                };
-                _fileSystemWatcher.Created += (s, e) => Dispatcher.Invoke(ReloadContent);
-                _fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
-                _fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
-            }
+            
 
             string buttonContent = Path.GetFileName(filePath).Replace("_", "__");
 
@@ -95,6 +79,25 @@ namespace PiIDE {
 
         private void Expand() {
             Debug.Assert(IsDir && MainStackPanel.Children.Count == 0);
+
+            if (IsDir && _fileSystemWatcher is null) {
+                // TODO: FileSystemWatcher doesnt like paths with spaces
+                _fileSystemWatcher = new FileSystemWatcher(FilePath) {
+                    NotifyFilter = NotifyFilters.Attributes
+                                 | NotifyFilters.CreationTime
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.Security
+                                 | NotifyFilters.Size,
+                    IncludeSubdirectories = false,
+                    EnableRaisingEvents = true,
+                };
+                _fileSystemWatcher.Created += (s, e) => Dispatcher.Invoke(ReloadContent);
+                _fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+                _fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+            }
 
             string[] subDirPaths;
             string[] subFilePaths;
