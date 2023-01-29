@@ -29,16 +29,8 @@ namespace PiIDE {
         private string MainButtonCollapsedContent;
         private string MainButtonExpandedContent;
 
-        public BoardFileViewItem() {
-            InitializeComponent();
-        }
-
         public BoardFileViewItem(string boardFilePath, string localRootDirPath, int comPort, int indent) {
             InitializeComponent();
-            OpenDir(boardFilePath, localRootDirPath, comPort, indent);
-        }
-
-        public void OpenDir(string boardFilePath, string localRootDirPath, int comPort, int indent) {
             IsDir = !Path.HasExtension(boardFilePath);
             BoardFilePath = boardFilePath;
             LocalRootDirPath = localRootDirPath;

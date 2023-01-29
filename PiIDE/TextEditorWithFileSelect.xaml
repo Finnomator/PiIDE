@@ -38,9 +38,8 @@
 
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
 
-            <StackPanel Grid.Row="3">
+            <StackPanel Grid.Row="3" x:Name="BoardFileViewStackPanel">
                 <Button Content="Sync" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
-                <local:BoardFileViewItem x:Name="RootBoardFileView"/>
             </StackPanel>
 
         </Grid>

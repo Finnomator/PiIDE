@@ -18,6 +18,7 @@ namespace PiIDE {
         private readonly Dictionary<string, int> OpenLocalFilesAndTheirTabindex = new();
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
+        private BoardFileViewItem? RootBoardFileView;
 
         public const string LocalBoardPath = "BoardFiles/";
 
@@ -173,20 +174,17 @@ namespace PiIDE {
 
         public void OpenBoardDirectory(string directory = "") {
             // "" is the default path, do not use "/"!
-            if (GlobalSettings.Default.SelectedCOMPort < 0) {
-                ErrorMessager.PromptForCOMPort();
-                return;
-            }
 
-            RootBoardFileView.OpenDir(directory, LocalBoardPath, GlobalSettings.Default.SelectedCOMPort, 0);
+            if (RootBoardFileView is not null)
+                BoardFileViewStackPanel.Children.Remove(RootBoardFileView);
+            RootBoardFileView = new(directory, LocalBoardPath, GlobalSettings.Default.SelectedCOMPort, 0);
+            BoardFileViewStackPanel.Children.Add(RootBoardFileView);
         }
 
         private void SyncButton_Click(object sender, System.Windows.RoutedEventArgs e) {
 
-            if (GlobalSettings.Default.SelectedCOMPort < 0) {
-                ErrorMessager.PromptForCOMPort();
+            if (!Tools.EnableBoardInteractions || RootBoardFileView is null)
                 return;
-            }
 
             Debug.Assert(RootBoardFileView.IsRootDir);
             RootBoardFileView.DownloadDirectory(LocalBoardPath);
