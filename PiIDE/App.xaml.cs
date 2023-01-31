@@ -10,6 +10,10 @@ namespace PiIDE {
 
         public App() : base() {
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+# if DEBUG
+            // TODO: Remove the reset if not needed
+            GlobalSettings.Default.Reset();
+#endif
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
