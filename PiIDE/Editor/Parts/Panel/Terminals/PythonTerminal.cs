@@ -1,7 +1,8 @@
-﻿using System.Windows.Input;
+﻿using PiIDE.Wrapers;
+using System.Windows.Input;
 
-namespace PiIDE {
-    public class PythonTerminal : IntegratedTerminal {
+namespace PiIDE.Editor.Parts.Panel.Terminal {
+    public class PythonTerminal : TerminalBase {
 
         public PythonTerminal() {
             PythonWraper.PythonOutputDataReceived += OutputDataReceived;

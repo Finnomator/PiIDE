@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace PiIDE {
+namespace PiIDE.Wrapers {
     internal static class AmpyWraper {
 
         public static DataReceivedEventHandler? AmpyOutputDataReceived;
@@ -25,7 +25,9 @@ namespace PiIDE {
         }
 
         public static string ReadFileOnBoard(int comport, string filePath) {
+
             Debug.Assert(!IsBusy);
+
             IsBusy = true;
 
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
@@ -41,7 +43,10 @@ namespace PiIDE {
         }
 
         public static void ReadFileOnBoardIntoFile(int comport, string filePath, string destPath) {
-            Debug.Assert(!IsBusy);
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
 
             IsBusy = true;
 
@@ -55,7 +60,10 @@ namespace PiIDE {
         }
 
         public static void WriteToBoard(int comport, string fileOrDirPath, string destDir = "/") {
-            Debug.Assert(!IsBusy);
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
 
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
@@ -69,8 +77,10 @@ namespace PiIDE {
         }
 
         public static void CreateDirectory(int comport, string newDirPath) {
-            Debug.Assert(!IsBusy);
-
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
@@ -110,7 +120,11 @@ namespace PiIDE {
             private static Process? RunnerProcess;
 
             public static async void RunFileOnBoardAsync(int comport, string filePath) {
-                Debug.Assert(!IsBusy);
+                if (IsBusy) {
+                    ErrorMessager.AmpyIsBusy();
+                    return;
+                }
+
                 IsBusy = true;
                 RunnerProcess = new() { StartInfo = AmpyDefaultStartInfo };
                 RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath}\"";
@@ -144,7 +158,11 @@ namespace PiIDE {
         }
 
         public static void RemoveFromBoard(int comport, string fileOrDirPath) {
-            Debug.Assert(!IsBusy);
+
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
 
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
@@ -156,7 +174,11 @@ namespace PiIDE {
         }
 
         public static void Softreset(int comport) {
-            Debug.Assert(!IsBusy);
+
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
 
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
@@ -168,6 +190,12 @@ namespace PiIDE {
         }
 
         public static void DownloadDirectoryFromBoard(int comport, string dirPath, string destDirPath) {
+
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
+
             string[] subPaths = ListFilesOnBoard(comport, dirPath);
 
             for (int i = 0; i < subPaths.Length; ++i) {

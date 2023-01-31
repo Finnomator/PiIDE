@@ -11,7 +11,7 @@ namespace PiIDE {
             string newDestPathExt = Path.GetExtension(newDestPath);
 
             for (int i = 1; File.Exists(newDestPath); i++)
-                newDestPath = newDestPathWithoutExt + i + newDestPathExt;
+                newDestPath = $"{newDestPathWithoutExt}{i}{newDestPathExt}";
 
             try {
                 File.Copy(sourcePath, newDestPath);
@@ -25,6 +25,11 @@ namespace PiIDE {
         }
 
         public static void CopyDirectory(string sourceDir, string destinationDir) {
+
+            string temp = destinationDir;
+            for (int i = 0; Directory.Exists(destinationDir); i++)
+                destinationDir = $"{temp}{i}";
+
             try {
                 _CopyDirectory(sourceDir, destinationDir);
             } catch (Exception ex) {

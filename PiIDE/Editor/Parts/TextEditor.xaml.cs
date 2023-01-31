@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiIDE.Wrapers;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,7 +34,6 @@ namespace PiIDE {
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
-        private readonly BoardFileViewItem? BoardViewItem;
         public readonly PylingUnderliner Underliner;
 
         public int FirstVisibleLineNum { get; private set; }
@@ -44,11 +44,9 @@ namespace PiIDE {
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
 
-        public TextEditor(string filePath, BoardFileViewItem? boardViewItem = null) {
+        public TextEditor(string filePath) {
             InitializeComponent();
             FilePath = filePath;
-            IsBoardFile = boardViewItem is not null;
-            BoardViewItem = boardViewItem;
             FileName = Path.GetFileName(filePath);
             FileExt = Path.GetExtension(filePath);
 
@@ -80,10 +78,8 @@ namespace PiIDE {
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
 
-        public void SaveFile() {
+        public virtual void SaveFile() {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
-            if (IsBoardFile)
-                AmpyWraper.WriteToBoard(BoardViewItem.COMPort, FilePath, BoardViewItem.BoardFilePath);
             OnFileSaved?.Invoke(this, FilePath);
         }
 

@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace PiIDE {
+namespace PiIDE.Wrapers {
     internal static class PylintWraper {
 
         public const string PylintPath = "Assets/Lint/pylint.exe";

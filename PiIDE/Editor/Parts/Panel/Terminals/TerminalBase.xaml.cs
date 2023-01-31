@@ -4,9 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PiIDE {
-    public abstract partial class IntegratedTerminal : UserControl {
+    public abstract partial class TerminalBase : UserControl {
 
-        public IntegratedTerminal() {
+        public TerminalBase() {
             InitializeComponent();
         }
 

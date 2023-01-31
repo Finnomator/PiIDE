@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace PiIDE {
+namespace PiIDE.Wrapers {
     public static class PythonWraper {
 
         public static DataReceivedEventHandler? PythonOutputDataReceived;

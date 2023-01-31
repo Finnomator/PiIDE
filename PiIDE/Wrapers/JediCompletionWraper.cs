@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace PiIDE {
+namespace PiIDE.Wrapers {
     internal static class JediCompletionWraper {
 
         public const string CodeCompleterPath = "Assets/Jedi/code_completer.exe";

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using PiIDE.Editor.Parts;
+using PiIDE.Wrapers;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -13,9 +14,10 @@ namespace PiIDE {
 
     public partial class TextEditorWithFileSelect : UserControl {
 
-        private TextEditor OpenTextEditor;
+        // TODO: Reopen board directory when comport gets changed
+        // TODO: Renable RunOnBoardButton when comport gets set or reconnected
 
-        private readonly Dictionary<string, int> OpenLocalFilesAndTheirTabindex = new();
+        private TextEditor OpenTextEditor;
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
 
@@ -32,15 +34,18 @@ namespace PiIDE {
             AmpyWraper.AmpyExited += Ampy_Exited;
             PythonWraper.PythonExited += Python_Exited;
 
+            if (!Directory.Exists(LocalBoardPath))
+                Directory.CreateDirectory(LocalBoardPath);
+
             OpenFile("TempFiles/temp_file1.py");
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
-            // TODO: Reopen board directory when comport gets changed
-            if (Tools.EnableBoardInteractions)
-                OpenBoardDirectory();
-            else
-                RunFileOnBoardButton.IsEnabled = false;
-
+            OpenBoardDirectory();
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
+
+            if (Tools.EnableBoardInteractions)
+                EnableBoardInteractions();
+            else
+                DisableBoardInteractions();
         }
 
         private void Ampy_Exited(object? sender, EventArgs e) {
@@ -57,21 +62,27 @@ namespace PiIDE {
 
         private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
-        public void OpenFile(string filePath, BoardFileViewItem? boardItem = null) {
+        public void OpenFile(string filePath, bool onBoard = false) {
 
             if (IsFileOpen(filePath)) {
-                MainTabControl.SelectedIndex = OpenLocalFilesAndTheirTabindex[Path.GetFullPath(filePath)];
+                MainTabControl.SelectedIndex = GetTabIndexOfOpenFile(filePath);
             } else {
-                TextEditor textEditor = AddFile(filePath, boardItem);
+                TextEditor textEditor = AddFile(filePath, onBoard);
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
                 UpdatePylintMessages(textEditor);
             }
         }
 
-        public bool IsFileOpen(string filePath) => OpenLocalFilesAndTheirTabindex.Keys.Any(x => Path.GetFullPath(filePath) == Path.GetFullPath(x));
+        public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
 
-        private TextEditor AddFile(string filePath, BoardFileViewItem? boardItem = null, int atIndex = -1) {
-            TextEditor textEditor = new(filePath, boardItem);
+        private TextEditor AddFile(string filePath, bool onBoard = false, int atIndex = -1) {
+            TextEditor textEditor;
+
+            if (onBoard)
+                textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..]);
+            else
+                textEditor = new(filePath);
+
             textEditor.OnFileSaved += TextEditor_OnFileSaved;
 
             if (atIndex >= 0) {
@@ -89,7 +100,6 @@ namespace PiIDE {
             if (textEditor.IsPythonFile)
                 PythonOnlyFilePaths.Add(filePath);
 
-            OpenLocalFilesAndTheirTabindex[Path.GetFullPath(filePath)] = MainTabControl.Items.Count - 1;
             OpenTextEditors.Add(textEditor);
 
             return textEditor;
@@ -139,26 +149,25 @@ namespace PiIDE {
 
         public void OpenDirectory(string directory) {
             RootPathTextBox.Text = Path.GetFullPath(directory);
-            RootFileView = new(directory);
-            RootFileView.OnFileClick += (s) => {
-                if (!s.IsDir)
-                    OpenFile(s.FilePath);
+            LocalExplorer = new(directory);
+            LocalExplorer.OnFileClick += (s) => {
+                OpenFile(s.FilePath);
             };
-            RootFileView.OnFileDeleted += (s, filePath) => {
+            LocalExplorer.OnFileDeleted += (s, filePath) => {
                 CloseFile(filePath);
             };
-            RootFileView.OnFileRenamed += (s, oldPath, newPath) => {
+            LocalExplorer.OnFileRenamed += (s, oldPath, newPath) => {
                 if (File.Exists(newPath)) {
                     OpenRenamedFile(oldPath, newPath);
                 }
             };
-            LocalDirectoryScrollViewer.Content = RootFileView;
+            LocalDirectoryScrollViewer.Content = LocalExplorer;
             GlobalSettings.Default.OpenDirectoryPath = directory;
         }
 
         private void OpenRenamedFile(string oldPath, string newPath) {
             if (IsFileOpen(oldPath)) {
-                int index = OpenLocalFilesAndTheirTabindex[oldPath];
+                int index = GetTabIndexOfOpenFile(oldPath);
                 MainTabControl.Items.RemoveAt(index);
                 AddFile(newPath, atIndex: index);
             }
@@ -166,74 +175,106 @@ namespace PiIDE {
 
         private void CloseFile(string filePath) {
             if (IsFileOpen(filePath)) {
-                MainTabControl.Items.RemoveAt(OpenLocalFilesAndTheirTabindex[filePath]);
-                OpenLocalFilesAndTheirTabindex.Remove(filePath);
+                MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
             }
         }
 
         public void OpenBoardDirectory(string directory = "") {
             // "" is the default path, do not use "/"!
-            if (GlobalSettings.Default.SelectedCOMPort < 0) {
-                ErrorMessager.PromptForCOMPort();
-                return;
-            }
 
-            RootBoardFileView.OpenDir(directory, LocalBoardPath, GlobalSettings.Default.SelectedCOMPort, 0);
+            BoardExplorer = new(LocalBoardPath, directory);
+
+            BoardExplorer.OnFileClick += (s) => {
+                OpenFile(s.FilePath, true);
+            };
+
+            BoardExplorer.OnFileDeleted += (s, filePath) => {
+                CloseFile(filePath);
+            };
+
+            BoardExplorer.OnFileRenamed += (s, oldPath, newPath) => {
+                if (File.Exists(newPath)) {
+                    OpenRenamedFile(oldPath, newPath);
+                }
+            };
+
+            BoardDirectoryScrollViewer.Content = BoardExplorer;
         }
 
-        private void SyncButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+        private void SyncButton_Click(object sender, RoutedEventArgs e) {
 
             if (GlobalSettings.Default.SelectedCOMPort < 0) {
                 ErrorMessager.PromptForCOMPort();
                 return;
             }
 
-            Debug.Assert(RootBoardFileView.IsRootDir);
-            RootBoardFileView.DownloadDirectory(LocalBoardPath);
-            for (int i = 0; i < OpenTextEditors.Count; i++) {
+            AmpyWraper.DownloadDirectoryFromBoard(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
+
+            for (int i = 0; i < OpenTextEditors.Count; i++)
                 OpenTextEditors[i].ReloadFile();
-            }
         }
 
-        private void RunFileOnBoardButton_Click(object sender, System.Windows.RoutedEventArgs e) {
-            RunFileOnBoardButton.IsEnabled = false;
+        private void RunFileOnBoardButton_Click(object sender, RoutedEventArgs e) {
+            DisableBoardInteractions();
             OpenTextEditor.SaveFile();
 
-            int port = GlobalSettings.Default.SelectedCOMPort;
-
-            if (!Tools.IsValidCOMPort(port)) {
-                ErrorMessager.PromptForCOMPort();
-                return;
-            } 
-            
             if (!Tools.EnableBoardInteractions) {
-                Debug.Assert(false, "This should not happen");
+                ErrorMessager.PromptForCOMPort();
                 return;
             }
 
             OutputTabControl.SelectedIndex = 1;
 
-            AmpyWraper.FileRunner.RunFileOnBoardAsync(port, OpenTextEditor.FilePath);
+            AmpyWraper.FileRunner.RunFileOnBoardAsync(GlobalSettings.Default.SelectedCOMPort, OpenTextEditor.FilePath);
         }
 
-        private void RunFileLocalButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+        private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
             RunFileLocalButton.IsEnabled = false;
             OpenTextEditor.SaveFile();
             OutputTabControl.SelectedIndex = 2;
             PythonWraper.AsyncFileRunner.RunFileAsync(OpenTextEditor.FilePath);
         }
 
-        private void StopAllRunningTasksButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+        private void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
             PythonWraper.AsyncFileRunner.KillProcess();
-            AmpyWraper.FileRunner.KillProcess();
+
+            if (Tools.EnableBoardInteractions) {
+                AmpyWraper.FileRunner.KillProcess();
+                AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort);
+                EnableBoardInteractions();
+            } else
+                DisableBoardInteractions();
+
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
-            RunFileOnBoardButton.IsEnabled = Tools.EnableBoardInteractions;
         }
 
         private void GoToPylintMessage(PylintMessage pylintMessage) {
             OpenFile(pylintMessage.Path);
             OpenTextEditor.SetCaretPositioin(pylintMessage.Line, pylintMessage.Column);
             OpenTextEditor.ScrollToPosition(pylintMessage.Line, pylintMessage.Column);
+        }
+
+        private int GetTabIndexOfOpenFile(string filePath) {
+            for (int i = 0; i < MainTabControl.Items.Count; i++) {
+                TabItem tabItem = (TabItem) MainTabControl.Items[i];
+                TextEditor content = (TextEditor) tabItem.Content;
+                if (Path.GetFullPath(content.FilePath) == Path.GetFullPath(filePath)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private void DisableBoardInteractions() {
+            SyncButton.IsEnabled = false;
+            RunFileOnBoardButton.IsEnabled = false;
+
+        }
+
+        private void EnableBoardInteractions() {
+            SyncButton.IsEnabled = true;
+            RunFileOnBoardButton.IsEnabled = true;
+
         }
     }
 }

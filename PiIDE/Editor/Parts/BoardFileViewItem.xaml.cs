@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using PiIDE.Wrapers;
 
-namespace PiIDE {
+namespace PiIDE
+{
 
     public partial class BoardFileViewItem : UserControl {
 

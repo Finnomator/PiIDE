@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PiIDE {
+namespace PiIDE.Wrapers {
     internal static class JediSyntaxHighlighterWraper {
 
         private const string SyntaxHighlighterPath = "Assets/Jedi/syntax_highlighter.exe";

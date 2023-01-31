@@ -4,6 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
+             xmlns:terminal="clr-namespace:PiIDE.Editor.Parts.Panel.Terminal"
+             xmlns:editorParts="clr-namespace:PiIDE.Editor.Parts"
+             xmlns:localExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.LocalExplorer"
+             xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800">
 
@@ -32,15 +36,19 @@
             </Grid.RowDefinitions>
 
             <TextBox IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap"/>
+            
             <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <local:FileViewItem x:Name="RootFileView"/>
+                <localExplorer:LocalExplorer x:Name="LocalExplorer"/>
             </ScrollViewer>
 
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
 
             <StackPanel Grid.Row="3">
-                <Button Content="Sync" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
-                <local:BoardFileViewItem x:Name="RootBoardFileView"/>
+                <Button Content="Sync" x:Name="SyncButton" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
+
+                <ScrollViewer x:Name="BoardDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <boardExplorer:BoardExplorer x:Name="BoardExplorer"/>
+                </ScrollViewer>
             </StackPanel>
 
         </Grid>
@@ -71,11 +79,11 @@
             </TabItem>
 
             <TabItem Header="Pi Terminal">
-                <local:BoardTerminal x:Name="PiTerminal"/>
+                <terminal:BoardTerminal x:Name="PiTerminal"/>
             </TabItem>
 
             <TabItem Header="Python Terminal">
-                <local:PythonTerminal x:Name="PyTerminal"/>
+                <terminal:PythonTerminal x:Name="PyTerminal"/>
             </TabItem>
 
             <TabItem Header="Notepad">

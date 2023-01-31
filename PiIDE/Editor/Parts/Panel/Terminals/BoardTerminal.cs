@@ -1,10 +1,11 @@
-﻿using System.Windows.Input;
+﻿using PiIDE.Wrapers;
+using System.Windows.Input;
 
-namespace PiIDE {
+namespace PiIDE.Editor.Parts.Panel.Terminal {
 
     // TODO: Ampy throws an exception when waiting for input
 
-    public class BoardTerminal : IntegratedTerminal {
+    public class BoardTerminal : TerminalBase {
 
         public BoardTerminal() {
             AmpyWraper.AmpyOutputDataReceived += OutputDataReceived;

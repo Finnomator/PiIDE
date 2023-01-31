@@ -9,6 +9,13 @@ namespace PiIDE {
             "Warning",
             MessageBoxButton.OK,
             MessageBoxImage.Warning);
-
+        public static void AmpyIsBusy() => MessageBox.Show("Device is busy!\nTry again later",
+            "Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+        public static void FeatureNotSupported() => MessageBox.Show("This feature is currently not available",
+            "Information",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 }
