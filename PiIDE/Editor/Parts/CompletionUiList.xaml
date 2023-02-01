@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="PiIDE.CompletionUiList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PiIDE"
+             mc:Ignorable="d" 
+             d:DesignHeight="100"
+             d:DesignWidth="100"
+             MaxHeight="200" MaxWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top">
+    
+    <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Name}" Foreground="{Binding ForegroundColor}"/>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
+                <EventSetter
+                Event="PreviewMouseLeftButtonDown" 
+                Handler="ListBox_MouseLeftButtonDown" />
+            </Style>
+        </ListBox.ItemContainerStyle>
+    </ListBox>
+</UserControl>
