@@ -32,7 +32,7 @@ namespace PiIDE.Wrapers {
 
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath.Replace("\\", "/")}\"";
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
@@ -52,7 +52,7 @@ namespace PiIDE.Wrapers {
 
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath}\" \"{destPath}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath}\" \"{destPath.Replace("\\", "/")}\"";
             process.Start();
             process.WaitForExit();
             process.Close();
@@ -68,7 +68,7 @@ namespace PiIDE.Wrapers {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} put \"{fileOrDirPath}\" put \"{destPath.Replace("\\", "/")}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} put \"{fileOrDirPath}\" \"{destPath.Replace("\\", "/")}\"";
             process.Start();
 
             process.WaitForExit();
@@ -84,7 +84,7 @@ namespace PiIDE.Wrapers {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} mkdir \"{newDirPath}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} mkdir \"{newDirPath.Replace("\\", "/")}\"";
             process.Start();
 
             process.WaitForExit();
@@ -98,7 +98,7 @@ namespace PiIDE.Wrapers {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} ls \"{dirPath}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} ls \"{dirPath.Replace("\\", "/")}\"";
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
@@ -127,7 +127,7 @@ namespace PiIDE.Wrapers {
 
                 IsBusy = true;
                 RunnerProcess = new() { StartInfo = AmpyDefaultStartInfo };
-                RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath}\"";
+                RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath.Replace("\\", "/")}\"";
                 RunnerProcess.EnableRaisingEvents = true;
                 RunnerProcess.OutputDataReceived += (s, e) => AmpyOutputDataReceived?.Invoke(s, e);
                 RunnerProcess.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
@@ -166,7 +166,7 @@ namespace PiIDE.Wrapers {
 
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
-            process.StartInfo.Arguments = $"--port COM{comport} rm \"{fileOrDirPath}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} rm \"{fileOrDirPath.Replace("\\", "/")}\"";
             process.Start();
             process.WaitForExit();
             process.Close();
