@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -26,7 +27,15 @@ namespace PiIDE.Wrapers {
             process.StandardInput.WriteLine(fileContent.Split('\n').Length);
             process.StandardInput.WriteLine(fileContent);
             string line = process.StandardOutput.ReadLine();
-            return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line);
+            try {
+                return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line);
+            } catch {
+#if DEBUG
+                throw;
+#else
+                return Array.Empty<JediSyntaxHighlightedWord>();
+#endif
+            }
         }
     }
 

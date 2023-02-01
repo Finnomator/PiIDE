@@ -52,7 +52,15 @@ namespace PiIDE.Wrapers {
 
             FinishedGettingCompletions = true;
 
-            return JsonSerializer.Deserialize<Completion[]>(line);
+            try {
+                return JsonSerializer.Deserialize<Completion[]>(line);
+            } catch {
+#if DEBUG
+                throw;
+#else
+                return Array.Empty<Completion>();
+#endif
+            }
         }
     }
 
