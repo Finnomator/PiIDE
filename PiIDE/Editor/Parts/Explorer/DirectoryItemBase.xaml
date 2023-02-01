@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE.Editor.Parts.Explorer"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" d:DesignWidth="200">
     <StackPanel>
         <Button x:Name="MainButton" Click="MainButton_Click" HorizontalContentAlignment="Left" BorderThickness="0" Background="Transparent">
@@ -22,27 +23,27 @@
                 <ContextMenu>
                     <MenuItem Header="Copy" Click="Copy_Click">
                         <MenuItem.Icon>
-                            <Label Content="📋" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <fa:FontAwesome Icon="Copy" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Cut" Click="Cut_Click">
                         <MenuItem.Icon>
-                            <Label Content="✂" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <fa:FontAwesome Icon="Cut" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Paste" Click="Paste_Click">
                         <MenuItem.Icon>
-                            <Label Content="📋" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <fa:FontAwesome Icon="Paste" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Rename" Click="Rename_Click">
                         <MenuItem.Icon>
-                            <Image Source="/Assets/Icons/rename.png"/>
+                            <fa:FontAwesome Icon="ICursor" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Delete" Click="Delete_Click">
                         <MenuItem.Icon>
-                            <Label Content="✖" Foreground="Red" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <fa:FontAwesome Icon="Remove" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Red"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
