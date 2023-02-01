@@ -1,8 +1,12 @@
 ﻿using PiIDE.Wrapers;
+using System;
 using System.Windows;
 
 namespace PiIDE.Editor.Parts {
     public class BoardTextEditor : TextEditor {
+
+        public event EventHandler? StartedWritingToBoard;
+        public event EventHandler? DoneWritingToBoard;
 
         private string BoardFilePath;
 
@@ -18,7 +22,9 @@ namespace PiIDE.Editor.Parts {
                 return;
             }
 
+            StartedWritingToBoard?.Invoke(this, EventArgs.Empty);
             AmpyWraper.WriteToBoard(GlobalSettings.Default.SelectedCOMPort, FilePath, BoardFilePath);
+            DoneWritingToBoard?.Invoke(this, EventArgs.Empty);
         }
     }
 }

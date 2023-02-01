@@ -78,9 +78,11 @@ namespace PiIDE {
         private TextEditor AddFile(string filePath, bool onBoard = false, int atIndex = -1) {
             TextEditor textEditor;
 
-            if (onBoard)
+            if (onBoard) {
                 textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..]);
-            else
+                ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { };
+                ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { };
+            } else
                 textEditor = new(filePath);
 
             textEditor.OnFileSaved += TextEditor_OnFileSaved;
