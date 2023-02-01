@@ -20,6 +20,7 @@ namespace PiIDE {
         private TextEditor OpenTextEditor;
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
+        private BoardFileViewItem? RootBoardFileView;
 
         public const string LocalBoardPath = "BoardFiles/";
 
@@ -203,8 +204,7 @@ namespace PiIDE {
 
         private void SyncButton_Click(object sender, RoutedEventArgs e) {
 
-            if (GlobalSettings.Default.SelectedCOMPort < 0) {
-                ErrorMessager.PromptForCOMPort();
+            if (!Tools.EnableBoardInteractions || RootBoardFileView is null)
                 return;
             }
 
@@ -248,10 +248,12 @@ namespace PiIDE {
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
         }
 
-        private void GoToPylintMessage(PylintMessage pylintMessage) {
-            OpenFile(pylintMessage.Path);
-            OpenTextEditor.SetCaretPositioin(pylintMessage.Line, pylintMessage.Column);
-            OpenTextEditor.ScrollToPosition(pylintMessage.Line, pylintMessage.Column);
+        private void GoToPylintMessage(PylintMessage pylintMessage) => GoTo(pylintMessage.Path, pylintMessage.Line, pylintMessage.Column);
+
+        private void GoTo(string filePath, int row, int column) {
+            OpenFile(filePath);
+            OpenTextEditor.SetCaretPositioin(row, column);
+            OpenTextEditor.ScrollToPosition(row, column);
         }
 
         private int GetTabIndexOfOpenFile(string filePath) {

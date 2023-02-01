@@ -37,6 +37,6 @@ namespace PiIDE {
             fs.Write(new UTF8Encoding(true).GetBytes(fileContent));
         }
 
-        
+
     }
 }

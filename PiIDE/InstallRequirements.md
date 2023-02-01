@@ -5,6 +5,7 @@
 
 ## PylintWraper.cs
 - Python
+- Pylint? (pip install pylint)
 
 ## JediCompletionWraper.cs
 
