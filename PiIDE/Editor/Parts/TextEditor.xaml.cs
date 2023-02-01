@@ -1,5 +1,6 @@
 ﻿using PiIDE.Wrapers;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -65,6 +66,7 @@ namespace PiIDE {
             TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
 
             Highlighter = new(TextEditorTextBoxCharacterSize);
+            Highlighter.OnHoverOverWord += Highlighter_OnHoverOverWord;
             TextEditorGrid.Children.Add(Highlighter);
 
             Underliner = new(TextEditorTextBoxCharacterSize);
@@ -74,6 +76,10 @@ namespace PiIDE {
                 UpdateHighlighting();
 
             BlockCompletions = false;
+        }
+
+        private void Highlighter_OnHoverOverWord(object? sender, string e) {
+            Debug.WriteLine("Hover");
         }
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);

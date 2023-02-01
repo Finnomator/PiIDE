@@ -113,7 +113,6 @@ namespace PiIDE {
             else
                 ErrorMessager.ModuleIsNotInstalled("Jedi", "Unknown", "None");
 
-
             GlobalSettings.Default.Save();
         }
     }

@@ -12,17 +12,19 @@ namespace PiIDE {
 
         // TODO: dont highlight keywords in comments and strings etc.
 
+        public EventHandler<string>? OnHoverOverWord;
+        public EventHandler<string>? OnStoppedHoveringOverWord;
+        public EventHandler<string>? OnClickOnWord;
+
         private readonly Regex Rx = MyRegex();
-        private readonly List<TextBlock> OldChildren = new();
-        private readonly List<TextBlock> NewChildren = new();
+        private readonly List<Button> OldChildren = new();
+        private readonly List<Button> NewChildren = new();
         private readonly Size FontSizes;
 
         public SyntaxHighlighter(Size fontSizes) {
             InitializeComponent();
             FontSizes = fontSizes;
         }
-
-
 
         public void HighglightText(string text, string filePath, int startLine, int endLine) {
 
@@ -67,16 +69,25 @@ namespace PiIDE {
                 else if (indexPoint.Y < upperLineLimit)
                     continue;
 
-                NewChildren.Add(new() {
-                    Text = keyword,
-                    Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height + 0.3, 0, 0),
-                    Foreground = TypeColors.Keyword,
-                    //Background = System.Windows.Media.Brushes.White,
-                    IsHitTestVisible = false,
-                    FontFamily = Tools.CascadiaCodeFont,
-                    FontSize = 14,
-                });
+                AddNewButton(keyword, indexPoint, "keyword");
             }
+        }
+
+        private void AddNewButton(string keyword, Point indexPoint, string type) {
+            Button item = new() {
+                Content = keyword,
+                Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height + 0.3, 0, 0),
+                Foreground = TypeColors.TypeToColor(type),
+                IsHitTestVisible = true,
+                FontFamily = Tools.CascadiaCodeFont,
+                FontSize = 14,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+            };
+            item.Click += (s, e) => OnClickOnWord?.Invoke(item, "");
+            item.MouseEnter += (s, e) => OnHoverOverWord?.Invoke(item, "");
+            item.MouseLeave += (s, e) => OnStoppedHoveringOverWord?.Invoke(item, "");
+            NewChildren.Add(item);
         }
 
         private void AddHighlightedJediWordsToChildren(string filePath, string fileContent, int upperLineLimit, int lowerLineLimit) {
@@ -96,15 +107,7 @@ namespace PiIDE {
                 else if (row < upperLineLimit)
                     continue;
 
-                NewChildren.Add(new() {
-                    Text = name,
-                    Margin = new(col * FontSizes.Width + 2, (row - 1) * FontSizes.Height + 0.3, 0, 0),
-                    Foreground = TypeColors.TypeToColor(type),
-                    //Background = System.Windows.Media.Brushes.White,
-                    IsHitTestVisible = false,
-                    FontFamily = Tools.CascadiaCodeFont,
-                    FontSize = 14,
-                });
+                AddNewButton(name, new Point(col, row - 1), type);
             }
         }
 
