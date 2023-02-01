@@ -76,7 +76,7 @@ namespace PiIDE {
 
         private void AddNewButton(string keyword, Point indexPoint, string type) {
             Button item = new() {
-                Content = keyword,
+                Content = keyword.Replace("_", "__"),
                 Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
                 Foreground = TypeColors.TypeToColor(type),
                 IsHitTestVisible = false,
