@@ -98,13 +98,13 @@
       <dsig:DigestValue>NvckznJq1edIreljXRyeYdFcVxsDfHWsw+It8JjH+Uk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="PiIDE.dll" size="123392">
+  <file name="PiIDE.dll" size="124928">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>lvAV++1TxG60mro99BRzsI7Kjh3nRar2Uk7taAlm2W4=</dsig:DigestValue>
+      <dsig:DigestValue>3Np6FAR23bNOWpcbdswJ8FLPkiNo4Pqwjig5oQj86YA=</dsig:DigestValue>
     </hash>
   </file>
   <file name="PiIDE.dll.config" size="1700">
@@ -116,13 +116,13 @@
       <dsig:DigestValue>hl7xPLU3mDA9pM4JOzJEhBIFl+v5L1dOeq7mMzK9f+E=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="PiIDE.exe" size="153088">
+  <file name="PiIDE.exe" size="154112">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>DXlPfE61aNf/sT/sgLuIlzyGDbkrlXoYcAsMinLsVl4=</dsig:DigestValue>
+      <dsig:DigestValue>rzMOEOIm0ZxBMlO2+RiMePsZpt9SGWM703vHw4hDiC4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="PiIDE.runtimeconfig.json" size="372">
