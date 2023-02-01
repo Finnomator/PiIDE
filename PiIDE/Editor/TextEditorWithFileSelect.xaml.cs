@@ -20,7 +20,6 @@ namespace PiIDE {
         private TextEditor OpenTextEditor;
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
-        private readonly BoardFileViewItem? RootBoardFileView;
 
         public const string LocalBoardPath = "BoardFiles/";
 
@@ -204,7 +203,7 @@ namespace PiIDE {
 
         private void SyncButton_Click(object sender, RoutedEventArgs e) {
 
-            if (!Tools.EnableBoardInteractions || RootBoardFileView is null)
+            if (!Tools.EnableBoardInteractions)
                 return;
 
             AmpyWraper.DownloadDirectoryFromBoard(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
