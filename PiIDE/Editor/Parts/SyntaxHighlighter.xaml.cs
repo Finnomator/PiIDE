@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace PiIDE {
 
@@ -76,13 +77,16 @@ namespace PiIDE {
         private void AddNewButton(string keyword, Point indexPoint, string type) {
             Button item = new() {
                 Content = keyword,
-                Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height + 0.3, 0, 0),
+                Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
                 Foreground = TypeColors.TypeToColor(type),
-                IsHitTestVisible = true,
+                IsHitTestVisible = false,
                 FontFamily = Tools.CascadiaCodeFont,
                 FontSize = 14,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
+                Background = Brushes.Transparent,
+                BorderThickness = new(0),
+                Padding = new(0),
             };
             item.Click += (s, e) => OnClickOnWord?.Invoke(item, "");
             item.MouseEnter += (s, e) => OnHoverOverWord?.Invoke(item, "");
