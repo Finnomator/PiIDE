@@ -9,7 +9,7 @@
     <TabControl>
         <TabItem Header="General">
             <WrapPanel>
-                <Label Content="Select COM Port: "/>
+                <Label Content="Select COM Port:"/>
                 <ComboBox x:Name="COMPortComboBox" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
                     <TextBlock Text="&lt;None>"/>
                 </ComboBox>
@@ -20,7 +20,7 @@
             <StackPanel>
 
                 <WrapPanel>
-                    <Label Content="Version: "/>
+                    <Label Content="Version:"/>
                     <Label x:Name="VersionLabel" Content="Not installed"/>
                 </WrapPanel>
 

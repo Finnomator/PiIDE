@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System;
 
 namespace PiIDE {
 
@@ -18,9 +19,7 @@ namespace PiIDE {
                 COMPortComboBox.SelectedIndex = 1;
             }
 
-            try {
-                VersionLabel.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            } catch { }
+            VersionLabel.Content = Environment.GetEnvironmentVariable("ClickOnce_CurrentVersion") ?? "Not installed";
         }
 
         private void COMPortComboBox_DropDownOpened(object sender, System.EventArgs e) {
