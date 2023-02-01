@@ -8,22 +8,38 @@
         Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
     <TabControl>
         <TabItem Header="General">
-            <Grid>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
+            <WrapPanel>
                 <Label Content="Select COM Port: "/>
-                <ComboBox x:Name="COMPortComboBox" Grid.Column="1" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
+                <ComboBox x:Name="COMPortComboBox" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
                     <TextBlock Text="&lt;None>"/>
                 </ComboBox>
-            </Grid>
+            </WrapPanel>
+        </TabItem>
+
+        <TabItem Header="About">
+            <StackPanel>
+
+                <WrapPanel>
+                    <Label Content="Version: "/>
+                    <Label x:Name="VersionLabel" Content="Not installed"/>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <Label>
+                        <Hyperlink NavigateUri="https://github.com/Finnomator/PiIDE" RequestNavigate="GithubRepo_RequestNavigate">
+                            Github repo
+                        </Hyperlink>
+                    </Label>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <Label>
+                        <Hyperlink NavigateUri="https://github.com/Finnomator/PiIDE/issues/new" RequestNavigate="GithubIssue_RequestNavigate">
+                            Report an issue
+                        </Hyperlink>
+                    </Label>
+                </WrapPanel>
+            </StackPanel>
         </TabItem>
     </TabControl>
 </Window>

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace PiIDE {
@@ -15,6 +17,10 @@ namespace PiIDE {
                 });
                 COMPortComboBox.SelectedIndex = 1;
             }
+
+            try {
+                VersionLabel.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            } catch { }
         }
 
         private void COMPortComboBox_DropDownOpened(object sender, System.EventArgs e) {
@@ -39,6 +45,16 @@ namespace PiIDE {
 
             GlobalSettings.Default.SelectedCOMPort = selectedCOMPort;
             GlobalSettings.Default.Save();
+        }
+
+        private void GithubIssue_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
+        private void GithubRepo_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }
