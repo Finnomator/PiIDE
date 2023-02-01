@@ -26,6 +26,7 @@ namespace PiIDE {
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinging;
         public readonly bool EnableJediCompletions;
+        public readonly bool IsBoardFile;
 
         public bool DisableAllWrapers = true;
 

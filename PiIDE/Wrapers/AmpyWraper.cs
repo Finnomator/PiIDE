@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace PiIDE.Wrapers {
     internal static class AmpyWraper {
@@ -59,7 +60,7 @@ namespace PiIDE.Wrapers {
             IsBusy = false;
         }
 
-        public static void WriteToBoard(int comport, string fileOrDirPath, string destPath = "/") {
+        public static async Task WriteToBoardAsync(int comport, string fileOrDirPath, string destPath = "/") {
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
                 return;
@@ -71,7 +72,7 @@ namespace PiIDE.Wrapers {
             process.StartInfo.Arguments = $"--port COM{comport} put \"{fileOrDirPath}\" \"{destPath.Replace("\\", "/")}\"";
             process.Start();
 
-            process.WaitForExit();
+            await process.WaitForExitAsync();
             process.Close();
             IsBusy = false;
         }

@@ -1,5 +1,6 @@
 ﻿using PiIDE.Wrapers;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace PiIDE.Editor.Parts {
@@ -8,13 +9,13 @@ namespace PiIDE.Editor.Parts {
         public event EventHandler? StartedWritingToBoard;
         public event EventHandler? DoneWritingToBoard;
 
-        private string BoardFilePath;
+        private readonly string BoardFilePath;
 
         public BoardTextEditor(string filePath, string boardFilePath) : base(filePath) {
             BoardFilePath = boardFilePath;
         }
 
-        public override void SaveFile() {
+        public override async void SaveFile() {
             base.SaveFile();
 
             if (!Tools.EnableBoardInteractions) {
@@ -23,7 +24,7 @@ namespace PiIDE.Editor.Parts {
             }
 
             StartedWritingToBoard?.Invoke(this, EventArgs.Empty);
-            AmpyWraper.WriteToBoard(GlobalSettings.Default.SelectedCOMPort, FilePath, BoardFilePath);
+            await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, BoardFilePath);
             DoneWritingToBoard?.Invoke(this, EventArgs.Empty);
         }
     }

@@ -80,8 +80,8 @@ namespace PiIDE {
 
             if (onBoard) {
                 textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..]);
-                ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { };
-                ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { };
+                ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Visible; };
+                ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Collapsed; };
             } else
                 textEditor = new(filePath);
 
