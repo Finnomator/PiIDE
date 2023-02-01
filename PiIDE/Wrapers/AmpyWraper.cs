@@ -59,7 +59,7 @@ namespace PiIDE.Wrapers {
             IsBusy = false;
         }
 
-        public static void WriteToBoard(int comport, string fileOrDirPath, string destDir = "/") {
+        public static void WriteToBoard(int comport, string fileOrDirPath, string destPath = "/") {
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
                 return;
@@ -68,7 +68,7 @@ namespace PiIDE.Wrapers {
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
 
-            process.StartInfo.Arguments = $"--port COM{comport} put \"{fileOrDirPath}\" \"{destDir}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} put \"{fileOrDirPath}\" put \"{destPath.Replace("\\", "/")}\"";
             process.Start();
 
             process.WaitForExit();
