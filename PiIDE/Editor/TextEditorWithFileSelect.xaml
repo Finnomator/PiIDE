@@ -9,7 +9,6 @@
              xmlns:localExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.LocalExplorer"
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             xmlns:extensions="clr-namespace:PiIDE.Themes"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800">
 
@@ -72,13 +71,6 @@
             <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3"/>
             <Button x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3">
                 <fa:FontAwesome Icon="FileTextOutline"/>
-            </Button>
-            <Button  x:Name="RunFileOnBoardButton" Click="RunFileOnBoardButton_Click" ToolTip="Upload to Board and run" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3">
-                <fa:FontAwesome Icon="Play"/>
-            </Button>
-            <Button Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
-            <Button x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Background="Transparent" Foreground="Red" BorderThickness="0" Padding="3">
-                <fa:FontAwesome Icon="Stop"/>
             </Button>
 
         </StackPanel>

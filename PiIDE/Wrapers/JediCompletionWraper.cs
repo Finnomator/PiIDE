@@ -44,16 +44,16 @@ namespace PiIDE.Wrapers {
 
             if (line is null) {
 # if DEBUG
-                throw new Exception(CompletionProcess.StandardError.ReadToEnd());
-# else
                 MessageBox.Show("The jedi language server failed to get completions for this file", "Jedi Error", MessageBoxButton.OK, MessageBoxImage.Error);
 # endif
+                return Array.Empty<Completion>();
             }
+
 
             FinishedGettingCompletions = true;
 
             try {
-                return JsonSerializer.Deserialize<Completion[]>(line);
+                return JsonSerializer.Deserialize<Completion[]>(line) ?? Array.Empty<Completion>();
             } catch {
                 return Array.Empty<Completion>();
             }
@@ -79,7 +79,7 @@ namespace PiIDE.Wrapers {
         [JsonPropertyName("name_with_symbols")]
         public string NameWithSymbols { get; set; } = "";
 
-        private string _Type;
+        private string _Type = "";
 
         [JsonPropertyName("type")]
         public string Type {
@@ -89,7 +89,7 @@ namespace PiIDE.Wrapers {
                 _Type = value;
             }
         }
-        public Brush ForegroundColor { get; set; }
+        public Brush? ForegroundColor { get; set; }
 
         [JsonPropertyName("line")]
         public int? Line { get; set; }

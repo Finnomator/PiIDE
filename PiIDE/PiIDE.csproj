@@ -18,7 +18,7 @@
 
 	<ItemGroup>
 		<Content Include="Assets\Icons\rename.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\Jedi\code_completer.exe">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -40,7 +40,11 @@ namespace PiIDE {
         public int FirstVisibleLineNum { get; private set; }
         public int LastVisibleLineNum { get; private set; }
 
-        public event EventHandler<string>? OnFileSaved;
+        public delegate void EditorFileSavedEventArgs(TextEditor sender);
+        public event EditorFileSavedEventArgs? OnFileSaved;
+
+        public event EventHandler? ContentChanged;
+        public event EventHandler? StartedPythonExecution;
 
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
@@ -55,6 +59,9 @@ namespace PiIDE {
             EnablePylinging = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
             EnableJediCompletions = IsPythonFile;
+
+            RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
+            PythonWraper.PythonExited += Python_Exited;
 
             CompletionUiList = new(FilePath);
             CompletionUiList.CompletionClicked += CompletionUiList_CompletionClick;
@@ -78,6 +85,16 @@ namespace PiIDE {
             BlockCompletions = false;
         }
 
+        
+
+        private void Python_Exited(object? sender, EventArgs e) {
+            Dispatcher.Invoke(() => {
+                RunFileLocalButton.IsEnabled = true;
+            });
+        }
+
+        
+
         private void Highlighter_OnHoverOverWord(object? sender, string e) {
             Debug.WriteLine("Hover");
         }
@@ -87,7 +104,7 @@ namespace PiIDE {
         public virtual void SaveFile() {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
             ContentIsSaved = true;
-            OnFileSaved?.Invoke(this, FilePath);
+            OnFileSaved?.Invoke(this);
         }
 
         public void ReloadFile() {
@@ -230,6 +247,7 @@ namespace PiIDE {
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = false;
+            ContentChanged?.Invoke(this, e);
 
             string[] textLines = TextEditorTextBox.Text.Split("\r\n");
 
@@ -276,6 +294,7 @@ namespace PiIDE {
         }
 
         public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
+
         public void ScrollToCaret() {
             // TODO: Implement something to calculate col and row
             double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
@@ -284,6 +303,7 @@ namespace PiIDE {
             MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight * 0.5));
             MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight * 0.5));
         }
+
         public void ScrollToPosition(int line, int column) {
             double verticalOffset = line * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = column * TextEditorTextBoxCharacterSize.Width;
@@ -295,5 +315,17 @@ namespace PiIDE {
         private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) => CompletionUiList.Close();
 
         private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionUiList.Close();
+
+        private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
+            RunFileLocalButton.IsEnabled = false;
+            SaveFile();
+            PythonWraper.AsyncFileRunner.RunFileAsync(FilePath);
+            StartedPythonExecution?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
+            PythonWraper.AsyncFileRunner.KillProcess();
+            RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
+        }
     }
 }

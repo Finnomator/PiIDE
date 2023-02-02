@@ -13,7 +13,7 @@ namespace PiIDE {
     public partial class LintMessagesWindow : UserControl {
 
         private double OldScrollState;
-        private ScrollViewer ListViewScrollViewer;
+        private ScrollViewer? ListViewScrollViewer;
         private const string WikidotBaseUrl = "http://pylint-messages.wikidot.com/messages:";
 
         public EventHandler<PylintMessage>? SelectionChanged;

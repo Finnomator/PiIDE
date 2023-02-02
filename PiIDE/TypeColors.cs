@@ -4,16 +4,18 @@ using System.Windows.Media;
 
 namespace PiIDE {
     public static class TypeColors {
-        public static readonly Brush Keyword = (Brush) Tools.Converter.ConvertFromString("#8634eb");
-        public static readonly Brush Class = (Brush) Tools.Converter.ConvertFromString("#07ab71");
-        public static readonly Brush Function = (Brush) Tools.Converter.ConvertFromString("#d6cf00");
-        public static readonly Brush Instance = (Brush) Tools.Converter.ConvertFromString("#0084d6");
-        public static readonly Brush Statement = (Brush) Tools.Converter.ConvertFromString("#2f82b5");
-        public static readonly Brush Module = (Brush) Tools.Converter.ConvertFromString("#2f7837");
-        public static readonly Brush Param = (Brush) Tools.Converter.ConvertFromString("#FF0000");
-        public static readonly Brush Property = (Brush) Tools.Converter.ConvertFromString("#00FF00");
-        public static readonly Brush Path = (Brush) Tools.Converter.ConvertFromString("#FF0000");
-        public static readonly Brush EverythingElse = (Brush) Tools.Converter.ConvertFromString("#000000");
+
+        // TODO: Make these colors customizable
+        public static readonly Brush Keyword = Brushes.BlueViolet;
+        public static readonly Brush Class = Brushes.DarkCyan;
+        public static readonly Brush Function = Brushes.Peru;
+        public static readonly Brush Instance = Brushes.Red; // What is this?
+        public static readonly Brush Statement = Brushes.SteelBlue;
+        public static readonly Brush Module = Brushes.MediumSeaGreen;
+        public static readonly Brush Param = Brushes.SteelBlue;
+        public static readonly Brush Property = Brushes.Red; // What is this?
+        public static readonly Brush Path = Brushes.Red; // What is this?
+        public static readonly Brush EverythingElse = Brushes.Gray;
 
         private static readonly Dictionary<string, Brush> TypeToColorMap = new() {
             { "keyword", Keyword },
@@ -24,15 +26,14 @@ namespace PiIDE {
             { "module", Module },
             { "param", Param},
             { "property", Property},
-            {"path", Path },
+            { "path", Path },
         };
 
         public static Brush TypeToColor(string type) {
-            if (TypeToColorMap.ContainsKey(type))
-                return TypeToColorMap[type];
+            if (TypeToColorMap.TryGetValue(type, out Brush? value))
+                return value;
 # if DEBUG
             MessageBox.Show($"Type '{type}' not found");
-            throw new KeyNotFoundException(type);
 # endif
             return EverythingElse;
         }
@@ -40,13 +41,13 @@ namespace PiIDE {
 
     public static class PylintMessageColors {
 
-        public static readonly Brush Fatal = (Brush) Tools.Converter.ConvertFromString("#FF0000");
-        public static readonly Brush Error = (Brush) Tools.Converter.ConvertFromString("#FF0000");
-        public static readonly Brush Warning = (Brush) Tools.Converter.ConvertFromString("#FFFF00");
-        public static readonly Brush Convention = (Brush) Tools.Converter.ConvertFromString("#0000FF");
-        public static readonly Brush Refactor = (Brush) Tools.Converter.ConvertFromString("#0000FF");
-        public static readonly Brush Information = (Brush) Tools.Converter.ConvertFromString("#0000FF");
-        public static readonly Brush EverythingElse = (Brush) Tools.Converter.ConvertFromString("#000000");
+        public static readonly Brush Fatal = Brushes.DarkRed;
+        public static readonly Brush Error = Brushes.Red;
+        public static readonly Brush Warning = Brushes.Yellow;
+        public static readonly Brush Convention = Brushes.Blue;
+        public static readonly Brush Refactor = Brushes.LightBlue;
+        public static readonly Brush Information = Brushes.CadetBlue;
+        public static readonly Brush EverythingElse = Brushes.Gray;
 
         private static readonly Dictionary<string, Brush> TypeToColorMap = new() {
             { "fatal", Fatal },
@@ -58,11 +59,10 @@ namespace PiIDE {
         };
 
         public static Brush MessageTypeToColor(string type) {
-            if (TypeToColorMap.ContainsKey(type))
-                return TypeToColorMap[type];
+            if (TypeToColorMap.TryGetValue(type, out Brush? value))
+                return value;
 # if DEBUG
             MessageBox.Show($"Type '{type}' not found");
-            throw new KeyNotFoundException(type);
 # endif
             return EverythingElse;
         }

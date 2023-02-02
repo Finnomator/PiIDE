@@ -16,11 +16,7 @@ namespace PiIDE {
             try {
                 File.Copy(sourcePath, newDestPath);
             } catch (Exception ex) {
-# if DEBUG
-                throw;
-# else
                 MessageBox.Show(ex.Message, "Failed to Copy File", MessageBoxButton.OK, MessageBoxImage.Error);
-# endif
             }
         }
 
@@ -31,17 +27,13 @@ namespace PiIDE {
                 destinationDir = $"{temp}{i}";
 
             try {
-                _CopyDirectory(sourceDir, destinationDir);
+                PCopyDirectory(sourceDir, destinationDir);
             } catch (Exception ex) {
-#if DEBUG
-                throw;
-#else
                 MessageBox.Show(ex.Message, "Failed to Copy Directory", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
             }
         }
 
-        private static void _CopyDirectory(string sourcePath, string targetPath) {
+        private static void PCopyDirectory(string sourcePath, string targetPath) {
             Directory.CreateDirectory(targetPath);
             foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories)) {
                 Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
@@ -56,11 +48,7 @@ namespace PiIDE {
             try {
                 Directory.Delete(dirPath, true);
             } catch (Exception ex) {
-#if DEBUG
-                throw;
-#else
                 MessageBox.Show(ex.Message, "Failed to Delete Directory", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
             }
         }
 
@@ -68,33 +56,21 @@ namespace PiIDE {
             try {
                 File.Delete(filePath);
             } catch (Exception ex) {
-#if DEBUG
-                throw;
-#else
                 MessageBox.Show(ex.Message, "Failed to Delete File", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
             }
         }
         public static void MoveDirectory(string oldDirPath, string newDirPath) {
             try {
                 Directory.Move(oldDirPath, newDirPath);
             } catch (Exception ex) {
-#if DEBUG
-                throw;
-#else
                 MessageBox.Show(ex.Message, "Failed to Move Directory", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
             }
         }
         public static void MoveFile(string oldFilePath, string newFilePath) {
             try {
                 Directory.Move(oldFilePath, newFilePath);
             } catch (Exception ex) {
-#if DEBUG
-                throw;
-#else
                 MessageBox.Show(ex.Message, "Failed to Move File", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
             }
         }
 

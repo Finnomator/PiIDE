@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Windows;
 
 namespace PiIDE.Wrapers {
     internal static class JediSyntaxHighlighterWraper {
@@ -26,9 +27,17 @@ namespace PiIDE.Wrapers {
             process.StandardInput.WriteLine(filePath);
             process.StandardInput.WriteLine(fileContent.Split('\n').Length);
             process.StandardInput.WriteLine(fileContent);
-            string line = process.StandardOutput.ReadLine();
+            string? line = process.StandardOutput.ReadLine();
+
+            if (line is null) {
+#if DEBUG
+                MessageBox.Show("The jedi language server failed to get syntax highlighting for this file", "Jedi Error", MessageBoxButton.OK, MessageBoxImage.Error);
+# endif
+                return Array.Empty<JediSyntaxHighlightedWord>();
+            }
+
             try {
-                return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line);
+                return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line) ?? Array.Empty<JediSyntaxHighlightedWord>();
             } catch {
                 return Array.Empty<JediSyntaxHighlightedWord>();
             }

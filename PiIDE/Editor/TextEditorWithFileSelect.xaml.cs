@@ -1,12 +1,12 @@
 ﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -17,7 +17,7 @@ namespace PiIDE {
         // TODO: Reopen board directory when comport gets changed
         // TODO: Renable RunOnBoardButton when comport gets set or reconnected
 
-        private TextEditor? OpenTextEditor;
+        private TextEditor OpenTextEditor;
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
 
@@ -28,16 +28,12 @@ namespace PiIDE {
 
             MessagesWindow.SelectionChanged += MessagesWindow_SelectionChanged;
 
-            AmpyWraper.AmpyExited += Ampy_Exited;
-            PythonWraper.PythonExited += Python_Exited;
-
             if (!Directory.Exists(LocalBoardPath))
                 Directory.CreateDirectory(LocalBoardPath);
 
-            OpenFile("TempFiles/temp_file1.py");
+            OpenTextEditor = OpenFile("TempFiles/temp_file1.py");
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
             OpenBoardDirectory();
-            RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
 
             if (Tools.EnableBoardInteractions)
                 EnableBoardInteractions();
@@ -45,29 +41,20 @@ namespace PiIDE {
                 DisableBoardInteractions();
         }
 
-        private void Ampy_Exited(object? sender, EventArgs e) {
-            Dispatcher.Invoke(() => {
-                RunFileOnBoardButton.IsEnabled = true;
-            });
-        }
-
-        private void Python_Exited(object? sender, EventArgs e) {
-            Dispatcher.Invoke(() => {
-                RunFileLocalButton.IsEnabled = true;
-            });
-        }
-
         private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
-        public void OpenFile(string filePath, bool onBoard = false) {
+        public TextEditor OpenFile(string filePath, bool onBoard = false) {
 
             if (IsFileOpen(filePath)) {
                 MainTabControl.SelectedIndex = GetTabIndexOfOpenFile(filePath);
-            } else {
-                TextEditor textEditor = AddFile(filePath, onBoard);
-                MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-                UpdatePylintMessages(textEditor);
+                return (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
             }
+
+            TextEditor textEditor = AddFile(filePath, onBoard);
+            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            UpdatePylintMessages(textEditor);
+
+            return textEditor;
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
@@ -79,15 +66,24 @@ namespace PiIDE {
                 textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..]);
                 ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Visible; };
                 ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Collapsed; };
+                ((BoardTextEditor) textEditor).StartedPythonExecutionOnBoard += (s, e) => OutputTabControl.SelectedIndex = 1;
             } else
                 textEditor = new(filePath);
 
-            textEditor.OnFileSaved += TextEditor_OnFileSaved;
 
             EditorTabItem tabItem = new(filePath) {
                 Content = textEditor,
             };
-            tabItem.CloseTabClick += (s, filePath) => { };
+
+            textEditor.ContentChanged += (s, e) => tabItem.SaveLocalButton.IsEnabled = true;
+            textEditor.OnFileSaved += (sender) => {
+                UpdatePylintMessages(sender);
+                tabItem.SaveLocalButton.IsEnabled = false;
+            };
+            textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
+
+            tabItem.CloseTabClick += (s, filePath) => CloseFile(filePath);
+            tabItem.SaveLocalClick += (s, filePath) => textEditor.SaveFile();
 
             if (atIndex < 0)
                 MainTabControl.Items.Add(tabItem);
@@ -107,10 +103,6 @@ namespace PiIDE {
                 PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray());
                 textEditor.Underliner.Underline(pylintMessages.Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray(), textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
             }
-        }
-
-        private void TextEditor_OnFileSaved(object? sender, string filePath) {
-            UpdatePylintMessages((TextEditor) sender);
         }
 
         public void AddTempFile() {
@@ -175,9 +167,8 @@ namespace PiIDE {
         }
 
         private void CloseFile(string filePath) {
-            if (IsFileOpen(filePath)) {
+            if (IsFileOpen(filePath))
                 MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
-            }
         }
 
         public void OpenBoardDirectory(string directory = "") {
@@ -204,47 +195,15 @@ namespace PiIDE {
 
         private void SyncButton_Click(object sender, RoutedEventArgs e) {
 
-            if (!Tools.EnableBoardInteractions)
+            if (!Tools.EnableBoardInteractions) {
+                DisableBoardInteractions();
                 return;
+            }
 
             AmpyWraper.DownloadDirectoryFromBoard(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
 
             for (int i = 0; i < OpenTextEditors.Count; i++)
                 OpenTextEditors[i].ReloadFile();
-        }
-
-        private void RunFileOnBoardButton_Click(object sender, RoutedEventArgs e) {
-            DisableBoardInteractions();
-            OpenTextEditor.SaveFile();
-
-            if (!Tools.EnableBoardInteractions) {
-                ErrorMessager.PromptForCOMPort();
-                return;
-            }
-
-            OutputTabControl.SelectedIndex = 1;
-
-            AmpyWraper.FileRunner.RunFileOnBoardAsync(GlobalSettings.Default.SelectedCOMPort, OpenTextEditor.FilePath);
-        }
-
-        private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
-            RunFileLocalButton.IsEnabled = false;
-            OpenTextEditor.SaveFile();
-            OutputTabControl.SelectedIndex = 2;
-            PythonWraper.AsyncFileRunner.RunFileAsync(OpenTextEditor.FilePath);
-        }
-
-        private void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
-            PythonWraper.AsyncFileRunner.KillProcess();
-
-            if (Tools.EnableBoardInteractions) {
-                AmpyWraper.FileRunner.KillProcess();
-                AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort);
-                EnableBoardInteractions();
-            } else
-                DisableBoardInteractions();
-
-            RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
         }
 
         private void GoToPylintMessage(PylintMessage pylintMessage) => GoTo(pylintMessage.Path, pylintMessage.Line, pylintMessage.Column);
@@ -259,23 +218,14 @@ namespace PiIDE {
             for (int i = 0; i < MainTabControl.Items.Count; i++) {
                 TabItem tabItem = (TabItem) MainTabControl.Items[i];
                 TextEditor content = (TextEditor) tabItem.Content;
-                if (Path.GetFullPath(content.FilePath) == Path.GetFullPath(filePath)) {
+                if (Path.GetFullPath(content.FilePath) == Path.GetFullPath(filePath))
                     return i;
-                }
             }
             return -1;
         }
 
-        private void DisableBoardInteractions() {
-            SyncButton.IsEnabled = false;
-            RunFileOnBoardButton.IsEnabled = false;
+        private void DisableBoardInteractions() => SyncButton.IsEnabled = false;
 
-        }
-
-        private void EnableBoardInteractions() {
-            SyncButton.IsEnabled = true;
-            RunFileOnBoardButton.IsEnabled = true;
-
-        }
+        private void EnableBoardInteractions() => SyncButton.IsEnabled = true;
     }
 }

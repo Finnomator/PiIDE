@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Windows.Media;
+using Point = System.Drawing.Point;
 
 namespace PiIDE {
     public static class Tools {
-        public static readonly BrushConverter Converter = new();
-        public static readonly Brush SelectedBrush = (Brush) Converter.ConvertFromString("#24000000");
-        public static readonly Brush HighlightBrush = (Brush) Converter.ConvertFromString("#10000000");
-        public static readonly Brush UnselectedBrush = Brushes.Transparent;
-
         public readonly static string[] PythonKeywords = new string[] {
             "False", "None", "True", "and", "await", "async", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
         };
@@ -33,6 +30,7 @@ namespace PiIDE {
 
             return index - offset;
         }
+
         public static int GetRowOfIndex(string text, int index) {
 
             int offset = 0;
@@ -44,6 +42,19 @@ namespace PiIDE {
 
             return line - 1;
         }
+
+        public static Point GetPointOfIndex(string text, int index) {
+            int caretLine = GetRowOfIndex(text, index);
+
+            int offset = 0;
+            string[] lines = text.Split("\r\n");
+
+            for (int i = 0; i < caretLine; ++i)
+                offset += lines[i].Length + 2;
+
+            return new Point(index - offset, caretLine);
+        }
+
         public static int GetIndexOfColRow(string text, int row, int col) {
             // TODO: Check if this works proberly
             string[] lines = text.Split("\r\n");

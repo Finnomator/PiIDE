@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Point = System.Drawing.Point;
 
 namespace PiIDE {
 
@@ -63,7 +64,8 @@ namespace PiIDE {
                 int startIndex = match.Index;
                 string keyword = match.Value;
 
-                Point indexPoint = new(Tools.GetColOfIndex(text, startIndex), Tools.GetRowOfIndex(text, startIndex));
+                // TODO: This is pretty slow
+                Point indexPoint = Tools.GetPointOfIndex(text, startIndex);
 
                 if (indexPoint.Y > lowerLineLimit)
                     break;
@@ -75,6 +77,9 @@ namespace PiIDE {
         }
 
         private void AddNewButton(string keyword, Point indexPoint, string type) {
+
+            // TODO: implement hover effects and stuff
+
             Button item = new() {
                 Content = keyword.Replace("_", "__"),
                 Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
