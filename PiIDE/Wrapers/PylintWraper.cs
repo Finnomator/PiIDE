@@ -29,11 +29,7 @@ namespace PiIDE.Wrapers {
             try {
                 return JsonSerializer.Deserialize<PylintMessage[]>(output);
             } catch {
-#if DEBUG
-                throw;
-#else
                 return System.Array.Empty<PylintMessage>();
-#endif
             }
         }
     }

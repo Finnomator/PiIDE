@@ -21,12 +21,12 @@ namespace PiIDE {
         public readonly string FilePath;
         public readonly string FileName;
         public readonly string FileExt;
-
         public readonly bool IsPythonFile;
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinging;
         public readonly bool EnableJediCompletions;
         public readonly bool IsBoardFile;
+        public bool ContentIsSaved { get; set; } = true;
 
         public bool DisableAllWrapers = true;
 
@@ -86,6 +86,7 @@ namespace PiIDE {
 
         public virtual void SaveFile() {
             File.WriteAllText(FilePath, TextEditorTextBox.Text);
+            ContentIsSaved = true;
             OnFileSaved?.Invoke(this, FilePath);
         }
 
@@ -226,7 +227,9 @@ namespace PiIDE {
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
 
-        private void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+        protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+
+            ContentIsSaved = false;
 
             string[] textLines = TextEditorTextBox.Text.Split("\r\n");
 

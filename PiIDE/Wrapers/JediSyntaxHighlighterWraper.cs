@@ -30,11 +30,7 @@ namespace PiIDE.Wrapers {
             try {
                 return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line);
             } catch {
-#if DEBUG
-                throw;
-#else
                 return Array.Empty<JediSyntaxHighlightedWord>();
-#endif
             }
         }
     }

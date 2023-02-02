@@ -17,7 +17,7 @@ namespace PiIDE {
         // TODO: Reopen board directory when comport gets changed
         // TODO: Renable RunOnBoardButton when comport gets set or reconnected
 
-        private TextEditor OpenTextEditor;
+        private TextEditor? OpenTextEditor;
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
 
@@ -25,9 +25,6 @@ namespace PiIDE {
 
         public TextEditorWithFileSelect() {
             InitializeComponent();
-            OpenTextEditor = (TextEditor) DefaultEditor.Content;
-
-            MainTabControl.Items.Clear();
 
             MessagesWindow.SelectionChanged += MessagesWindow_SelectionChanged;
 
@@ -87,17 +84,15 @@ namespace PiIDE {
 
             textEditor.OnFileSaved += TextEditor_OnFileSaved;
 
-            if (atIndex >= 0) {
-                MainTabControl.Items.Insert(atIndex, new FileTabItem() {
-                    Header = Path.GetFileName(filePath).Replace("_", "__"),
-                    Content = textEditor,
-                });
-            } else {
-                MainTabControl.Items.Add(new FileTabItem() {
-                    Header = Path.GetFileName(filePath).Replace("_", "__"),
-                    Content = textEditor,
-                });
-            }
+            EditorTabItem tabItem = new(filePath) {
+                Content = textEditor,
+            };
+            tabItem.CloseTabClick += (s, filePath) => { };
+
+            if (atIndex < 0)
+                MainTabControl.Items.Add(tabItem);
+            else
+                MainTabControl.Items.Insert(atIndex, tabItem);
 
             if (textEditor.IsPythonFile)
                 PythonOnlyFilePaths.Add(filePath);
@@ -114,7 +109,9 @@ namespace PiIDE {
             }
         }
 
-        private void TextEditor_OnFileSaved(object? sender, string filePath) => UpdatePylintMessages((TextEditor) sender);
+        private void TextEditor_OnFileSaved(object? sender, string filePath) {
+            UpdatePylintMessages((TextEditor) sender);
+        }
 
         public void AddTempFile() {
             string newFilePath = $"TempFiles/temp_file{Directory.GetFiles("TempFiles").Length + 1}.py";
@@ -127,7 +124,9 @@ namespace PiIDE {
             if (MainTabControl.SelectedItem is null)
                 return;
 
-            OpenTextEditor.DisableAllWrapers = true;
+            if (OpenTextEditor is not null)
+                OpenTextEditor.DisableAllWrapers = true;
+
             OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
             OpenTextEditor.DisableAllWrapers = false;
         }

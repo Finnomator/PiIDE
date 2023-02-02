@@ -9,6 +9,7 @@
              xmlns:localExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.LocalExplorer"
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:extensions="clr-namespace:PiIDE.Themes"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800">
 
@@ -56,11 +57,7 @@
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
 
-        <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
-            <local:FileTabItem x:Name="DefaultEditor" Header="&lt;new file>">
-                <local:TextEditor/>
-            </local:FileTabItem>
-        </TabControl>
+        <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged"/>
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
 
