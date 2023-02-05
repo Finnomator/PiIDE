@@ -50,7 +50,7 @@ namespace PiIDE {
         public const FontAwesome.WPF.FontAwesomeIcon Param = FontAwesome.WPF.FontAwesomeIcon.Close;
         public const FontAwesome.WPF.FontAwesomeIcon Property = FontAwesome.WPF.FontAwesomeIcon.Close;
         public const FontAwesome.WPF.FontAwesomeIcon Path = FontAwesome.WPF.FontAwesomeIcon.Close;
-        public const FontAwesome.WPF.FontAwesomeIcon EverythingElse = FontAwesome.WPF.FontAwesomeIcon.Close;
+        public const FontAwesome.WPF.FontAwesomeIcon EverythingElse = FontAwesome.WPF.FontAwesomeIcon.Question;
 
         private static readonly Dictionary<string, FontAwesome.WPF.FontAwesomeIcon> TypeToIconMap = new() {
             { "keyword", Keyword },

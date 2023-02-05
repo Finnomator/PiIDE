@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Media;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -32,6 +31,7 @@ namespace PiIDE {
             if (!Directory.Exists(LocalBoardPath))
                 Directory.CreateDirectory(LocalBoardPath);
 
+            // TODO: board files are opened as normals files
             for (int i = GlobalSettings.Default.LastOpenedFilePaths.Count - 1; i >= 0; i--) {
                 string path = GlobalSettings.Default.LastOpenedFilePaths[i];
                 OpenFile(path);
@@ -246,5 +246,14 @@ namespace PiIDE {
         private void DisableBoardInteractions() => SyncButton.IsEnabled = false;
 
         private void EnableBoardInteractions() => SyncButton.IsEnabled = true;
+
+        private void ConnectToBoardButton_Click(object sender, RoutedEventArgs e) {
+            if (Tools.EnableBoardInteractions)
+                EnableBoardInteractions();
+            else {
+                System.Windows.MessageBox.Show("Unable to connect to board, did you select the correct COM port?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                DisableBoardInteractions();
+            }
+        }
     }
 }

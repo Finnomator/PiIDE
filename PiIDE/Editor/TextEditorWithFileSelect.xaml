@@ -10,7 +10,7 @@
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="800" Background="White">
 
     <Grid>
 
@@ -57,7 +57,6 @@
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
 
         <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged"/>
-
         <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
 
             <StackPanel x:Name="UploadingFileStatusStackPanel" Orientation="Horizontal" Visibility="Collapsed">
@@ -71,6 +70,10 @@
             <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3"/>
             <Button x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3">
                 <fa:FontAwesome Icon="FileTextOutline"/>
+            </Button>
+
+            <Button x:Name="ConnectToBoardButton" Click="ConnectToBoardButton_Click" ToolTip="Connect to Board" BorderThickness="0" Background="Transparent" Padding="3">
+                <fa:FontAwesome Icon="Refresh"/>
             </Button>
 
         </StackPanel>
