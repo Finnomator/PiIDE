@@ -21,10 +21,6 @@ namespace PiIDE.Wrapers {
             CreateNoWindow = true,
         };
 
-        static AmpyWraper() {
-
-        }
-
         public static string ReadFileOnBoard(int comport, string filePath) {
 
             Debug.Assert(!IsBusy);

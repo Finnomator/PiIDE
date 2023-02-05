@@ -1,5 +1,6 @@
 ﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace PiIDE {
         // TODO: Reopen board directory when comport gets changed
         // TODO: Renable RunOnBoardButton when comport gets set or reconnected
 
-        private TextEditor OpenTextEditor;
+        private TextEditor? OpenTextEditor;
         private readonly List<string> PythonOnlyFilePaths = new();
         private readonly List<TextEditor> OpenTextEditors = new();
 
@@ -31,7 +32,11 @@ namespace PiIDE {
             if (!Directory.Exists(LocalBoardPath))
                 Directory.CreateDirectory(LocalBoardPath);
 
-            OpenTextEditor = OpenFile("TempFiles/temp_file1.py");
+            for (int i = GlobalSettings.Default.LastOpenedFilePaths.Count - 1; i >= 0; i--) {
+                string path = GlobalSettings.Default.LastOpenedFilePaths[i];
+                OpenFile(path);
+            }
+
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
             OpenBoardDirectory();
 
@@ -43,18 +48,22 @@ namespace PiIDE {
 
         private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
-        public TextEditor OpenFile(string filePath, bool onBoard = false) {
+        public void OpenFile(string filePath, bool onBoard = false) {
 
             if (IsFileOpen(filePath)) {
                 MainTabControl.SelectedIndex = GetTabIndexOfOpenFile(filePath);
-                return (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
+                return;
+            }
+
+            if (!File.Exists(filePath)) {
+                if (GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
+                    GlobalSettings.Default.LastOpenedFilePaths.Remove(filePath);
+                return;
             }
 
             TextEditor textEditor = AddFile(filePath, onBoard);
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
             UpdatePylintMessages(textEditor);
-
-            return textEditor;
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
@@ -94,6 +103,9 @@ namespace PiIDE {
                 PythonOnlyFilePaths.Add(filePath);
 
             OpenTextEditors.Add(textEditor);
+
+            if (!GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
+                GlobalSettings.Default.LastOpenedFilePaths.Add(filePath);
 
             return textEditor;
         }
@@ -167,8 +179,13 @@ namespace PiIDE {
         }
 
         private void CloseFile(string filePath) {
-            if (IsFileOpen(filePath))
-                MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
+            if (!IsFileOpen(filePath))
+                return;
+
+            MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
+
+            if (GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
+                GlobalSettings.Default.LastOpenedFilePaths.Remove(filePath);
         }
 
         public void OpenBoardDirectory(string directory = "") {
@@ -210,6 +227,8 @@ namespace PiIDE {
 
         private void GoTo(string filePath, int row, int column) {
             OpenFile(filePath);
+            if (OpenTextEditor is null)
+                throw new NullReferenceException();
             OpenTextEditor.SetCaretPositioin(row, column);
             OpenTextEditor.ScrollToPosition(row, column);
         }

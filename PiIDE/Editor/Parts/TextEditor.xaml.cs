@@ -1,4 +1,5 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Editor.Parts;
+using PiIDE.Wrapers;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Point = System.Drawing.Point;
 
 namespace PiIDE {
 
@@ -36,6 +38,7 @@ namespace PiIDE {
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
         public readonly PylingUnderliner Underliner;
+        private bool TextChangedSinceLastHighlighted;
 
         public int FirstVisibleLineNum { get; private set; }
         public int LastVisibleLineNum { get; private set; }
@@ -74,6 +77,8 @@ namespace PiIDE {
 
             Highlighter = new(TextEditorTextBoxCharacterSize);
             Highlighter.OnHoverOverWord += Highlighter_OnHoverOverWord;
+            Highlighter.OnStoppedHoveringOverWord += (s, e) => JediNameDescriber.CloseIfNotMouseOver();
+            JediNameDescriber.CloseWhenMouseLeaves = true;
             TextEditorGrid.Children.Add(Highlighter);
 
             Underliner = new(TextEditorTextBoxCharacterSize);
@@ -85,33 +90,35 @@ namespace PiIDE {
             BlockCompletions = false;
         }
 
-        
-
         private void Python_Exited(object? sender, EventArgs e) {
             Dispatcher.Invoke(() => {
                 RunFileLocalButton.IsEnabled = true;
             });
         }
 
-        
-
-        private void Highlighter_OnHoverOverWord(object? sender, string e) {
-            Debug.WriteLine("Hover");
+        private void Highlighter_OnHoverOverWord(object? sender, JediName jediName) {
+            JediNameDescriber.Open(jediName);
+            JediNameDescriber.Margin = new((double) jediName.Column * TextEditorTextBoxCharacterSize.Width, (double) jediName.Line * TextEditorTextBoxCharacterSize.Height, 0, 0);
         }
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
 
         public virtual void SaveFile() {
-            File.WriteAllText(FilePath, TextEditorTextBox.Text);
-            ContentIsSaved = true;
-            OnFileSaved?.Invoke(this);
+            try {
+                File.WriteAllText(FilePath, TextEditorTextBox.Text);
+                ContentIsSaved = true;
+                OnFileSaved?.Invoke(this);
+            } catch (Exception ex) {
+                MessageBox.Show($"There was an error saving the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void ReloadFile() {
-            string fileContent = File.ReadAllText(FilePath);
-            string[] fileLines = fileContent.Split("\r\n");
-            TextEditorTextBox.Text = fileContent;
-            NumsTextBlock.Text = GetLineNumbers(fileLines.Length);
+            try {
+                TextEditorTextBox.Text = File.ReadAllText(FilePath);
+            } catch (Exception ex) {
+                MessageBox.Show($"There was an error loading the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -235,11 +242,19 @@ namespace PiIDE {
         private async void DisplayCodeCompletionsWithExtraTextAsync(string extraText) {
 
             // This method is intended to be used when the user presses a key and the input is not in textbox yet
+            // extraText must be one line!
 
             if (BlockCompletions || !EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
-            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), GetCaretRow() + 1, GetCaretCol() + extraText.Length);
+            Point caretPosition = GetCaretPosition();
+            caretPosition.Y++;
+            caretPosition.X += extraText.Length;
+
+            // TODO: en/disable type hinting based on performance or sth.
+            bool enableTypeHints = false;
+
+            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), enableTypeHints, caretPosition);
             CompletionUiList.SelectFirst();
             CompletionUiList.Margin = MarginAtCaretPosition();
         }
@@ -247,13 +262,14 @@ namespace PiIDE {
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = false;
+            TextChangedSinceLastHighlighted = true;
             ContentChanged?.Invoke(this, e);
 
-            string[] textLines = TextEditorTextBox.Text.Split("\r\n");
+            int textLines = Tools.CountLines(TextEditorTextBox.Text);
 
-            if (textLines.Length != CurrentAmountOfLines) {
-                NumsTextBlock.Text = GetLineNumbers(textLines.Length);
-                CurrentAmountOfLines = textLines.Length;
+            if (textLines != CurrentAmountOfLines) {
+                NumsTextBlock.Text = GetLineNumbers(textLines);
+                CurrentAmountOfLines = textLines;
             }
         }
 
@@ -274,15 +290,21 @@ namespace PiIDE {
 
         private int GetCaretCol() => Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
+        private Point GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
         private async void UpdateHighlighting() {
 
             while (true) {
 
-                while (DisableAllWrapers)
+                while (DisableAllWrapers || !TextChangedSinceLastHighlighted)
                     await Task.Delay(1000);
 
-                Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, FirstVisibleLineNum, LastVisibleLineNum);
+                // TODO: dynamicly en-/disable type hints (for performance reasons)
+                bool enableTypeHints = false;
+
+                Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, enableTypeHints, FirstVisibleLineNum, LastVisibleLineNum);
+
+                TextChangedSinceLastHighlighted = false;
 
                 await Task.Delay((LastVisibleLineNum - FirstVisibleLineNum) * 5 + 50);
             }
@@ -300,16 +322,16 @@ namespace PiIDE {
             double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Width;
 
-            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight * 0.5));
-            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight * 0.5));
+            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));
+            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
         }
 
         public void ScrollToPosition(int line, int column) {
             double verticalOffset = line * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = column * TextEditorTextBoxCharacterSize.Width;
 
-            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight * 0.5));
-            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight * 0.5));
+            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));
+            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
         }
 
         private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) => CompletionUiList.Close();

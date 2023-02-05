@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d"
              d:DesignWidth="800" Loaded="UserControl_Loaded">
 
@@ -12,6 +13,13 @@
         <ListView.View>
             <GridView >
 
+                <GridViewColumn>
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <fa:FontAwesome Icon="{Binding Icon}" Foreground="{Binding ForegroundColor}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
                 <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
                 <GridViewColumn Header="Code">
                     <GridViewColumn.CellTemplate>

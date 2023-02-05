@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PiIDE.Wrapers {
     internal static class JediSyntaxHighlighterWraper {
@@ -23,9 +24,11 @@ namespace PiIDE.Wrapers {
             process.Start();
         }
 
-        public static JediSyntaxHighlightedWord[] GetHighlightedWords(string filePath, string fileContent) {
+        public static JediName[] GetHighlightedWords(string filePath, string fileContent, bool enableTypeHints) {
+
             process.StandardInput.WriteLine(filePath);
-            process.StandardInput.WriteLine(fileContent.Split('\n').Length);
+            process.StandardInput.WriteLine(enableTypeHints? 1 : 0);
+            process.StandardInput.WriteLine(Tools.CountLines(fileContent));
             process.StandardInput.WriteLine(fileContent);
             string? line = process.StandardOutput.ReadLine();
 
@@ -33,27 +36,52 @@ namespace PiIDE.Wrapers {
 #if DEBUG
                 MessageBox.Show("The jedi language server failed to get syntax highlighting for this file", "Jedi Error", MessageBoxButton.OK, MessageBoxImage.Error);
 # endif
-                return Array.Empty<JediSyntaxHighlightedWord>();
+                return Array.Empty<JediName>();
             }
 
             try {
-                return JsonSerializer.Deserialize<JediSyntaxHighlightedWord[]>(line) ?? Array.Empty<JediSyntaxHighlightedWord>();
+                return JsonSerializer.Deserialize<JediName[]>(line) ?? Array.Empty<JediName>();
             } catch {
-                return Array.Empty<JediSyntaxHighlightedWord>();
+                return Array.Empty<JediName>();
             }
         }
     }
 
-    public class JediSyntaxHighlightedWord {
+    public class JediName {
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
-        [JsonPropertyName("line")]
-        public int Line { get; set; }
-        [JsonPropertyName("column")]
-        public int Column { get; set; }
-        [JsonPropertyName("type")]
-        public string Type { get; set; } = "";
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = "";
+        [JsonPropertyName("docstring")]
+        public string Docstring { get; set; } = "";
+        [JsonPropertyName("is_keyword")]
+        public bool IsKeyword { get; set; }
+        [JsonPropertyName("module_name")]
+        public string ModuleName { get; set; } = "";
+        [JsonPropertyName("module_path")]
+        public string ModulePath { get; set; } = "";
 
+        private string _type = "";
+
+        [JsonPropertyName("type")]
+        public string Type {
+            get { return _type; }
+            set {
+                ForegroundColor = TypeColors.TypeToColor(value);
+                Icon = TypeIcons.TypeToIcon(value);
+                _type = value;
+            }
+        }
+        public Brush? ForegroundColor { get; private set; }
+        public FontAwesome.WPF.FontAwesomeIcon Icon { get; private set; }
+
+
+        [JsonPropertyName("line")]
+        public int? Line { get; set; }
+        [JsonPropertyName("column")]
+        public int? Column { get; set; }
+        [JsonPropertyName("type_hint")]
+        public string? TypeHint { get; set; }
     }
 }

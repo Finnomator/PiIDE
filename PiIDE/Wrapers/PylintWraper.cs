@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace PiIDE.Wrapers {
     internal static class PylintWraper {
@@ -36,8 +37,6 @@ namespace PiIDE.Wrapers {
     }
 
     public class PylintMessage {
-        [JsonPropertyName("type")]
-        public string Type { get; set; } = "";
         [JsonPropertyName("module")]
         public string Module { get; set; } = "";
         [JsonPropertyName("obj")]
@@ -58,5 +57,20 @@ namespace PiIDE.Wrapers {
         public string Message { get; set; } = "";
         [JsonPropertyName("message-id")]
         public string MessageId { get; set; } = "";
+
+        private string _type = "";
+
+        [JsonPropertyName("type")]
+        public string Type {
+            get { return _type; }
+            set {
+                ForegroundColor = PylintMessageColors.MessageTypeToColor(value);
+                Icon = PylintMessageIcons.MessageTypeToIcon(value);
+                _type = value;
+            }
+        }
+
+        public FontAwesome.WPF.FontAwesomeIcon Icon { get; private set; }
+        public Brush? ForegroundColor { get; private set; }
     }
 }

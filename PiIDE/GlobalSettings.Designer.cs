@@ -118,5 +118,17 @@ namespace PiIDE {
                 this["AmpyIsUsable"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TempFiles/temp_file1.py")]
+        public global::System.Collections.Generic.List<System.String> LastOpenedFilePaths {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedFilePaths"]));
+            }
+            set {
+                this["LastOpenedFilePaths"] = value;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="100"
              d:DesignWidth="100"
@@ -12,7 +13,11 @@
     <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
         <ListBox.ItemTemplate>
             <DataTemplate>
-                <TextBlock Text="{Binding Name}" Foreground="{Binding ForegroundColor}"/>
+                <WrapPanel>
+                    <fa:FontAwesome Icon="{Binding Icon}" Foreground="{Binding ForegroundColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border BorderThickness="2"/>
+                    <TextBlock Text="{Binding Name}" Foreground="{Binding ForegroundColor}"/>
+                </WrapPanel>
             </DataTemplate>
         </ListBox.ItemTemplate>
 

@@ -26,5 +26,8 @@
     <Setting Name="AmpyIsUsable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="LastOpenedFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)">TempFiles/temp_file1.py</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

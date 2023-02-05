@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Point = System.Drawing.Point;
 
 namespace PiIDE {
 
@@ -31,9 +32,9 @@ namespace PiIDE {
             MainListBox.ItemsSource = null;
         }
 
-        public async Task ReloadCompletionsAsync(string fileContent, int caretLine, int caretColumn) {
+        public async Task ReloadCompletionsAsync(string fileContent, bool enableTypeHints, Point caretPosition) {
             Close();
-            Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, caretLine, caretColumn);
+            Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, enableTypeHints, caretPosition);
 
             if (completions.Length == 0)
                 return;

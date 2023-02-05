@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Point = System.Drawing.Point;
 
 namespace PiIDE.Wrapers {
     internal static class JediCompletionWraper {
@@ -27,17 +28,18 @@ namespace PiIDE.Wrapers {
             CompletionProcess.Start();
         }
 
-        public static async Task<Completion[]> GetCompletionAsync(string filePath, string fileContent, int row, int col) {
+        public static async Task<Completion[]> GetCompletionAsync(string filePath, string fileContent, bool enableTypeHints, Point colRow) {
 
             if (!FinishedGettingCompletions)
                 return Array.Empty<Completion>();
 
             FinishedGettingCompletions = false;
 
-            CompletionProcess.StandardInput.WriteLine($"{filePath}");
-            CompletionProcess.StandardInput.WriteLine(row);
-            CompletionProcess.StandardInput.WriteLine(col);
-            CompletionProcess.StandardInput.WriteLine(fileContent.Split('\n').Length);
+            CompletionProcess.StandardInput.WriteLine(filePath);
+            CompletionProcess.StandardInput.WriteLine(enableTypeHints ? 1 : 0);
+            CompletionProcess.StandardInput.WriteLine(colRow.Y);
+            CompletionProcess.StandardInput.WriteLine(colRow.X);
+            CompletionProcess.StandardInput.WriteLine(Tools.CountLines(fileContent));
             CompletionProcess.StandardInput.WriteLine(fileContent);
 
             string? line = await CompletionProcess.StandardOutput.ReadLineAsync();
@@ -79,20 +81,26 @@ namespace PiIDE.Wrapers {
         [JsonPropertyName("name_with_symbols")]
         public string NameWithSymbols { get; set; } = "";
 
-        private string _Type = "";
+        private string _type = "";
 
         [JsonPropertyName("type")]
         public string Type {
-            get { return _Type; }
+            get { return _type; }
             set {
                 ForegroundColor = TypeColors.TypeToColor(value);
-                _Type = value;
+                Icon = TypeIcons.TypeToIcon(value);
+                _type = value;
             }
         }
-        public Brush? ForegroundColor { get; set; }
+
+        public Brush? ForegroundColor { get; private set; }
+        public FontAwesome.WPF.FontAwesomeIcon Icon { get; private set; }
 
         [JsonPropertyName("line")]
         public int? Line { get; set; }
-
+        [JsonPropertyName("column")]
+        public int? Column { get; set; }
+        [JsonPropertyName("type_hint")]
+        public string? TypeHint { get; set; }
     }
 }

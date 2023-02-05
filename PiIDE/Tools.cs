@@ -6,6 +6,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
+using CommunityToolkit.HighPerformance;
 
 namespace PiIDE {
     public static class Tools {
@@ -20,39 +21,34 @@ namespace PiIDE {
         public static bool IsPythonExt(string ext) => PythonExtensions.Contains(ext);
 
         public static int GetColOfIndex(string text, int index) {
-            int caretLine = GetRowOfIndex(text, index);
+            int col = 0;
 
-            int offset = 0;
-            string[] lines = text.Split("\r\n");
-
-            for (int i = 0; i < caretLine; ++i)
-                offset += lines[i].Length + 2;
-
-            return index - offset;
+            for (int i = 0; i < index; i++) {
+                if (text[i] == '\n')
+                    col = 0;
+                else
+                    col++;
+            }
+            return col;
         }
 
-        public static int GetRowOfIndex(string text, int index) {
-
-            int offset = 0;
-            string[] lines = text.Split("\r\n");
-            int line = 0;
-
-            for (; index >= offset; ++line)
-                offset += lines[line].Length + 2;
-
-            return line - 1;
-        }
+        public static int GetRowOfIndex(string text, int index) => CountLines(text[..index]) - 1;
+        public static int CountLines(string text) => text.AsSpan().Count('\n') + 1;
 
         public static Point GetPointOfIndex(string text, int index) {
-            int caretLine = GetRowOfIndex(text, index);
 
-            int offset = 0;
-            string[] lines = text.Split("\r\n");
+            int col = 0;
+            int row = 0;
 
-            for (int i = 0; i < caretLine; ++i)
-                offset += lines[i].Length + 2;
+            for (int i = 0; i < index; i++) {
+                if (text[i] == '\n') {
+                    col = 0;
+                    row++;
+                } else
+                    col++;
+            }
 
-            return new Point(index - offset, caretLine);
+            return new Point(col, row);
         }
 
         public static int GetIndexOfColRow(string text, int row, int col) {

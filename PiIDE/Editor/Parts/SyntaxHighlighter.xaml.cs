@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
 
@@ -14,9 +15,9 @@ namespace PiIDE {
 
         // TODO: dont highlight keywords in comments and strings etc.
 
-        public EventHandler<string>? OnHoverOverWord;
-        public EventHandler<string>? OnStoppedHoveringOverWord;
-        public EventHandler<string>? OnClickOnWord;
+        public EventHandler<JediName>? OnHoverOverWord;
+        public EventHandler<JediName>? OnStoppedHoveringOverWord;
+        public EventHandler<JediName>? OnClickOnWord;
 
         private readonly Regex Rx = MyRegex();
         private readonly List<Button> OldChildren = new();
@@ -28,11 +29,11 @@ namespace PiIDE {
             FontSizes = fontSizes;
         }
 
-        public void HighglightText(string text, string filePath, int startLine, int endLine) {
+        public void HighglightText(string text, string filePath, bool enableTypeHints, int startLine, int endLine) {
 
             NewChildren.Clear();
             AddHighlightedKeywordsToChildren(text, startLine, endLine);
-            AddHighlightedJediWordsToChildren(filePath, text, startLine, endLine);
+            AddHighlightedJediWordsToChildren(filePath, text, enableTypeHints, startLine, endLine);
 
             if (NewChildren.Count == 0) {
                 OldChildren.Clear();
@@ -62,9 +63,7 @@ namespace PiIDE {
             foreach (Match match in FindKeywords(text)) {
 
                 int startIndex = match.Index;
-                string keyword = match.Value;
 
-                // TODO: This is pretty slow
                 Point indexPoint = Tools.GetPointOfIndex(text, startIndex);
 
                 if (indexPoint.Y > lowerLineLimit)
@@ -72,51 +71,79 @@ namespace PiIDE {
                 else if (indexPoint.Y < upperLineLimit)
                     continue;
 
-                AddNewButton(keyword, indexPoint, "keyword");
+                NewChildren.Add(CreateKeywordButton(match.Value, indexPoint));
             }
         }
 
-        private void AddNewButton(string keyword, Point indexPoint, string type) {
+        private Button CreateKeywordButton(string keyword, Point indexPoint) {
+            return new() {
+                Content = keyword,
+                Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
+                Foreground = TypeColors.TypeToColor("keyword"),
+                Background = Brushes.Transparent,
+                IsHitTestVisible = false,
+                FontFamily = Tools.CascadiaCodeFont,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                FontSize = 14,
+                BorderThickness = new(0),
+                Padding = new(0),
+            };
+        }
+
+        private Button CreateJediNameButton(JediName jediName, Point indexPoint) {
 
             // TODO: implement hover effects and stuff
 
             Button item = new() {
-                Content = keyword.Replace("_", "__"),
+                Content = jediName.Name.Replace("_", "__"),
                 Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
-                Foreground = TypeColors.TypeToColor(type),
-                IsHitTestVisible = false,
+                Foreground = TypeColors.TypeToColor(jediName.Type),
+                IsHitTestVisible = true,
+                Cursor = Cursors.Hand,
                 FontFamily = Tools.CascadiaCodeFont,
                 FontSize = 14,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Background = Brushes.Transparent,
+                // Background = Brushes.Transparent,
                 BorderThickness = new(0),
                 Padding = new(0),
             };
-            item.Click += (s, e) => OnClickOnWord?.Invoke(item, "");
-            item.MouseEnter += (s, e) => OnHoverOverWord?.Invoke(item, "");
-            item.MouseLeave += (s, e) => OnStoppedHoveringOverWord?.Invoke(item, "");
-            NewChildren.Add(item);
+
+            if (jediName.Type != "keyword") {
+                item.Click += (s, e) => {
+                    OnClickOnWord?.Invoke(item, jediName);
+                };
+                item.MouseEnter += (s, e) => {
+                    OnHoverOverWord?.Invoke(item, jediName);
+                };
+                item.MouseLeave += (s, e) => {
+                    OnStoppedHoveringOverWord?.Invoke(item, jediName);
+                };
+            }
+
+            return item;
         }
 
-        private void AddHighlightedJediWordsToChildren(string filePath, string fileContent, int upperLineLimit, int lowerLineLimit) {
+        private void AddHighlightedJediWordsToChildren(string filePath, string fileContent, bool enableTypeHints, int upperLineLimit, int lowerLineLimit) {
 
-            JediSyntaxHighlightedWord[] jediSyntaxHighlightedWords = JediSyntaxHighlighterWraper.GetHighlightedWords(filePath, fileContent);
+            JediName[] jediSyntaxHighlightedWords = JediSyntaxHighlighterWraper.GetHighlightedWords(filePath, fileContent, enableTypeHints);
 
             for (int i = 0; i < jediSyntaxHighlightedWords.Length; ++i) {
-                JediSyntaxHighlightedWord jediSyntaxHighlightedWord = jediSyntaxHighlightedWords[i];
+                JediName jediSyntaxHighlightedWord = jediSyntaxHighlightedWords[i];
 
-                int row = jediSyntaxHighlightedWord.Line;
-                int col = jediSyntaxHighlightedWord.Column;
-                string name = jediSyntaxHighlightedWord.Name;
-                string type = jediSyntaxHighlightedWord.Type;
+                int? row = jediSyntaxHighlightedWord.Line;
+                int? col = jediSyntaxHighlightedWord.Column;
+
+                if (col is null || row is null)
+                    throw new NullReferenceException();
 
                 if (row > lowerLineLimit)
                     break;
                 else if (row < upperLineLimit)
                     continue;
 
-                AddNewButton(name, new Point(col, row - 1), type);
+                NewChildren.Add(CreateJediNameButton(jediSyntaxHighlightedWords[i], new Point((int) col, (int) (row - 1))));
             }
         }
 
