@@ -2,6 +2,7 @@
 using PiIDE.Wrapers;
 using System;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,6 @@ using Point = System.Drawing.Point;
 namespace PiIDE {
 
     // TODO: Fix tabitems stacking. Replace with scrollbar
-    // TODO: Add "Saved on Board/Local" identifier
     // TODO: Automaticly insert indentation
 
     public partial class TextEditor : UserControl {
@@ -38,7 +38,7 @@ namespace PiIDE {
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
         public readonly PylingUnderliner Underliner;
-        private bool TextChangedSinceLastHighlighted;
+        private bool BeginSyntaxHiglighting;
 
         public int FirstVisibleLineNum { get; private set; }
         public int LastVisibleLineNum { get; private set; }
@@ -155,7 +155,6 @@ namespace PiIDE {
                             spaceToFillIndent = 4;
                         InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
                     }
-
                     e.Handled = true;
                     break;
                 case Key.S:
@@ -182,24 +181,27 @@ namespace PiIDE {
                 return;
 
             string keyString = e.Key.ToString();
+            char keyChar;
 
-            //TODO: dont open when key combos (like ctrl + a) are pressed
+            if (!Shortcuts.IsTheOnlyKeyPressed(e.Key))
+                return;
 
-            if (keyString.Length != 1) {
-                CompletionUiList.Close();
+            if (keyString.Length == 1) {
+                keyChar = keyString[0];
+                if (!char.IsLetter(keyChar)) {
+                    CompletionUiList.Close();
+                    return;
+                }
+            } else if (e.Key == Key.OemPeriod)
+                keyString = ".";
+            else {
+                if (e.Key != Key.LeftCtrl)
+                    CompletionUiList.Close();
                 return;
             }
 
-            char keyChar = keyString[0];
-            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift)) {
-                keyChar = char.ToLower(keyChar);
+            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
                 keyString = keyString.ToLower();
-            }
-
-            if (!char.IsLetter(keyChar) || !JediCompletionWraper.FinishedGettingCompletions) {
-                CompletionUiList.Close();
-                return;
-            }
 
             DisplayCodeCompletionsWithExtraTextAsync(keyString);
         }
@@ -254,15 +256,16 @@ namespace PiIDE {
             // TODO: en/disable type hinting based on performance or sth.
             bool enableTypeHints = false;
 
+            CompletionUiList.Margin = MarginAtCaretPosition();
             await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), enableTypeHints, caretPosition);
             CompletionUiList.SelectFirst();
-            CompletionUiList.Margin = MarginAtCaretPosition();
+            
         }
 
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = false;
-            TextChangedSinceLastHighlighted = true;
+            BeginSyntaxHiglighting = true;
             ContentChanged?.Invoke(this, e);
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
@@ -296,29 +299,27 @@ namespace PiIDE {
 
             while (true) {
 
-                while (DisableAllWrapers || !TextChangedSinceLastHighlighted)
-                    await Task.Delay(1000);
+                while (DisableAllWrapers || !BeginSyntaxHiglighting)
+                    await Task.Delay(10);
 
                 // TODO: dynamicly en-/disable type hints (for performance reasons)
                 bool enableTypeHints = false;
 
                 Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, enableTypeHints, FirstVisibleLineNum, LastVisibleLineNum);
 
-                TextChangedSinceLastHighlighted = false;
-
-                await Task.Delay((LastVisibleLineNum - FirstVisibleLineNum) * 5 + 50);
+                BeginSyntaxHiglighting = false;
             }
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
             FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
             LastVisibleLineNum = (int) ((e.VerticalOffset + TextEditorTextBox.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+            BeginSyntaxHiglighting = true;
         }
 
         public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
 
         public void ScrollToCaret() {
-            // TODO: Implement something to calculate col and row
             double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Width;
 

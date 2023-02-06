@@ -14,7 +14,7 @@
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <WrapPanel>
-                    <fa:FontAwesome Icon="{Binding Icon}" Foreground="{Binding ForegroundColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ContentPresenter Content="{Binding Icon}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <Border BorderThickness="2"/>
                     <TextBlock Text="{Binding Name}" Foreground="{Binding ForegroundColor}"/>
                 </WrapPanel>

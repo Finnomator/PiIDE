@@ -26,14 +26,3 @@ while True:
         print_completions_with_type_hints(completions)
     else:
         print_completions_without_type_hints(completions)
-    break
-class E:
-    pass
-
-
-
-def a():
-    pass
-
-b = "a"
-

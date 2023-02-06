@@ -1,8 +1,10 @@
 ﻿using PiIDE.Wrapers;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Point = System.Drawing.Point;
 
 namespace PiIDE {
@@ -28,12 +30,15 @@ namespace PiIDE {
             MainListBox.Visibility = Visibility.Visible;
         }
 
-        private void ClearCompletions() {
-            MainListBox.ItemsSource = null;
-        }
+        private void ClearCompletions() => MainListBox.ItemsSource = null;
 
         public async Task ReloadCompletionsAsync(string fileContent, bool enableTypeHints, Point caretPosition) {
-            Close();
+
+            SetIntoLoadingState();
+
+            if (!JediCompletionWraper.FinishedGettingCompletions)
+                return;
+
             Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, enableTypeHints, caretPosition);
 
             if (completions.Length == 0)
@@ -76,6 +81,16 @@ namespace PiIDE {
         private void ListBox_MouseLeftButtonDown(object sender, RoutedEventArgs e) {
             CompletionClicked?.Invoke(sender, (Completion) ((ListBoxItem) sender).Content);
             Close();
+        }
+
+        private void SetIntoLoadingState() {
+            Completion dumy = new() {
+                Name = "Loading...",
+                ForegroundColor = Brushes.Black,
+                Icon = new FontAwesome.WPF.FontAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true },
+            };
+            MainListBox.ItemsSource = new Completion[] { dumy };
+            MainListBox.Visibility = Visibility.Visible;
         }
 
         public void SelectFirst() {

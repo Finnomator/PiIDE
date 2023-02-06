@@ -70,7 +70,7 @@ namespace PiIDE.Wrapers {
             }
         }
 
-        public FontAwesome.WPF.FontAwesomeIcon Icon { get; private set; }
+        public FontAwesome.WPF.FontAwesome? Icon { get; private set; }
         public Brush? ForegroundColor { get; private set; }
     }
 }

@@ -20,8 +20,8 @@ namespace PiIDE {
         public EventHandler<JediName>? OnClickOnWord;
 
         private readonly Regex Rx = MyRegex();
-        private readonly List<Button> OldChildren = new();
-        private readonly List<Button> NewChildren = new();
+        private readonly List<HighlighterButton> OldChildren = new();
+        private readonly List<HighlighterButton> NewChildren = new();
         private readonly Size FontSizes;
 
         public SyntaxHighlighter(Size fontSizes) {
@@ -43,11 +43,15 @@ namespace PiIDE {
 
             int max = Math.Max(NewChildren.Count, OldChildren.Count);
 
+
+            // TODO: There is some bug here
             for (int i = 0; i < max; ++i) {
-                if (i < NewChildren.Count && i < OldChildren.Count && !NewChildren[i].Equals(OldChildren[i])) {
-                    MainCanvas.Children.RemoveAt(i);
-                    MainCanvas.Children.Insert(i, NewChildren[i]);
-                    OldChildren[i] = NewChildren[i];
+                if (i < NewChildren.Count && i < OldChildren.Count) {
+                    if (NewChildren[i] != OldChildren[i]) {
+                        MainCanvas.Children.RemoveAt(i);
+                        MainCanvas.Children.Insert(i, NewChildren[i]);
+                        OldChildren[i] = NewChildren[i];
+                    }
                 } else if (i < NewChildren.Count) {
                     MainCanvas.Children.Add(NewChildren[i]);
                     OldChildren.Add(NewChildren[i]);
@@ -75,7 +79,7 @@ namespace PiIDE {
             }
         }
 
-        private Button CreateKeywordButton(string keyword, Point indexPoint) {
+        private HighlighterButton CreateKeywordButton(string keyword, Point indexPoint) {
             return new() {
                 Content = keyword,
                 Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
@@ -91,11 +95,11 @@ namespace PiIDE {
             };
         }
 
-        private Button CreateJediNameButton(JediName jediName, Point indexPoint) {
+        private HighlighterButton CreateJediNameButton(JediName jediName, Point indexPoint) {
 
             // TODO: implement hover effects and stuff
 
-            Button item = new() {
+            HighlighterButton item = new() {
                 Content = jediName.Name.Replace("_", "__"),
                 Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
                 Foreground = TypeColors.TypeToColor(jediName.Type),
@@ -110,17 +114,15 @@ namespace PiIDE {
                 Padding = new(0),
             };
 
-            if (jediName.Type != "keyword") {
-                item.Click += (s, e) => {
-                    OnClickOnWord?.Invoke(item, jediName);
-                };
-                item.MouseEnter += (s, e) => {
-                    OnHoverOverWord?.Invoke(item, jediName);
-                };
-                item.MouseLeave += (s, e) => {
-                    OnStoppedHoveringOverWord?.Invoke(item, jediName);
-                };
-            }
+            item.Click += (s, e) => {
+                OnClickOnWord?.Invoke(item, jediName);
+            };
+            item.MouseEnter += (s, e) => {
+                OnHoverOverWord?.Invoke(item, jediName);
+            };
+            item.MouseLeave += (s, e) => {
+                OnStoppedHoveringOverWord?.Invoke(item, jediName);
+            };
 
             return item;
         }
@@ -153,5 +155,19 @@ namespace PiIDE {
 
         [GeneratedRegex("[\\w]+", RegexOptions.Compiled)]
         private static partial Regex MyRegex();
+
+
+        private class HighlighterButton : Button {
+
+            public static bool operator ==(HighlighterButton b1, HighlighterButton b2) {
+                if (b1 is null)
+                    return b2 is null;
+                return (string) b1.Content == (string) b2.Content && b1.Margin == b2.Margin;
+            }
+
+            public static bool operator !=(HighlighterButton b1, HighlighterButton b2) => !(b1 == b2);
+        }
     }
+
+
 }

@@ -93,8 +93,8 @@ namespace PiIDE.Wrapers {
             }
         }
 
-        public Brush? ForegroundColor { get; private set; }
-        public FontAwesome.WPF.FontAwesomeIcon Icon { get; private set; }
+        public Brush? ForegroundColor { get; set; }
+        public FontAwesome.WPF.FontAwesome? Icon { get; set; }
 
         [JsonPropertyName("line")]
         public int? Line { get; set; }
