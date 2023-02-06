@@ -7,7 +7,7 @@ namespace PiIDE {
     internal static class Shortcuts {
 
         // TODO: add all keys to this array
-        private static Key[] _keys = Enum.GetValues(typeof(Key)).Cast<Key>().ToArray();
+        private static readonly Key[] _keys = Enum.GetValues(typeof(Key)).Cast<Key>().ToArray();
 
         public static bool AreKeysPressed(Key[] keys) {
             for (int i = 0; i < keys.Length; i++) {

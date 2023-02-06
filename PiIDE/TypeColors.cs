@@ -136,12 +136,12 @@ namespace PiIDE {
             { "error", Error},
             {"warning", Warning },
             {"convention", Convention },
-            {"Refactor", Refactor },
+            {"refactor", Refactor },
             {"information", Information },
         };
 
         public static FontAwesome.WPF.FontAwesome MessageTypeToIcon(string type) {
-            if (TypeToIconMap.TryGetValue(type, out FontAwesome.WPF.FontAwesome value))
+            if (TypeToIconMap.TryGetValue(type, out FontAwesome.WPF.FontAwesome? value))
                 return value;
 # if DEBUG
             MessageBox.Show($"Type '{type}' not found");

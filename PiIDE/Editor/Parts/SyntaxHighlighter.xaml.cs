@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,6 +28,13 @@ namespace PiIDE {
         public SyntaxHighlighter(Size fontSizes) {
             InitializeComponent();
             FontSizes = fontSizes;
+        }
+
+        public void ForceAllButtonsToStayEnabled(bool enabled) {
+            for (int i = 0; i < MainCanvas.Children.Count; ++i) {
+                HighlighterButton button = (HighlighterButton) MainCanvas.Children[i];
+                button.StayEnabled = enabled;
+            }
         }
 
         public void HighglightText(string text, string filePath, bool enableTypeHints, int startLine, int endLine) {
@@ -103,13 +111,12 @@ namespace PiIDE {
                 Content = jediName.Name.Replace("_", "__"),
                 Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
                 Foreground = TypeColors.TypeToColor(jediName.Type),
-                IsHitTestVisible = true,
                 Cursor = Cursors.Hand,
                 FontFamily = Tools.CascadiaCodeFont,
                 FontSize = 14,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                // Background = Brushes.Transparent,
+                Background = Brushes.Transparent,
                 BorderThickness = new(0),
                 Padding = new(0),
             };
@@ -159,6 +166,25 @@ namespace PiIDE {
 
         private class HighlighterButton : Button {
 
+            public new event EventHandler? MouseLeave;
+            public new event MouseEventHandler? MouseEnter;
+
+            private bool _stayEnabled;
+            public bool StayEnabled {
+                get => _stayEnabled; set {
+                    _stayEnabled = value;
+                    IsHitTestVisible = value;
+                }
+            }
+
+            private Rect _rect;
+
+            public HighlighterButton() {
+                Loaded += delegate {
+                    _rect = new(0, 0, ActualWidth, ActualHeight);
+                };
+            }
+
             public static bool operator ==(HighlighterButton b1, HighlighterButton b2) {
                 if (b1 is null)
                     return b2 is null;
@@ -166,8 +192,27 @@ namespace PiIDE {
             }
 
             public static bool operator !=(HighlighterButton b1, HighlighterButton b2) => !(b1 == b2);
+
+            protected override void OnMouseEnter(MouseEventArgs e) {
+                MouseEnter?.Invoke(this, e);
+                IsHitTestVisible = StayEnabled;
+                WaitForMouseLeave();
+            }
+
+            private async void WaitForMouseLeave() {
+                System.Windows.Point mousePos = Mouse.GetPosition(this);
+
+                // The point.X is negative if the mouse comes from the right of the button, for some reason...
+                mousePos = new(Math.Abs(mousePos.X), mousePos.Y);
+
+                while (_rect.Contains(mousePos)) {
+                    await Task.Delay(100);
+                    mousePos = Mouse.GetPosition(this);
+                }
+
+                MouseLeave?.Invoke(this, EventArgs.Empty);
+                IsHitTestVisible = true;
+            }
         }
     }
-
-
 }

@@ -49,6 +49,8 @@ namespace PiIDE {
         public event EventHandler? ContentChanged;
         public event EventHandler? StartedPythonExecution;
 
+        public event EventHandler<JediName>? OnClickedOnWord;
+
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
 
@@ -78,6 +80,7 @@ namespace PiIDE {
             Highlighter = new(TextEditorTextBoxCharacterSize);
             Highlighter.OnHoverOverWord += Highlighter_OnHoverOverWord;
             Highlighter.OnStoppedHoveringOverWord += (s, e) => JediNameDescriber.CloseIfNotMouseOver();
+            Highlighter.OnClickOnWord += (s, e) => OnClickedOnWord?.Invoke(s, e);
             JediNameDescriber.CloseWhenMouseLeaves = true;
             TextEditorGrid.Children.Add(Highlighter);
 
@@ -335,7 +338,10 @@ namespace PiIDE {
             MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
         }
 
-        private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) => CompletionUiList.Close();
+        private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) {
+            CompletionUiList.Close();
+            Highlighter.ForceAllButtonsToStayEnabled(false);
+        }
 
         private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionUiList.Close();
 
@@ -349,6 +355,18 @@ namespace PiIDE {
         protected virtual void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
             PythonWraper.AsyncFileRunner.KillProcess();
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
+        }
+
+        private void TextEditorTextBox_PreviewKeyUp(object sender, KeyEventArgs e) {
+            if (e.Key == Key.LeftCtrl && Shortcuts.IsTheOnlyKeyPressed(Key.LeftCtrl)) {
+                Highlighter.ForceAllButtonsToStayEnabled(false);
+            }
+        }
+
+        private void TextEditorTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.LeftCtrl && Shortcuts.IsTheOnlyKeyPressed(Key.LeftCtrl)) {
+                Highlighter.ForceAllButtonsToStayEnabled(true);
+            }
         }
     }
 }

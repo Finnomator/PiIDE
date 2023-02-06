@@ -43,7 +43,7 @@ namespace PiIDE {
             return pylintMessages;
         }
 
-        private ScrollViewer FindScrollViewer(DependencyObject d) {
+        public static ScrollViewer FindScrollViewer(DependencyObject d) {
             if (d is ScrollViewer viewer)
                 return viewer;
 

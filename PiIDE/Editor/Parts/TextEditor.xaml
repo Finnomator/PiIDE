@@ -7,7 +7,7 @@
              xmlns:editorParts="clr-namespace:PiIDE.Editor.Parts"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown">
+             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="DarkGray">
 
     <Grid>
 
@@ -28,10 +28,10 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code"/>
+                <TextBlock Background="#E5FFFFFF" x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1"/>
 
                 <Grid x:Name="TextEditorGrid" Grid.Column="2">
-                    <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
+                    <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"  PreviewKeyDown="TextEditorTextBox_PreviewKeyDown" PreviewKeyUp="TextEditorTextBox_PreviewKeyUp"/>
                     <editorParts:JediNameDescription x:Name="JediNameDescriber" Panel.ZIndex="1"/>
                 </Grid>
             </Grid>

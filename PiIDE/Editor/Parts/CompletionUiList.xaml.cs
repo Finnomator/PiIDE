@@ -41,8 +41,10 @@ namespace PiIDE {
 
             Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, enableTypeHints, caretPosition);
 
-            if (completions.Length == 0)
+            if (completions.Length == 0) {
+                SetIntoNoSuggestionsState();
                 return;
+            }
 
             AddCompletions(completions);
         }
@@ -88,6 +90,15 @@ namespace PiIDE {
                 Name = "Loading...",
                 ForegroundColor = Brushes.Black,
                 Icon = new FontAwesome.WPF.FontAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true },
+            };
+            MainListBox.ItemsSource = new Completion[] { dumy };
+            MainListBox.Visibility = Visibility.Visible;
+        }
+
+        private void SetIntoNoSuggestionsState() {
+            Completion dumy = new() {
+                Name = "No Suggestions",
+                ForegroundColor = Brushes.Black,
             };
             MainListBox.ItemsSource = new Completion[] { dumy };
             MainListBox.Visibility = Visibility.Visible;

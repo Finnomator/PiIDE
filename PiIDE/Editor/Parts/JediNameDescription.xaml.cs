@@ -49,7 +49,5 @@ namespace PiIDE.Editor.Parts {
             if (CloseWhenMouseLeaves)
                 Close();
         }
-
-
     }
 }
