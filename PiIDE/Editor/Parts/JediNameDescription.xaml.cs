@@ -1,6 +1,8 @@
 ﻿using PiIDE.Wrapers;
 using System.Windows.Controls;
 using System.Windows;
+using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
+using System.Threading.Tasks;
 
 namespace PiIDE.Editor.Parts {
 
@@ -13,14 +15,17 @@ namespace PiIDE.Editor.Parts {
             Visibility = Visibility.Collapsed;
         }
 
-        public void Open(JediName jediName) {
+        public async Task OpenAsync(JediName jediName) {
             Visibility = Visibility.Visible;
             TypeTextBlock.Text = jediName.Type;
-            TypeTextBlock.Foreground = jediName.ForegroundColor;
+            TypeTextBlock.Foreground = jediName.Foreground;
             NameTextBlock.Text = jediName.Name;
 
-            if (jediName.TypeHint is not null) {
-                TypeHintTextBlock.Text = jediName.TypeHint;
+            string? typeHint = await jediName.GetTypeHint();
+            string? docstring = await jediName.Docstring();
+
+            if (jediName.GetTypeHint() is not null) {
+                TypeHintTextBlock.Text = typeHint;
                 TypeHintTextBlock.Visibility = Visibility.Visible;
                 TypeHintSeperatorTextBlock.Visibility = Visibility.Visible;
             } else {
@@ -28,11 +33,12 @@ namespace PiIDE.Editor.Parts {
                 TypeHintSeperatorTextBlock.Visibility = Visibility.Collapsed;
             }
 
-            if (string.IsNullOrEmpty(jediName.Docstring)) {
+
+            if (string.IsNullOrEmpty(docstring)) {
                 DocstringSeperator.Visibility = Visibility.Collapsed;
                 DocstringTextBlock.Visibility = Visibility.Collapsed;
             } else {
-                DocstringTextBlock.Text = jediName.Docstring;
+                DocstringTextBlock.Text = docstring;
                 DocstringSeperator.Visibility = Visibility.Visible;
                 DocstringTextBlock.Visibility = Visibility.Visible;
             }

@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
+using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
+using static PiIDE.Wrapers.JediWraper;
 
 namespace PiIDE {
 
@@ -37,11 +39,11 @@ namespace PiIDE {
             }
         }
 
-        public void HighglightText(string text, string filePath, bool enableTypeHints, int startLine, int endLine) {
+        public async Task HighglightTextAsync(Script script, int startLine, int endLine) {
 
             NewChildren.Clear();
-            AddHighlightedKeywordsToChildren(text, startLine, endLine);
-            AddHighlightedJediWordsToChildren(filePath, text, enableTypeHints, startLine, endLine);
+            AddHighlightedKeywordsToChildren(script.Code, startLine, endLine);
+            await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
 
             if (NewChildren.Count == 0) {
                 OldChildren.Clear();
@@ -134,12 +136,15 @@ namespace PiIDE {
             return item;
         }
 
-        private void AddHighlightedJediWordsToChildren(string filePath, string fileContent, bool enableTypeHints, int upperLineLimit, int lowerLineLimit) {
+        private async Task AddHighlightedJediWordsToChildrenAsync(Script script, int upperLineLimit, int lowerLineLimit) {
 
-            JediName[] jediSyntaxHighlightedWords = JediSyntaxHighlighterWraper.GetHighlightedWords(filePath, fileContent, enableTypeHints);
+            JediName[] jediSyntaxHighlightedWords = await script.GetNames(true, true, true);
 
             for (int i = 0; i < jediSyntaxHighlightedWords.Length; ++i) {
                 JediName jediSyntaxHighlightedWord = jediSyntaxHighlightedWords[i];
+
+                if (jediSyntaxHighlightedWord.Type == "keyword")
+                    continue;
 
                 int? row = jediSyntaxHighlightedWord.Line;
                 int? col = jediSyntaxHighlightedWord.Column;

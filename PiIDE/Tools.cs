@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
 using CommunityToolkit.HighPerformance;
+using System.Security.Policy;
 
 namespace PiIDE {
     public static class Tools {
@@ -69,5 +70,11 @@ namespace PiIDE {
         public static bool IsValidCOMPort(int comPort) => GetCOMPorts().Contains(comPort);
 
         public static bool EnableBoardInteractions => IsValidCOMPort(GlobalSettings.Default.SelectedCOMPort) && GlobalSettings.Default.AmpyIsUsable;
+
+        private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private static readonly Random random = new();
+
+        public static string GenerateRandomString(int length) => new string(Enumerable.Repeat(chars, length)
+        .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 }

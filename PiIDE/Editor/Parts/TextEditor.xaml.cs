@@ -12,6 +12,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
+using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
+using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
+using static PiIDE.Wrapers.JediWraper;
 
 namespace PiIDE {
 
@@ -29,6 +32,8 @@ namespace PiIDE {
         public readonly bool EnableJediCompletions;
         public readonly bool IsBoardFile;
         public bool ContentIsSaved { get; set; } = true;
+        public Script Script { get; private set; }
+        public WraperRepl WraperRepl { get; private set; }
 
         public bool DisableAllWrapers = true;
 
@@ -59,11 +64,13 @@ namespace PiIDE {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
             FileExt = Path.GetExtension(filePath);
-
             IsPythonFile = Tools.IsPythonExt(FileExt);
             EnablePylinging = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
             EnableJediCompletions = IsPythonFile;
+            string fileContent = File.ReadAllText(FilePath);
+            WraperRepl = new();
+            Script = new(WraperRepl, fileContent, filePath);
 
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
             PythonWraper.PythonExited += Python_Exited;
@@ -73,7 +80,7 @@ namespace PiIDE {
             Panel.SetZIndex(CompletionUiList, 1);
             TextEditorGrid.Children.Add(CompletionUiList);
 
-            ReloadFile();
+            ReloadFile(fileContent);
 
             TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
 
@@ -100,7 +107,7 @@ namespace PiIDE {
         }
 
         private void Highlighter_OnHoverOverWord(object? sender, JediName jediName) {
-            JediNameDescriber.Open(jediName);
+            JediNameDescriber.OpenAsync(jediName);
             JediNameDescriber.Margin = new((double) jediName.Column * TextEditorTextBoxCharacterSize.Width, (double) jediName.Line * TextEditorTextBoxCharacterSize.Height, 0, 0);
         }
 
@@ -123,6 +130,8 @@ namespace PiIDE {
                 MessageBox.Show($"There was an error loading the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        public void ReloadFile(string fileContent) => TextEditorTextBox.Text = fileContent;
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
 
@@ -255,12 +264,12 @@ namespace PiIDE {
             Point caretPosition = GetCaretPosition();
             caretPosition.Y++;
             caretPosition.X += extraText.Length;
-
-            // TODO: en/disable type hinting based on performance or sth.
-            bool enableTypeHints = false;
+            
+            Script = new(WraperRepl, TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), FilePath);
 
             CompletionUiList.Margin = MarginAtCaretPosition();
-            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), enableTypeHints, caretPosition);
+
+            await CompletionUiList.ReloadCompletionsAsync(Script, caretPosition);
             CompletionUiList.SelectFirst();
             
         }
@@ -305,18 +314,24 @@ namespace PiIDE {
                 while (DisableAllWrapers || !BeginSyntaxHiglighting)
                     await Task.Delay(10);
 
-                // TODO: dynamicly en-/disable type hints (for performance reasons)
-                bool enableTypeHints = false;
+                Script = new(WraperRepl, TextEditorTextBox.Text, FilePath);
 
-                Highlighter.HighglightText(TextEditorTextBox.Text, FilePath, enableTypeHints, FirstVisibleLineNum, LastVisibleLineNum);
+                await Highlighter.HighglightTextAsync(Script, FirstVisibleLineNum, LastVisibleLineNum);
 
                 BeginSyntaxHiglighting = false;
             }
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
-            FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
-            LastVisibleLineNum = (int) ((e.VerticalOffset + TextEditorTextBox.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+
+            int firstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+            int lastVisibleLineNum = ((int) ((e.VerticalOffset + TextEditorTextBox.ActualHeight) / TextEditorTextBoxCharacterSize.Height));
+
+            if (firstVisibleLineNum == FirstVisibleLineNum && lastVisibleLineNum == LastVisibleLineNum)
+                return;
+
+            FirstVisibleLineNum = firstVisibleLineNum;
+            LastVisibleLineNum = lastVisibleLineNum;
             BeginSyntaxHiglighting = true;
         }
 

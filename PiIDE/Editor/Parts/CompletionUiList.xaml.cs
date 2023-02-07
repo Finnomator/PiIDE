@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
+using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
+using Script = PiIDE.Wrapers.JediWraper.Script;
 
 namespace PiIDE {
 
@@ -32,14 +34,11 @@ namespace PiIDE {
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
 
-        public async Task ReloadCompletionsAsync(string fileContent, bool enableTypeHints, Point caretPosition) {
+        public async Task ReloadCompletionsAsync(Script script, Point caretPosition) {
 
             SetIntoLoadingState();
 
-            if (!JediCompletionWraper.FinishedGettingCompletions)
-                return;
-
-            Completion[] completions = await JediCompletionWraper.GetCompletionAsync(FilePath, fileContent, enableTypeHints, caretPosition);
+            Completion[] completions = await script.Complete(caretPosition.Y, caretPosition.X);
 
             if (completions.Length == 0) {
                 SetIntoNoSuggestionsState();
@@ -88,7 +87,7 @@ namespace PiIDE {
         private void SetIntoLoadingState() {
             Completion dumy = new() {
                 Name = "Loading...",
-                ForegroundColor = Brushes.Black,
+                Foreground = Brushes.Black,
                 Icon = new FontAwesome.WPF.FontAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true },
             };
             MainListBox.ItemsSource = new Completion[] { dumy };
@@ -98,7 +97,7 @@ namespace PiIDE {
         private void SetIntoNoSuggestionsState() {
             Completion dumy = new() {
                 Name = "No Suggestions",
-                ForegroundColor = Brushes.Black,
+                Foreground = Brushes.Black,
             };
             MainListBox.ItemsSource = new Completion[] { dumy };
             MainListBox.Visibility = Visibility.Visible;

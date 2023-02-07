@@ -14,7 +14,7 @@
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <WrapPanel>
-                    <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding ForegroundColor}"/>
+                    <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding Foreground}"/>
                     <Rectangle Width="3"/>
                     <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code"/>
                 </WrapPanel>
