@@ -132,12 +132,12 @@ namespace PiIDE {
         public static readonly FontAwesome.WPF.FontAwesome EverythingElse = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.QuestionCircle };
 
         private static readonly Dictionary<string, FontAwesome.WPF.FontAwesome> TypeToIconMap = new() {
-            {"fatal", Fatal },
+            { "fatal", Fatal },
             { "error", Error},
-            {"warning", Warning },
-            {"convention", Convention },
-            {"refactor", Refactor },
-            {"information", Information },
+            { "warning", Warning },
+            { "convention", Convention },
+            { "refactor", Refactor },
+            { "information", Information },
         };
 
         public static FontAwesome.WPF.FontAwesome MessageTypeToIcon(string type) {

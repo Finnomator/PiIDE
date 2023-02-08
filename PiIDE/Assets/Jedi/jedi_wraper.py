@@ -78,5 +78,11 @@ def print_obj(obj):
     print(orjson.dumps(obj).decode("utf-8"), flush=True)
 
 
+def print_one_line(s: str, *args, **kwargs):
+    if s is None:
+        print(None, flush=True, *args, **kwargs)
+    else:
+        print(s.replace("\n", r"\n").replace("\r", r"\r"), flush=True, *args, **kwargs)
+
 while True:
     exec(input())

@@ -7,11 +7,10 @@
              xmlns:editorParts="clr-namespace:PiIDE.Editor.Parts"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="DarkGray">
+             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="#FFE2E2E2">
 
     <Grid>
-
-        <Border Grid.Column="2" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,20,0" Background="White" BorderBrush="Gray" BorderThickness="1">
+        <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Background="White" BorderBrush="Gray" BorderThickness="1,0,1,1" Margin="0,0,17,0">
             <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
                 <Button Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
                 <Button x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Background="Transparent" Foreground="Red" BorderThickness="0" Padding="3">
@@ -19,22 +18,21 @@
                 </Button>
             </StackPanel>
         </Border>
-        
-        <ScrollViewer x:Name="MainScrollViewer" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
 
-                <TextBlock Background="#E5FFFFFF" x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1"/>
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-                <Grid x:Name="TextEditorGrid" Grid.Column="2">
-                    <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"  PreviewKeyDown="TextEditorTextBox_PreviewKeyDown" PreviewKeyUp="TextEditorTextBox_PreviewKeyUp"/>
-                    <editorParts:JediNameDescription x:Name="JediNameDescriber" Panel.ZIndex="1"/>
-                </Grid>
+            <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6D6D6D" TextAlignment="Right" Padding="5,0,5,0"/>
+
+            <TextBox x:Name="TextEditorTextBox" Grid.Column="2" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"  PreviewKeyDown="TextEditorTextBox_PreviewKeyDown" PreviewKeyUp="TextEditorTextBox_PreviewKeyUp" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+
+            <Grid x:Name="TextEditorGrid" Grid.Column="2">
+                <editorParts:JediNameDescription x:Name="JediNameDescriber" Panel.ZIndex="1"/>
             </Grid>
-        </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
+using WraperRepl = PiIDE.Wrapers.JediWraper.WraperRepl;
 using static PiIDE.Wrapers.JediWraper;
 
 namespace PiIDE {
@@ -26,10 +27,13 @@ namespace PiIDE {
         private readonly List<HighlighterButton> OldChildren = new();
         private readonly List<HighlighterButton> NewChildren = new();
         private readonly Size FontSizes;
+        private readonly WraperRepl Repl = new();
+        private readonly string FilePath;
 
-        public SyntaxHighlighter(Size fontSizes) {
+        public SyntaxHighlighter(Size fontSizes, string filePath) {
             InitializeComponent();
             FontSizes = fontSizes;
+            FilePath = filePath;
         }
 
         public void ForceAllButtonsToStayEnabled(bool enabled) {
@@ -39,10 +43,11 @@ namespace PiIDE {
             }
         }
 
-        public async Task HighglightTextAsync(Script script, int startLine, int endLine) {
+        public async Task HighglightTextAsync(string text, int startLine, int endLine) {
 
             NewChildren.Clear();
-            AddHighlightedKeywordsToChildren(script.Code, startLine, endLine);
+            Script script = new(Repl, text, FilePath);
+            AddHighlightedKeywordsToChildren(text, startLine, endLine);
             await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
 
             if (NewChildren.Count == 0) {

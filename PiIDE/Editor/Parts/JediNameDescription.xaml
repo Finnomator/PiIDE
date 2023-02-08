@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE.Editor.Parts"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" MouseLeave="Control_MouseLeave">
+             MouseLeave="Control_MouseLeave">
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Top">
         <Border BorderThickness="1" BorderBrush="Gray">
             <StackPanel Background="White">
@@ -15,10 +16,17 @@
                     <TextBlock Text=") "/>
                     <TextBlock x:Name="NameTextBlock" Text="Name"/>
                     <TextBlock x:Name="TypeHintSeperatorTextBlock" Text=": "/>
-                    <TextBlock x:Name="TypeHintTextBlock" Text="TypeHint"/>
+                    <Label x:Name="TypeHintLabel" Padding="0" VerticalAlignment="Center">
+                        <Label.Content>
+                            <fa:FontAwesome Icon="Spinner" Spin="True"/>
+                        </Label.Content>
+                    </Label>
                 </WrapPanel>
                 <Separator x:Name="DocstringSeperator"/>
-                <TextBlock x:Name="DocstringTextBlock" Text="Docstring"/>
+                <WrapPanel x:Name="DocstringWraper">
+                    <fa:FontAwesome x:Name="DocstringSpinner" Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
+                    <TextBox x:Name="DocstringTextBox" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Center"/>
+                </WrapPanel>
             </StackPanel>
         </Border>
     </ScrollViewer>

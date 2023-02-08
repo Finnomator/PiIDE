@@ -27,6 +27,7 @@ namespace PiIDE.Wrapers {
 
 #if DEBUG
             public string WritenInput = "";
+            public string WritenOutput = "";
 # endif
 
             private bool ReceivedOutputData;
@@ -38,6 +39,10 @@ namespace PiIDE.Wrapers {
             public WraperRepl() {
 
                 WraperProcess.OutputDataReceived += (s, e) => {
+#if DEBUG
+                    WritenOutput += (e.Data ?? "NULL") + "\n";
+                    Debug.WriteLine("Output: " + (e.Data ?? "NULL"));
+#endif
                     NewOutputData = e.Data;
                     ReceivedOutputData = true;
                 };
@@ -49,7 +54,6 @@ namespace PiIDE.Wrapers {
 
                 WraperProcess.Exited += (s, e) => {
                     MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    string inp = WritenInput;
                 };
 
                 WraperProcess.Start();
@@ -59,13 +63,14 @@ namespace PiIDE.Wrapers {
 
             public void WriteLine(string line) {
 # if DEBUG
+                Debug.WriteLine("Input: " + line);
                 WritenInput += line + "\n";
 # endif
                 WraperProcess.StandardInput.WriteLine(line);
             }
 
             public async Task<string?> ReadOutput() {
-                while (!ReceivedOutputData)
+                while (!ReceivedOutputData) 
                     await Task.Delay(10);
                 ReceivedOutputData = false;
                 return NewOutputData;
@@ -81,12 +86,15 @@ namespace PiIDE.Wrapers {
 
         public class Script {
 
-            public const string WraperVariableName = "script";
             public readonly WraperRepl Repl;
             public string Code { get; private set; }
             public string Path { get; private set; }
 
-            public Script(WraperRepl repl,  string code, string path) {
+            public const string WraperVariableName = "script";
+            public const string CompletionsVarName = "completions";
+            public const string NamesVarName = "names";
+
+            public Script(WraperRepl repl, string code, string path) {
                 // Repl should only be created once to avoid reinitializing the program (takes long)
                 Code = code;
                 Path = path;
@@ -99,16 +107,29 @@ namespace PiIDE.Wrapers {
             public T[] TryConvert<T>(string? line) where T : ReturnClasses.BaseName {
                 if (line is null)
                     return Array.Empty<T>();
-                T[] x = JsonSerializer.Deserialize<T[]>(line) ?? Array.Empty<T>();
 
-                for (int i = 0; i < x.Length; ++i)
+                T[] x;
+
+                try {
+                    x = JsonSerializer.Deserialize<T[]>(line) ?? Array.Empty<T>();
+                } catch {
+                    return Array.Empty<T>();
+                }
+
+                for (int i = 0; i < x.Length; ++i) {
                     x[i].Repl = Repl;
+                    if (typeof(T) == typeof(ReturnClasses.Name))
+                        x[i].VariableName = $"{NamesVarName}[{i}]";
+                    else if (typeof(T) == typeof(ReturnClasses.Completion))
+                        x[i].VariableName = $"{CompletionsVarName}[{i}]";
+                }
 
                 return x;
             }
 
             public async Task<ReturnClasses.Completion[]> Complete(int line, int column, bool fuzzy = false) {
-                Repl.WriteLine($"print_obj(dump_completions({WraperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})))");
+                Repl.WriteLine($"{CompletionsVarName} = {WraperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})");
+                Repl.WriteLine($"print_obj(dump_completions(completions))");
                 return TryConvert<ReturnClasses.Completion>(await Repl.ReadOutput());
             }
 
@@ -158,10 +179,10 @@ namespace PiIDE.Wrapers {
             }
 
             public async Task<ReturnClasses.Name[]> GetNames(bool allScopes = false, bool definitions = false, bool references = false) {
-                Repl.WriteLine($"print_obj(dump_names({WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})))");
+                Repl.WriteLine($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})");
+                Repl.WriteLine($"print_obj(dump_names(names))");
                 return TryConvert<ReturnClasses.Name>(await Repl.ReadOutput());
             }
-
         }
 
         public class ReturnClasses {
@@ -169,13 +190,13 @@ namespace PiIDE.Wrapers {
             public abstract class BaseName {
 
                 [JsonPropertyName("module_path")]
-                public string ModulePath { get; set; }
+                public string? ModulePath { get; set; }
                 [JsonPropertyName("name")]
                 public string? Name { get; set; }
 
-                public string _type;
+                public string? _type;
                 [JsonPropertyName("type")]
-                public string Type {
+                public string? Type {
                     get => _type; set {
                         _type = value;
                         Foreground = TypeColors.TypeToColor(value);
@@ -184,22 +205,22 @@ namespace PiIDE.Wrapers {
                 }
 
                 [JsonPropertyName("module_name")]
-                public string ModuleName { get; set; }
+                public string? ModuleName { get; set; }
                 [JsonPropertyName("line")]
                 public int? Line { get; set; }
                 [JsonPropertyName("column")]
                 public int? Column { get; set; }
                 [JsonPropertyName("description")]
-                public string Description { get; set; }
+                public string? Description { get; set; }
                 [JsonPropertyName("full_name")]
                 public string? FullName { get; set; }
 
-                public Brush Foreground { get; set; }
-                public FontAwesome.WPF.FontAwesome Icon { get; set; }
+                public Brush? Foreground { get; set; }
+                public FontAwesome.WPF.FontAwesome? Icon { get; set; }
 
-                protected readonly string VariableName = "base_name";
-                public WraperRepl Repl { get; set; }
-                protected readonly Script script;
+                public string? VariableName { get; set; }
+                public WraperRepl? Repl { get; set; }
+                protected readonly Script? script;
 
                 public BaseName(Script script) {
                     this.script = script;
@@ -215,68 +236,74 @@ namespace PiIDE.Wrapers {
                 }
 
                 public async Task<bool> InBuiltinModule() {
-                    Repl.WriteLine($"print({VariableName}.in_builtin_module(), flush=True)");
-                    return TryConvert<bool>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.in_builtin_module())");
+                    return await Repl.ReadOutput() == "True";
                 }
 
                 public async Task<(int row, int column)> GetDefinitionStartPosition() {
-                    Repl.WriteLine($"print({VariableName}.get_definition_start_position(), flush=True)");
-                    return TryConvert<(int, int)>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.get_definition_start_position())");
+                    string? res = await Repl.ReadOutput();
+                    string[] parts = res.Split(", ");
+                    return (int.Parse(parts[0][1..]), int.Parse(parts[1][..1]));
                 }
 
                 public async Task<(int row, int column)> GetDefinitionEndPosition() {
-                    Repl.WriteLine($"print({VariableName}.get_definition_end_position(), flush=True)");
-                    return TryConvert<(int, int)>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.get_definition_end_position())");
+                    string? res = await Repl.ReadOutput();
+                    string[] parts = res.Split(", ");
+                    return (int.Parse(parts[0][1..]), int.Parse(parts[1][..1]));
                 }
 
                 public async Task<string?> Docstring(bool raw = false, bool fast = true) {
-                    Repl.WriteLine($"print({VariableName}.docstring({(raw ? 1 : 0)}, {(fast ? 1 : 0)}), flush=True)");
-                    return TryConvert<string>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.docstring({(raw ? 1 : 0)}, {(fast ? 1 : 0)}))");
+                    string? res = await Repl.ReadOutput();
+                    return res is null? null : res.Replace("\\n", "\n");
                 }
 
                 public async Task<bool> IsStub() {
-                    Repl.WriteLine($"print({VariableName}.is_stub(), flush=True)");
-                    return TryConvert<bool>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.is_stub())");
+                    return await Repl.ReadOutput() == "True";
                 }
 
                 public async Task<bool> IsSideEffect() {
-                    Repl.WriteLine($"print({VariableName}.is_side_effect(), flush=True)");
-                    return TryConvert<bool>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.is_side_effect())");
+                    return await Repl.ReadOutput() == "True";
                 }
 
                 public async Task<Name[]> Goto(bool followImports = false, bool followBuiltinImports = false, bool onlyStubs = false, bool preferStubs = false) {
-                    Repl.WriteLine($"print({VariableName}.goto(follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)}), flush=True)");
+                    Repl.WriteLine($"print_obj(dump_names({VariableName}.goto(follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))");
                     return script.TryConvert<Name>(await Repl.ReadOutput());
                 }
 
                 public async Task<Name[]> Infer(bool onlyStubs = false, bool preferStubs = false) {
-                    Repl.WriteLine($"print({VariableName}.infer(only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)}), flush=True)");
+                    Repl.WriteLine($"print_obj(dump_names({VariableName}.infer(only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))");
                     return script.TryConvert<Name>(await Repl.ReadOutput());
                 }
 
                 public async Task<Name?> Parent() {
-                    Repl.WriteLine($"print({VariableName}.parent(), flush=True)");
+                    Repl.WriteLine($"print_obj(dump_names({VariableName}.parent()))");
                     return TryConvert<Name>(await Repl.ReadOutput());
                 }
 
                 public async Task<string?> GetLineCode(int before = 0, int after = 0) {
-                    Repl.WriteLine($"print({VariableName}.get_line_code({before}, {after}), flush=True)");
-                    return TryConvert<string>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.get_line_code({before}, {after}))");
+                    return await Repl.ReadOutput();
                 }
 
                 public async Task<BaseSignature[]> GetSignatures() {
-                    Repl.WriteLine($"print({VariableName}.get_signatures(), flush=True)");
+                    Repl.WriteLine($"print_obj(dump_signatures({VariableName}.get_signatures()))");
                     return script.TryConvert<BaseSignature>(await Repl.ReadOutput());
                 }
 
                 public async Task<Name[]> Execute() {
-                    Repl.WriteLine($"print({VariableName}.execute(), flush=True)");
+                    Repl.WriteLine($"print_obj(dump_names({VariableName}.execute()))");
                     return script.TryConvert<Name>(await Repl.ReadOutput());
                 }
 
                 public async Task<string?> GetTypeHint() {
-                    Repl.WriteLine($"print({VariableName}.get_type_hint(), flush=True)");
-                    return TryConvert<string>(await Repl.ReadOutput());
+                    Repl.WriteLine($"print_one_line({VariableName}.get_type_hint())");
+                    string? res = await Repl.ReadOutput();
+                    return res == "None" ? null : res;
                 }
             }
 
@@ -301,9 +328,9 @@ namespace PiIDE.Wrapers {
 
             public class Completion : BaseName {
                 [JsonPropertyName("complete")]
-                public string Complete { get; set; }
+                public string? Complete { get; set; }
                 [JsonPropertyName("name_with_symbols")]
-                public string NameWithSymbols { get; set; }
+                public string? NameWithSymbols { get; set; }
 
                 public Completion(Script script) : base(script) {
 

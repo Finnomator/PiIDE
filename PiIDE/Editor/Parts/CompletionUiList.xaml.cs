@@ -8,12 +8,14 @@ using System.Windows.Media;
 using Point = System.Drawing.Point;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 using Script = PiIDE.Wrapers.JediWraper.Script;
+using static PiIDE.Wrapers.JediWraper;
 
 namespace PiIDE {
 
     public partial class CompletionUiList : UserControl {
 
         private readonly string FilePath;
+        private readonly WraperRepl Repl = new();
         public EventHandler<Completion>? CompletionClicked;
 
         public CompletionUiList(string filePath) {
@@ -22,7 +24,7 @@ namespace PiIDE {
             Close();
         }
 
-        public Completion SelectedCompletion => (Completion) MainListBox.SelectedItem;
+        public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;
         public int CompletionsCount => MainListBox.Items.Count;
         public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
         public bool IsOpen => MainListBox.IsVisible;
@@ -34,11 +36,13 @@ namespace PiIDE {
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
 
-        public async Task ReloadCompletionsAsync(Script script, Point caretPosition) {
+        public async Task ReloadCompletionsAsync(string code, Point caretPosition) {
 
             SetIntoLoadingState();
 
+            Script script = new(Repl, code, FilePath);
             Completion[] completions = await script.Complete(caretPosition.Y, caretPosition.X);
+
 
             if (completions.Length == 0) {
                 SetIntoNoSuggestionsState();
@@ -51,6 +55,13 @@ namespace PiIDE {
         public void Close() {
             ClearCompletions();
             MainListBox.Visibility = Visibility.Collapsed;
+        }
+
+        public void CloseTemporary() => MainListBox.Visibility = Visibility.Collapsed;
+
+        public void LoadCached() {
+            if (MainListBox.Items.Count > 0)
+                MainListBox.Visibility = Visibility.Visible;
         }
 
         public void MoveSelectedCompletionUp() {
@@ -88,7 +99,7 @@ namespace PiIDE {
             Completion dumy = new() {
                 Name = "Loading...",
                 Foreground = Brushes.Black,
-                Icon = new FontAwesome.WPF.FontAwesome { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true },
+                Icon = Tools.FontAwesome_Loading,
             };
             MainListBox.ItemsSource = new Completion[] { dumy };
             MainListBox.Visibility = Visibility.Visible;

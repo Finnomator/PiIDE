@@ -56,13 +56,21 @@
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
 
-        <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged"/>
-        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+            <TabControl.Resources>
+                <Style TargetType="TabControl">
+                    <Setter Property="BorderThickness" Value="0,1,0,0"/>
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </TabControl.Resources>
+        </TabControl>
 
-            <StackPanel x:Name="UploadingFileStatusStackPanel" Orientation="Horizontal" Visibility="Collapsed">
+        <WrapPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Background="White">
+
+            <WrapPanel x:Name="UploadingFileStatusStackPanel" Orientation="Horizontal" Visibility="Collapsed">
                 <Label Content="UploadingFile" Padding="0" VerticalAlignment="Center"/>
                 <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
-            </StackPanel>
+            </WrapPanel>
 
             <Button x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" BorderThickness="0" Background="Transparent" Padding="3">
                 <fa:FontAwesome Icon="FolderOutlinepenOutline" FontSize="14"/>
@@ -76,7 +84,7 @@
                 <fa:FontAwesome Icon="Refresh"/>
             </Button>
 
-        </StackPanel>
+        </WrapPanel>
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3"/>
 

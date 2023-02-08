@@ -21,27 +21,33 @@ namespace PiIDE.Editor.Parts {
             TypeTextBlock.Foreground = jediName.Foreground;
             NameTextBlock.Text = jediName.Name;
 
+            DocstringWraper.Visibility = Visibility.Visible;
+            DocstringSeperator.Visibility = Visibility.Visible;
+            DocstringTextBox.Visibility = Visibility.Visible;
+
+            LoadingDocstringState();
+            LoadingTypeHintState();
+
             string? typeHint = await jediName.GetTypeHint();
+
+            TypeHintLabel.Content = string.IsNullOrEmpty(typeHint) ? "Any" : typeHint;
+
             string? docstring = await jediName.Docstring();
-
-            if (jediName.GetTypeHint() is not null) {
-                TypeHintTextBlock.Text = typeHint;
-                TypeHintTextBlock.Visibility = Visibility.Visible;
-                TypeHintSeperatorTextBlock.Visibility = Visibility.Visible;
-            } else {
-                TypeHintTextBlock.Visibility = Visibility.Collapsed;
-                TypeHintSeperatorTextBlock.Visibility = Visibility.Collapsed;
-            }
-
 
             if (string.IsNullOrEmpty(docstring)) {
                 DocstringSeperator.Visibility = Visibility.Collapsed;
-                DocstringTextBlock.Visibility = Visibility.Collapsed;
+                DocstringWraper.Visibility = Visibility.Collapsed;
             } else {
-                DocstringTextBlock.Text = docstring;
-                DocstringSeperator.Visibility = Visibility.Visible;
-                DocstringTextBlock.Visibility = Visibility.Visible;
+                DocstringTextBox.Text = docstring;
+                DocstringSpinner.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void LoadingTypeHintState() => TypeHintLabel.Content = Tools.FontAwesome_Loading;
+        private void LoadingDocstringState() {
+            DocstringWraper.Visibility = Visibility.Visible;
+            DocstringSpinner.Visibility = Visibility.Visible;
+            DocstringTextBox.Text = "";
         }
 
         public void Close() => Visibility = Visibility.Collapsed;
