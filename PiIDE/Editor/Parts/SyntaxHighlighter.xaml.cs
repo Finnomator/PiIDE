@@ -203,25 +203,34 @@ namespace PiIDE {
 
             public static bool operator !=(HighlighterButton b1, HighlighterButton b2) => !(b1 == b2);
 
-            protected override void OnMouseEnter(MouseEventArgs e) {
-                MouseEnter?.Invoke(this, e);
+            protected override async void OnMouseEnter(MouseEventArgs e) {
                 IsHitTestVisible = StayEnabled;
-                WaitForMouseLeave();
+
+                await Task.Delay(500);
+                System.Windows.Point mousePos = Mouse.GetPosition(this);
+
+                if (IsMouseOver()) {
+                    MouseEnter?.Invoke(this, e);
+                    WaitForMouseLeave();
+                } else {
+                    IsHitTestVisible = true;
+                }
             }
 
             private async void WaitForMouseLeave() {
-                System.Windows.Point mousePos = Mouse.GetPosition(this);
-
-                // The point.X is negative if the mouse comes from the right of the button, for some reason...
-                mousePos = new(Math.Abs(mousePos.X), mousePos.Y);
-
-                while (_rect.Contains(mousePos)) {
+                
+                while (IsMouseOver())
                     await Task.Delay(100);
-                    mousePos = Mouse.GetPosition(this);
-                }
 
                 MouseLeave?.Invoke(this, EventArgs.Empty);
                 IsHitTestVisible = true;
+            }
+
+            private new bool IsMouseOver() {
+                System.Windows.Point mousePos = Mouse.GetPosition(this);
+                // The point.X is negative if the mouse comes from the right of the button, for some reason...
+                mousePos.X = Math.Abs(mousePos.X);
+                return _rect.Contains(mousePos);
             }
         }
     }

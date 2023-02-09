@@ -41,7 +41,6 @@ namespace PiIDE {
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
         public readonly PylingUnderliner Underliner;
-        private bool BeginSyntaxHiglighting;
 
         public int FirstVisibleLineNum { get; private set; }
         public int LastVisibleLineNum { get; private set; }
@@ -103,8 +102,10 @@ namespace PiIDE {
         }
 
         private void Highlighter_OnHoverOverWord(object? sender, JediName jediName) {
+            Thickness margin = new((jediName.Column ?? 0) * TextEditorTextBoxCharacterSize.Width, (jediName.Line ?? 0) * TextEditorTextBoxCharacterSize.Height, 0, 0);
+            //JediNameDescriber.MaxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - (jediName.Line ?? 0) * TextEditorTextBoxCharacterSize.Height;
+            JediNameDescriber.Margin = margin;
             JediNameDescriber.OpenAsync(jediName);
-            JediNameDescriber.Margin = new((double) jediName.Column * TextEditorTextBoxCharacterSize.Width + TextEditorTextBox.HorizontalOffset, (double) jediName.Line * TextEditorTextBoxCharacterSize.Height + TextEditorTextBox.VerticalOffset, 0, 0);
         }
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
@@ -261,7 +262,9 @@ namespace PiIDE {
             caretPosition.Y++;
             caretPosition.X += extraText.Length;
 
-            CompletionUiList.Margin = MarginAtCaretPosition();
+            Thickness marginAtCaretPos = MarginAtCaretPosition();
+            CompletionUiList.Margin = marginAtCaretPos;
+            CompletionUiList.MaxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - marginAtCaretPos.Top;
             await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), caretPosition);
             CompletionUiList.SelectFirst();
         }
@@ -269,7 +272,7 @@ namespace PiIDE {
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = false;
-            BeginSyntaxHiglighting = true;
+            UpdateHighlighting();
             ContentChanged?.Invoke(this, e);
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
@@ -284,7 +287,7 @@ namespace PiIDE {
             Point caretPos = GetCaretPosition();
             return new(
                 (caretPos.X + 0.5) * TextEditorTextBoxCharacterSize.Width,
-                (caretPos.Y - (FirstVisibleLineNum == 0 ? 0 : FirstVisibleLineNum + 1) + 1) * TextEditorTextBoxCharacterSize.Height,
+                (caretPos.Y + 1) * TextEditorTextBoxCharacterSize.Height,
                 0,
                 0
             );
@@ -309,36 +312,18 @@ namespace PiIDE {
 
         private async void UpdateHighlighting() {
 
-            while (true) {
+            if (DisableAllWrapers)
+                return;
 
-                while (DisableAllWrapers || !BeginSyntaxHiglighting)
-                    await Task.Delay(10);
-
-                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FirstVisibleLineNum, LastVisibleLineNum);
-
-                BeginSyntaxHiglighting = false;
-            }
+            await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FirstVisibleLineNum, LastVisibleLineNum);
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
 
             FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
-            LastVisibleLineNum = (int) ((e.VerticalOffset + TextEditorTextBox.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+            LastVisibleLineNum = (int) ((e.VerticalOffset + MainGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
 
-            Thickness newMargin = new(-e.HorizontalOffset, -e.VerticalOffset, 0, 0);
-            Highlighter.Margin = newMargin;
-            NumsTextBlock.Margin = new(0, -e.VerticalOffset, 0, 0);
-            Underliner.Margin = newMargin;
-            Thickness caretMargin = MarginAtCaretPosition();
-
-            if (caretMargin.Top < 0)
-                CompletionUiList.CloseTemporary();
-            else {
-                CompletionUiList.Margin = caretMargin;
-                CompletionUiList.LoadCached();
-            }
-
-            BeginSyntaxHiglighting = true;
+            UpdateHighlighting();
         }
 
         public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
@@ -347,16 +332,16 @@ namespace PiIDE {
             double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Width;
 
-            TextEditorTextBox.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));
-            TextEditorTextBox.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
+            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));
+            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
         }
 
         public void ScrollToPosition(int line, int column) {
             double verticalOffset = line * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = column * TextEditorTextBoxCharacterSize.Width;
 
-            TextEditorTextBox.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));
-            TextEditorTextBox.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
+            MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));
+            MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
         }
 
         private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) {

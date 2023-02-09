@@ -15,7 +15,7 @@ namespace PiIDE.Editor.Parts {
             Visibility = Visibility.Collapsed;
         }
 
-        public async Task OpenAsync(JediName jediName) {
+        public async void OpenAsync(JediName jediName) {
             Visibility = Visibility.Visible;
             TypeTextBlock.Text = jediName.Type;
             TypeTextBlock.Foreground = jediName.Foreground;
@@ -25,6 +25,7 @@ namespace PiIDE.Editor.Parts {
             DocstringSeperator.Visibility = Visibility.Visible;
             DocstringTextBox.Visibility = Visibility.Visible;
 
+            
             LoadingDocstringState();
             LoadingTypeHintState();
 

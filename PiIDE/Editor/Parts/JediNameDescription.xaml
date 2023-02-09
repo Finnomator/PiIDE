@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PiIDE.Editor.Parts"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             MouseLeave="Control_MouseLeave">
+             MouseLeave="Control_MouseLeave" MaxWidth="200" MaxHeight="100">
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Top">
         <Border BorderThickness="1" BorderBrush="Gray">
             <StackPanel Background="White">
