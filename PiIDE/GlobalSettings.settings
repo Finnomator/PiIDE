@@ -29,5 +29,8 @@
     <Setting Name="LastOpenedFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="LastOpenedFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

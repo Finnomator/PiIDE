@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:PiIDE.Editor.Parts"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             MouseLeave="Control_MouseLeave" MaxWidth="200" MaxHeight="100">
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Top">
-        <Border BorderThickness="1" BorderBrush="Gray">
+             MouseLeave="Control_MouseLeave" MaxWidth="300" MaxHeight="400">
+    <Border BorderThickness="1" BorderBrush="Gray">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <StackPanel Background="White">
                 <WrapPanel>
                     <TextBlock Text="("/>
@@ -28,7 +28,6 @@
                     <TextBox x:Name="DocstringTextBox" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Center"/>
                 </WrapPanel>
             </StackPanel>
-        </Border>
-    </ScrollViewer>
-        
+        </ScrollViewer>
+    </Border>
 </UserControl>

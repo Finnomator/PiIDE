@@ -129,5 +129,17 @@ namespace PiIDE {
                 this["LastOpenedFilePaths"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastOpenedFilePath {
+            get {
+                return ((string)(this["LastOpenedFilePath"]));
+            }
+            set {
+                this["LastOpenedFilePath"] = value;
+            }
+        }
     }
 }

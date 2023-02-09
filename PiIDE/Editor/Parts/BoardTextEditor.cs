@@ -23,7 +23,7 @@ namespace PiIDE.Editor.Parts {
             }
         };
 
-        public BoardTextEditor(string filePath, string boardFilePath) : base(filePath) {
+        public BoardTextEditor(string filePath, string boardFilePath, bool disableAllWrapers = false) : base(filePath, disableAllWrapers) {
             BoardFilePath = boardFilePath;
             RunFileOnBoardButton.Click += RunFileOnBoardButton_Click;
             AmpyWraper.AmpyExited += Ampy_Exited;

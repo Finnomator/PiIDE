@@ -30,18 +30,16 @@ namespace PiIDE {
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinging;
         public readonly bool EnableJediCompletions;
-        public readonly bool IsBoardFile;
-        public bool ContentIsSaved { get; set; } = true;
 
-        public bool DisableAllWrapers = true;
-
-        private bool BlockCompletions = true;
         private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
         public readonly PylingUnderliner Underliner;
 
+        public bool DisableAllWrapers { get; set; }
+
+        public bool ContentIsSaved { get; private set; } = true;
         public int FirstVisibleLineNum { get; private set; }
         public int LastVisibleLineNum { get; private set; }
 
@@ -56,29 +54,29 @@ namespace PiIDE {
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
 
-        public TextEditor(string filePath) {
+        public TextEditor(string filePath, bool disableAllWrapers = false) {
             InitializeComponent();
             FilePath = filePath;
+            DisableAllWrapers = disableAllWrapers;
             FileName = Path.GetFileName(filePath);
             FileExt = Path.GetExtension(filePath);
             IsPythonFile = Tools.IsPythonExt(FileExt);
             EnablePylinging = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
             EnableJediCompletions = IsPythonFile;
+            TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
             string fileContent = File.ReadAllText(FilePath);
 
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
             PythonWraper.PythonExited += Python_Exited;
 
+            // Completion suggestions stuff
             CompletionUiList = new(FilePath);
             CompletionUiList.CompletionClicked += CompletionUiList_CompletionClick;
             Panel.SetZIndex(CompletionUiList, 1);
             TextEditorGrid.Children.Add(CompletionUiList);
 
-            ReloadFile(fileContent);
-
-            TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
-
+            // Syntax highlighter and var describer stuff
             Highlighter = new(TextEditorTextBoxCharacterSize, FilePath);
             Highlighter.OnHoverOverWord += Highlighter_OnHoverOverWord;
             Highlighter.OnStoppedHoveringOverWord += (s, e) => JediNameDescriber.CloseIfNotMouseOver();
@@ -86,13 +84,11 @@ namespace PiIDE {
             JediNameDescriber.CloseWhenMouseLeaves = true;
             TextEditorGrid.Children.Add(Highlighter);
 
+            // Pylint underlining stuff
             Underliner = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Underliner);
 
-            if (EnablePythonSyntaxhighlighting && GlobalSettings.Default.JediIsUsable)
-                UpdateHighlighting();
-
-            BlockCompletions = false;
+            ReloadFile(fileContent);
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -102,8 +98,17 @@ namespace PiIDE {
         }
 
         private void Highlighter_OnHoverOverWord(object? sender, JediName jediName) {
-            Thickness margin = new((jediName.Column ?? 0) * TextEditorTextBoxCharacterSize.Width, (jediName.Line ?? 0) * TextEditorTextBoxCharacterSize.Height, 0, 0);
-            //JediNameDescriber.MaxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - (jediName.Line ?? 0) * TextEditorTextBoxCharacterSize.Height;
+            System.Windows.Point mousePos = Mouse.GetPosition(TextEditorGrid);
+            Thickness margin = new(mousePos.X, mousePos.Y, 0, 0);
+
+            double maxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - margin.Top;
+            double maxWidth = TextEditorGrid.ActualWidth - margin.Left;
+
+            if (maxHeight < 400)
+                JediNameDescriber.MaxHeight = maxHeight;
+            if (maxWidth < 300)
+                JediNameDescriber.MaxWidth = maxWidth;
+
             JediNameDescriber.Margin = margin;
             JediNameDescriber.OpenAsync(jediName);
         }
@@ -159,7 +164,7 @@ namespace PiIDE {
                         CompletionUiList.Close();
                     } else {
                         // TODO: replace with a variable option
-                        int spaceToFillIndent = 4 - GetCaretCol() % 4;
+                        int spaceToFillIndent = 4 - GetCaretPosition().X % 4;
                         if (spaceToFillIndent == 0)
                             spaceToFillIndent = 4;
                         InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
@@ -222,8 +227,6 @@ namespace PiIDE {
             if (completion.Complete is null || completion.Complete.Length == 0)
                 return;
 
-            BlockCompletions = true;
-
             int oldCaretIndex = TextEditorTextBox.CaretIndex;
             int completionStart = oldCaretIndex - (completion.Name.Length - completion.Complete.Length);
             int toRemoveLen = completion.Name.Length - completion.Complete.Length;
@@ -234,16 +237,12 @@ namespace PiIDE {
             int newIndex = oldCaretIndex + completion.Complete.Length;
 
             TextEditorTextBox.CaretIndex = newIndex < 0 ? 0 : newIndex;
-
-            BlockCompletions = false;
         }
 
         private void InsertAtCaretAndMoveCaret(string text) {
-            BlockCompletions = true;
             int oldCaretIndex = TextEditorTextBox.CaretIndex;
             TextEditorTextBox.Text = TextEditorTextBox.Text.Insert(oldCaretIndex, text);
             TextEditorTextBox.CaretIndex = oldCaretIndex + text.Length;
-            BlockCompletions = false;
         }
 
         public static string GetLineNumbers(int lines) => string.Join(Environment.NewLine, Enumerable.Range(1, lines));
@@ -255,7 +254,7 @@ namespace PiIDE {
             // This method is intended to be used when the user presses a key and the input is not in textbox yet
             // extraText must be one line!
 
-            if (BlockCompletions || !EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
+            if (!EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
             Point caretPosition = GetCaretPosition();
@@ -272,7 +271,7 @@ namespace PiIDE {
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = false;
-            UpdateHighlighting();
+            UpdateHighlighting(true);
             ContentChanged?.Invoke(this, e);
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
@@ -306,24 +305,29 @@ namespace PiIDE {
             return new Size(formattedText.Width, formattedText.Height);
         }
 
-        private int GetCaretCol() => Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         private Point GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
-        private async void UpdateHighlighting() {
+        private async void UpdateHighlighting(bool textChangedSinceLastHighlighting) {
 
             if (DisableAllWrapers)
                 return;
 
-            await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FirstVisibleLineNum, LastVisibleLineNum);
+            if (textChangedSinceLastHighlighting)
+                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FirstVisibleLineNum, LastVisibleLineNum);
+            else
+                Highlighter.UpdateHighlighting(FirstVisibleLineNum, LastVisibleLineNum);
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
 
+            if (e.HorizontalChange == 0 && e.VerticalChange == 0)
+                return;
+
             FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
             LastVisibleLineNum = (int) ((e.VerticalOffset + MainGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
 
-            UpdateHighlighting();
+            UpdateHighlighting(false);
         }
 
         public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);

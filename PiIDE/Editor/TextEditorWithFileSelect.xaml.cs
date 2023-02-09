@@ -32,9 +32,12 @@ namespace PiIDE {
                 Directory.CreateDirectory(LocalBoardPath);
 
             // TODO: board files are opened as normals files
-            for (int i = GlobalSettings.Default.LastOpenedFilePaths.Count - 1; i >= 0; i--) {
-                string path = GlobalSettings.Default.LastOpenedFilePaths[i];
-                OpenFile(path);
+            // TODO: the files are opened in reverse
+            List<string> lastOpenedFiles = GlobalSettings.Default.LastOpenedFilePaths;
+            string? lastOpenedFile = GlobalSettings.Default.LastOpenedFilePath;
+            for (int i = lastOpenedFiles.Count - 1; i >= 0; i--) {
+                string path = lastOpenedFiles[i];
+                OpenFile(path, path != lastOpenedFile);
             }
 
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
@@ -48,7 +51,7 @@ namespace PiIDE {
 
         private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
-        public void OpenFile(string filePath, bool onBoard = false) {
+        public void OpenFile(string filePath, bool openInBackground = false, bool onBoard = false) {
 
             if (IsFileOpen(filePath)) {
                 MainTabControl.SelectedIndex = GetTabIndexOfOpenFile(filePath);
@@ -61,24 +64,25 @@ namespace PiIDE {
                 return;
             }
 
-            TextEditor textEditor = AddFile(filePath, onBoard);
-            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-            UpdatePylintMessages(textEditor);
+            TextEditor textEditor = AddFile(filePath, openInBackground, onBoard);
+            if (!openInBackground) {
+                MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                UpdatePylintMessages(textEditor);
+            }
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
 
-        private TextEditor AddFile(string filePath, bool onBoard = false, int atIndex = -1) {
+        private TextEditor AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
             TextEditor textEditor;
 
             if (onBoard) {
-                textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..]);
+                textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..], openInBackground) { DisableAllWrapers = openInBackground };
                 ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Visible; };
                 ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Collapsed; };
                 ((BoardTextEditor) textEditor).StartedPythonExecutionOnBoard += (s, e) => OutputTabControl.SelectedIndex = 1;
             } else
-                textEditor = new(filePath);
-
+                textEditor = new(filePath, openInBackground);
 
             EditorTabItem tabItem = new(filePath) {
                 Content = textEditor,
@@ -136,6 +140,7 @@ namespace PiIDE {
 
             OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
             OpenTextEditor.DisableAllWrapers = false;
+            GlobalSettings.Default.LastOpenedFilePath = OpenTextEditor.FilePath;
         }
 
         private void OpenFileButton_Click(object sender, RoutedEventArgs e) {

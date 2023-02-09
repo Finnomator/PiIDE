@@ -24,7 +24,6 @@ namespace PiIDE.Editor.Parts {
             DocstringWraper.Visibility = Visibility.Visible;
             DocstringSeperator.Visibility = Visibility.Visible;
             DocstringTextBox.Visibility = Visibility.Visible;
-
             
             LoadingDocstringState();
             LoadingTypeHintState();

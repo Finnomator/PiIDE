@@ -96,6 +96,7 @@ namespace PiIDE {
         }
 
         private void SetIntoLoadingState() {
+            /*
             Completion dumy = new() {
                 Name = "Loading...",
                 Foreground = Brushes.Black,
@@ -103,15 +104,18 @@ namespace PiIDE {
             };
             MainListBox.ItemsSource = new Completion[] { dumy };
             MainListBox.Visibility = Visibility.Visible;
+            */
         }
 
         private void SetIntoNoSuggestionsState() {
+            /*
             Completion dumy = new() {
                 Name = "No Suggestions",
                 Foreground = Brushes.Black,
             };
             MainListBox.ItemsSource = new Completion[] { dumy };
             MainListBox.Visibility = Visibility.Visible;
+            */
         }
 
         public void SelectFirst() {
