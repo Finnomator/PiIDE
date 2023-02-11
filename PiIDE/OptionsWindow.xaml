@@ -75,7 +75,7 @@
 
                         <WrapPanel>
                             <Label Content="Performance: "/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
+                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" ContextMenuClosing="SyntaxHighlighterPerformance_ContextMenuClosing">
                                 <ComboBoxItem Content="Normal"/>
                                 <ComboBoxItem Content="Performance"/>
                             </ComboBox>
