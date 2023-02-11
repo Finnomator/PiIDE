@@ -54,5 +54,26 @@ namespace PiIDE {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
+
+        private void HighlightingMode_ContextMenuClosing(object sender, ContextMenuEventArgs e) {
+            HighlightingMode mode = (HighlightingMode) ((ComboBox) sender).SelectedIndex;
+        }
+
+        private void SyntaxHighlighterPerformance_ContextMenuClosing(object sender, ContextMenuEventArgs e) {
+            HighlightingPerformanceMode mode = (HighlightingPerformanceMode) ((ComboBox) sender).SelectedIndex;
+        }
+    }
+
+
+    public enum HighlightingMode {
+        JediAndKeywords,
+        JediOnly,
+        KeywordsOnly,
+        None,
+    }
+
+    public enum HighlightingPerformanceMode {
+        Normal,
+        Performance,
     }
 }

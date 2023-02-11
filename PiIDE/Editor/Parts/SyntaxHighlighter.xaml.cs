@@ -29,7 +29,6 @@ namespace PiIDE {
         private readonly List<HighlighterButton> OldChildren = new();
         private readonly List<HighlighterButton> NewChildren = new();
         private readonly Size FontSizes;
-        private readonly WraperRepl Repl = new();
         private readonly string FilePath;
         private JediName[]? CachedJediNames;
         private Match[]? CachedKeywordMatches;
@@ -53,6 +52,7 @@ namespace PiIDE {
             if (CachedJediNames is null || CachedKeywordText is null)
                 return;
 
+            NewChildren.Clear();
             AddJediNamesToChildren(CachedJediNames, startLine, endLine);
             AddHighlightedKeywordsToChildren(CachedKeywordText, startLine, endLine);
             UpdateVisualChildren();
@@ -61,7 +61,7 @@ namespace PiIDE {
         public async Task HighglightTextAsync(string text, int startLine, int endLine) {
 
             NewChildren.Clear();
-            Script script = new(Repl, text, FilePath);
+            Script script = new(text, FilePath);
             AddHighlightedKeywordsToChildren(text, startLine, endLine);
             await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
 
@@ -75,24 +75,27 @@ namespace PiIDE {
         }
 
         private void UpdateVisualChildren() {
-            int max = Math.Max(NewChildren.Count, OldChildren.Count);
+            int min = Math.Min(NewChildren.Count, OldChildren.Count);
 
-            for (int i = 0; i < max; ++i) {
-                if (i < NewChildren.Count && i < OldChildren.Count) {
-                    if (NewChildren[i] != OldChildren[i]) {
-                        MainCanvas.Children.RemoveAt(i);
-                        MainCanvas.Children.Insert(i, NewChildren[i]);
-                        OldChildren[i] = NewChildren[i];
-                    }
-                } else if (i < NewChildren.Count) {
-                    MainCanvas.Children.Add(NewChildren[i]);
-                    OldChildren.Add(NewChildren[i]);
-                } else if (i < OldChildren.Count) {
-                    MainCanvas.Children.RemoveAt(MainCanvas.Children.Count - 1);
-                    OldChildren.RemoveAt(OldChildren.Count - 1);
+            for (int i = 0; i < min; ++i) {
+                if (NewChildren[i] != OldChildren[i]) {
+                    MainCanvas.Children.RemoveAt(i);
+                    MainCanvas.Children.Insert(i, NewChildren[i]);
+                    OldChildren[i] = NewChildren[i];
                 }
             }
+
+            for (int i = min; i < NewChildren.Count; ++i) {
+                MainCanvas.Children.Add(NewChildren[i]);
+                OldChildren.Add(NewChildren[i]);
+            }
+
+            for (int i = min; i < OldChildren.Count; ++i) {
+                MainCanvas.Children.RemoveAt(i);
+                OldChildren.RemoveAt(i);
+            }
         }
+
 
         private void AddHighlightedKeywordsToChildren(string text, int upperLineLimit, int lowerLineLimit) {
             CachedKeywordMatches = FindKeywords(text);
@@ -129,8 +132,8 @@ namespace PiIDE {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
                 FontSize = 14,
-                BorderThickness = new(0),
-                Padding = new(0),
+                BorderThickness = Tools.ZeroThichness,
+                Padding = Tools.ZeroThichness,
             };
         }
 
@@ -146,8 +149,8 @@ namespace PiIDE {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
                 Background = Brushes.Transparent,
-                BorderThickness = new(0),
-                Padding = new(0),
+                BorderThickness = Tools.ZeroThichness,
+                Padding = Tools.ZeroThichness,
             };
 
             item.Click += (s, e) => {

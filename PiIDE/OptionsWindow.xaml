@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
     <TabControl>
@@ -40,6 +41,60 @@
                     </Label>
                 </WrapPanel>
             </StackPanel>
+        </TabItem>
+
+        <TabItem Header="Editor">
+            <TabControl TabStripPlacement="Left">
+                <TabItem Header="General">
+                    <StackPanel>
+                        <WrapPanel>
+                            <Label Content="Font Size: "/>
+                            <TextBox Text="14" VerticalContentAlignment="Center"/>
+                        </WrapPanel>
+
+                        <WrapPanel>
+                            <Label Content="Font"/>
+                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
+                                <ComboBoxItem Content="Cascadia Code"/>
+                            </ComboBox>
+                        </WrapPanel>
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Syntax Highlighter">
+                    <StackPanel>
+                        <WrapPanel>
+                            <Label Content="Highlighting Mode: "/>
+                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" ContextMenuClosing="HighlightingMode_ContextMenuClosing">
+                                <ComboBoxItem Content="Jedi + Keywords"/>
+                                <ComboBoxItem Content="Jedi Only"/>
+                                <ComboBoxItem Content="Keywords Only"/>
+                                <ComboBoxItem Content="None"/>
+                            </ComboBox>
+                        </WrapPanel>
+
+                        <WrapPanel>
+                            <Label Content="Performance: "/>
+                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
+                                <ComboBoxItem Content="Normal"/>
+                                <ComboBoxItem Content="Performance"/>
+                            </ComboBox>
+                            <Button BorderThickness="0" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,0,0" Background="Transparent" Foreground="#FF6E8EDA">
+                                <Button.Content>
+                                    <fa:FontAwesome Icon="QuestionCircle"/>
+                                </Button.Content>
+
+                                <Button.ToolTip>
+                                    <TextBlock xml:space="preserve">Normal Mode:
+    Standard syntax highlighting, gets slow on large files.
+Performance Mode:
+    Improves performance for large files. Highlighting maight be inaccurate.</TextBlock>
+                                </Button.ToolTip>
+                            </Button>
+                        </WrapPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
         </TabItem>
     </TabControl>
 </Window>

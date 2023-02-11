@@ -78,5 +78,7 @@ namespace PiIDE {
         .Select(s => s[random.Next(s.Length)]).ToArray());
 
         public static FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment=VerticalAlignment.Center };
+
+        public static readonly Thickness ZeroThichness = new(0);
     }
 }

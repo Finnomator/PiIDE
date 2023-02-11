@@ -15,7 +15,6 @@ namespace PiIDE {
     public partial class CompletionUiList : UserControl {
 
         private readonly string FilePath;
-        private readonly WraperRepl Repl = new();
         public EventHandler<Completion>? CompletionClicked;
 
         public CompletionUiList(string filePath) {
@@ -40,7 +39,7 @@ namespace PiIDE {
 
             SetIntoLoadingState();
 
-            Script script = new(Repl, code, FilePath);
+            Script script = new(code, FilePath);
             Completion[] completions = await script.Complete(caretPosition.Y, caretPosition.X);
 
 
