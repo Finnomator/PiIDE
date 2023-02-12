@@ -118,10 +118,7 @@ namespace PiIDE {
         }
 
         private async void UpdatePylintMessages(TextEditor textEditor) {
-            if (textEditor.EnablePylinging && GlobalSettings.Default.PylintIsUsable) {
-                PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray());
-                textEditor.Underliner.Underline(pylintMessages.Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray(), textEditor.FirstVisibleLineNum, textEditor.LastVisibleLineNum);
-            }
+            textEditor.UpdatePylint((await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray())).Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray());
         }
 
         public void AddTempFile() {

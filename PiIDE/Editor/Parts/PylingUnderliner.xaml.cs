@@ -10,6 +10,7 @@ namespace PiIDE {
 
         private readonly Size FontSizes;
         private readonly VisualBrush WavyLine;
+        private PylintMessage[] CachedMessages = System.Array.Empty<PylintMessage>();
 
         public PylingUnderliner(Size fontSizes) {
             InitializeComponent();
@@ -30,7 +31,18 @@ namespace PiIDE {
             };
         }
 
+        public void UpdateUnderline(int upperLineLimit, int lowerLineLimit) {
+            UpdateVisualChildren(CachedMessages, upperLineLimit, lowerLineLimit);
+        }
+
         public void Underline(PylintMessage[] pylintMessages, int upperLineLimit, int lowerLineLimit) {
+            CachedMessages = new PylintMessage[pylintMessages.Length];
+            pylintMessages.CopyTo(CachedMessages, 0);
+
+            UpdateVisualChildren(CachedMessages, upperLineLimit, lowerLineLimit);
+        }
+
+        private void UpdateVisualChildren(PylintMessage[] pylintMessages, int upperLineLimit, int lowerLineLimit) {
 
             MainGrid.Children.Clear();
 
@@ -39,19 +51,20 @@ namespace PiIDE {
 
                 int line = pylintMessage.Line;
 
-                if (line - 1 > lowerLineLimit || line + 1 < upperLineLimit)
+                if (line + 1 < upperLineLimit)
                     continue;
+                else if (line - 1 > lowerLineLimit)
+                    break;
 
                 int column = pylintMessage.Column;
                 int endCol = pylintMessage.EndColumn is null ? 1 : (int) pylintMessage.EndColumn;
 
 
-
                 MainGrid.Children.Add(new Line() {
-                    //Stroke = WavyLine,
+                    //Stroke = (VisualBrush) Resources["asdf"],
                     StrokeThickness = 2,
-                    X1 = column * FontSizes.Width + 1,
-                    X2 = endCol * FontSizes.Width + 1,
+                    X1 = column * FontSizes.Width,
+                    X2 = endCol * FontSizes.Width,
                     Y1 = line * FontSizes.Height,
                     Y2 = line * FontSizes.Height,
                     Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type),

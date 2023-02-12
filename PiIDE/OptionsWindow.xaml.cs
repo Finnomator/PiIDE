@@ -55,12 +55,15 @@ namespace PiIDE {
             e.Handled = true;
         }
 
-        private void HighlightingMode_ContextMenuClosing(object sender, ContextMenuEventArgs e) {
-            HighlightingMode mode = (HighlightingMode) ((ComboBox) sender).SelectedIndex;
+
+        private void SyntaxHighlighterPerformance_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            GlobalSettings.Default.SyntaxhighlighterPerformanceMode = ((ComboBox) sender).SelectedIndex;
+
         }
 
-        private void SyntaxHighlighterPerformance_ContextMenuClosing(object sender, ContextMenuEventArgs e) {
-            HighlightingPerformanceMode mode = (HighlightingPerformanceMode) ((ComboBox) sender).SelectedIndex;
+        private void HighlightingMode_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            GlobalSettings.Default.SyntaxhighlighterMode = ((ComboBox) sender).SelectedIndex;
+
         }
     }
 

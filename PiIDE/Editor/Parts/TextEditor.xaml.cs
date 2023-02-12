@@ -1,20 +1,15 @@
-﻿using PiIDE.Editor.Parts;
-using PiIDE.Wrapers;
+﻿using PiIDE.Wrapers;
 using System;
-using System.Diagnostics;
-using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Point = System.Drawing.Point;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
-using static PiIDE.Wrapers.JediWraper;
+using Point = System.Drawing.Point;
 
 namespace PiIDE {
 
@@ -28,14 +23,14 @@ namespace PiIDE {
         public readonly string FileExt;
         public readonly bool IsPythonFile;
         public readonly bool EnablePythonSyntaxhighlighting;
-        public readonly bool EnablePylinging;
+        public readonly bool EnablePylinting;
         public readonly bool EnableJediCompletions;
 
         private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
         private readonly SyntaxHighlighter Highlighter;
-        public readonly PylingUnderliner Underliner;
+        private readonly PylingUnderliner Underliner;
 
         public bool DisableAllWrapers { get; set; }
 
@@ -61,11 +56,10 @@ namespace PiIDE {
             FileName = Path.GetFileName(filePath);
             FileExt = Path.GetExtension(filePath);
             IsPythonFile = Tools.IsPythonExt(FileExt);
-            EnablePylinging = IsPythonFile;
+            EnablePylinting = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
             EnableJediCompletions = IsPythonFile;
             TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
-            string fileContent = File.ReadAllText(FilePath);
 
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
             PythonWraper.PythonExited += Python_Exited;
@@ -88,7 +82,6 @@ namespace PiIDE {
             Underliner = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Underliner);
 
-            ReloadFile(fileContent);
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -104,9 +97,9 @@ namespace PiIDE {
             double maxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - margin.Top;
             double maxWidth = TextEditorGrid.ActualWidth - margin.Left;
 
-            if (maxHeight < 400)
+            if (maxHeight < 400 && maxHeight > 0)
                 JediNameDescriber.MaxHeight = maxHeight;
-            if (maxWidth < 300)
+            if (maxWidth < 300 && maxWidth > 0)
                 JediNameDescriber.MaxWidth = maxWidth;
 
             JediNameDescriber.Margin = margin;
@@ -314,7 +307,11 @@ namespace PiIDE {
                 return;
 
             if (textChangedSinceLastHighlighting)
-                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text, FirstVisibleLineNum, LastVisibleLineNum);
+                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text,
+                                                      FirstVisibleLineNum,
+                                                      LastVisibleLineNum,
+                                                      (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode,
+                                                      (HighlightingMode) GlobalSettings.Default.SyntaxhighlighterMode);
             else
                 Highlighter.UpdateHighlighting(FirstVisibleLineNum, LastVisibleLineNum);
         }
@@ -326,8 +323,8 @@ namespace PiIDE {
 
             FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
             LastVisibleLineNum = (int) ((e.VerticalOffset + MainGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
-
             UpdateHighlighting(false);
+            UpdatePylint();
         }
 
         public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
@@ -377,6 +374,22 @@ namespace PiIDE {
             if (e.Key == Key.LeftCtrl && Shortcuts.IsTheOnlyKeyPressed(Key.LeftCtrl)) {
                 Highlighter.ForceAllButtonsToStayEnabled(true);
             }
+        }
+
+        public void UpdatePylint(PylintMessage[] pylintMessages) {
+            if (EnablePylinting && GlobalSettings.Default.PylintIsUsable)
+                Underliner.Underline(pylintMessages, FirstVisibleLineNum, LastVisibleLineNum);
+        }
+
+        public void UpdatePylint() {
+            if (EnablePylinting && GlobalSettings.Default.PylintIsUsable)
+                Underliner.UpdateUnderline(FirstVisibleLineNum, LastVisibleLineNum);
+        }
+
+        private void MainGridLoaded(object sender, RoutedEventArgs e) {
+            LastVisibleLineNum = (int) (MainGrid.ActualHeight / TextEditorTextBoxCharacterSize.Height);
+            ReloadFile();
+
         }
     }
 }

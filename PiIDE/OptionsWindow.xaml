@@ -65,19 +65,19 @@
                     <StackPanel>
                         <WrapPanel>
                             <Label Content="Highlighting Mode: "/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" ContextMenuClosing="HighlightingMode_ContextMenuClosing">
+                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="HighlightingMode_SelectionChanged">
                                 <ComboBoxItem Content="Jedi + Keywords"/>
-                                <ComboBoxItem Content="Jedi Only"/>
-                                <ComboBoxItem Content="Keywords Only"/>
+                                <ComboBoxItem Content="Jedi Only (Experimental)"/>
+                                <ComboBoxItem Content="Keywords Only (Experimental)"/>
                                 <ComboBoxItem Content="None"/>
                             </ComboBox>
                         </WrapPanel>
 
                         <WrapPanel>
                             <Label Content="Performance: "/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" ContextMenuClosing="SyntaxHighlighterPerformance_ContextMenuClosing">
+                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="SyntaxHighlighterPerformance_SelectionChanged">
                                 <ComboBoxItem Content="Normal"/>
-                                <ComboBoxItem Content="Performance"/>
+                                <ComboBoxItem Content="Performance (Experimental)"/>
                             </ComboBox>
                             <Button BorderThickness="0" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,0,0" Background="Transparent" Foreground="#FF6E8EDA">
                                 <Button.Content>

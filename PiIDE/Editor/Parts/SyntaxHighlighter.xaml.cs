@@ -1,5 +1,4 @@
-﻿using PiIDE.Wrapers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,10 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Point = System.Drawing.Point;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
-using WraperRepl = PiIDE.Wrapers.JediWraper.WraperRepl;
 using static PiIDE.Wrapers.JediWraper;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
 
 namespace PiIDE {
 
@@ -58,12 +54,31 @@ namespace PiIDE {
             UpdateVisualChildren();
         }
 
-        public async Task HighglightTextAsync(string text, int startLine, int endLine) {
+        public async Task HighglightTextAsync(string text, int startLine, int endLine, HighlightingPerformanceMode performanceMode, HighlightingMode highlightingMode) {
+
+            if (highlightingMode == HighlightingMode.None)
+                return;
 
             NewChildren.Clear();
+
+            if (performanceMode == HighlightingPerformanceMode.Performance) {
+                text = string.Join('\n', text.Split('\n')[startLine..endLine]);
+            }
+
             Script script = new(text, FilePath);
-            AddHighlightedKeywordsToChildren(text, startLine, endLine);
-            await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
+
+            switch (highlightingMode) {
+                case HighlightingMode.JediAndKeywords:
+                    AddHighlightedKeywordsToChildren(text, startLine, endLine);
+                    await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
+                    break;
+                case HighlightingMode.JediOnly:
+                    await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
+                    break;
+                case HighlightingMode.KeywordsOnly:
+                    AddHighlightedKeywordsToChildren(text, startLine, endLine);
+                    break;
+            }
 
             if (NewChildren.Count == 0) {
                 OldChildren.Clear();
@@ -96,7 +111,6 @@ namespace PiIDE {
             }
         }
 
-
         private void AddHighlightedKeywordsToChildren(string text, int upperLineLimit, int lowerLineLimit) {
             CachedKeywordMatches = FindKeywords(text);
             CachedKeywordText = text;
@@ -119,6 +133,11 @@ namespace PiIDE {
 
                 NewChildren.Add(CreateKeywordButton(match.Value, indexPoint));
             }
+        }
+
+        private async Task AddHighlightedJediWordsToChildrenAsync(Script script, int upperLineLimit, int lowerLineLimit) {
+            CachedJediNames = await script.GetNames(true, true, true);
+            AddJediNamesToChildren(CachedJediNames, upperLineLimit, lowerLineLimit);
         }
 
         private HighlighterButton CreateKeywordButton(string keyword, Point indexPoint) {
@@ -166,11 +185,6 @@ namespace PiIDE {
             return item;
         }
 
-        private async Task AddHighlightedJediWordsToChildrenAsync(Script script, int upperLineLimit, int lowerLineLimit) {
-            CachedJediNames = await script.GetNames(true, true, true);
-            AddJediNamesToChildren(CachedJediNames, upperLineLimit, lowerLineLimit);
-        }
-
         private void AddJediNamesToChildren(JediName[] jediNames, int upperLineLimit, int lowerLineLimit) {
             for (int i = 0; i < jediNames.Length; ++i) {
                 JediName jediName = jediNames[i];
@@ -200,6 +214,9 @@ namespace PiIDE {
         [GeneratedRegex("[\\w]+", RegexOptions.Compiled)]
         private static partial Regex MyRegex();
 
+        internal Task HighglightTextAsync(string text, int firstVisibleLineNum, int lastVisibleLineNum, int syntaxhighlighterPerformanceMode, int syntaxhighlighterMode) {
+            throw new NotImplementedException();
+        }
 
         private class HighlighterButton : Button {
 
