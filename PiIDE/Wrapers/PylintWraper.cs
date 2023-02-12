@@ -66,6 +66,7 @@ namespace PiIDE.Wrapers {
             set {
                 ForegroundColor = PylintMessageColors.MessageTypeToColor(value);
                 Icon = PylintMessageIcons.MessageTypeToIcon(value);
+                Icon.Foreground = PylintMessageColors.MessageTypeToColor(value);
                 _type = value;
             }
         }

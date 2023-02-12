@@ -16,7 +16,7 @@
                 <GridViewColumn>
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <fa:FontAwesome Icon="{Binding Icon}" Foreground="{Binding ForegroundColor}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <fa:FontAwesome Icon="{Binding Icon.Icon}" Foreground="{Binding Icon.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>

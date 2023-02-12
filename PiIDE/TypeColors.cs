@@ -49,19 +49,19 @@ namespace PiIDE {
             Icon = FontAwesome.WPF.FontAwesomeIcon.Cube
         };
         public static readonly FontAwesome.WPF.FontAwesome Instance = new() {
-            Icon = FontAwesome.WPF.FontAwesomeIcon.Close
+            Icon = FontAwesome.WPF.FontAwesomeIcon.StarOutline
         };
         public static readonly FontAwesome.WPF.FontAwesome Statement = new() {
-            Icon = FontAwesome.WPF.FontAwesomeIcon.Close
+            Icon = FontAwesome.WPF.FontAwesomeIcon.Diamond
         };
         public static readonly FontAwesome.WPF.FontAwesome Module = new() {
-            Icon = FontAwesome.WPF.FontAwesomeIcon.Close
+            Icon = FontAwesome.WPF.FontAwesomeIcon.Linode
         };
         public static readonly FontAwesome.WPF.FontAwesome Param = new() {
-            Icon = FontAwesome.WPF.FontAwesomeIcon.Close
+            Icon = FontAwesome.WPF.FontAwesomeIcon.Chain
         };
         public static readonly FontAwesome.WPF.FontAwesome Property = new() {
-            Icon = FontAwesome.WPF.FontAwesomeIcon.Close
+            Icon = FontAwesome.WPF.FontAwesomeIcon.Wrench
         };
         public static readonly FontAwesome.WPF.FontAwesome Path = new() {
             Icon = FontAwesome.WPF.FontAwesomeIcon.Close
@@ -96,7 +96,7 @@ namespace PiIDE {
 
         public static readonly Brush Fatal = Brushes.DarkRed;
         public static readonly Brush Error = Brushes.Red;
-        public static readonly Brush Warning = Brushes.Yellow;
+        public static readonly Brush Warning = Brushes.Gold;
         public static readonly Brush Convention = Brushes.Blue;
         public static readonly Brush Refactor = Brushes.LightBlue;
         public static readonly Brush Information = Brushes.CadetBlue;

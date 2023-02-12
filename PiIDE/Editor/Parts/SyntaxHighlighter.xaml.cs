@@ -10,6 +10,7 @@ using System.Windows.Media;
 using Point = System.Drawing.Point;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
 using static PiIDE.Wrapers.JediWraper;
+using System.Diagnostics;
 
 namespace PiIDE {
 
@@ -49,8 +50,8 @@ namespace PiIDE {
                 return;
 
             NewChildren.Clear();
-            AddJediNamesToChildren(CachedJediNames, startLine, endLine);
-            AddHighlightedKeywordsToChildren(CachedKeywordText, startLine, endLine);
+            AddJediNamesToChildren(CachedJediNames, startLine, endLine, false);
+            AddHighlightedKeywordsToChildren(CachedKeywordText, startLine, endLine, false);
             UpdateVisualChildren();
         }
 
@@ -62,21 +63,26 @@ namespace PiIDE {
             NewChildren.Clear();
 
             if (performanceMode == HighlightingPerformanceMode.Performance) {
-                text = string.Join('\n', text.Split('\n')[startLine..endLine]);
+                // TODO: implement some faster text trimming
+                string[] lines = text.Split("\r\n");
+                int lastVisibleLine = endLine;
+                if (lines.Length < lastVisibleLine)
+                    lastVisibleLine = lines.Length;
+                text = string.Join("\r\n", lines[startLine..lastVisibleLine]);
             }
 
             Script script = new(text, FilePath);
 
             switch (highlightingMode) {
                 case HighlightingMode.JediAndKeywords:
-                    AddHighlightedKeywordsToChildren(text, startLine, endLine);
-                    await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
+                    AddHighlightedKeywordsToChildren(text, startLine, endLine, performanceMode == HighlightingPerformanceMode.Performance);
+                    await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine, performanceMode == HighlightingPerformanceMode.Performance);
                     break;
                 case HighlightingMode.JediOnly:
-                    await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine);
+                    await AddHighlightedJediWordsToChildrenAsync(script, startLine, endLine, performanceMode == HighlightingPerformanceMode.Performance);
                     break;
                 case HighlightingMode.KeywordsOnly:
-                    AddHighlightedKeywordsToChildren(text, startLine, endLine);
+                    AddHighlightedKeywordsToChildren(text, startLine, endLine, performanceMode == HighlightingPerformanceMode.Performance);
                     break;
             }
 
@@ -86,7 +92,11 @@ namespace PiIDE {
                 return;
             }
 
-            UpdateVisualChildren();
+            MainCanvas.Children.Clear();
+            for (int i = 0; i < NewChildren.Count; ++i)
+                MainCanvas.Children.Add(NewChildren[i]);
+
+            // UpdateVisualChildren();
         }
 
         private void UpdateVisualChildren() {
@@ -111,39 +121,42 @@ namespace PiIDE {
             }
         }
 
-        private void AddHighlightedKeywordsToChildren(string text, int upperLineLimit, int lowerLineLimit) {
+        private void AddHighlightedKeywordsToChildren(string text, int upperLineLimit, int lowerLineLimit, bool isPerformanceMode) {
             CachedKeywordMatches = FindKeywords(text);
             CachedKeywordText = text;
-            AddKeywordsToChildren(CachedKeywordMatches, text, upperLineLimit, lowerLineLimit);
+            AddKeywordsToChildren(CachedKeywordMatches, text, upperLineLimit, lowerLineLimit, isPerformanceMode);
         }
 
-        private void AddKeywordsToChildren(Match[] keywordMatches, string text, int upperLineLimit, int lowerLineLimit) {
+        private void AddKeywordsToChildren(Match[] keywordMatches, string text, int upperLineLimit, int lowerLineLimit, bool isPerformanceMode) {
             for (int i = 0; i < keywordMatches.Length; i++) {
 
                 Match match = keywordMatches[i];
 
                 int startIndex = match.Index;
 
-                Point indexPoint = Tools.GetPointOfIndex(text, startIndex);
+                (int col, int row) indexPoint = Tools.GetPointOfIndex(text, startIndex);
 
-                if (indexPoint.Y > lowerLineLimit)
+                if (isPerformanceMode)
+                    indexPoint.row += upperLineLimit;
+
+                if (indexPoint.row > lowerLineLimit)
                     break;
-                else if (indexPoint.Y < upperLineLimit)
+                else if (indexPoint.row < upperLineLimit)
                     continue;
 
                 NewChildren.Add(CreateKeywordButton(match.Value, indexPoint));
             }
         }
 
-        private async Task AddHighlightedJediWordsToChildrenAsync(Script script, int upperLineLimit, int lowerLineLimit) {
+        private async Task AddHighlightedJediWordsToChildrenAsync(Script script, int upperLineLimit, int lowerLineLimit, bool isPerformanceMode) {
             CachedJediNames = await script.GetNames(true, true, true);
-            AddJediNamesToChildren(CachedJediNames, upperLineLimit, lowerLineLimit);
+            AddJediNamesToChildren(CachedJediNames, upperLineLimit, lowerLineLimit, isPerformanceMode);
         }
 
-        private HighlighterButton CreateKeywordButton(string keyword, Point indexPoint) {
+        private HighlighterButton CreateKeywordButton(string keyword, (int col, int row) indexPoint) {
             return new() {
                 Content = keyword,
-                Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
+                Margin = new(indexPoint.col * FontSizes.Width + 2, indexPoint.row * FontSizes.Height, 0, 0),
                 Foreground = TypeColors.TypeToColor("keyword"),
                 Background = Brushes.Transparent,
                 IsHitTestVisible = false,
@@ -156,11 +169,11 @@ namespace PiIDE {
             };
         }
 
-        private HighlighterButton CreateJediNameButton(JediName jediName, Point indexPoint) {
+        private HighlighterButton CreateJediNameButton(JediName jediName, (int col, int row) indexPoint) {
 
             HighlighterButton item = new() {
                 Content = jediName.Name.Replace("_", "__"),
-                Margin = new(indexPoint.X * FontSizes.Width + 2, indexPoint.Y * FontSizes.Height, 0, 0),
+                Margin = new(indexPoint.col * FontSizes.Width + 2, indexPoint.row * FontSizes.Height, 0, 0),
                 Foreground = TypeColors.TypeToColor(jediName.Type),
                 Cursor = Cursors.Hand,
                 FontFamily = Tools.CascadiaCodeFont,
@@ -185,7 +198,7 @@ namespace PiIDE {
             return item;
         }
 
-        private void AddJediNamesToChildren(JediName[] jediNames, int upperLineLimit, int lowerLineLimit) {
+        private void AddJediNamesToChildren(JediName[] jediNames, int upperLineLimit, int lowerLineLimit, bool isPerformanceMode) {
             for (int i = 0; i < jediNames.Length; ++i) {
                 JediName jediName = jediNames[i];
 
@@ -198,12 +211,15 @@ namespace PiIDE {
                 if (col is null || row is null)
                     throw new NullReferenceException();
 
+                if (isPerformanceMode)
+                    row += upperLineLimit;
+
                 if (row > lowerLineLimit)
                     break;
                 else if (row < upperLineLimit)
                     continue;
 
-                NewChildren.Add(CreateJediNameButton(jediName, new Point((int) col, (int) (row - 1))));
+                NewChildren.Add(CreateJediNameButton(jediName, ((int) col, (int) (row - 1))));
             }
         }
 

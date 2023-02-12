@@ -97,6 +97,7 @@ namespace PiIDE {
             double maxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - margin.Top;
             double maxWidth = TextEditorGrid.ActualWidth - margin.Left;
 
+            // TODO: fix that maxHeight is sometimes negative
             if (maxHeight < 400 && maxHeight > 0)
                 JediNameDescriber.MaxHeight = maxHeight;
             if (maxWidth < 300 && maxWidth > 0)
@@ -157,7 +158,7 @@ namespace PiIDE {
                         CompletionUiList.Close();
                     } else {
                         // TODO: replace with a variable option
-                        int spaceToFillIndent = 4 - GetCaretPosition().X % 4;
+                        int spaceToFillIndent = 4 - GetCaretPosition().col % 4;
                         if (spaceToFillIndent == 0)
                             spaceToFillIndent = 4;
                         InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
@@ -250,13 +251,17 @@ namespace PiIDE {
             if (!EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
-            Point caretPosition = GetCaretPosition();
-            caretPosition.Y++;
-            caretPosition.X += extraText.Length;
+            (int col, int row) caretPosition = GetCaretPosition();
+            caretPosition.row++;
+            caretPosition.col += extraText.Length;
 
             Thickness marginAtCaretPos = MarginAtCaretPosition();
             CompletionUiList.Margin = marginAtCaretPos;
-            CompletionUiList.MaxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - marginAtCaretPos.Top;
+
+            // TODO: fix that maxHeight is sometimes negative
+            double maxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - marginAtCaretPos.Top;
+            if (maxHeight > 0 && maxHeight < 400)
+                CompletionUiList.MaxHeight = maxHeight;
             await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), caretPosition);
             CompletionUiList.SelectFirst();
         }
@@ -276,10 +281,10 @@ namespace PiIDE {
         }
 
         private Thickness MarginAtCaretPosition() {
-            Point caretPos = GetCaretPosition();
+            (int col, int row) = GetCaretPosition();
             return new(
-                (caretPos.X + 0.5) * TextEditorTextBoxCharacterSize.Width,
-                (caretPos.Y + 1) * TextEditorTextBoxCharacterSize.Height,
+                (col + 0.5) * TextEditorTextBoxCharacterSize.Width,
+                (row + 1) * TextEditorTextBoxCharacterSize.Height,
                 0,
                 0
             );
@@ -299,14 +304,14 @@ namespace PiIDE {
         }
 
         private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
-        private Point GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
+        private (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
         private async void UpdateHighlighting(bool textChangedSinceLastHighlighting) {
 
             if (DisableAllWrapers)
                 return;
 
-            if (textChangedSinceLastHighlighting)
+            if (textChangedSinceLastHighlighting || ((HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode) == HighlightingPerformanceMode.Performance)
                 await Highlighter.HighglightTextAsync(TextEditorTextBox.Text,
                                                       FirstVisibleLineNum,
                                                       LastVisibleLineNum,

@@ -35,12 +35,12 @@ namespace PiIDE {
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
 
-        public async Task ReloadCompletionsAsync(string code, Point caretPosition) {
+        public async Task ReloadCompletionsAsync(string code, (int col, int row) caretPosition) {
 
             SetIntoLoadingState();
 
             Script script = new(code, FilePath);
-            Completion[] completions = await script.Complete(caretPosition.Y, caretPosition.X);
+            Completion[] completions = await script.Complete(caretPosition.row, caretPosition.col);
 
 
             if (completions.Length == 0) {

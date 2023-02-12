@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.HighPerformance;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
@@ -40,7 +41,7 @@ namespace PiIDE.Wrapers {
                 WraperProcess.OutputDataReceived += (s, e) => {
 #if DEBUG
                     WritenOutput += (e.Data ?? "NULL") + "\n";
-                    Debug.WriteLine("Output: " + (e.Data ?? "NULL"));
+                    Debug.WriteLine($"Output: {e.Data ?? "NULL"}");
 #endif
                     NewOutputData = e.Data;
                     ReceivedOutputData = true;
@@ -48,6 +49,10 @@ namespace PiIDE.Wrapers {
 
                 WraperProcess.Exited += (s, e) => {
                     MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+#if DEBUG
+                    Debug.WriteLine("Input that crashed Jedi: \n" + WritenInput);
+                    Debug.WriteLine("Output before Jedi crashed: \n" + WritenOutput);
+#endif
                 };
 
                 WraperProcess.Start();
@@ -56,10 +61,10 @@ namespace PiIDE.Wrapers {
             }
 
             public static async Task<string?> WriteLine(string line, bool expectsOutput) {
-# if DEBUG
+#if DEBUG
                 Debug.WriteLine("Input: " + line);
                 WritenInput += line + "\n";
-# endif
+#endif
                 while (IsBusy)
                     await Task.Delay(10);
 
@@ -78,7 +83,7 @@ namespace PiIDE.Wrapers {
             }
 
             private static async Task<string?> ReadOutput() {
-                while (!ReceivedOutputData) 
+                while (!ReceivedOutputData)
                     await Task.Delay(10);
                 ReceivedOutputData = false;
                 return NewOutputData;
@@ -98,7 +103,7 @@ namespace PiIDE.Wrapers {
                 // Repl should only be created once to avoid reinitializing the program (takes long)
                 Code = code;
                 Path = path;
-                WraperRepl.WriteLine($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r\n", @"\r\n")}\"\"\", path=r\"{path}\")", false);
+                WraperRepl.WriteLine($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
             }
 
             public static T[] TryConvert<T>(string? line) where T : ReturnClasses.BaseName {
@@ -208,7 +213,7 @@ namespace PiIDE.Wrapers {
                 public Brush Foreground { get; set; }
                 public FontAwesome.WPF.FontAwesome Icon { get; set; }
 
-                public required string VariableName { get; set; }
+                public string VariableName { get; set; }
                 public required Script script;
 
                 public BaseName() { }

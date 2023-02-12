@@ -36,7 +36,7 @@ namespace PiIDE {
         public static int GetRowOfIndex(string text, int index) => CountLines(text[..index]) - 1;
         public static int CountLines(string text) => text.AsSpan().Count('\n') + 1;
 
-        public static Point GetPointOfIndex(string text, int index) {
+        public static (int col, int row) GetPointOfIndex(string text, int index) {
 
             int col = 0;
             int row = 0;
@@ -49,7 +49,7 @@ namespace PiIDE {
                     col++;
             }
 
-            return new Point(col, row);
+            return (col, row);
         }
 
         public static int GetIndexOfColRow(string text, int row, int col) {
@@ -74,10 +74,10 @@ namespace PiIDE {
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         private static readonly Random random = new();
 
-        public static string GenerateRandomString(int length) => new string(Enumerable.Repeat(chars, length)
+        public static string GenerateRandomString(int length) => new(Enumerable.Repeat(chars, length)
         .Select(s => s[random.Next(s.Length)]).ToArray());
 
-        public static FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment=VerticalAlignment.Center };
+        public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment=VerticalAlignment.Center };
 
         public static readonly Thickness ZeroThichness = new(0);
     }
