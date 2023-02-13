@@ -36,6 +36,33 @@ namespace PiIDE {
         public static int GetRowOfIndex(string text, int index) => CountLines(text[..index]) - 1;
         public static int CountLines(string text) => text.AsSpan().Count('\n') + 1;
 
+        public static (int col, int row)[] GetPointsOfindexes(string text, int[] indexes) {
+
+            // indexes must be sorted ascending
+
+            (int col, int row)[] points = new (int col, int row)[indexes.Length];
+
+            int col = 0;
+            int row = 0;
+
+            int index = indexes[0];
+            for (int i = 0, j = 1; j < indexes.Length; i++) {
+
+                if (i == index) {
+                    points[j - 1] = (col, row);
+                    index = indexes[j++];
+                }
+
+                if (text[i] == '\n') {
+                    col = 0;
+                    ++row;
+                } else
+                    ++col;
+            }
+
+            return points;
+        }
+
         public static (int col, int row) GetPointOfIndex(string text, int index) {
 
             int col = 0;
@@ -77,7 +104,7 @@ namespace PiIDE {
         public static string GenerateRandomString(int length) => new(Enumerable.Repeat(chars, length)
         .Select(s => s[random.Next(s.Length)]).ToArray());
 
-        public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment=VerticalAlignment.Center };
+        public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
         public static readonly Thickness ZeroThichness = new(0);
     }

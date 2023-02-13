@@ -52,7 +52,12 @@ namespace PiIDE {
             NewChildren.Clear();
             AddJediNamesToChildren(CachedJediNames, startLine, endLine, false);
             AddHighlightedKeywordsToChildren(CachedKeywordText, startLine, endLine, false);
-            UpdateVisualChildren();
+
+            MainCanvas.Children.Clear();
+            for (int i = 0; i < NewChildren.Count; ++i)
+                MainCanvas.Children.Add(NewChildren[i]);
+
+            // UpdateVisualChildren();
         }
 
         public async Task HighglightTextAsync(string text, int startLine, int endLine, HighlightingPerformanceMode performanceMode, HighlightingMode highlightingMode) {
@@ -128,13 +133,13 @@ namespace PiIDE {
         }
 
         private void AddKeywordsToChildren(Match[] keywordMatches, string text, int upperLineLimit, int lowerLineLimit, bool isPerformanceMode) {
+            (int col, int row)[] indexPoints = Tools.GetPointsOfindexes(text, keywordMatches.Select(x => x.Index).ToArray());
+            
             for (int i = 0; i < keywordMatches.Length; i++) {
 
                 Match match = keywordMatches[i];
 
-                int startIndex = match.Index;
-
-                (int col, int row) indexPoint = Tools.GetPointOfIndex(text, startIndex);
+                (int col, int row) indexPoint = indexPoints[i];
 
                 if (isPerformanceMode)
                     indexPoint.row += upperLineLimit;
