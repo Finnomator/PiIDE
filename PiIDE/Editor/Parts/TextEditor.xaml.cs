@@ -1,5 +1,7 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Editor.Parts;
+using PiIDE.Wrapers;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,8 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
-using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
-using Point = System.Drawing.Point;
 
 namespace PiIDE {
 
@@ -29,22 +29,30 @@ namespace PiIDE {
         private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
-        private readonly SyntaxHighlighter Highlighter;
+        private readonly TextEditorCore EditorCore;
         private readonly PylingUnderliner Underliner;
+        private bool ScrollUpdateCalledItself;
 
         public bool DisableAllWrapers { get; set; }
 
         public bool ContentIsSaved { get; private set; } = true;
-        public int FirstVisibleLineNum { get; private set; }
-        public int LastVisibleLineNum { get; private set; }
+        public bool ContentLoaded { get; private set; }
+
+        public string EditorText => TextEditorTextBox.Text;
+        public int FirstVisibleLineNum => (int) Math.Round(MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+        public int LastVisibleLineNum {
+            get {
+                int lines = (int) ((MainScrollViewer.VerticalOffset + MainGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+                return Tools.CountLines(EditorText) < lines ? TextEditorTextBox.LineCount : lines;
+            }
+        }
+        public string VisibleText => string.Join('\n', EditorText.Split('\n')[FirstVisibleLineNum..LastVisibleLineNum]);
 
         public delegate void EditorFileSavedEventArgs(TextEditor sender);
         public event EditorFileSavedEventArgs? OnFileSaved;
 
         public event EventHandler? ContentChanged;
         public event EventHandler? StartedPythonExecution;
-
-        public event EventHandler<JediName>? OnClickedOnWord;
 
         public TextEditor() : this("TempFiles/temp_file1.py") {
         }
@@ -67,44 +75,22 @@ namespace PiIDE {
             // Completion suggestions stuff
             CompletionUiList = new(FilePath);
             CompletionUiList.CompletionClicked += CompletionUiList_CompletionClick;
-            Panel.SetZIndex(CompletionUiList, 1);
             TextEditorGrid.Children.Add(CompletionUiList);
 
-            // Syntax highlighter and var describer stuff
-            Highlighter = new(TextEditorTextBoxCharacterSize, FilePath);
-            Highlighter.OnHoverOverWord += Highlighter_OnHoverOverWord;
-            Highlighter.OnStoppedHoveringOverWord += (s, e) => JediNameDescriber.CloseIfNotMouseOver();
-            Highlighter.OnClickOnWord += (s, e) => OnClickedOnWord?.Invoke(s, e);
-            JediNameDescriber.CloseWhenMouseLeaves = true;
-            TextEditorGrid.Children.Add(Highlighter);
+            // Syntax highlighter
+            EditorCore = new(this);
+            Grid.SetColumn(EditorCore, 2);
+            OuterTextGrid.Children.Add(EditorCore);
 
             // Pylint underlining stuff
             Underliner = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Underliner);
-
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
             Dispatcher.Invoke(() => {
                 RunFileLocalButton.IsEnabled = true;
             });
-        }
-
-        private void Highlighter_OnHoverOverWord(object? sender, JediName jediName) {
-            System.Windows.Point mousePos = Mouse.GetPosition(TextEditorGrid);
-            Thickness margin = new(mousePos.X, mousePos.Y, 0, 0);
-
-            double maxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - margin.Top;
-            double maxWidth = TextEditorGrid.ActualWidth - margin.Left;
-
-            // TODO: fix that maxHeight is sometimes negative
-            if (maxHeight < 400 && maxHeight > 0)
-                JediNameDescriber.MaxHeight = maxHeight;
-            if (maxWidth < 300 && maxWidth > 0)
-                JediNameDescriber.MaxWidth = maxWidth;
-
-            JediNameDescriber.Margin = margin;
-            JediNameDescriber.OpenAsync(jediName);
         }
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
@@ -122,6 +108,7 @@ namespace PiIDE {
         public void ReloadFile() {
             try {
                 TextEditorTextBox.Text = File.ReadAllText(FilePath);
+                ContentLoaded = true;
             } catch (Exception ex) {
                 MessageBox.Show($"There was an error loading the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -258,10 +245,6 @@ namespace PiIDE {
             Thickness marginAtCaretPos = MarginAtCaretPosition();
             CompletionUiList.Margin = marginAtCaretPos;
 
-            // TODO: fix that maxHeight is sometimes negative
-            double maxHeight = LastVisibleLineNum * TextEditorTextBoxCharacterSize.Height - marginAtCaretPos.Top;
-            if (maxHeight > 0 && maxHeight < 400)
-                CompletionUiList.MaxHeight = maxHeight;
             await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), caretPosition);
             CompletionUiList.SelectFirst();
         }
@@ -269,8 +252,8 @@ namespace PiIDE {
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = false;
-            UpdateHighlighting(true);
             ContentChanged?.Invoke(this, e);
+            UpdateHighlighting();
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
 
@@ -306,19 +289,12 @@ namespace PiIDE {
         private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         private (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
-        private async void UpdateHighlighting(bool textChangedSinceLastHighlighting) {
+        private void UpdateHighlighting() {
 
             if (DisableAllWrapers)
                 return;
 
-            if (textChangedSinceLastHighlighting || ((HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode) == HighlightingPerformanceMode.Performance)
-                await Highlighter.HighglightTextAsync(TextEditorTextBox.Text,
-                                                      FirstVisibleLineNum,
-                                                      LastVisibleLineNum,
-                                                      (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode,
-                                                      (HighlightingMode) GlobalSettings.Default.SyntaxhighlighterMode);
-            else
-                Highlighter.UpdateHighlighting(FirstVisibleLineNum, LastVisibleLineNum);
+            EditorCore.UpdateTextAsync();
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
@@ -326,13 +302,11 @@ namespace PiIDE {
             if (e.HorizontalChange == 0 && e.VerticalChange == 0)
                 return;
 
-            FirstVisibleLineNum = (int) (e.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
-            LastVisibleLineNum = (int) ((e.VerticalOffset + MainGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
-            UpdateHighlighting(false);
+            UpdateHighlighting();
             UpdatePylint();
         }
 
-        public void SetCaretPositioin(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
+        public void SetCaretPosition(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
 
         public void ScrollToCaret() {
             double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
@@ -352,7 +326,6 @@ namespace PiIDE {
 
         private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) {
             CompletionUiList.Close();
-            Highlighter.ForceAllButtonsToStayEnabled(false);
         }
 
         private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionUiList.Close();
@@ -370,15 +343,11 @@ namespace PiIDE {
         }
 
         private void TextEditorTextBox_PreviewKeyUp(object sender, KeyEventArgs e) {
-            if (e.Key == Key.LeftCtrl && Shortcuts.IsTheOnlyKeyPressed(Key.LeftCtrl)) {
-                Highlighter.ForceAllButtonsToStayEnabled(false);
-            }
+
         }
 
         private void TextEditorTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
-            if (e.Key == Key.LeftCtrl && Shortcuts.IsTheOnlyKeyPressed(Key.LeftCtrl)) {
-                Highlighter.ForceAllButtonsToStayEnabled(true);
-            }
+
         }
 
         public void UpdatePylint(PylintMessage[] pylintMessages) {
@@ -392,9 +361,13 @@ namespace PiIDE {
         }
 
         private void MainGridLoaded(object sender, RoutedEventArgs e) {
-            LastVisibleLineNum = (int) (MainGrid.ActualHeight / TextEditorTextBoxCharacterSize.Height);
-            ReloadFile();
+            if (!ContentLoaded)
+                ReloadFile();
+        }
 
+        private void MainScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
+            e.Handled = true;
+            MainScrollViewer.ScrollToVerticalOffset((FirstVisibleLineNum - e.Delta / 60) * TextEditorTextBoxCharacterSize.Height);
         }
     }
 }

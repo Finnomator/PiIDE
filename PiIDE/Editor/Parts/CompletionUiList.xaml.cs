@@ -26,11 +26,11 @@ namespace PiIDE {
         public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;
         public int CompletionsCount => MainListBox.Items.Count;
         public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
-        public bool IsOpen => MainListBox.IsVisible;
+        public bool IsOpen => MainPopup.IsOpen;
 
         private void AddCompletions(Completion[] completions) {
             MainListBox.ItemsSource = completions;
-            MainListBox.Visibility = Visibility.Visible;
+            MainPopup.IsOpen = true;
         }
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
@@ -39,28 +39,29 @@ namespace PiIDE {
 
             SetIntoLoadingState();
 
-            Script script = new(code, FilePath);
+            Script script = await Script.MakeScript(code, FilePath);
             Completion[] completions = await script.Complete(caretPosition.row, caretPosition.col);
-
 
             if (completions.Length == 0) {
                 SetIntoNoSuggestionsState();
                 return;
             }
 
+            ResetToNormalState();
+
             AddCompletions(completions);
         }
 
         public void Close() {
             ClearCompletions();
-            MainListBox.Visibility = Visibility.Collapsed;
+            MainPopup.IsOpen = false;
         }
 
-        public void CloseTemporary() => MainListBox.Visibility = Visibility.Collapsed;
+        public void CloseTemporary() => MainPopup.IsOpen = false;
 
         public void LoadCached() {
             if (MainListBox.Items.Count > 0)
-                MainListBox.Visibility = Visibility.Visible;
+                MainPopup.IsOpen = true;
         }
 
         public void MoveSelectedCompletionUp() {
@@ -95,31 +96,44 @@ namespace PiIDE {
         }
 
         private void SetIntoLoadingState() {
-            /*
-            Completion dumy = new() {
-                Name = "Loading...",
-                Foreground = Brushes.Black,
-                Icon = Tools.FontAwesome_Loading,
-            };
-            MainListBox.ItemsSource = new Completion[] { dumy };
-            MainListBox.Visibility = Visibility.Visible;
-            */
+            MainPopup.Child = new LoadingState();
+            MainPopup.IsOpen = true;
         }
 
         private void SetIntoNoSuggestionsState() {
-            /*
-            Completion dumy = new() {
-                Name = "No Suggestions",
-                Foreground = Brushes.Black,
-            };
-            MainListBox.ItemsSource = new Completion[] { dumy };
-            MainListBox.Visibility = Visibility.Visible;
-            */
+            MainPopup.Child = new NoSuggestionsState();
+            MainPopup.IsOpen = true;
+        }
+
+        private void ResetToNormalState() {
+            MainPopup.Child = MainListBox;
         }
 
         public void SelectFirst() {
             if (MainListBox.Items.Count > 0)
                 MainListBox.SelectedIndex = 0;
+        }
+
+        private class LoadingState : Border {
+            public LoadingState() {
+                BorderThickness = new(1);
+                BorderBrush = Brushes.Black;
+                Background = Brushes.White;
+
+                WrapPanel wrapPanel = new();
+
+                wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment=VerticalAlignment.Center });
+                wrapPanel.Children.Add(new TextBlock() { Text = "Loading..." });
+
+                Child = wrapPanel;
+            }
+        }
+
+        private class NoSuggestionsState : Label {
+            public NoSuggestionsState() {
+                Background = Brushes.White;
+                Content = "No Suggestions";
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ namespace PiIDE.Wrapers {
 #if DEBUG
             public static string WritenInput = "";
             public static string WritenOutput = "";
+            public static string WritenError = "";
 # endif
 
             private static bool ReceivedOutputData;
@@ -47,12 +48,15 @@ namespace PiIDE.Wrapers {
                     ReceivedOutputData = true;
                 };
 
+# if DEBUG
+                WraperProcess.ErrorDataReceived += (s, e) => {
+                    WritenError += (e.Data ?? "NULL") + "\n";
+                    Debug.WriteLine($"Error: {e.Data ?? "NULL"}");
+                };
+#endif
+
                 WraperProcess.Exited += (s, e) => {
                     MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-#if DEBUG
-                    Debug.WriteLine("Input that crashed Jedi: \n" + WritenInput);
-                    Debug.WriteLine("Output before Jedi crashed: \n" + WritenOutput);
-#endif
                 };
 
                 WraperProcess.Start();
@@ -99,11 +103,14 @@ namespace PiIDE.Wrapers {
             public const string CompletionsVarName = "completions";
             public const string NamesVarName = "names";
 
-            public Script(string code, string path) {
-                // Repl should only be created once to avoid reinitializing the program (takes long)
+            private Script(string code, string path) {
                 Code = code;
                 Path = path;
-                WraperRepl.WriteLine($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
+            }
+
+            public async static Task<Script> MakeScript(string code, string path) {
+                await WraperRepl.WriteLine($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
+                return new(code, path);
             }
 
             public static T[] TryConvert<T>(string? line) where T : ReturnClasses.BaseName {
@@ -185,14 +192,14 @@ namespace PiIDE.Wrapers {
             public abstract class BaseName {
 
                 [JsonPropertyName("module_path")]
-                public required string? ModulePath { get; set; }
+                public required string? ModulePath { get; init; }
                 [JsonPropertyName("name")]
-                public required string Name { get; set; }
+                public required string Name { get; init; }
 
-                public string _type;
+                private string _type;
                 [JsonPropertyName("type")]
                 public required string Type {
-                    get => _type; set {
+                    get => _type; init {
                         _type = value;
                         Foreground = TypeColors.TypeToColor(value);
                         Icon = TypeIcons.TypeToIcon(value);
@@ -200,18 +207,18 @@ namespace PiIDE.Wrapers {
                 }
 
                 [JsonPropertyName("module_name")]
-                public required string ModuleName { get; set; }
+                public required string ModuleName { get; init; }
                 [JsonPropertyName("line")]
-                public required int? Line { get; set; }
+                public required int? Line { get; init; }
                 [JsonPropertyName("column")]
-                public required int? Column { get; set; }
+                public required int? Column { get; init; }
                 [JsonPropertyName("description")]
-                public required string Description { get; set; }
+                public required string Description { get; init; }
                 [JsonPropertyName("full_name")]
-                public required string? FullName { get; set; }
+                public required string? FullName { get; init; }
 
-                public Brush Foreground { get; set; }
-                public FontAwesome.WPF.FontAwesome Icon { get; set; }
+                public Brush Foreground { get; init; }
+                public FontAwesome.WPF.FontAwesome Icon { get; init; }
 
                 public string VariableName { get; set; }
                 public required Script script;

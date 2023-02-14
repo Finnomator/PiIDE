@@ -7,9 +7,9 @@
              xmlns:editorParts="clr-namespace:PiIDE.Editor.Parts"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="#FFE2E2E2">
+             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown">
 
-    <Grid x:Name="MainGrid" Loaded="MainGridLoaded">
+    <Grid x:Name="MainGrid" Loaded="MainGridLoaded" Grid.IsSharedSizeScope="True">
         <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Background="White" BorderBrush="Gray" BorderThickness="1,0,1,1" Margin="0,0,17,0">
             <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
                 <Button Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
@@ -19,21 +19,34 @@
             </StackPanel>
         </Border>
 
-        <ScrollViewer x:Name="MainScrollViewer" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+        <Grid Name="OuterTextGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-                <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6D6D6D" TextAlignment="Right" Padding="5,0,5,0"/>
 
-                <Grid x:Name="TextEditorGrid" Grid.Column="2" >
-                    <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"  PreviewKeyDown="TextEditorTextBox_PreviewKeyDown" PreviewKeyUp="TextEditorTextBox_PreviewKeyUp"/>
-                    <editorParts:JediNameDescription x:Name="JediNameDescriber" Panel.ZIndex="1" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <ScrollViewer Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="{Binding ActualHeight, ElementName=MainGrid, Mode=OneWay}"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6D6D6D" TextAlignment="Right" Padding="5,0,5,0" Background="#FFE2E2E2"/>
+
+                    <Grid x:Name="TextEditorGrid" Grid.Column="2" >
+                        <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"  PreviewKeyDown="TextEditorTextBox_PreviewKeyDown" PreviewKeyUp="TextEditorTextBox_PreviewKeyUp" Foreground="#7FFF0000"/>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

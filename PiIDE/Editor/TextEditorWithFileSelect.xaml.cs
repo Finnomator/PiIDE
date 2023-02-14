@@ -94,9 +94,6 @@ namespace PiIDE {
                 tabItem.SaveLocalButton.IsEnabled = false;
             };
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
-            textEditor.OnClickedOnWord += (s, e) => {
-
-            };
 
             tabItem.CloseTabClick += (s, filePath) => CloseFile(filePath);
             tabItem.SaveLocalClick += (s, filePath) => textEditor.SaveFile();
@@ -234,7 +231,9 @@ namespace PiIDE {
             OpenFile(filePath);
             if (OpenTextEditor is null)
                 throw new NullReferenceException();
-            OpenTextEditor.SetCaretPositioin(row, column);
+            if (!OpenTextEditor.ContentLoaded)
+                OpenTextEditor.ReloadFile();
+            OpenTextEditor.SetCaretPosition(row, column);
             OpenTextEditor.ScrollToPosition(row, column);
         }
 

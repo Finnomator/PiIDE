@@ -36,7 +36,7 @@ namespace PiIDE {
         public static int GetRowOfIndex(string text, int index) => CountLines(text[..index]) - 1;
         public static int CountLines(string text) => text.AsSpan().Count('\n') + 1;
 
-        public static (int col, int row)[] GetPointsOfindexes(string text, int[] indexes) {
+        public static (int col, int row)[] GetPointsOfIndexes(string text, int[] indexes) {
 
             // indexes must be sorted ascending
 
@@ -45,12 +45,11 @@ namespace PiIDE {
             int col = 0;
             int row = 0;
 
-            int index = indexes[0];
-            for (int i = 0, j = 1; j < indexes.Length; i++) {
+            for (int i = 0, j = 0; j < indexes.Length; i++) {
 
-                if (i == index) {
-                    points[j - 1] = (col, row);
-                    index = indexes[j++];
+                while (i == indexes[j]) {
+                    points[j] = (col, row);
+                    ++j;
                 }
 
                 if (text[i] == '\n') {
@@ -80,14 +79,48 @@ namespace PiIDE {
         }
 
         public static int GetIndexOfColRow(string text, int row, int col) {
-            // TODO: Check if this works proberly
-            string[] lines = text.Split("\r\n");
-            int index = 0;
-            for (int i = 0; i < row; ++i)
-                index += lines[i].Length;
-            index += col;
-            return index;
+            int c = 0;
+            int r = 0;
+
+            for (int i = 0; i < text.Length; i++) {
+
+                if (row == r && c == col)
+                    return i;
+
+                if (text[i] == '\n') {
+                    c = 0;
+                    ++r;
+                } else
+                    ++c;
+            }
+            return -1;
         }
+
+        public static int[] GetIndexesOfColRows(string text, int[] rows, int[] cols) {
+            int col = 0;
+            int row = 0;
+
+            int[] indexes = new int[rows.Length];
+
+            for (int i = 0, j = 0; j < indexes.Length; ++i) {
+                while (row == rows[j] && col == cols[j]) {
+                    indexes[j] = i;
+                    ++j;
+
+                    if (j == rows.Length)
+                        return indexes;
+                }
+
+                if (text[i] == '\n') {
+                    col = 0;
+                    row++;
+                } else
+                    col++;
+            }
+
+            return indexes;
+        }
+
         public static int GetLengthOfLine(string text, int line) {
             string[] lines = text.Split("\r\n");
             return lines[line].Length;
