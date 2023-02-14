@@ -125,10 +125,12 @@ namespace PiIDE {
             }
         }
 
-        private class NoSuggestionsState : Label {
+        private class NoSuggestionsState : Border {
             public NoSuggestionsState() {
+                BorderThickness = new(1);
+                BorderBrush = Brushes.Black;
                 Background = Brushes.White;
-                Content = "No Suggestions";
+                Child = new TextBlock() { Text = "No Suggestions" };
             }
         }
     }

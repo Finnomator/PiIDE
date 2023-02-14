@@ -12,17 +12,7 @@ namespace PiIDE.Wrapers {
     public class JediWraper {
 
         public static class WraperRepl {
-            private static readonly Process WraperProcess = new() {
-                StartInfo = new ProcessStartInfo() {
-                    FileName = "Assets/Jedi/jedi_wraper.exe",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true,
-                },
-                EnableRaisingEvents = true,
-            };
+            private static Process WraperProcess;
 
 #if DEBUG
             public static string WritenInput = "";
@@ -36,6 +26,21 @@ namespace PiIDE.Wrapers {
             private static bool IsBusy;
 
             static WraperRepl() {
+                InitProcess();
+            }
+
+            private static void InitProcess() {
+                WraperProcess = new() {
+                    StartInfo = new ProcessStartInfo() {
+                        FileName = "Assets/Jedi/jedi_wraper.exe",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        CreateNoWindow = true,
+                    },
+                    EnableRaisingEvents = true,
+                };
 
                 WraperProcess.OutputDataReceived += (s, e) => {
 #if DEBUG
@@ -53,8 +58,12 @@ namespace PiIDE.Wrapers {
                 };
 #endif
 
+
                 WraperProcess.Exited += (s, e) => {
+#if DEBUG
                     MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+#endif
+                    InitProcess();
                 };
 
                 WraperProcess.Start();
