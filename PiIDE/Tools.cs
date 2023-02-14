@@ -1,13 +1,11 @@
-﻿using System;
+﻿using CommunityToolkit.HighPerformance;
+using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
-using Point = System.Drawing.Point;
-using CommunityToolkit.HighPerformance;
-using System.Security.Policy;
 
 namespace PiIDE {
     public static class Tools {

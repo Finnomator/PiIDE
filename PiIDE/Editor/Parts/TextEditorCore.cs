@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,19 +19,12 @@ namespace PiIDE.Editor.Parts {
         private ReturnClasses.Name[]? CachedJediNames;
         private bool IsBusy;
 
-        private TimeSpan UpdateCooldown = TimeSpan.FromMilliseconds(10);
-        private readonly Stopwatch sw;
-
         public TextEditorCore(TextEditor textEditor) {
             Editor = textEditor;
             IsHitTestVisible = false;
-            sw = Stopwatch.StartNew();
         }
 
         public async void UpdateTextAsync() {
-
-            //if (sw.Elapsed < UpdateCooldown)
-            //    return;
 
 
             for (int i = 0; i < 50 && OldVisibleText == VisibleText; i++)
@@ -51,6 +42,8 @@ namespace PiIDE.Editor.Parts {
                 c.Close();
                 return;
             }
+
+            // TODO: Add something like a queue
 
             if (IsBusy)
                 return;
@@ -77,7 +70,7 @@ namespace PiIDE.Editor.Parts {
             if (textChanged || CachedJediNames is null)
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
 
-            
+
 
             ReturnClasses.Name[] visibleJediNames = CachedJediNames.Where(x => x.Line > fvl && x.Line <= lvl).ToArray();
 
@@ -106,7 +99,6 @@ namespace PiIDE.Editor.Parts {
             DrawingContext context = drawingGroup.Open();
             context.DrawText(formattedText, new(2, 0));
             context.Close();
-            sw.Restart();
 
             IsBusy = false;
         }

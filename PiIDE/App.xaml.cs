@@ -9,7 +9,7 @@ namespace PiIDE {
     public partial class App : Application {
 
         public App() : base() {
-           // GlobalSettings.Default.Reset();
+            // GlobalSettings.Default.Reset();
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
 
             if (GlobalSettings.Default.LastOpenedFilePaths is null)

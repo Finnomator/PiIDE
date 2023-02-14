@@ -1,7 +1,6 @@
 ﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;

@@ -1,8 +1,6 @@
-﻿using PiIDE.Wrapers;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
-using System.Threading.Tasks;
 
 namespace PiIDE.Editor.Parts {
 
@@ -24,7 +22,7 @@ namespace PiIDE.Editor.Parts {
             DocstringWraper.Visibility = Visibility.Visible;
             DocstringSeperator.Visibility = Visibility.Visible;
             DocstringTextBox.Visibility = Visibility.Visible;
-            
+
             LoadingDocstringState();
             LoadingTypeHintState();
 

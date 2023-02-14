@@ -1,14 +1,10 @@
-﻿using PiIDE.Wrapers;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Point = System.Drawing.Point;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 using Script = PiIDE.Wrapers.JediWraper.Script;
-using static PiIDE.Wrapers.JediWraper;
 
 namespace PiIDE {
 
@@ -122,7 +118,7 @@ namespace PiIDE {
 
                 WrapPanel wrapPanel = new();
 
-                wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment=VerticalAlignment.Center });
+                wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center });
                 wrapPanel.Children.Add(new TextBlock() { Text = "Loading..." });
 
                 Child = wrapPanel;
