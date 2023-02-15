@@ -379,7 +379,7 @@ namespace PiIDE {
 
         private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
             RunFileLocalButton.IsEnabled = false;
-            SaveFile(true);
+            SaveFile(false);
             PythonWraper.AsyncFileRunner.RunFileAsync(FilePath);
             StartedPythonExecution?.Invoke(this, EventArgs.Empty);
         }
