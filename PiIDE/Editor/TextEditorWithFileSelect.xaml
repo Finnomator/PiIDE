@@ -44,13 +44,31 @@
 
             <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
 
-            <StackPanel Grid.Row="3">
-                <Button Content="Sync" x:Name="SyncButton" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click"/>
+            <Grid Grid.Row="3">
 
-                <ScrollViewer x:Name="BoardDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <Button x:Name="SyncButton" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click">
+                    <Button.Content>
+                        <WrapPanel>
+                            <fa:FontAwesome Icon="Download" VerticalAlignment="Center"/>
+                            <Rectangle Width="5"/>
+                            <TextBlock Text="Sync"/>
+                            <WrapPanel Name="SyncStatus" Visibility="Collapsed">
+                                <TextBlock Text="ing..."/>
+                                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
+                            </WrapPanel>
+                        </WrapPanel>
+                    </Button.Content>
+                </Button>
+
+                <ScrollViewer Grid.Row="1"  x:Name="BoardDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <boardExplorer:BoardExplorer x:Name="BoardExplorer"/>
                 </ScrollViewer>
-            </StackPanel>
+            </Grid>
 
         </Grid>
 

@@ -22,7 +22,7 @@ namespace PiIDE {
         private string[] PythonOnlyFilePaths => OpenTextEditors.Where(x => x.IsPythonFile).Select(x => x.FilePath).ToArray();
         private readonly List<TextEditor> OpenTextEditors = new();
 
-        public string LocalBoardPath => GlobalSettings.Default.LocalBoardFilesPath;
+        public static string LocalBoardPath => GlobalSettings.Default.LocalBoardFilesPath;
 
         public TextEditorWithFileSelect() {
             InitializeComponent();
@@ -231,14 +231,18 @@ namespace PiIDE {
             BoardDirectoryScrollViewer.Content = BoardExplorer;
         }
 
-        private void SyncButton_Click(object sender, RoutedEventArgs e) {
+        private async void SyncButton_Click(object sender, RoutedEventArgs e) {
 
             if (!Tools.EnableBoardInteractions) {
                 DisableBoardInteractions();
                 return;
             }
 
-            AmpyWraper.DownloadDirectoryFromBoard(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
+            SyncButton.IsEnabled = false;
+            SyncStatus.Visibility = Visibility.Visible;
+            await AmpyWraper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
+            SyncStatus.Visibility = Visibility.Collapsed;
+            SyncButton.IsEnabled = true;
 
             for (int i = 0; i < OpenTextEditors.Count; i++)
                 OpenTextEditors[i].ReloadFile();

@@ -1,6 +1,7 @@
 ﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -403,7 +404,10 @@ namespace PiIDE {
 
         private void MainScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
             e.Handled = true;
-            MainScrollViewer.ScrollToVerticalOffset((FirstVisibleLineNum - e.Delta / 60) * TextEditorTextBoxCharacterSize.Height);
+            int deltaLines = -e.Delta / 60;
+            if (deltaLines == 0 && e.Delta != 0)
+                deltaLines = e.Delta < 0 ? 1 : (-1);
+            MainScrollViewer.ScrollToVerticalOffset((FirstVisibleLineNum + deltaLines) * TextEditorTextBoxCharacterSize.Height);
         }
     }
 }

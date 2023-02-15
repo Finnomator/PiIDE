@@ -73,6 +73,15 @@ namespace PiIDE.Editor.Parts.Explorer {
             RenameTextBox.Focus();
         }
 
+        protected void SetStatus(string status) {
+            StatusTextBlock.Text = status;
+            Status.Visibility = Visibility.Visible;
+        }
+
+        protected void UnsetStatus() {
+            Status.Visibility = Visibility.Collapsed;
+        }
+
         private void RenameTextBox_KeyDown(object sender, KeyEventArgs e) {
             switch (e.Key) {
                 case Key.Enter:

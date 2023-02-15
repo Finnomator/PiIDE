@@ -21,7 +21,7 @@ namespace PiIDE.Wrapers {
             CreateNoWindow = true,
         };
 
-        public static string ReadFileOnBoard(int comport, string filePath) {
+        public static async Task<string> ReadFileOnBoardAsync(int comport, string filePath) {
 
             Debug.Assert(!IsBusy);
 
@@ -33,13 +33,13 @@ namespace PiIDE.Wrapers {
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
+            await process.WaitForExitAsync();
             process.Close();
             IsBusy = false;
             return output;
         }
 
-        public static void ReadFileOnBoardIntoFile(int comport, string filePath, string destPath) {
+        public static async Task ReadFileOnBoardIntoFileAsync(int comport, string filePath, string destPath) {
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
                 return;
@@ -51,7 +51,7 @@ namespace PiIDE.Wrapers {
 
             process.StartInfo.Arguments = $"--port COM{comport} get \"{filePath}\" \"{destPath.Replace("\\", "/")}\"";
             process.Start();
-            process.WaitForExit();
+            await process.WaitForExitAsync();
             process.Close();
             IsBusy = false;
         }
@@ -89,7 +89,7 @@ namespace PiIDE.Wrapers {
             IsBusy = false;
         }
 
-        public static string[] ListFilesOnBoard(int comport, string dirPath = "/") {
+        public static async Task<string[]> ListFilesOnBoardAsync(int comport, string dirPath = "/") {
             Debug.Assert(!IsBusy);
 
             IsBusy = true;
@@ -99,7 +99,7 @@ namespace PiIDE.Wrapers {
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
+            await process.WaitForExitAsync();
             process.Close();
             IsBusy = false;
 
@@ -154,7 +154,7 @@ namespace PiIDE.Wrapers {
             }
         }
 
-        public static void RemoveFromBoard(int comport, string fileOrDirPath) {
+        public static async Task RemoveFileFromBoardAsync(int comport, string filePath) {
 
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
@@ -163,9 +163,25 @@ namespace PiIDE.Wrapers {
 
             IsBusy = true;
             Process process = new() { StartInfo = AmpyDefaultStartInfo };
-            process.StartInfo.Arguments = $"--port COM{comport} rm \"{fileOrDirPath.Replace("\\", "/")}\"";
+            process.StartInfo.Arguments = $"--port COM{comport} rm \"{filePath.Replace("\\", "/")}\"";
             process.Start();
-            process.WaitForExit();
+            await process.WaitForExitAsync();
+            process.Close();
+            IsBusy = false;
+        }
+
+        public static async Task RemoveDirectoryFromBoardAsync(int comport, string dirPath) {
+
+            if (IsBusy) {
+                ErrorMessager.AmpyIsBusy();
+                return;
+            }
+
+            IsBusy = true;
+            Process process = new() { StartInfo = AmpyDefaultStartInfo };
+            process.StartInfo.Arguments = $"--port COM{comport} rmdir \"{dirPath.Replace("\\", "/")}\"";
+            process.Start();
+            await process.WaitForExitAsync();
             process.Close();
             IsBusy = false;
         }
@@ -186,14 +202,14 @@ namespace PiIDE.Wrapers {
             IsBusy = false;
         }
 
-        public static void DownloadDirectoryFromBoard(int comport, string dirPath, string destDirPath) {
+        public static async Task DownloadDirectoryFromBoardAsync(int comport, string dirPath, string destDirPath) {
 
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
                 return;
             }
 
-            string[] subPaths = ListFilesOnBoard(comport, dirPath);
+            string[] subPaths = await ListFilesOnBoardAsync(comport, dirPath);
 
             for (int i = 0; i < subPaths.Length; ++i) {
                 string subPath = subPaths[i];
@@ -206,13 +222,13 @@ namespace PiIDE.Wrapers {
                     if (!Directory.Exists(fullDestPath))
                         Directory.CreateDirectory(fullDestPath);
 
-                    DownloadDirectoryFromBoard(comport, subPath, destDirPath);
+                    await DownloadDirectoryFromBoardAsync(comport, subPath, destDirPath);
                 } else {
 
                     if (!File.Exists(fullDestPath))
                         File.Create(fullDestPath).Close();
 
-                    ReadFileOnBoardIntoFile(comport, subPath, fullDestPath);
+                    await ReadFileOnBoardIntoFileAsync(comport, subPath, fullDestPath);
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using PiIDE.Editor.Parts.Explorer.LocalExplorer;
+using PiIDE.Wrapers;
 using System.IO;
 using System.Windows;
 
@@ -10,6 +11,8 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
         public override event FileDeletedEventHandler? OnFileDeleted;
         public override event FileRenamedEventHandler? OnFileRenamed;
         public override event FileClickEventHandler? OnFileClick;
+
+        public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
         public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, BoardDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
             DirectoryPathOnBoard = directoryPathOnBoard;
@@ -66,7 +69,16 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
 
-        protected override void Delete_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+        protected override async void Delete_Click(object sender, RoutedEventArgs e) {
+            if (!Tools.EnableBoardInteractions) {
+                MessageBox.Show("Unable to connect to Pi", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            SetStatus("Deleting");
+            await AmpyWraper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard);
+            BasicFileActions.DeleteDirectory(DirectoryPath);
+            UnsetStatus();
+        }
 
         protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
 

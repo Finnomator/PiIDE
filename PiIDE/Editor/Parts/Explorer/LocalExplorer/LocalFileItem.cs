@@ -30,14 +30,14 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
         protected override void RenameFile(string oldPath, string newPath, string newName) => BasicFileActions.RenameFile(oldPath, newName);
 
         private async void Upload_Click(object sender, RoutedEventArgs e) {
-            UploadingStatus.Visibility = Visibility.Visible;
             if (!Tools.EnableBoardInteractions) {
                 MessageBox.Show("Unable to connect to Pi", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            SetStatus("Uploading");
             await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath);
             BasicFileActions.CopyFile(FilePath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, FileName));
-            UploadingStatus.Visibility = Visibility.Collapsed;
+            UnsetStatus();
         }
     }
 }

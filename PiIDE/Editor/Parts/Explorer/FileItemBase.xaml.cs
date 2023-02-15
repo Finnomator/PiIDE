@@ -36,6 +36,15 @@ namespace PiIDE.Editor.Parts.Explorer {
 
         private void MainButton_Click(object sender, RoutedEventArgs e) => OnClick?.Invoke(this);
 
+        protected void SetStatus(string status) {
+            Status.Visibility = Visibility.Visible;
+            StatusTextBlock.Text = status;
+        }
+
+        protected void UnsetStatus() {
+            Status.Visibility = Visibility.Collapsed;
+        }
+
         protected abstract void Copy_Click(object sender, RoutedEventArgs e);
         protected abstract void Cut_Click(object sender, RoutedEventArgs e);
         protected abstract void Paste_Click(object sender, RoutedEventArgs e);
