@@ -56,7 +56,7 @@ namespace PiIDE.Wrapers {
             IsBusy = false;
         }
 
-        public static async Task WriteToBoardAsync(int comport, string fileOrDirPath, string destPath = "/") {
+        public static async Task WriteToBoardAsync(int comport, string fileOrDirPath, string destPath) {
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
                 return;
