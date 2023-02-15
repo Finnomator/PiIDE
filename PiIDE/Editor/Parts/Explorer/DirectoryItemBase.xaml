@@ -15,12 +15,21 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="IsExpandedTextBlock" Grid.Column="1" Text=">" Padding="0,0,2,0"/>
-                <TextBlock Grid.Column="2" x:Name="FileNameTextBlock" Text="Directory Name"/>
+                <WrapPanel Grid.Column="2">
+
+                    <TextBlock x:Name="FileNameTextBlock" Text="Directory Name"/>
+                    <WrapPanel x:Name="UploadingStatus" Visibility="Collapsed">
+                        <Rectangle Width="3"/>
+                        <TextBlock Text="["/>
+                        <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Bottom"/>
+                        <TextBlock Text="Uploading]"/>
+                    </WrapPanel>
+                </WrapPanel>
                 <TextBox Grid.Column="2" x:Name="RenameTextBox" Visibility="Collapsed" KeyDown="RenameTextBox_KeyDown" LostFocus="RenameTextBox_LostFocus"/>
             </Grid>
 
             <Button.ContextMenu>
-                <ContextMenu>
+                <ContextMenu x:Name="DirContextMenu">
                     <MenuItem Header="Copy" Click="Copy_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="Copy" HorizontalAlignment="Center" VerticalAlignment="Center"/>

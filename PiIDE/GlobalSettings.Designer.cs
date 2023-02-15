@@ -189,5 +189,17 @@ namespace PiIDE {
                 this["SyntaxhighlighterPerformanceMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("BoardFiles/")]
+        public string LocalBoardFilesPath {
+            get {
+                return ((string)(this["LocalBoardFilesPath"]));
+            }
+            set {
+                this["LocalBoardFilesPath"] = value;
+            }
+        }
     }
 }

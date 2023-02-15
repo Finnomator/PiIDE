@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using PiIDE.Wrapers;
+using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
     public class LocalDirectoryItem : DirectoryItemBase {
@@ -11,6 +13,16 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
         public override event FileClickEventHandler? OnFileClick;
 
         public LocalDirectoryItem(string fullPath, LocalDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
+            MenuItem newItem = new MenuItem() {
+                Header = "Upload to Pi/",
+                Icon = new FontAwesome.WPF.FontAwesome() {
+                    Icon = FontAwesome.WPF.FontAwesomeIcon.Upload,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                },
+            };
+            newItem.Click += Upload_Click;
+            DirContextMenu.Items.Add(newItem);
         }
 
         protected override void Collapse() {
@@ -91,5 +103,16 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
         protected override void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(DirectoryPath);
 
         protected override void RenameDirectory(string oldPath, string newPath, string newName) => BasicFileActions.RenameDirectory(oldPath, newName);
+
+        private async void Upload_Click(object sender, RoutedEventArgs e) {
+            UploadingStatus.Visibility = Visibility.Visible;
+            if (!Tools.EnableBoardInteractions) {
+                MessageBox.Show("Unable to connect to Pi", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, DirectoryPath);
+            BasicFileActions.CopyDirectory(DirectoryPath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, DirectoryName));
+            UploadingStatus.Visibility = Visibility.Collapsed;
+        }
     }
 }

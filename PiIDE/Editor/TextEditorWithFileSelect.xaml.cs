@@ -22,7 +22,7 @@ namespace PiIDE {
         private string[] PythonOnlyFilePaths => OpenTextEditors.Where(x => x.IsPythonFile).Select(x => x.FilePath).ToArray();
         private readonly List<TextEditor> OpenTextEditors = new();
 
-        public const string LocalBoardPath = "BoardFiles/";
+        public string LocalBoardPath => GlobalSettings.Default.LocalBoardFilesPath;
 
         public TextEditorWithFileSelect() {
             InitializeComponent();
@@ -38,7 +38,7 @@ namespace PiIDE {
             string? lastOpenedFile = GlobalSettings.Default.LastOpenedFilePath;
             for (int i = lastOpenedFiles.Count - 1; i >= 0; i--) {
                 string path = lastOpenedFiles[i];
-                OpenFile(path, path != lastOpenedFile);
+                OpenFile(path, path != lastOpenedFile, false);
             }
 
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
@@ -52,7 +52,7 @@ namespace PiIDE {
 
         private void MessagesWindow_SelectionChanged(object? _, PylintMessage e) => GoToPylintMessage(e);
 
-        public void OpenFile(string filePath, bool openInBackground = false, bool onBoard = false) {
+        public void OpenFile(string filePath, bool openInBackground, bool onBoard) {
 
             if (IsFileOpen(filePath)) {
                 MainTabControl.SelectedIndex = GetTabIndexOfOpenFile(filePath);
@@ -65,14 +65,16 @@ namespace PiIDE {
                 return;
             }
 
-            AddFile(filePath, openInBackground, onBoard);
-            if (!openInBackground)
+            TextEditor editor = AddFile(filePath, openInBackground, onBoard);
+            if (!openInBackground) {
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                UpdatePylintMessages(editor);
+            }
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
 
-        private void AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
+        private TextEditor AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
             TextEditor textEditor;
 
             if (onBoard) {
@@ -122,6 +124,8 @@ namespace PiIDE {
 
             if (!GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
                 GlobalSettings.Default.LastOpenedFilePaths.Add(filePath);
+
+            return textEditor;
         }
 
         private async void UpdatePylintMessages(TextEditor textEditor) {
@@ -133,7 +137,7 @@ namespace PiIDE {
         public void AddTempFile() {
             string newFilePath = $"TempFiles/temp_file{Directory.GetFiles("TempFiles").Length + 1}.py";
             File.Create(newFilePath).Close();
-            OpenFile(newFilePath);
+            OpenFile(newFilePath, false, false);
         }
 
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -152,7 +156,7 @@ namespace PiIDE {
         private void OpenFileButton_Click(object sender, RoutedEventArgs e) {
             OpenFileDialog openFileDialog = new();
             if (openFileDialog.ShowDialog() == true)
-                OpenFile(openFileDialog.FileName);
+                OpenFile(openFileDialog.FileName, false, false);
         }
 
         private void OpenDirectoryButton_Click(object sender, RoutedEventArgs e) {
@@ -170,7 +174,7 @@ namespace PiIDE {
             RootPathTextBox.Text = Path.GetFullPath(directory);
             LocalExplorer = new(directory);
             LocalExplorer.OnFileClick += (s) => {
-                OpenFile(s.FilePath);
+                OpenFile(s.FilePath, false, false);
             };
             LocalExplorer.OnFileDeleted += (s, filePath) => {
                 CloseFile(filePath);
@@ -197,6 +201,9 @@ namespace PiIDE {
                 return;
 
             MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
+            TextEditor? editor = GetEditorFromPath(filePath);
+            if (editor is not null)
+                OpenTextEditors.Remove(editor);
 
             if (GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
                 GlobalSettings.Default.LastOpenedFilePaths.Remove(filePath);
@@ -208,7 +215,7 @@ namespace PiIDE {
             BoardExplorer = new(LocalBoardPath, directory);
 
             BoardExplorer.OnFileClick += (s) => {
-                OpenFile(s.FilePath, true);
+                OpenFile(s.FilePath, false, true);
             };
 
             BoardExplorer.OnFileDeleted += (s, filePath) => {
@@ -240,7 +247,7 @@ namespace PiIDE {
         private void GoToPylintMessage(PylintMessage pylintMessage) => GoTo(pylintMessage.Path, pylintMessage.Line, pylintMessage.Column);
 
         private void GoTo(string filePath, int row, int column) {
-            OpenFile(filePath);
+            OpenFile(filePath, false, false);
             if (OpenTextEditor is null)
                 throw new NullReferenceException();
             if (!OpenTextEditor.ContentLoaded)
