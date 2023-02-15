@@ -144,7 +144,7 @@ namespace PiIDE.Wrapers {
             }
 
             public async Task<ReturnClasses.Completion[]> Complete(int line, int column, bool fuzzy = false) {
-                WraperRepl.WriteLine($"{CompletionsVarName} = {WraperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})", false);
+                await WraperRepl.WriteLine($"{CompletionsVarName} = {WraperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})", false);
                 return TryConvert<ReturnClasses.Completion>(await WraperRepl.WriteLine($"print_obj(dump_completions(completions))", true));
             }
 
@@ -190,7 +190,7 @@ namespace PiIDE.Wrapers {
             }
 
             public async Task<ReturnClasses.Name[]> GetNames(bool allScopes = false, bool definitions = false, bool references = false) {
-                WraperRepl.WriteLine($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
+                await WraperRepl.WriteLine($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
                 return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLine($"print_obj(dump_names(names))", true));
             }
         }
@@ -231,8 +231,6 @@ namespace PiIDE.Wrapers {
                 public string VariableName { get; set; }
                 public required Script script;
 
-                public BaseName() { }
-
                 protected static T? TryConvert<T>(string? line) {
                     if (line is null)
                         return default;
@@ -250,7 +248,6 @@ namespace PiIDE.Wrapers {
                 }
 
                 public async Task<(int row, int column)> GetDefinitionEndPosition() {
-                    ;
                     string? res = await WraperRepl.WriteLine($"print_one_line({VariableName}.get_definition_end_position())", true);
                     string[] parts = res.Split(", ");
                     return (int.Parse(parts[0][1..]), int.Parse(parts[1][..1]));

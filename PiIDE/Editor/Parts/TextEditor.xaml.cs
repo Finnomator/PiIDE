@@ -26,13 +26,15 @@ namespace PiIDE {
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinting;
         public readonly bool EnableJediCompletions;
+        public static HighlightingMode HighlightingMode => (HighlightingMode) GlobalSettings.Default.SyntaxhighlighterMode;
+        public static HighlightingPerformanceMode HighlightingPerformanceMode => (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode;
 
         private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
         private Size TextEditorTextBoxCharacterSize;
-        private readonly TextEditorCore EditorCore;
+        private readonly TextEditorCore? EditorCore;
         private readonly PylingUnderliner Underliner;
-        protected int AutoSaveDelaySeconds = 5;
+        protected int AutoSaveDelaySeconds;
         protected bool DoAutoSaves = true;
 
         public bool DisableAllWrapers { get; set; }
@@ -73,6 +75,8 @@ namespace PiIDE {
             Loaded += delegate {
                 if (!ContentLoaded)
                     ReloadFile();
+                AutoSaveDelaySeconds = Tools.CountLines(EditorText) / 500 + 5;
+                AutoSave();
             };
 
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
@@ -84,28 +88,29 @@ namespace PiIDE {
             TextEditorGrid.Children.Add(CompletionUiList);
 
             // Syntax highlighter
-            EditorCore = new(this);
-            EditorCore.StartedHighlighting += delegate {
-                LoadingJediStatus.Visibility = Visibility.Visible;
-            };
-            EditorCore.FinishedHighlighting += delegate {
-                LoadingJediStatus.Visibility = Visibility.Collapsed;
-                if (TextEditorTextBox.Foreground is not null) {
+            if (IsPythonFile) {
+                EditorCore = new(this);
+                EditorCore.StartedHighlighting += delegate {
+                    LoadingJediStatus.Visibility = Visibility.Visible;
+                };
+                EditorCore.FinishedHighlighting += delegate {
+                    LoadingJediStatus.Visibility = Visibility.Collapsed;
+                    if (TextEditorTextBox.Foreground is not null) {
 #if DEBUG
-                    TextEditorTextBox.Foreground = Brushes.Red;
+                        TextEditorTextBox.Foreground = Brushes.Red;
 #else
-                    TextEditorTextBox.Foreground = null;
+                        TextEditorTextBox.Foreground = null;
 #endif
-                }
-            };
-            Grid.SetColumn(EditorCore, 2);
-            OuterTextGrid.Children.Add(EditorCore);
+                    }
+                };
+                Grid.SetColumn(EditorCore, 2);
+                OuterTextGrid.Children.Add(EditorCore);
+            }
 
             // Pylint underlining stuff
             Underliner = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Underliner);
 
-            AutoSave();
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -338,10 +343,10 @@ namespace PiIDE {
 
         private void UpdateHighlighting() {
 
-            if (DisableAllWrapers)
+            if (DisableAllWrapers || EditorCore is null)
                 return;
 
-            EditorCore.UpdateTextAsync();
+            EditorCore.UpdateTextAsync(HighlightingMode, HighlightingPerformanceMode);
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {

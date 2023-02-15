@@ -19,8 +19,8 @@ namespace PiIDE {
         // TODO: Renable RunOnBoardButton when comport gets set or reconnected
 
         private TextEditor? OpenTextEditor;
-        private string[] PythonOnlyFilePaths => OpenTextEditors.Where(x => x.IsPythonFile).Select(x => x.FilePath).ToArray();
         private readonly List<TextEditor> OpenTextEditors = new();
+        private const int PylintLinesLimit = 500;
 
         public static string LocalBoardPath => GlobalSettings.Default.LocalBoardFilesPath;
 
@@ -66,10 +66,8 @@ namespace PiIDE {
             }
 
             TextEditor editor = AddFile(filePath, openInBackground, onBoard);
-            if (!openInBackground) {
+            if (!openInBackground)
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-                UpdatePylintMessages(editor);
-            }
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
@@ -94,8 +92,8 @@ namespace PiIDE {
             };
 
             textEditor.OnFileSaved += delegate {
-                UpdatePylintMessages(textEditor);
                 tabItem.SaveLocalButton.IsEnabled = false;
+                UpdatePylintMessages(textEditor);
             };
 
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
@@ -129,7 +127,9 @@ namespace PiIDE {
         }
 
         private async void UpdatePylintMessages(TextEditor textEditor) {
-            textEditor.UpdatePylint((await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray())).Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray());
+            IEnumerable<TextEditor> pythonEditorsBelowLineLimit = OpenTextEditors.Where(x => x.IsPythonFile && x.EditorText.CountLines() < PylintLinesLimit);
+            PylintMessage[] pylintMessages = await MessagesWindow.UpdateLintMessages(pythonEditorsBelowLineLimit.Select(x => x.FilePath).ToArray());
+            textEditor.UpdatePylint(pylintMessages.Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray());
         }
 
         private TextEditor? GetEditorFromPath(string path) => OpenTextEditors.Find(x => x.FilePath == path);

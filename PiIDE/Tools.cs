@@ -31,10 +31,10 @@ namespace PiIDE {
             return col;
         }
 
-        public static int GetRowOfIndex(string text, int index) => CountLines(text[..index]) - 1;
-        public static int CountLines(string text) => text.AsSpan().Count('\n') + 1;
+        public static int GetRowOfIndex(this string text, int index) => CountLines(text[..index]) - 1;
+        public static int CountLines(this string text) => text.AsSpan().Count('\n') + 1;
 
-        public static (int col, int row)[] GetPointsOfIndexes(string text, int[] indexes) {
+        public static (int col, int row)[] GetPointsOfIndexes(this string text, int[] indexes) {
 
             // indexes must be sorted ascending
 
@@ -60,7 +60,7 @@ namespace PiIDE {
             return points;
         }
 
-        public static (int col, int row) GetPointOfIndex(string text, int index) {
+        public static (int col, int row) GetPointOfIndex(this string text, int index) {
 
             int col = 0;
             int row = 0;
@@ -76,7 +76,7 @@ namespace PiIDE {
             return (col, row);
         }
 
-        public static int GetIndexOfColRow(string text, int row, int col) {
+        public static int GetIndexOfColRow(this string text, int row, int col) {
             int c = 0;
             int r = 0;
             int i = 0;
@@ -96,7 +96,7 @@ namespace PiIDE {
             return i - 1;
         }
 
-        public static int[] GetIndexesOfColRows(string text, int[] rows, int[] cols) {
+        public static int[] GetIndexesOfColRows(this string text, int[] rows, int[] cols) {
             int col = 0;
             int row = 0;
 
@@ -119,11 +119,6 @@ namespace PiIDE {
             }
 
             return indexes;
-        }
-
-        public static int GetLengthOfLine(string text, int line) {
-            string[] lines = text.Split("\r\n");
-            return lines[line].Length;
         }
 
         public static int[] GetCOMPorts() => SerialPort.GetPortNames().Select(x => int.Parse(x[3..])).ToArray();
