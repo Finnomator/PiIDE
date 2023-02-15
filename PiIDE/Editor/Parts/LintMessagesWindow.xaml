@@ -8,45 +8,57 @@
              mc:Ignorable="d"
              d:DesignWidth="800" Loaded="UserControl_Loaded">
 
-    <ListView d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">
+    <Grid>
 
-        <ListView.View>
-            <GridView >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
 
-                <GridViewColumn>
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>
-                            <fa:FontAwesome Icon="{Binding Icon.Icon}" Foreground="{Binding Icon.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-                <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
-                <GridViewColumn Header="Code">
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock>
+        <WrapPanel Name="PylintStatus">
+            <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
+            <Rectangle Width="4"/>
+            <TextBlock Text="Loading Pylint..."/>
+        </WrapPanel>
+        
+        
+        <ListView Grid.Row="1"  d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <fa:FontAwesome Icon="{Binding Icon.Icon}" Foreground="{Binding Icon.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Header="Code">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
                                 <Hyperlink Click="CodeHyperlink_Click" Tag="{Binding MessageId}">
                                     <TextBlock x:Name="CodeHyperlinkTextBlock" Text="{Binding MessageId}"/>
                                 </Hyperlink>
                             </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}"/>
+                    <GridViewColumn Header="File" DisplayMemberBinding="{Binding Module}"/>
+                    <GridViewColumn Header="Line" DisplayMemberBinding="{Binding Line}"/>
+                </GridView>
+            </ListView.View>
+
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="15" Text="{Binding Name}"/>
                         </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-                <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}"/>
-                <GridViewColumn Header="File" DisplayMemberBinding="{Binding Module}"/>
-                <GridViewColumn Header="Line" DisplayMemberBinding="{Binding Line}"/>
-            </GridView>
-        </ListView.View>
-
-        <ListView.GroupStyle>
-            <GroupStyle>
-                <GroupStyle.HeaderTemplate>
-                    <DataTemplate>
-                        <TextBlock FontSize="15" Text="{Binding Name}"/>
-                    </DataTemplate>
-                </GroupStyle.HeaderTemplate>
-            </GroupStyle>
-        </ListView.GroupStyle>
-
-    </ListView>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
+    </Grid>
 </UserControl>

@@ -12,6 +12,8 @@ namespace PiIDE {
 
         private readonly string FilePath;
         public EventHandler<Completion>? CompletionClicked;
+        private bool IsBusy;
+        private bool GotNewerRequest;
 
         public CompletionUiList(string filePath) {
             InitializeComponent();
@@ -31,7 +33,14 @@ namespace PiIDE {
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
 
-        public async Task ReloadCompletionsAsync(string code, (int col, int row) caretPosition) {
+        public async void ReloadCompletionsAsync(string code, (int col, int row) caretPosition, bool selectFirst) {
+
+            if (IsBusy) {
+                GotNewerRequest = true;
+                return;
+            }
+
+            IsBusy = true;
 
             SetIntoLoadingState();
 
@@ -46,6 +55,16 @@ namespace PiIDE {
             ResetToNormalState();
 
             AddCompletions(completions);
+
+            if (selectFirst)
+                SelectFirst();
+
+            IsBusy = false;
+
+            if (GotNewerRequest) {
+                ReloadCompletionsAsync(code, caretPosition, selectFirst);
+                GotNewerRequest = false;
+            }
         }
 
         public void Close() {
@@ -105,7 +124,7 @@ namespace PiIDE {
             MainPopup.Child = MainListBox;
         }
 
-        public void SelectFirst() {
+        private void SelectFirst() {
             if (MainListBox.Items.Count > 0)
                 MainListBox.SelectedIndex = 0;
         }

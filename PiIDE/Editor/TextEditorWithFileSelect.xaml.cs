@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -18,7 +19,7 @@ namespace PiIDE {
         // TODO: Renable RunOnBoardButton when comport gets set or reconnected
 
         private TextEditor? OpenTextEditor;
-        private readonly List<string> PythonOnlyFilePaths = new();
+        private string[] PythonOnlyFilePaths => OpenTextEditors.Where(x => x.IsPythonFile).Select(x => x.FilePath).ToArray();
         private readonly List<TextEditor> OpenTextEditors = new();
 
         public const string LocalBoardPath = "BoardFiles/";
@@ -64,16 +65,14 @@ namespace PiIDE {
                 return;
             }
 
-            TextEditor textEditor = AddFile(filePath, openInBackground, onBoard);
-            if (!openInBackground) {
+            AddFile(filePath, openInBackground, onBoard);
+            if (!openInBackground)
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-                UpdatePylintMessages(textEditor);
-            }
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
 
-        private TextEditor AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
+        private void AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
             TextEditor textEditor;
 
             if (onBoard) {
@@ -88,35 +87,48 @@ namespace PiIDE {
                 Content = textEditor,
             };
 
-            textEditor.ContentChanged += (s, e) => tabItem.SaveLocalButton.IsEnabled = true;
-            textEditor.OnFileSaved += (sender) => {
-                UpdatePylintMessages(sender);
+            textEditor.ContentChanged += delegate {
+                tabItem.SaveLocalButton.IsEnabled = !textEditor.ContentIsSaved;
+            };
+
+            textEditor.OnFileSaved += delegate {
+                UpdatePylintMessages(textEditor);
                 tabItem.SaveLocalButton.IsEnabled = false;
             };
+
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
 
-            tabItem.CloseTabClick += (s, filePath) => CloseFile(filePath);
-            tabItem.SaveLocalClick += (s, filePath) => textEditor.SaveFile();
+            tabItem.CloseTabClick += (s, filePath) => {
+                TextEditor? editor = GetEditorFromPath(filePath);
+                if (editor is null)
+                    return;
+
+                if (!editor.ContentIsSaved) {
+                    MessageBoxResult msgbr = MessageBox.Show("This file is not saved. Do you want to close it anyway?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (msgbr == MessageBoxResult.Yes)
+                        CloseFile(filePath);
+                } else
+                    CloseFile(filePath);
+            };
+
+            tabItem.SaveLocalClick += (s, filePath) => textEditor.SaveFile(true);
 
             if (atIndex < 0)
                 MainTabControl.Items.Add(tabItem);
             else
                 MainTabControl.Items.Insert(atIndex, tabItem);
 
-            if (textEditor.IsPythonFile)
-                PythonOnlyFilePaths.Add(filePath);
-
             OpenTextEditors.Add(textEditor);
 
             if (!GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
                 GlobalSettings.Default.LastOpenedFilePaths.Add(filePath);
-
-            return textEditor;
         }
 
         private async void UpdatePylintMessages(TextEditor textEditor) {
             textEditor.UpdatePylint((await MessagesWindow.UpdateLintMessages(PythonOnlyFilePaths.ToArray())).Where(x => Path.GetFullPath(x.Path) == Path.GetFullPath(textEditor.FilePath)).ToArray());
         }
+
+        private TextEditor? GetEditorFromPath(string path) => OpenTextEditors.Find(x => x.FilePath == path);
 
         public void AddTempFile() {
             string newFilePath = $"TempFiles/temp_file{Directory.GetFiles("TempFiles").Length + 1}.py";
@@ -258,6 +270,14 @@ namespace PiIDE {
                 System.Windows.MessageBox.Show("Unable to connect to board, did you select the correct COM port?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 DisableBoardInteractions();
             }
+        }
+
+        public bool AreAllFilesSaved() {
+            for (int i = 0; i < OpenTextEditors.Count; ++i) {
+                if (!OpenTextEditors[i].ContentIsSaved)
+                    return false;
+            }
+            return true;
         }
     }
 }

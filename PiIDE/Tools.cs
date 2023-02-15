@@ -79,8 +79,9 @@ namespace PiIDE {
         public static int GetIndexOfColRow(string text, int row, int col) {
             int c = 0;
             int r = 0;
+            int i = 0;
 
-            for (int i = 0; i < text.Length; i++) {
+            for (; i < text.Length; i++) {
 
                 if (row == r && c == col)
                     return i;
@@ -91,7 +92,8 @@ namespace PiIDE {
                 } else
                     ++c;
             }
-            return -1;
+
+            return i - 1;
         }
 
         public static int[] GetIndexesOfColRows(string text, int[] rows, int[] cols) {

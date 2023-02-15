@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -18,6 +19,11 @@ namespace PiIDE.Editor.Parts {
         private string OldVisibleText = "";
         private ReturnClasses.Name[]? CachedJediNames;
         private bool IsBusy;
+        private bool GotNewerRequest;
+
+        public event EventHandler? StartedHighlighting;
+        public event EventHandler? FinishedHighlighting;
+
 
         public TextEditorCore(TextEditor textEditor) {
             Editor = textEditor;
@@ -26,27 +32,29 @@ namespace PiIDE.Editor.Parts {
 
         public async void UpdateTextAsync() {
 
-
             for (int i = 0; i < 50 && OldVisibleText == VisibleText; i++)
                 await Task.Delay(10);
 
             bool textChanged = OldVisibleText != VisibleText;
+
+            if (VisibleText == "") {
+                DrawingContext c = drawingGroup.Open();
+                c.Close();
+                return;
+            }
+
+            if (IsBusy) {
+                GotNewerRequest = true;
+                return;
+            }
+
+            StartedHighlighting?.Invoke(this, EventArgs.Empty);
 
             string visibleText = VisibleText;
             string editorText = EditorText;
             int fvl = Editor.FirstVisibleLineNum;
             int lvl = Editor.LastVisibleLineNum;
 
-            if (visibleText == "") {
-                DrawingContext c = drawingGroup.Open();
-                c.Close();
-                return;
-            }
-
-            // TODO: Add something like a queue
-
-            if (IsBusy)
-                return;
             IsBusy = true;
 
             FormattedText formattedText = new(
@@ -70,8 +78,6 @@ namespace PiIDE.Editor.Parts {
             if (textChanged || CachedJediNames is null)
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
 
-
-
             ReturnClasses.Name[] visibleJediNames = CachedJediNames.Where(x => x.Line > fvl && x.Line <= lvl).ToArray();
 
             int[] cols = new int[visibleJediNames.Length];
@@ -87,11 +93,7 @@ namespace PiIDE.Editor.Parts {
             for (int i = 0; i < visibleJediNames.Length; ++i) {
                 ReturnClasses.Name name = visibleJediNames[i];
                 int index = jediIndexes[i];
-                try {
-                    formattedText.SetForegroundBrush(TypeColors.TypeToColor(name.Type), index, name.Name.Length);
-                } catch {
-                    //TODO: fix index out of range
-                }
+                formattedText.SetForegroundBrush(TypeColors.TypeToColor(name.Type), index, name.Name.Length);
             }
 
 
@@ -101,6 +103,13 @@ namespace PiIDE.Editor.Parts {
             context.Close();
 
             IsBusy = false;
+
+            if (GotNewerRequest) {
+                UpdateTextAsync();
+                GotNewerRequest = false;
+            }
+
+            FinishedHighlighting?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void OnRender(DrawingContext drawingContext) {

@@ -30,8 +30,11 @@ namespace PiIDE.Editor.Parts {
             ActionsStackPanel.Children.Add(RunFileOnBoardButton);
         }
 
-        public override async void SaveFile() {
-            base.SaveFile();
+        public override async void SaveFile(bool savedByUser) {
+            base.SaveFile(savedByUser);
+
+            if (!savedByUser)
+                return;
 
             if (!Tools.EnableBoardInteractions) {
                 MessageBox.Show("Unable to save file on board", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

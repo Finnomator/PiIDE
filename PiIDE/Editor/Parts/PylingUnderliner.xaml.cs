@@ -63,8 +63,8 @@ namespace PiIDE {
                 MainGrid.Children.Add(new Line() {
                     //Stroke = (VisualBrush) Resources["asdf"],
                     StrokeThickness = 2,
-                    X1 = column * FontSizes.Width,
-                    X2 = endCol * FontSizes.Width,
+                    X1 = column * FontSizes.Width + 2,
+                    X2 = endCol * FontSizes.Width + 2,
                     Y1 = line * FontSizes.Height,
                     Y2 = line * FontSizes.Height,
                     Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type),

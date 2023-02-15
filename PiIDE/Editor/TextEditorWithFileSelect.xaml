@@ -88,7 +88,7 @@
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3"/>
 
-        <TabControl x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3" Panel.ZIndex="1">
+        <TabControl x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 
             <TabItem Header="Error List">
                 <local:LintMessagesWindow  x:Name="MessagesWindow" />

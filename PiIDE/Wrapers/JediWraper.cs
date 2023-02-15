@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -15,15 +16,15 @@ namespace PiIDE.Wrapers {
             private static Process WraperProcess;
 
 #if DEBUG
-            public static string WritenInput = "";
-            public static string WritenOutput = "";
-            public static string WritenError = "";
+            public static string WritenInput { get; private set; } = "";
+            public static string WritenOutput { get; private set; } = "";
+            public static string WritenError { get; private set; } = "";
 # endif
 
             private static bool ReceivedOutputData;
             private static string? NewOutputData;
 
-            private static bool IsBusy;
+            private static readonly SemaphoreSlim semaphoreSlim = new(1, 1);
 
             static WraperRepl() {
                 InitProcess();
@@ -72,26 +73,26 @@ namespace PiIDE.Wrapers {
             }
 
             public static async Task<string?> WriteLine(string line, bool expectsOutput) {
+
+                await semaphoreSlim.WaitAsync();
+
 #if DEBUG
                 Debug.WriteLine("Input: " + line);
                 WritenInput += line + "\n";
 #endif
-                while (IsBusy)
-                    await Task.Delay(10);
-
-                IsBusy = true;
 
                 WraperProcess.StandardInput.WriteLine(line);
 
                 if (expectsOutput) {
                     string? res = await ReadOutput();
-                    IsBusy = false;
+                    semaphoreSlim.Release();
                     return res;
                 }
 
-                IsBusy = false;
+                semaphoreSlim.Release();
                 return null;
             }
+
 
             private static async Task<string?> ReadOutput() {
                 while (!ReceivedOutputData)

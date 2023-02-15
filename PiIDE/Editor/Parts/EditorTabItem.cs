@@ -37,7 +37,9 @@ namespace PiIDE.Editor.Parts {
                 Padding = new(0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                ToolTip = "Close",
             };
+
             CloseTabButton.Click += (s, e) => CloseTabClick?.Invoke(this, FilePath);
 
             SaveLocalButton = new() {
@@ -49,8 +51,9 @@ namespace PiIDE.Editor.Parts {
                 Padding = new(0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                ToolTip = "Save Localy"
+                ToolTip = "Save"
             };
+
             SaveLocalButton.Click += (s, e) => SaveLocalClick?.Invoke(this, FilePath);
 
             header.Children.Add(fileNameTextBlock);

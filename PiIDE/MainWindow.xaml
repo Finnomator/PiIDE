@@ -13,6 +13,6 @@
         </Grid.RowDefinitions>
 
         <local:Toolbar x:Name="toolbar"/>
-        <local:TextEditorWithFileSelect x:Name="MainTabbar" Grid.Row="1"/>
+        <local:TextEditorWithFileSelect x:Name="Editor" Grid.Row="1"/>
     </Grid>
 </Window>

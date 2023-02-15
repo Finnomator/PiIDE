@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -30,10 +31,10 @@ namespace PiIDE {
         private Size TextEditorTextBoxCharacterSize;
         private readonly TextEditorCore EditorCore;
         private readonly PylingUnderliner Underliner;
-        private bool ScrollUpdateCalledItself;
+        protected int AutoSaveDelaySeconds = 5;
+        protected bool DoAutoSaves = true;
 
         public bool DisableAllWrapers { get; set; }
-
         public bool ContentIsSaved { get; private set; } = true;
         public bool ContentLoaded { get; private set; }
 
@@ -41,7 +42,7 @@ namespace PiIDE {
         public int FirstVisibleLineNum => (int) Math.Round(MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
         public int LastVisibleLineNum {
             get {
-                int lines = (int) ((MainScrollViewer.VerticalOffset + MainGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height);
+                int lines = (int) ((MainScrollViewer.VerticalOffset + OuterTextGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
                 return Tools.CountLines(EditorText) < lines ? TextEditorTextBox.LineCount : lines;
             }
         }
@@ -68,6 +69,11 @@ namespace PiIDE {
             EnableJediCompletions = IsPythonFile;
             TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
 
+            Loaded += delegate {
+                if (!ContentLoaded)
+                    ReloadFile();
+            };
+
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
             PythonWraper.PythonExited += Python_Exited;
 
@@ -78,12 +84,27 @@ namespace PiIDE {
 
             // Syntax highlighter
             EditorCore = new(this);
+            EditorCore.StartedHighlighting += delegate {
+                LoadingJediStatus.Visibility = Visibility.Visible;
+            };
+            EditorCore.FinishedHighlighting += delegate {
+                LoadingJediStatus.Visibility = Visibility.Collapsed;
+                if (TextEditorTextBox.Foreground is not null) {
+#if DEBUG
+                    TextEditorTextBox.Foreground = Brushes.Red;
+#else
+                    TextEditorTextBox.Foreground = null;
+#endif
+                }
+            };
             Grid.SetColumn(EditorCore, 2);
             OuterTextGrid.Children.Add(EditorCore);
 
             // Pylint underlining stuff
             Underliner = new(TextEditorTextBoxCharacterSize);
             TextEditorGrid.Children.Add(Underliner);
+
+            AutoSave();
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -94,7 +115,7 @@ namespace PiIDE {
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
 
-        public virtual void SaveFile() {
+        public virtual void SaveFile(bool savedByUser) {
             try {
                 File.WriteAllText(FilePath, TextEditorTextBox.Text);
                 ContentIsSaved = true;
@@ -114,6 +135,14 @@ namespace PiIDE {
         }
 
         public void ReloadFile(string fileContent) => TextEditorTextBox.Text = fileContent;
+
+        private int GetIndentOfLine(int line) {
+            int index = Tools.GetIndexOfColRow(EditorText, line, 0);
+            int indent = 0;
+            while (indent + index < EditorText.Length && EditorText[index + indent] == ' ')
+                ++indent;
+            return indent;
+        }
 
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
 
@@ -136,6 +165,17 @@ namespace PiIDE {
                         InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
                         CompletionUiList.Close();
                         e.Handled = true;
+                    } else {
+                        if (TextEditorTextBox.CaretIndex > 0) {
+                            char charInFrontOfCaret = EditorText[TextEditorTextBox.CaretIndex - 1];
+                            int caretRow = GetCaretRow();
+
+                            int indentAmount = GetIndentOfLine(caretRow);
+
+                            InsertAtCaretAndMoveCaret("\r\n" + new string(' ', indentAmount + (charInFrontOfCaret == ':' ? 4 : 0)));
+
+                            e.Handled = true;
+                        }
                     }
                     break;
                 case Key.Tab:
@@ -153,7 +193,7 @@ namespace PiIDE {
                     break;
                 case Key.S:
                     if (Shortcuts.IsShortcutPressed(Shortcut.SaveFile)) {
-                        SaveFile();
+                        SaveFile(true);
                         e.Handled = true;
                     }
                     break;
@@ -197,7 +237,7 @@ namespace PiIDE {
             if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
                 keyString = keyString.ToLower();
 
-            DisplayCodeCompletionsWithExtraTextAsync(keyString);
+            DisplayCodeCompletionsWithExtraText(keyString);
         }
 
         private void InsertCompletionAtCaret(Completion completion) {
@@ -227,9 +267,9 @@ namespace PiIDE {
 
         public static string GetLineNumbers(int lines) => string.Join(Environment.NewLine, Enumerable.Range(1, lines));
 
-        private void DisplayCodeCompletionsAsync() => DisplayCodeCompletionsWithExtraTextAsync("");
+        private void DisplayCodeCompletionsAsync() => DisplayCodeCompletionsWithExtraText("");
 
-        private async void DisplayCodeCompletionsWithExtraTextAsync(string extraText) {
+        private void DisplayCodeCompletionsWithExtraText(string extraText) {
 
             // This method is intended to be used when the user presses a key and the input is not in textbox yet
             // extraText must be one line!
@@ -244,13 +284,12 @@ namespace PiIDE {
             Thickness marginAtCaretPos = MarginAtCaretPosition();
             CompletionUiList.Margin = marginAtCaretPos;
 
-            await CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), caretPosition);
-            CompletionUiList.SelectFirst();
+            CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), caretPosition, true);
         }
 
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
-            ContentIsSaved = false;
+            ContentIsSaved = !ContentLoaded;
             ContentChanged?.Invoke(this, e);
             UpdateHighlighting();
 
@@ -283,6 +322,14 @@ namespace PiIDE {
                 new NumberSubstitution(),
                 VisualTreeHelper.GetDpi(TextEditorTextBox).PixelsPerDip);
             return new Size(formattedText.Width, formattedText.Height);
+        }
+
+        private async void AutoSave() {
+            while (DoAutoSaves) {
+                await Task.Delay(AutoSaveDelaySeconds * 1000);
+                if (!ContentIsSaved)
+                    SaveFile(false);
+            }
         }
 
         private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
@@ -331,7 +378,7 @@ namespace PiIDE {
 
         private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
             RunFileLocalButton.IsEnabled = false;
-            SaveFile();
+            SaveFile(true);
             PythonWraper.AsyncFileRunner.RunFileAsync(FilePath);
             StartedPythonExecution?.Invoke(this, EventArgs.Empty);
         }
@@ -341,27 +388,17 @@ namespace PiIDE {
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
         }
 
-        private void TextEditorTextBox_PreviewKeyUp(object sender, KeyEventArgs e) {
-
-        }
-
-        private void TextEditorTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
-
-        }
-
         public void UpdatePylint(PylintMessage[] pylintMessages) {
-            if (EnablePylinting && GlobalSettings.Default.PylintIsUsable)
+            if (EnablePylinting && GlobalSettings.Default.PylintIsUsable) {
                 Underliner.Underline(pylintMessages, FirstVisibleLineNum, LastVisibleLineNum);
+                AmountOfErrorsTextBlock.Text = pylintMessages.Where(x => x.Type == "error").Count().ToString();
+                AmountOfWarningsTextBlock.Text = pylintMessages.Where(x => x.Type == "warning").Count().ToString();
+            }
         }
 
         public void UpdatePylint() {
             if (EnablePylinting && GlobalSettings.Default.PylintIsUsable)
                 Underliner.UpdateUnderline(FirstVisibleLineNum, LastVisibleLineNum);
-        }
-
-        private void MainGridLoaded(object sender, RoutedEventArgs e) {
-            if (!ContentLoaded)
-                ReloadFile();
         }
 
         private void MainScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {

@@ -37,10 +37,23 @@ namespace PiIDE {
         }
 
         public async Task<PylintMessage[]> UpdateLintMessages(string[] filesToLint) {
+
+            SetIntoLoadingState();
             PylintMessage[] pylintMessages = await PylintWraper.GetLintingAsync(filesToLint);
+            ResetToNormalState();
+
             ClearLintMessages();
             AddLintMessages(pylintMessages);
+
             return pylintMessages;
+        }
+
+        private void ResetToNormalState() {
+            PylintStatus.Visibility = Visibility.Collapsed;
+        }
+
+        private void SetIntoLoadingState() {
+            PylintStatus.Visibility = Visibility.Visible;
         }
 
         public static ScrollViewer FindScrollViewer(DependencyObject d) {
