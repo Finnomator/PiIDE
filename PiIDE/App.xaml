@@ -3,4 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PiIDE"
              StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/EditorTextBoxTheme.xaml"/>
+                <ResourceDictionary Source="Themes/EditorScrollViewerTheme.xaml"/>
+                <ResourceDictionary Source="Themes/TabControlTheme.xaml"/>
+                <ResourceDictionary Source="Themes/CleanButtonTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

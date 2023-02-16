@@ -10,20 +10,20 @@
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800" Background="White">
+             d:DesignHeight="500" d:DesignWidth="800" Background="#FF181818">
 
     <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="22"/>
             <RowDefinition/>
-            <RowDefinition Height="5"/>
+            <RowDefinition Height="1"/>
             <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="1"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
@@ -32,17 +32,17 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
-                <RowDefinition Height="5"/>
+                <RowDefinition Height="1"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBox IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap"/>
+            <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap" Background="#FF181818" Foreground="White"/>
 
             <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <localExplorer:LocalExplorer x:Name="LocalExplorer"/>
             </ScrollViewer>
 
-            <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch"/>
+            <GridSplitter Background="#4CFFFFFF" Grid.Row="2" HorizontalAlignment="Stretch"/>
 
             <Grid Grid.Row="3">
 
@@ -50,8 +50,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                
-                <Button x:Name="SyncButton" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click">
+
+                <Button Style="{DynamicResource CleanButtonStyle}"  x:Name="SyncButton" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click" Foreground="White">
                     <Button.Content>
                         <WrapPanel>
                             <fa:FontAwesome Icon="Download" VerticalAlignment="Center"/>
@@ -72,9 +72,9 @@
 
         </Grid>
 
-        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="#4CFFFFFF"/>
 
-        <TabControl Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+        <TabControl Template="{DynamicResource TabControlStyle}" Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
             <TabControl.Resources>
                 <Style TargetType="TabControl">
                     <Setter Property="BorderThickness" Value="0,1,0,0"/>
@@ -83,28 +83,28 @@
             </TabControl.Resources>
         </TabControl>
 
-        <WrapPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Background="White">
+        <WrapPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Background="#FF181818">
 
             <WrapPanel x:Name="UploadingFileStatusStackPanel" Orientation="Horizontal" Visibility="Collapsed">
                 <Label Content="UploadingFile" Padding="0" VerticalAlignment="Center"/>
                 <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
             </WrapPanel>
 
-            <Button x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" BorderThickness="0" Background="Transparent" Padding="3">
-                <fa:FontAwesome Icon="FolderOutlinepenOutline" FontSize="14"/>
+            <Button Style="{StaticResource CleanButtonStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" BorderThickness="0" Background="Transparent" Padding="3">
+                <fa:FontAwesome Icon="FolderOutlinepenOutline" FontSize="14" Foreground="White"/>
             </Button>
-            <Button Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3"/>
-            <Button x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3">
-                <fa:FontAwesome Icon="FileTextOutline"/>
+            <Button Style="{StaticResource CleanButtonStyle}" Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3" TextBlock.Foreground="White"/>
+            <Button Style="{StaticResource CleanButtonStyle}" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3">
+                <fa:FontAwesome Icon="FileTextOutline" Foreground="White"/>
             </Button>
 
-            <Button x:Name="ConnectToBoardButton" Click="ConnectToBoardButton_Click" ToolTip="Connect to Board" BorderThickness="0" Background="Transparent" Padding="3">
-                <fa:FontAwesome Icon="Refresh"/>
+            <Button Style="{StaticResource CleanButtonStyle}" x:Name="ConnectToBoardButton" Click="ConnectToBoardButton_Click" ToolTip="Connect to Board" BorderThickness="0" Background="Transparent" Padding="3">
+                <fa:FontAwesome Icon="Refresh" Foreground="#FF7EDEFF"/>
             </Button>
 
         </WrapPanel>
 
-        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="#4CFFFFFF"/>
 
         <TabControl x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 

@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Background="White" BorderBrush="Gray" BorderThickness="1,0,1,1" Margin="0,0,17,0">
+        <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" CornerRadius="0,0,1,1" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="DimGray" BorderThickness="1,0,1,1" Margin="0,0,17,0">
             <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
                 <Button Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
                 <Button x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Background="Transparent" Foreground="Red" BorderThickness="0" Padding="3">
@@ -32,7 +32,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
+            <ScrollViewer Style="{StaticResource EditorScrollViewerTheme}" Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
 
                 <ScrollViewer.Resources>
                     <Style TargetType="ScrollBar">
@@ -42,7 +42,7 @@
                     </Style>
                 </ScrollViewer.Resources>
 
-                <Grid Background="White">
+                <Grid Background="#FF1F1F1F">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
                         <ColumnDefinition Width="1"/>
@@ -54,33 +54,29 @@
                         <RowDefinition Height="{Binding ActualHeight, ElementName=OuterTextGrid, Mode=OneWay}" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6D6D6D" TextAlignment="Right" Padding="5,0,5,0" Background="#FFE2E2E2"/>
+                    <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="5,0,5,0" Background="#FF1F1F1F"/>
 
                     <Grid x:Name="TextEditorGrid" Grid.Column="2" >
-                        <TextBox x:Name="TextEditorTextBox" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
+                        <TextBox x:Name="TextEditorTextBox" Style="{StaticResource EditorTextBoxStyle}" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
                     </Grid>
                 </Grid>
             </ScrollViewer>
         </Grid>
 
-        <WrapPanel Name="StatusPanel" Grid.Row="1" Background="#FFCCCCCC" >
-            <Border BorderThickness="1" BorderBrush="#33000000" CornerRadius="1">
+        <WrapPanel Name="StatusPanel" Grid.Row="1" Background="#FF181818" >
                 <WrapPanel ToolTip="Errors">
-                    <fa:FontAwesome Icon="Close" Foreground="Red" VerticalAlignment="Center" FontSize="14"/>
+                    <fa:FontAwesome Icon="Close" Foreground="#FFC8C8C8" VerticalAlignment="Center" FontSize="14"/>
                     <Rectangle Width="4"/>
-                    <TextBlock Name="AmountOfErrorsTextBlock" Text="0" FontSize="14" FontFamily="Cascadia Code"/>
+                    <TextBlock Name="AmountOfErrorsTextBlock" Foreground="#FFC8C8C8" Text="0" FontSize="14" FontFamily="Cascadia Code"/>
                 </WrapPanel>
-            </Border>
             
             <Rectangle Width="10"/>
 
-            <Border BorderThickness="1" BorderBrush="#33000000" CornerRadius="1">
                 <WrapPanel ToolTip="Warnings">
-                    <fa:FontAwesome Icon="Warning" Foreground="Gold" VerticalAlignment="Center" FontSize="14"/>
+                    <fa:FontAwesome Icon="Warning" Foreground="#FFC8C8C8" VerticalAlignment="Center" FontSize="14"/>
                     <Rectangle Width="4"/>
-                    <TextBlock Name="AmountOfWarningsTextBlock" Text="0" FontSize="14" FontFamily="Cascadia Code"/>
+                    <TextBlock Name="AmountOfWarningsTextBlock" Foreground="#FFC8C8C8" Text="0" FontSize="14" FontFamily="Cascadia Code"/>
                 </WrapPanel>
-            </Border>
 
             <Rectangle Width="10"/>
 

@@ -46,7 +46,8 @@ namespace PiIDE {
         public int LastVisibleLineNum {
             get {
                 int lines = (int) ((MainScrollViewer.VerticalOffset + OuterTextGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
-                return Tools.CountLines(EditorText) < lines ? TextEditorTextBox.LineCount : lines;
+                int textLines = Tools.CountLines(EditorText);
+                return textLines < lines ? textLines : lines;
             }
         }
         public string VisibleText => string.Join('\n', EditorText.Split('\n')[FirstVisibleLineNum..LastVisibleLineNum]);
