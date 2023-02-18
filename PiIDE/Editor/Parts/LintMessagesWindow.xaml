@@ -21,7 +21,8 @@
             <TextBlock Text="Loading Pylint..."/>
         </WrapPanel>
         
-        <ListView Grid.Row="1"  d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">
+        <ListView Grid.Row="1" Background="#FF181818" Foreground="White" d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">
+            
             <ListView.View>
                 <GridView>
                     <GridViewColumn>

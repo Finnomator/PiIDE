@@ -57,7 +57,7 @@
                     <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="5,0,5,0" Background="#FF1F1F1F"/>
 
                     <Grid x:Name="TextEditorGrid" Grid.Column="2" >
-                        <TextBox x:Name="TextEditorTextBox" Style="{StaticResource EditorTextBoxStyle}" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
+                        <TextBox x:Name="TextEditorTextBox" Background="#FF1F1F1F" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
                     </Grid>
                 </Grid>
             </ScrollViewer>

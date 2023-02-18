@@ -59,7 +59,7 @@ namespace PiIDE.Editor.Parts {
                 flowDirection: FlowDirection.LeftToRight,
                 typeface: new Typeface(EditorBox.FontFamily.Source),
                 emSize: EditorBox.FontSize,
-                foreground: Brushes.Black,
+                foreground: Brushes.White,
                 pixelsPerDip: VisualTreeHelper.GetDpi(this).PixelsPerDip
             );
 

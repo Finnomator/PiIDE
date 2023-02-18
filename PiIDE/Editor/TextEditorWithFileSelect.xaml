@@ -36,7 +36,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap" Background="#FF181818" Foreground="White"/>
+            <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap" Background="#FF353535" Foreground="White"/>
 
             <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <localExplorer:LocalExplorer x:Name="LocalExplorer"/>
@@ -106,7 +106,7 @@
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="#4CFFFFFF"/>
 
-        <TabControl x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
+        <TabControl BorderThickness="0" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3" Background="#FF181818">
 
             <TabItem Header="Error List">
                 <local:LintMessagesWindow  x:Name="MessagesWindow" />

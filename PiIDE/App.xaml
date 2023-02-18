@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="Themes/EditorScrollViewerTheme.xaml"/>
                 <ResourceDictionary Source="Themes/TabControlTheme.xaml"/>
                 <ResourceDictionary Source="Themes/CleanButtonTheme.xaml"/>
+                <ResourceDictionary Source="Themes/ListViewTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
