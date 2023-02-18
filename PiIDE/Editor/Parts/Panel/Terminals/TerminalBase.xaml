@@ -15,7 +15,7 @@
 
         <TextBox BorderThickness="0" Foreground="White" Background="#FF181818" IsReadOnly="True" x:Name="OutputTextBox" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Code"/>
 
-        <Border Grid.Row="1" BorderBrush="PaleVioletRed" BorderThickness="1" CornerRadius="3">
+        <Border Grid.Row="1" Background="#FF181818" BorderThickness="1" CornerRadius="3" BorderBrush="{StaticResource Accentcolor}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -23,8 +23,8 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Label Background="#FF181818" Foreground="White" Content="❯" Padding="1,0,1,0" VerticalContentAlignment="Center"/>
-                <TextBox Background="#FF181818" Foreground="White" Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True" FontFamily="Cascadia Code"/>
+                <Label Foreground="White" Content="❯" Padding="1,0,1,0" VerticalContentAlignment="Center"/>
+                <TextBox Background="Transparent"  Foreground="White" Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True" FontFamily="Cascadia Code"/>
             </Grid>
         </Border>
     </Grid>

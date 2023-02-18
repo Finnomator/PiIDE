@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="KeywordColor" Color="#FFC586C0"/>
+    <SolidColorBrush x:Key="ClassColor" Color="#FF4EC99D"/>
+    <SolidColorBrush x:Key="FunctionColor" Color="#FFDCDCAA"/>
+    <SolidColorBrush x:Key="InstanceColor" Color="#FF9CDCFE"/>
+    <SolidColorBrush x:Key="StatementColor" Color="#FF9CDCFE"/>
+    <SolidColorBrush x:Key="ModuleColor" Color="#FF4EC9A2"/>
+    <SolidColorBrush x:Key="ParamColor" Color="#FF9CDCFE"/>
+    <SolidColorBrush x:Key="PropertyColor" Color="#FF9CDCFE"/>
+    <SolidColorBrush x:Key="PathColor" Color="#FF5192C5"/>
+
+    <SolidColorBrush x:Key="Accentcolor" Color="PaleVioletRed"/>
+    <SolidColorBrush x:Key="EditorBackground" Color="#FF1F1F1F"/>
+</ResourceDictionary>

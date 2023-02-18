@@ -15,7 +15,7 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="22"/>
+            <RowDefinition Height="30"/>
             <RowDefinition/>
             <RowDefinition Height="1"/>
             <RowDefinition Height="150"/>
@@ -83,44 +83,43 @@
             </TabControl.Resources>
         </TabControl>
 
-        <WrapPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Background="#FF181818">
+        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" Background="#FF181818">
 
             <WrapPanel x:Name="UploadingFileStatusStackPanel" Orientation="Horizontal" Visibility="Collapsed">
-                <Label Content="UploadingFile" Padding="0" VerticalAlignment="Center"/>
-                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
+                <Label Content="UploadingFile" Padding="0" VerticalAlignment="Center" Foreground="White"/>
+                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Background="White"/>
             </WrapPanel>
 
-            <Button Style="{StaticResource CleanButtonStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" BorderThickness="0" Background="Transparent" Padding="3">
+            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" Padding="3" VerticalAlignment="Center" Width="23" Height="23" >
                 <fa:FontAwesome Icon="FolderOutlinepenOutline" FontSize="14" Foreground="White"/>
             </Button>
-            <Button Style="{StaticResource CleanButtonStyle}" Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" BorderThickness="0" Background="Transparent" Padding="3" TextBlock.Foreground="White"/>
-            <Button Style="{StaticResource CleanButtonStyle}" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" BorderThickness="0" Background="Transparent" Padding="3">
+            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" Padding="3" TextBlock.Foreground="White" VerticalAlignment="Center" Width="23" Height="23"/>
+            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" Padding="3" VerticalAlignment="Center" Height="23" Width="23">
                 <fa:FontAwesome Icon="FileTextOutline" Foreground="White"/>
             </Button>
 
-            <Button Style="{StaticResource CleanButtonStyle}" x:Name="ConnectToBoardButton" Click="ConnectToBoardButton_Click" ToolTip="Connect to Board" BorderThickness="0" Background="Transparent" Padding="3">
+            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="ConnectToBoardButton" Click="ConnectToBoardButton_Click" ToolTip="Connect to Board" Padding="3" VerticalAlignment="Center" Height="23" Width="23">
                 <fa:FontAwesome Icon="Refresh" Foreground="#FF7EDEFF"/>
             </Button>
-
-        </WrapPanel>
+        </StackPanel>
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="#4CFFFFFF"/>
 
-        <TabControl BorderThickness="0" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3" Background="#FF181818">
+        <TabControl Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 
-            <TabItem Header="Error List">
+            <TabItem Style="{DynamicResource TabItemStyle}" Header="Error List">
                 <local:LintMessagesWindow  x:Name="MessagesWindow" />
             </TabItem>
 
-            <TabItem Header="Pi Terminal">
+            <TabItem Style="{DynamicResource TabItemStyle}" Header="Pi Terminal">
                 <terminal:BoardTerminal x:Name="PiTerminal"/>
             </TabItem>
 
-            <TabItem Header="Python Terminal">
+            <TabItem Style="{DynamicResource TabItemStyle}" Header="Python Terminal">
                 <terminal:PythonTerminal x:Name="PyTerminal"/>
             </TabItem>
 
-            <TabItem Header="Notepad">
+            <TabItem Style="{DynamicResource TabItemStyle}" Header="Notepad">
                 <local:NotePad/>
             </TabItem>
 

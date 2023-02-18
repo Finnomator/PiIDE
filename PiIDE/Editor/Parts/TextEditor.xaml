@@ -81,9 +81,9 @@
             <Rectangle Width="10"/>
 
             <WrapPanel Visibility="Collapsed" Name="LoadingJediStatus" VerticalAlignment="Center">
-                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" FontSize="14"/>
+                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
                 <Rectangle Width="4"/>
-                <TextBlock  FontFamily="Cascadia Code" FontSize="14" Text="Loading Jedi..."/>
+                <TextBlock  FontFamily="Cascadia Code" FontSize="14" Text="Loading Jedi..." Foreground="White"/>
             </WrapPanel>
         </WrapPanel>
     </Grid>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE"
         mc:Ignorable="d"
-        Title="Pi IDE" Height="450" Width="800" Closing="Window_Closing" Background="#FF1F1F1F">
+        Title="Pi IDE" Height="450" Width="800" Closing="Window_Closing" Background="#FF1F1F1F" >
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

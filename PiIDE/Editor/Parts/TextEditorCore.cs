@@ -60,7 +60,7 @@ namespace PiIDE.Editor.Parts {
                 typeface: new Typeface(EditorBox.FontFamily.Source),
                 emSize: EditorBox.FontSize,
                 foreground: Brushes.White,
-                pixelsPerDip: VisualTreeHelper.GetDpi(this).PixelsPerDip
+                pixelsPerDip: VisualTreeHelper.GetDpi(EditorBox).PixelsPerDip
             );
 
             switch (highlightingMode) {

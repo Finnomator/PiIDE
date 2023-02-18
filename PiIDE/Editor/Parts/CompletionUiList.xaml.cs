@@ -106,6 +106,7 @@ namespace PiIDE {
         }
 
         private void ListBox_MouseLeftButtonDown(object sender, RoutedEventArgs e) {
+            // This Event has to be implementd (<EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBox_MouseLeftButtonDown"/>)
             CompletionClicked?.Invoke(sender, (Completion) ((ListBoxItem) sender).Content);
             Close();
         }

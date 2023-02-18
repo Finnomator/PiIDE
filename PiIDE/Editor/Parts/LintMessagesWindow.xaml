@@ -16,9 +16,9 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Visibility="Collapsed" Name="PylintStatus">
-            <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center"/>
+            <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Foreground="White"/>
             <Rectangle Width="4"/>
-            <TextBlock Text="Loading Pylint..."/>
+            <TextBlock Text="Loading Pylint..." Foreground="White"/>
         </WrapPanel>
         
         <ListView Grid.Row="1" Background="#FF181818" Foreground="White" d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">

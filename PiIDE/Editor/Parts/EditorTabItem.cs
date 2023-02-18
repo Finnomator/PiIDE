@@ -21,23 +21,27 @@ namespace PiIDE.Editor.Parts {
 
             FilePath = filePath;
             FileName = Path.GetFileName(FilePath);
+            Height = 30;
+
+            Style = (Style) Application.Current.Resources["TabItemStyle"];
 
             TextBlock fileNameTextBlock = new() {
                 Text = FileName,
+                Foreground = Brushes.White,
             };
 
             WrapPanel header = new();
 
             CloseTabButton = new() {
-                Content = new FontAwesome.WPF.FontAwesome() {
-                    Icon = FontAwesomeIcon.Remove
-                },
-                Background = Brushes.Transparent,
-                BorderBrush = null,
-                Padding = new(0),
+                Content = "⛌",
+                FontSize = 9,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
                 ToolTip = "Close",
+                Style = (Style) Application.Current.Resources["CleanButtonWithRoundCornersStyle"],
+                Foreground = Brushes.White,
+                Padding = new(2),
             };
 
             CloseTabButton.Click += (s, e) => CloseTabClick?.Invoke(this, FilePath);
@@ -46,12 +50,12 @@ namespace PiIDE.Editor.Parts {
                 Content = new FontAwesome.WPF.FontAwesome() {
                     Icon = FontAwesomeIcon.Save
                 },
-                Background = Brushes.Transparent,
-                BorderBrush = null,
-                Padding = new(0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                ToolTip = "Save"
+                ToolTip = "Save",
+                Style = (Style) Application.Current.Resources["CleanButtonWithRoundCornersStyle"],
+                Foreground = Brushes.White,
+                Padding = new(2),
             };
 
             SaveLocalButton.Click += (s, e) => SaveLocalClick?.Invoke(this, FilePath);
