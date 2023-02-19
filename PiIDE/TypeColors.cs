@@ -3,6 +3,14 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace PiIDE {
+
+    public static class RegexColors {
+        public static Brush Keyword => (Brush) Application.Current.Resources["KeywordColor"];
+        public static Brush Comment => (Brush) Application.Current.Resources["CommentColor"];
+        public static Brush String => (Brush) Application.Current.Resources["StringColor"];
+        public static Brush Number => (Brush) Application.Current.Resources["NumberColor"];
+    }
+
     public static class TypeColors {
 
         // TODO: Make these colors customizable
@@ -94,12 +102,12 @@ namespace PiIDE {
 
     public static class PylintMessageColors {
 
-        public static readonly Brush Fatal = Brushes.DarkRed;
-        public static readonly Brush Error = Brushes.Red;
-        public static readonly Brush Warning = Brushes.Gold;
-        public static readonly Brush Convention = Brushes.Blue;
-        public static readonly Brush Refactor = Brushes.LightBlue;
-        public static readonly Brush Information = Brushes.CadetBlue;
+        public static Brush Fatal => (Brush) Application.Current.Resources["FatalColor"];
+        public static Brush Error = (Brush) Application.Current.Resources["ErrorColor"];
+        public static Brush Warning = (Brush) Application.Current.Resources["WarningColor"];
+        public static Brush Convention = (Brush) Application.Current.Resources["ConventionColor"];
+        public static Brush Refactor = (Brush) Application.Current.Resources["RefactorColor"];
+        public static Brush Information = (Brush) Application.Current.Resources["InformationColor"];
         public static readonly Brush EverythingElse = Brushes.Gray;
 
         private static readonly Dictionary<string, Brush> TypeToColorMap = new() {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,14 +9,19 @@ namespace PiIDE {
 
     public partial class CompletionUiList : UserControl {
 
-        private readonly string FilePath;
         public EventHandler<Completion>? CompletionClicked;
         private bool IsBusy;
         private bool GotNewerRequest;
 
-        public CompletionUiList(string filePath) {
+        private readonly TextEditor Editor;
+        private TextBox EditorBox => Editor.TextEditorTextBox;
+        private string EditorText => Editor.TextEditorTextBox.Text;
+        private string VisibleText => Editor.VisibleText;
+        private string? ExtraText;
+
+        public CompletionUiList(TextEditor editor) {
             InitializeComponent();
-            FilePath = filePath;
+            Editor = editor;
             Close();
         }
 
@@ -33,7 +37,9 @@ namespace PiIDE {
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
 
-        public async void ReloadCompletionsAsync(string code, (int col, int row) caretPosition, bool selectFirst) {
+        public async void ReloadCompletionsAsync(bool selectFirst, string extraText = "") {
+
+            ExtraText = extraText;
 
             if (IsBusy) {
                 GotNewerRequest = true;
@@ -44,8 +50,16 @@ namespace PiIDE {
 
             SetIntoLoadingState();
 
-            Script script = await Script.MakeScript(code, FilePath);
-            Completion[] completions = await script.Complete(caretPosition.row, caretPosition.col);
+            string code = EditorText + extraText;
+            string filePath = Editor.FilePath;
+            (int col, int row) = Editor.GetCaretPosition();
+            row++;
+            col += extraText.Length;
+
+            Script script = await Script.MakeScript(code, filePath);
+            Completion[] completions = await script.Complete(row, col);
+
+            IsBusy = false;
 
             if (completions.Length == 0) {
                 SetIntoNoSuggestionsState();
@@ -59,10 +73,8 @@ namespace PiIDE {
             if (selectFirst)
                 SelectFirst();
 
-            IsBusy = false;
-
             if (GotNewerRequest) {
-                ReloadCompletionsAsync(code, caretPosition, selectFirst);
+                ReloadCompletionsAsync(selectFirst, ExtraText);
                 GotNewerRequest = false;
             }
         }
@@ -133,8 +145,8 @@ namespace PiIDE {
         private class LoadingState : Border {
             public LoadingState() {
                 BorderThickness = new(1);
-                BorderBrush = Brushes.Black;
-                Background = Brushes.White;
+                BorderBrush = (Brush) Application.Current.Resources["SplitterBackground"];
+                Background = (Brush) Application.Current.Resources["EditorBackground"];
 
                 WrapPanel wrapPanel = new();
 
@@ -148,8 +160,8 @@ namespace PiIDE {
         private class NoSuggestionsState : Border {
             public NoSuggestionsState() {
                 BorderThickness = new(1);
-                BorderBrush = Brushes.Black;
-                Background = Brushes.White;
+                BorderBrush = (Brush) Application.Current.Resources["SplitterBackground"];
+                Background = (Brush) Application.Current.Resources["EditorBackground"];
                 Child = new TextBlock() { Text = "No Suggestions" };
             }
         }

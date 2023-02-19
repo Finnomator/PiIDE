@@ -13,92 +13,122 @@ namespace PiIDE.Wrapers {
     public class JediWraper {
 
         public static class WraperRepl {
-            private static Process WraperProcess;
+
+            private class Wraper {
+
+                private Process WraperProcess;
 
 #if DEBUG
-            public static string WritenInput { get; private set; } = "";
-            public static string WritenOutput { get; private set; } = "";
-            public static string WritenError { get; private set; } = "";
+                public static string WritenInput { get; private set; } = "";
+                public static string WritenOutput { get; private set; } = "";
+                public static string WritenError { get; private set; } = "";
 # endif
 
-            private static bool ReceivedOutputData;
-            private static string? NewOutputData;
+                private bool ReceivedOutputData;
+                private string? NewOutputData;
 
-            private static readonly SemaphoreSlim semaphoreSlim = new(1, 1);
+                private readonly SemaphoreSlim semaphoreSlim = new(1, 1);
 
-            static WraperRepl() {
-                InitProcess();
+                public bool IsBusy { get; private set; }
+
+                public Wraper() {
+                    InitProcess();
+                }
+
+                private void InitProcess() {
+                    WraperProcess = new() {
+                        StartInfo = new ProcessStartInfo() {
+                            FileName = "Assets/Jedi/jedi_wraper.exe",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            RedirectStandardInput = true,
+                            CreateNoWindow = true,
+                        },
+                        EnableRaisingEvents = true,
+                    };
+
+                    WraperProcess.OutputDataReceived += (s, e) => {
+#if DEBUG
+                        WritenOutput += (e.Data ?? "NULL") + "\n";
+                        Debug.WriteLine($"Output: {e.Data ?? "NULL"}");
+#endif
+                        NewOutputData = e.Data;
+                        ReceivedOutputData = true;
+                    };
+
+#if DEBUG
+                    WraperProcess.ErrorDataReceived += (s, e) => {
+                        WritenError += (e.Data ?? "NULL") + "\n";
+                        Debug.WriteLine($"Error: {e.Data ?? "NULL"}");
+                    };
+#endif
+
+
+                    WraperProcess.Exited += (s, e) => {
+#if DEBUG
+                        MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+#endif
+                        InitProcess();
+                    };
+
+                    WraperProcess.Start();
+                    WraperProcess.BeginErrorReadLine();
+                    WraperProcess.BeginOutputReadLine();
+                }
+
+                public async Task<string?> WriteLine(string line, bool expectsOutput) {
+
+                    await semaphoreSlim.WaitAsync();
+#if DEBUG
+                    Debug.WriteLine("Input: " + line);
+                    WritenInput += line + "\n";
+#endif
+
+                    IsBusy = true;
+
+                    WraperProcess.StandardInput.WriteLine(line);
+
+                    if (expectsOutput) {
+                        string? res = await ReadOutput();
+                        semaphoreSlim.Release();
+                        IsBusy = false;
+                        return res;
+                    }
+
+                    IsBusy = false;
+                    semaphoreSlim.Release();
+                    return null;
+                }
+
+                private async Task<string?> ReadOutput() {
+                    while (!ReceivedOutputData)
+                        await Task.Delay(10);
+                    ReceivedOutputData = false;
+                    return NewOutputData;
+                }
             }
 
-            private static void InitProcess() {
-                WraperProcess = new() {
-                    StartInfo = new ProcessStartInfo() {
-                        FileName = "Assets/Jedi/jedi_wraper.exe",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        RedirectStandardInput = true,
-                        CreateNoWindow = true,
-                    },
-                    EnableRaisingEvents = true,
-                };
+            private const int AmountOfWrapers = 2;
+            private static Wraper[] Wrapers;
 
-                WraperProcess.OutputDataReceived += (s, e) => {
-#if DEBUG
-                    WritenOutput += (e.Data ?? "NULL") + "\n";
-                    Debug.WriteLine($"Output: {e.Data ?? "NULL"}");
-#endif
-                    NewOutputData = e.Data;
-                    ReceivedOutputData = true;
-                };
-
-# if DEBUG
-                WraperProcess.ErrorDataReceived += (s, e) => {
-                    WritenError += (e.Data ?? "NULL") + "\n";
-                    Debug.WriteLine($"Error: {e.Data ?? "NULL"}");
-                };
-#endif
-
-
-                WraperProcess.Exited += (s, e) => {
-#if DEBUG
-                    MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-#endif
-                    InitProcess();
-                };
-
-                WraperProcess.Start();
-                WraperProcess.BeginErrorReadLine();
-                WraperProcess.BeginOutputReadLine();
+            static WraperRepl() {
+                Wrapers = new Wraper[AmountOfWrapers];
+                for (int i = 0; i < AmountOfWrapers; i++)
+                    Wrapers[i] = new();
             }
 
             public static async Task<string?> WriteLine(string line, bool expectsOutput) {
-
-                await semaphoreSlim.WaitAsync();
-
-#if DEBUG
-                Debug.WriteLine("Input: " + line);
-                WritenInput += line + "\n";
-#endif
-
-                WraperProcess.StandardInput.WriteLine(line);
-
-                if (expectsOutput) {
-                    string? res = await ReadOutput();
-                    semaphoreSlim.Release();
-                    return res;
-                }
-
-                semaphoreSlim.Release();
-                return null;
+                Wraper wraper = AquireAvailableWraper();
+                return await wraper.WriteLine(line, expectsOutput);
             }
 
-
-            private static async Task<string?> ReadOutput() {
-                while (!ReceivedOutputData)
-                    await Task.Delay(10);
-                ReceivedOutputData = false;
-                return NewOutputData;
+            private static Wraper AquireAvailableWraper() {
+                for (int i = 0; i < AmountOfWrapers; i++) {
+                    if (!Wrapers[i].IsBusy)
+                        return Wrapers[i];
+                }
+                return Wrapers[0];
             }
         }
 

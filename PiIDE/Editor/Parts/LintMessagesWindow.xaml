@@ -20,11 +20,11 @@
             <Rectangle Width="4"/>
             <TextBlock Text="Loading Pylint..." Foreground="White"/>
         </WrapPanel>
-        
-        <ListView Grid.Row="1" Background="#FF181818" Foreground="White" d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged">
-            
+
+        <ListView Grid.Row="1" BorderThickness="0" Style="{StaticResource ListViewStyle}" Background="#FF181818" Foreground="White" d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged" ItemContainerStyle="{StaticResource ListViewItemStyle}">
+
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

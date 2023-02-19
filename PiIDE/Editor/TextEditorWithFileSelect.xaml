@@ -10,7 +10,7 @@
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800" Background="#FF181818">
+             d:DesignHeight="500" d:DesignWidth="800" Background="{DynamicResource ExplorerBackground}">
 
     <Grid>
 
@@ -38,8 +38,8 @@
 
             <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap" Background="#FF353535" Foreground="White"/>
 
-            <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <localExplorer:LocalExplorer x:Name="LocalExplorer"/>
+            <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{DynamicResource PanelBackground}" >
+                <localExplorer:LocalExplorer x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackground}"/>
             </ScrollViewer>
 
             <GridSplitter Background="#4CFFFFFF" Grid.Row="2" HorizontalAlignment="Stretch"/>
@@ -66,13 +66,13 @@
                 </Button>
 
                 <ScrollViewer Grid.Row="1"  x:Name="BoardDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <boardExplorer:BoardExplorer x:Name="BoardExplorer"/>
+                    <boardExplorer:BoardExplorer x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackground}"/>
                 </ScrollViewer>
             </Grid>
 
         </Grid>
 
-        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="#4CFFFFFF"/>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource SplitterBackground}"/>
 
         <TabControl Template="{DynamicResource TabControlStyle}" Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
             <TabControl.Resources>
@@ -103,7 +103,7 @@
             </Button>
         </StackPanel>
 
-        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="#4CFFFFFF"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="{DynamicResource SplitterBackground}"/>
 
         <TabControl Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 

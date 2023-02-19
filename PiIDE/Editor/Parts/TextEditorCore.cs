@@ -50,6 +50,7 @@ namespace PiIDE.Editor.Parts {
 
             // this is used because the EditorText could change while waiting for jedi to finish
             string visibleText = VisibleText;
+            string filePath = Editor.FilePath;
 
             IsBusy = true;
 
@@ -66,16 +67,16 @@ namespace PiIDE.Editor.Parts {
             switch (highlightingMode) {
                 case HighlightingMode.JediAndKeywords:
                     HighlightKeywords(formattedText, visibleText);
-                    await HighlightJediNamesAsync(formattedText, visibleText, performanceMode);
+                    await HighlightJediNamesAsync(formattedText, visibleText, filePath, performanceMode);
                     break;
                 case HighlightingMode.JediOnly:
-                    await HighlightJediNamesAsync(formattedText, visibleText, performanceMode);
+                    await HighlightJediNamesAsync(formattedText, visibleText, filePath, performanceMode);
                     break;
                 case HighlightingMode.KeywordsOnly:
                     HighlightKeywords(formattedText, visibleText);
                     break;
                 default:
-                    throw new Exception();
+                    break;
             }
 
             OldVisibleText = visibleText;
@@ -95,25 +96,38 @@ namespace PiIDE.Editor.Parts {
 
         private static void HighlightKeywords(FormattedText formattedText, string visibleText) {
             Match[] keywordMatches = SyntaxHighlighter.FindKeywords(visibleText);
-            for (int i = 0; i < keywordMatches.Length; i++) {
-                Match match = keywordMatches[i];
-                formattedText.SetForegroundBrush(TypeColors.Keyword, match.Index, match.Length);
-            }
+            Match[] commentMatches = SyntaxHighlighter.FindComments(visibleText);
+            Match[] stringMatches = SyntaxHighlighter.FindStrings(visibleText);
+            Match[] numberMatches = SyntaxHighlighter.FindNumbers(visibleText);
+
+            // The highlighting order is critical, so it overlaps the highlighted strings in comments
+
+            foreach (Match keyword in keywordMatches)
+                formattedText.SetForegroundBrush(RegexColors.Keyword, keyword.Index, keyword.Length);
+
+            foreach (Match number in numberMatches)
+                formattedText.SetForegroundBrush(RegexColors.Number, number.Index, number.Length);
+
+            foreach (Match stringMatch in stringMatches)
+                formattedText.SetForegroundBrush(RegexColors.String, stringMatch.Index, stringMatch.Length);
+
+            foreach (Match comment in commentMatches)
+                formattedText.SetForegroundBrush(RegexColors.Comment, comment.Index, comment.Length);
         }
 
-        private async Task HighlightJediNamesAsync(FormattedText formattedText, string visibleText, HighlightingPerformanceMode performanceMode) {
+        private async Task HighlightJediNamesAsync(FormattedText formattedText, string visibleText, string filePath, HighlightingPerformanceMode performanceMode) {
             if (performanceMode == HighlightingPerformanceMode.Normal)
-                await HighlightJediNamesNormalAsync(formattedText, visibleText);
+                await HighlightJediNamesNormalAsync(formattedText, visibleText, filePath);
             else if (performanceMode == HighlightingPerformanceMode.Performance)
-                await HighlightJediNamesPerformanceAsync(formattedText, visibleText);
+                await HighlightJediNamesPerformanceAsync(formattedText, visibleText, filePath);
         }
 
-        private async Task HighlightJediNamesNormalAsync(FormattedText formattedText, string visibleText) {
+        private async Task HighlightJediNamesNormalAsync(FormattedText formattedText, string visibleText, string filePath) {
 
             int fvl = Editor.FirstVisibleLineNum;
             int lvl = Editor.LastVisibleLineNum;
 
-            Script script = await Script.MakeScript(EditorText, Editor.FilePath);
+            Script script = await Script.MakeScript(EditorText, filePath);
 
             if (OldVisibleText != VisibleText || CachedJediNames is null)
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
@@ -137,11 +151,11 @@ namespace PiIDE.Editor.Parts {
             }
         }
 
-        private async Task HighlightJediNamesPerformanceAsync(FormattedText formattedText, string visibleText) {
+        private async Task HighlightJediNamesPerformanceAsync(FormattedText formattedText, string visibleText, string filePath) {
 
-            Script script = await Script.MakeScript(visibleText, Editor.FilePath);
+            Script script = await Script.MakeScript(visibleText, filePath);
 
-            if (OldVisibleText != VisibleText || CachedJediNames is null)
+            if (OldVisibleText != visibleText || CachedJediNames is null)
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
 
             ReturnClasses.Name[] visibleJediNames = CachedJediNames;

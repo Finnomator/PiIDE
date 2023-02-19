@@ -10,7 +10,7 @@
              d:DesignWidth="100"
              HorizontalAlignment="Left" VerticalAlignment="Top">
     <Popup Name="MainPopup" MaxHeight="200" MaxWidth="500" Placement="Right">
-        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}">
+        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" BorderBrush="{DynamicResource SplitterBackground}" Background="{DynamicResource EditorBackground}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <WrapPanel>

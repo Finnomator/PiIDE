@@ -7,27 +7,27 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
-    <TabControl>
-        <TabItem Header="General">
+    <TabControl Template="{StaticResource TabControlStyle}">
+        <TabItem Header="General" Style="{StaticResource TabItemStyle}">
             <WrapPanel>
-                <Label Content="Select COM Port:"/>
-                <ComboBox x:Name="COMPortComboBox" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
+                <Label Content="Select COM Port:" Foreground="White"/>
+                <ComboBox x:Name="COMPortComboBox" VerticalContentAlignment="Center" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
                     <TextBlock Text="&lt;None>"/>
                 </ComboBox>
             </WrapPanel>
         </TabItem>
 
-        <TabItem Header="Editor">
-            <TabControl TabStripPlacement="Left">
-                <TabItem Header="General">
+        <TabItem Header="Editor" Style="{StaticResource TabItemStyle}">
+            <TabControl Margin="-2,-2,0,0" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
+                <TabItem Header="General" Style="{StaticResource TabItemStyle}">
                     <StackPanel>
                         <WrapPanel>
-                            <Label Content="Font Size: "/>
+                            <Label Content="Font Size: " Foreground="White"/>
                             <TextBox Text="14" VerticalContentAlignment="Center"/>
                         </WrapPanel>
 
                         <WrapPanel>
-                            <Label Content="Font"/>
+                            <Label Content="Font" Foreground="White"/>
                             <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
                                 <ComboBoxItem Content="Cascadia Code"/>
                             </ComboBox>
@@ -35,10 +35,10 @@
                     </StackPanel>
                 </TabItem>
 
-                <TabItem Header="Syntax Highlighter">
+                <TabItem Header="Syntax Highlighter" Style="{StaticResource TabItemStyle}">
                     <StackPanel>
                         <WrapPanel>
-                            <Label Content="Highlighting Mode: "/>
+                            <Label Content="Highlighting Mode: " Foreground="White"/>
                             <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="HighlightingMode_SelectionChanged">
                                 <ComboBoxItem Content="Jedi + Keywords"/>
                                 <ComboBoxItem Content="Jedi Only"/>
@@ -48,7 +48,7 @@
                         </WrapPanel>
 
                         <WrapPanel>
-                            <Label Content="Performance: "/>
+                            <Label Content="Performance: " Foreground="White"/>
                             <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="SyntaxHighlighterPerformance_SelectionChanged">
                                 <ComboBoxItem Content="Normal"/>
                                 <ComboBoxItem Content="Performance"/>
@@ -69,10 +69,10 @@ Performance Mode:
                     </StackPanel>
                 </TabItem>
 
-                <TabItem Header="Completions">
+                <TabItem Header="Completions" Style="{StaticResource TabItemStyle}">
                     <StackPanel>
                         <WrapPanel>
-                            <Label Content="Completions: "/>
+                            <Label Content="Completions: " Foreground="White"/>
                             <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
                                 <ComboBoxItem Content="Jedi"/>
                             </ComboBox>
@@ -82,12 +82,12 @@ Performance Mode:
             </TabControl>
         </TabItem>
 
-        <TabItem Header="About">
+        <TabItem Header="About" Style="{StaticResource TabItemStyle}">
             <StackPanel>
 
                 <WrapPanel>
-                    <Label Content="Version:"/>
-                    <Label x:Name="VersionLabel" Content="Not installed"/>
+                    <Label Content="Version:" Foreground="White"/>
+                    <Label x:Name="VersionLabel" Content="Not installed" Foreground="White"/>
                 </WrapPanel>
 
                 <WrapPanel>

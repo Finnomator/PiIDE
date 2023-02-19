@@ -6,5 +6,5 @@
              xmlns:local="clr-namespace:PiIDE"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <RichTextBox Foreground="White" Background="#FF181818" FontFamily="Cascadia Code" BorderThickness="0"/>
+    <RichTextBox Foreground="White" Background="{DynamicResource PanelBackground}" FontFamily="Cascadia Code" BorderThickness="0"/>
 </UserControl>

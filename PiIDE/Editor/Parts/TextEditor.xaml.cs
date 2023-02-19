@@ -31,6 +31,7 @@ namespace PiIDE {
 
         private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
+        private (int row, int col) LastCaretPos = (1, 1);
         private Size TextEditorTextBoxCharacterSize;
         private readonly TextEditorCore? EditorCore;
         private readonly PylingUnderliner Underliner;
@@ -84,7 +85,7 @@ namespace PiIDE {
             PythonWraper.PythonExited += Python_Exited;
 
             // Completion suggestions stuff
-            CompletionUiList = new(FilePath);
+            CompletionUiList = new(this);
             CompletionUiList.CompletionClicked += CompletionUiList_CompletionClick;
             TextEditorGrid.Children.Add(CompletionUiList);
 
@@ -284,14 +285,10 @@ namespace PiIDE {
             if (!EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
-            (int col, int row) caretPosition = GetCaretPosition();
-            caretPosition.row++;
-            caretPosition.col += extraText.Length;
-
             Thickness marginAtCaretPos = MarginAtCaretPosition();
             CompletionUiList.Margin = marginAtCaretPos;
 
-            CompletionUiList.ReloadCompletionsAsync(TextEditorTextBox.Text.Insert(TextEditorTextBox.CaretIndex, extraText), caretPosition, true);
+            CompletionUiList.ReloadCompletionsAsync(true, extraText);
         }
 
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
@@ -339,8 +336,8 @@ namespace PiIDE {
             }
         }
 
-        private int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
-        private (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
+        public int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
+        public (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
         private void UpdateHighlighting() {
 
@@ -414,6 +411,17 @@ namespace PiIDE {
             if (deltaLines == 0 && e.Delta != 0)
                 deltaLines = e.Delta < 0 ? 1 : (-1);
             MainScrollViewer.ScrollToVerticalOffset((FirstVisibleLineNum + deltaLines) * TextEditorTextBoxCharacterSize.Height);
+        }
+
+        private void TextEditorTextBox_SelectionChanged(object sender, RoutedEventArgs e) {
+            (int col, int row) = GetCaretPosition();
+            if (LastCaretPos.row == row && LastCaretPos.col == col)
+                return;
+            LastCaretPos.row = row;
+            LastCaretPos.col = col;
+
+            CaretColTextBlock.Text = (col + 1).ToString();
+            CaretRowTextBlock.Text = (row + 1).ToString();
         }
     }
 }

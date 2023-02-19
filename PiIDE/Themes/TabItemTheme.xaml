@@ -31,8 +31,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
                     <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
-                        <Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderThickness="1,1,1,0" Margin="0" BorderBrush="#FF2A2A2A">
-                            <Border x:Name="innerBorder" Background="{StaticResource TabItem.Selected.Background}" BorderBrush="{StaticResource TabItem.Selected.Border}" BorderThickness="1,1,1,0" Margin="-1" Opacity="0">
+                        <Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderThickness="1,1,1,0" Margin="0" BorderBrush="{DynamicResource SplitterBackground}">
+                            <Border x:Name="innerBorder" Background="{StaticResource TabItem.Selected.Background}" BorderBrush="{DynamicResource SplitterBackground}" BorderThickness="1,1,1,0" Margin="-1" Opacity="0">
                                 <Border x:Name="accentBorder" BorderBrush="{DynamicResource Accentcolor}"/>
                             </Border>
                         </Border>
@@ -140,7 +140,7 @@
                             <Setter Property="Opacity" TargetName="innerBorder" Value="1"/>
                             <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,0,1"/>
                             <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,0,1"/>
-                            <Setter TargetName="accentBorder" Property="BorderThickness" Value="0,0,2,0"/>
+                            <Setter TargetName="accentBorder" Property="BorderThickness" Value="2,0,0,0"/>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
