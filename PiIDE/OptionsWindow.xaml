@@ -11,7 +11,7 @@
         <TabItem Header="General" Style="{StaticResource TabItemStyle}">
             <WrapPanel>
                 <Label Content="Select COM Port:" Foreground="White"/>
-                <ComboBox x:Name="COMPortComboBox" VerticalContentAlignment="Center" SelectedIndex="0" DropDownOpened="COMPortComboBox_DropDownOpened">
+                <ComboBox Foreground="White" x:Name="COMPortComboBox" VerticalContentAlignment="Center"  DropDownOpened="COMPortComboBox_DropDownOpened">
                     <TextBlock Text="&lt;None>"/>
                 </ComboBox>
             </WrapPanel>
@@ -20,40 +20,68 @@
         <TabItem Header="Editor" Style="{StaticResource TabItemStyle}">
             <TabControl Margin="-2,-2,0,0" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
                 <TabItem Header="General" Style="{StaticResource TabItemStyle}">
-                    <StackPanel>
-                        <WrapPanel>
-                            <Label Content="Font Size: " Foreground="White"/>
-                            <TextBox Text="14" VerticalContentAlignment="Center"/>
-                        </WrapPanel>
+                    <Grid>
 
-                        <WrapPanel>
-                            <Label Content="Font" Foreground="White"/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
-                                <ComboBoxItem Content="Cascadia Code"/>
-                            </ComboBox>
-                        </WrapPanel>
-                    </StackPanel>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Font Size" HorizontalAlignment="Center" Foreground="White"/>
+                        <TextBox Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Name="FontSizeTextBox" Text="14" VerticalContentAlignment="Center"/>
+
+                        <Separator Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackground}"/>
+
+                        <Label Grid.Row="2" HorizontalAlignment="Center" Content="Font" Foreground="White"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1"  Foreground="White" Name="FontFamilyComboBox"  VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="Cascadia Code"/>
+                        </ComboBox>
+                    </Grid>
                 </TabItem>
 
                 <TabItem Header="Syntax Highlighter" Style="{StaticResource TabItemStyle}">
-                    <StackPanel>
-                        <WrapPanel>
-                            <Label Content="Highlighting Mode: " Foreground="White"/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="HighlightingMode_SelectionChanged">
-                                <ComboBoxItem Content="Jedi + Keywords"/>
-                                <ComboBoxItem Content="Jedi Only"/>
-                                <ComboBoxItem Content="Keywords Only"/>
-                                <ComboBoxItem Content="None"/>
-                            </ComboBox>
-                        </WrapPanel>
+                    <Grid>
 
-                        <WrapPanel>
-                            <Label Content="Performance: " Foreground="White"/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center" SelectionChanged="SyntaxHighlighterPerformance_SelectionChanged">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Highlighting Mode" Foreground="White" HorizontalAlignment="Center"/>
+                        <ComboBox Name="HighlightingModeComboBox" Grid.Column="1" VerticalContentAlignment="Center" SelectionChanged="HighlightingMode_SelectionChanged" Foreground="White">
+                            <ComboBoxItem Content="Jedi + Keywords"/>
+                            <ComboBoxItem Content="Jedi Only"/>
+                            <ComboBoxItem Content="Keywords Only"/>
+                            <ComboBoxItem Content="None"/>
+                        </ComboBox>
+
+                        <Separator Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackground}"/>
+
+                        <Label Grid.Row="2"  Content="Performance" Foreground="White" HorizontalAlignment="Center"/>
+                        <Grid Grid.Row="2" Grid.Column="1">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox Foreground="White" Name="HighlighterPerformanceModeComboBox"   VerticalContentAlignment="Center" SelectionChanged="SyntaxHighlighterPerformance_SelectionChanged">
                                 <ComboBoxItem Content="Normal"/>
                                 <ComboBoxItem Content="Performance"/>
                             </ComboBox>
-                            <Button BorderThickness="0" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,0,0" Background="Transparent" Foreground="#FF6E8EDA">
+                            <Button BorderThickness="0" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Padding="0" Background="Transparent" Foreground="#FF6E8EDA" Grid.Column="1">
                                 <Button.Content>
                                     <fa:FontAwesome Icon="QuestionCircle"/>
                                 </Button.Content>
@@ -65,19 +93,26 @@ Performance Mode:
     Improves performance for large files. Highlighting maight be inaccurate.</TextBlock>
                                 </Button.ToolTip>
                             </Button>
-                        </WrapPanel>
-                    </StackPanel>
+                        </Grid>
+                    </Grid>
                 </TabItem>
 
                 <TabItem Header="Completions" Style="{StaticResource TabItemStyle}">
-                    <StackPanel>
-                        <WrapPanel>
-                            <Label Content="Completions: " Foreground="White"/>
-                            <ComboBox SelectedIndex="0" VerticalContentAlignment="Center">
-                                <ComboBoxItem Content="Jedi"/>
-                            </ComboBox>
-                        </WrapPanel>
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Completions" Foreground="White" HorizontalAlignment="Center"/>
+                        <ComboBox Grid.Column="1"  Foreground="White" Name="CompletionsComboBox" VerticalContentAlignment="Center">
+                            <ComboBoxItem Content="Jedi"/>
+                        </ComboBox>
+                    </Grid>
                 </TabItem>
             </TabControl>
         </TabItem>
@@ -107,6 +142,6 @@ Performance Mode:
                 </WrapPanel>
             </StackPanel>
         </TabItem>
-        
+
     </TabControl>
 </Window>

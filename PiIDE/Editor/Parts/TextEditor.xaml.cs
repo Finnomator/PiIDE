@@ -395,8 +395,8 @@ namespace PiIDE {
         public void UpdatePylint(PylintMessage[] pylintMessages) {
             if (EnablePylinting && GlobalSettings.Default.PylintIsUsable) {
                 Underliner.Underline(pylintMessages, FirstVisibleLineNum, LastVisibleLineNum);
-                AmountOfErrorsTextBlock.Text = pylintMessages.Where(x => x.Type == "error").Count().ToString();
-                AmountOfWarningsTextBlock.Text = pylintMessages.Where(x => x.Type == "warning").Count().ToString();
+                AmountOfErrorsLabel.Content = pylintMessages.Where(x => x.Type == "error").Count();
+                AmountOfWarningsLabel.Content = pylintMessages.Where(x => x.Type == "warning").Count();
             }
         }
 

@@ -201,5 +201,17 @@ namespace PiIDE {
                 this["LocalBoardFilesPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int CompletionsMode {
+            get {
+                return ((int)(this["CompletionsMode"]));
+            }
+            set {
+                this["CompletionsMode"] = value;
+            }
+        }
     }
 }

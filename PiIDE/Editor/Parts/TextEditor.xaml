@@ -18,8 +18,8 @@
 
         <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" CornerRadius="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="DimGray" BorderThickness="1,0,0,1" Margin="0,0,7,0" Background="{DynamicResource EditorBackground}">
             <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
-                <Button Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Background="Transparent" BorderThickness="0" Padding="3"/>
-                <Button x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Background="Transparent" Foreground="Red" BorderThickness="0" Padding="3">
+                <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
+                <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
                     <fa:FontAwesome Icon="Stop"/>
                 </Button>
             </StackPanel>
@@ -54,7 +54,7 @@
                         <RowDefinition Height="{Binding ActualHeight, ElementName=OuterTextGrid, Mode=OneWay}" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="5,0,5,0" Background="{DynamicResource EditorBackground}"/>
+                    <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackground}"/>
 
                     <Grid x:Name="TextEditorGrid" Grid.Column="2" >
                         <TextBox x:Name="TextEditorTextBox" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
@@ -67,29 +67,26 @@
             <Grid>
                 <StackPanel Orientation="Horizontal">
                     <WrapPanel ToolTip="Errors" VerticalAlignment="Center">
-                        <fa:FontAwesome Icon="Close" Foreground="White" VerticalAlignment="Center" FontSize="14"/>
-                        <Rectangle Width="4"/>
-                        <TextBlock Name="AmountOfErrorsTextBlock" Foreground="White" Text="0" FontSize="14" FontFamily="Cascadia Code"/>
+                        <fa:FontAwesome Icon="Close" Foreground="White" VerticalAlignment="Center"/>
+                        <Label Name="AmountOfErrorsLabel" Foreground="White" Content="0" Padding="4,0,0,0"/>
                     </WrapPanel>
 
                     <Rectangle Width="10"/>
 
                     <WrapPanel ToolTip="Warnings" VerticalAlignment="Center">
-                        <fa:FontAwesome Icon="Warning" Foreground="White" VerticalAlignment="Center" FontSize="14"/>
-                        <Rectangle Width="4"/>
-                        <TextBlock Name="AmountOfWarningsTextBlock" Foreground="White" Text="0" FontSize="14" FontFamily="Cascadia Code"/>
+                        <fa:FontAwesome Icon="Warning" Foreground="White" VerticalAlignment="Center"/>
+                        <Label Name="AmountOfWarningsLabel" Foreground="White" Content="0" Padding="4,0,0,0"/>
                     </WrapPanel>
 
                     <Rectangle Width="10"/>
 
                     <WrapPanel Visibility="Collapsed" Name="LoadingJediStatus" VerticalAlignment="Center">
-                        <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" FontSize="14" Foreground="White"/>
-                        <Rectangle Width="4"/>
-                        <TextBlock  FontFamily="Cascadia Code" FontSize="14" Text="Loading Jedi..." Foreground="White"/>
+                        <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Foreground="White"/>
+                        <Label Content="Loading Jedi..." Foreground="White" Padding="4,0,0,0"/>
                     </WrapPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0" >
                     <TextBlock Text="Line " VerticalAlignment="Center" Foreground="White"/>
                     <TextBlock Name="CaretRowTextBlock" Text="1" VerticalAlignment="Center" Foreground="White"/>
                     <TextBlock Text=", Column " VerticalAlignment="Center" Foreground="White"/>

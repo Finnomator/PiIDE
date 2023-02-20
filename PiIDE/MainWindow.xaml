@@ -4,15 +4,51 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Pi IDE" Height="450" Width="800" Closing="Window_Closing" Background="#FF1F1F1F" >
-    <Grid x:Name="MainGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+        Title="Pi IDE" Height="450" Width="800" Background="{DynamicResource WindowBackground}" WindowStyle="SingleBorderWindow" MouseDown="Window_MouseDown">
 
-        <local:Toolbar x:Name="toolbar"/>
-        <local:TextEditorWithFileSelect x:Name="Editor" Grid.Row="1"/>
-    </Grid>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="8" CaptionHeight="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border Name="PaddingBorder">
+        <Grid Panel.ZIndex="4" x:Name="MainGrid" Grid.Row="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Name="TitleBarRow" Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid HorizontalAlignment="Right">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Style="{StaticResource CleanButtonStyle}" Foreground="White" Click="Minimize_Click">
+                    <Button.Content>
+                        <fa:FontAwesome Icon="WindowMinimize"/>
+                    </Button.Content>
+                </Button>
+
+                <Button Name="MaximizeButton" Grid.Column="1" Style="{StaticResource CleanButtonStyle}" Foreground="White" Click="Maximize_Click">
+                    <Button.Content>
+                        <fa:FontAwesome Icon="WindowMaximize"/>
+                    </Button.Content>
+                </Button>
+
+                <Button Grid.Column="2"  Style="{StaticResource CleanButtonStyle}" Foreground="White" Click="Close_Click">
+                    <Button.Content>
+                        <fa:FontAwesome Icon="Close" FontSize="14"/>
+                    </Button.Content>
+                </Button>
+            </Grid>
+
+            <local:Toolbar x:Name="toolbar" HorizontalAlignment="Left"/>
+            <local:TextEditorWithFileSelect x:Name="Editor" Grid.Row="1"/>
+        </Grid>
+    </Border>
 </Window>

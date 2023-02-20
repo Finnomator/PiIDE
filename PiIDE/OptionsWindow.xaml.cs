@@ -8,16 +8,32 @@ namespace PiIDE {
     public partial class OptionsWindow : Window {
         public OptionsWindow() {
             InitializeComponent();
+            LoadSettings();
+        }
 
-            int port = GlobalSettings.Default.SelectedCOMPort;
+        private void LoadSettings() {
+
+            GlobalSettings settings = GlobalSettings.Default;
+
+            // General Tab
+            int port = settings.SelectedCOMPort;
             if (port >= 0) {
                 COMPortComboBox.Items.Add(new TextBlock() {
                     Text = $"COM{port}",
                     Tag = port
                 });
                 COMPortComboBox.SelectedIndex = 1;
-            }
+            } else 
+                COMPortComboBox.SelectedIndex = 0;
 
+            // Editor Tab
+            FontSizeTextBox.Text = settings.TextEditorFontSize.ToString();
+            FontFamilyComboBox.SelectedIndex = 0;
+            HighlightingModeComboBox.SelectedIndex = settings.SyntaxhighlighterMode;
+            HighlighterPerformanceModeComboBox.SelectedIndex = settings.SyntaxhighlighterPerformanceMode;
+            CompletionsComboBox.SelectedIndex = settings.CompletionsMode;
+
+            // About Tab
             VersionLabel.Content = Environment.GetEnvironmentVariable("ClickOnce_CurrentVersion") ?? "Not installed";
         }
 
@@ -58,12 +74,10 @@ namespace PiIDE {
 
         private void SyntaxHighlighterPerformance_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             GlobalSettings.Default.SyntaxhighlighterPerformanceMode = ((ComboBox) sender).SelectedIndex;
-
         }
 
         private void HighlightingMode_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             GlobalSettings.Default.SyntaxhighlighterMode = ((ComboBox) sender).SelectedIndex;
-
         }
     }
 

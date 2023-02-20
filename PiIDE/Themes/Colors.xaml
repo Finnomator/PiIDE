@@ -22,7 +22,8 @@
     <SolidColorBrush x:Key="RefactorColor" Color="LightCyan"/>
     <SolidColorBrush x:Key="InformationColor" Color="LightBlue"/>
 
-    <SolidColorBrush x:Key="Accentcolor" Color="PaleVioletRed"/>
+    <Color x:Key="AccentColor">#FFDB7093</Color>
+    <SolidColorBrush x:Key="Accentcolor" Color="{DynamicResource AccentColor}"/>
     <SolidColorBrush x:Key="EditorBackground" Color="#FF1F1F1F"/>
     <SolidColorBrush x:Key="WindowBackground" Color="#FF1F1F1F"/>
     <SolidColorBrush x:Key="TabPanelBackground" Color="#FF181818"/>

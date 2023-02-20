@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <WrapPanel Background="#FF1F1F1F">
-        <Button Style="{StaticResource CleanButtonStyle}" Content="Options" Click="OptionsButton_Click" Foreground="White" BorderThickness="5"/>
-    </WrapPanel>
+             xmlns:logo="clr-namespace:PiIDE.Assets.Icons"
+             mc:Ignorable="d" Height="25">
+    <StackPanel Orientation="Horizontal" Background="#FF1F1F1F">
+        <logo:Logo Height="16" Margin="7,0,0,0"/>
+        <Button Style="{StaticResource CleanButtonStyle}" Content="Options" Click="OptionsButton_Click" Foreground="White" BorderThickness="5" Padding="7,1,7,1"/>
+    </StackPanel>
 </UserControl>

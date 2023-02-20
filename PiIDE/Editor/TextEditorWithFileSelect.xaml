@@ -36,7 +36,25 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" TextWrapping="Wrap" Background="#FF353535" Foreground="White"/>
+            <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" Foreground="White">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Background" Value="#FF353535" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="false">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <TextBlock Text="{TemplateBinding Text}"  TextTrimming="CharacterEllipsis" Background="#FF353535" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </TextBox.Style>
+            </TextBox>
 
             <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{DynamicResource PanelBackground}" >
                 <localExplorer:LocalExplorer x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackground}"/>
