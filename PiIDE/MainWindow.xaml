@@ -20,6 +20,10 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
+            <Grid HorizontalAlignment="Center">
+                <Label Content="Pi IDE" Foreground="DarkGray"/>
+            </Grid>
+
             <Grid HorizontalAlignment="Right">
 
                 <Grid.ColumnDefinitions>

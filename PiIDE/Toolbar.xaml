@@ -7,7 +7,7 @@
              xmlns:logo="clr-namespace:PiIDE.Assets.Icons"
              mc:Ignorable="d" Height="25">
     <StackPanel Orientation="Horizontal" Background="#FF1F1F1F">
-        <logo:Logo Height="16" Margin="7,0,0,0"/>
+        <logo:Logo Height="16" Margin="7,0,7,0"/>
         <Button Style="{StaticResource CleanButtonStyle}" Content="Options" Click="OptionsButton_Click" Foreground="White" BorderThickness="5" Padding="7,1,7,1"/>
     </StackPanel>
 </UserControl>
