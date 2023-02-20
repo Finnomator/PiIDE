@@ -48,7 +48,7 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Border" Color="#FF7EB4EA"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="#FF3E3E3E"/>
-    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#FF569DE5"/>
+    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="{StaticResource AccentColor}"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Glyph" Color="White"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Background" Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Border" Color="#FF569DE5"/>

@@ -62,7 +62,7 @@ namespace PiIDE {
         private void NormalizeWindow() {
             WindowState = WindowState.Normal;
             MaximizeButton.Content = MaximizeIcon;
-            PaddingBorder.BorderThickness = new(0);
+            PaddingBorder.BorderThickness = new(2);
         }
     }
 }
