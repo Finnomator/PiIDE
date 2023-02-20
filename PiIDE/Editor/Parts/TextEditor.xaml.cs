@@ -513,5 +513,13 @@ namespace PiIDE {
         private void MainScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e) {
             UpdateHighlighting();
         }
+
+        private void Rectangle_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
+            if (e.ChangedButton == MouseButton.Left) {
+                TextEditorTextBox.Focus();
+                TextEditorTextBox.CaretIndex = EditorText.Length;
+                e.Handled = true;
+            }
+        }
     }
 }
