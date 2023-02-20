@@ -1,6 +1,7 @@
 ﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -44,7 +45,14 @@ namespace PiIDE {
         public bool ContentLoaded { get; private set; }
 
         public string EditorText => TextEditorTextBox.Text;
-        public int FirstVisibleLineNum => (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+        public int FirstVisibleLineNum {
+            get {
+                int line = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+                int textLines = Tools.CountLines(EditorText);
+                return textLines < line ? textLines : line;
+            }
+        }
+
         public int LastVisibleLineNum {
             get {
                 int lines = (int) ((MainScrollViewer.VerticalOffset + OuterTextGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
@@ -197,16 +205,7 @@ namespace PiIDE {
                     }
                     break;
                 case Key.Tab:
-                    if (CompletionUiList.SelectedAnIndex) {
-                        InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
-                        CompletionUiList.Close();
-                    } else {
-                        // TODO: replace with a variable option
-                        int spaceToFillIndent = 4 - GetCaretPosition().col % 4;
-                        if (spaceToFillIndent == 0)
-                            spaceToFillIndent = 4;
-                        InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
-                    }
+                    HandleTabKey();
                     e.Handled = true;
                     break;
                 case Key.S:
@@ -228,6 +227,108 @@ namespace PiIDE {
                     }
                     break;
             }
+        }
+
+        private (int firstSelectedLine, int lastSelectedLine) GetSelectedLines() {
+            int selectionStart = TextEditorTextBox.SelectionStart;
+            int selectionLength = TextEditorTextBox.SelectionLength;
+            (int col, int row)[] lines = Tools.GetPointsOfIndexes(EditorText, new int[] { selectionStart, selectionStart + selectionLength });
+            return (lines.Min().row, lines.Max().row);
+        }
+
+        private void IndentLines(int[] lines) {
+            int oldStart = TextEditorTextBox.SelectionStart;
+            int oldLength = TextEditorTextBox.SelectionLength;
+            string newText = EditorText;
+            foreach (int line in lines) {
+                int indent = 4 - GetIndentOfLine(line) % 4;
+                if (indent == 0)
+                    indent = 4;
+                newText = newText.Insert(newText.GetIndexOfColRow(line, 0), new string(' ', indent));
+
+                if (line == lines[0])
+                    oldStart += indent;
+                else
+                    oldLength += indent;
+            }
+            TextEditorTextBox.Text = newText;
+            TextEditorTextBox.SelectionStart = oldStart;
+            TextEditorTextBox.SelectionLength = oldLength;
+        }
+
+        private void OutdentLines(int[] lines) {
+            int oldStart = TextEditorTextBox.SelectionStart;
+            int oldLength = TextEditorTextBox.SelectionLength;
+            string newText = EditorText;
+
+            foreach (int line in lines) {
+                int indent = GetIndentOfLine(line);
+
+                if (indent == 0)
+                    continue;
+
+                int goBack = indent % 4;
+
+                if (goBack == 0)
+                    goBack = 4;
+
+                int index = newText.GetIndexOfColRow(line, 0);
+                newText = newText[..index] + newText[(index + goBack)..];
+
+                if (line == lines[0] && oldStart >= goBack)
+                    oldStart -= goBack;
+                else
+                    oldLength -= goBack;
+            }
+            TextEditorTextBox.Text = newText;
+            TextEditorTextBox.SelectionStart = oldStart;
+            TextEditorTextBox.SelectionLength = oldLength;
+        }
+
+        private void HandleTabKey() {
+
+            int selectionLength = TextEditorTextBox.SelectionLength;
+
+            if (selectionLength != 0) {
+                (int firstSelectedLine, int lastSelectedLine) = GetSelectedLines();
+                int lineDelta = lastSelectedLine - firstSelectedLine;
+
+                if (lineDelta == 0) {
+                    string text = TextEditorTextBox.Text;
+                    int index = TextEditorTextBox.CaretIndex;
+                    TextEditorTextBox.Text = $"{text[..index]}    {text[(index + selectionLength)..]}";
+                    TextEditorTextBox.CaretIndex = index + 4;
+                } else {
+                    int[] lineNums = new int[lineDelta + 1];
+                    for (int i = 0; i <= lineDelta; i++)
+                        lineNums[i] = firstSelectedLine + i;
+                    if (Keyboard.IsKeyDown(Key.LeftShift))
+                        OutdentLines(lineNums);
+                    else
+                        IndentLines(lineNums);
+                }
+                return;
+            }
+
+            if (CompletionUiList.SelectedAnIndex) {
+                InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
+                CompletionUiList.Close();
+                return;
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftShift)) {
+                int col = GetCaretPosition().col;
+                int goBack = col % 4;
+                if (col > 0)
+                    TextEditorTextBox.CaretIndex -= goBack == 0 ? 4 : goBack;
+                return;
+            }
+
+            // TODO: replace with a variable option
+            int spaceToFillIndent = 4 - GetCaretPosition().col % 4;
+            if (spaceToFillIndent == 0)
+                spaceToFillIndent = 4;
+            InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
         }
 
         private void InsertCompletionAtCaret(Completion completion) {

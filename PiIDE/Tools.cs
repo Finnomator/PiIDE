@@ -48,6 +48,8 @@ namespace PiIDE {
                 while (i == indexes[j]) {
                     points[j] = (col, row);
                     ++j;
+                    if (i == text.Length || j == indexes.Length)
+                        return points;
                 }
 
                 if (text[i] == '\n') {
@@ -103,7 +105,7 @@ namespace PiIDE {
             int[] indexes = new int[rows.Length];
 
             for (int i = 0, j = 0; j < indexes.Length; ++i) {
-                while (row == rows[j] && col == cols[j]) {
+                if (row == rows[j] && col == cols[j]) {
                     indexes[j] = i;
                     ++j;
 
