@@ -24,7 +24,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Foreground="White" Content="❯" Padding="1,0,1,0" VerticalContentAlignment="Center"/>
-                <TextBox Background="Transparent"  Foreground="White" Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True" FontFamily="Cascadia Code"/>
+                <TextBox Background="{StaticResource PanelBackground}"  Foreground="White" Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True" FontFamily="Cascadia Code"/>
             </Grid>
         </Border>
     </Grid>
