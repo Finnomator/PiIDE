@@ -26,8 +26,10 @@ namespace PiIDE.Editor.Parts {
 
 
         public TextEditorCore(TextEditor textEditor) {
+
             Editor = textEditor;
             IsHitTestVisible = false;
+
         }
 
         public async void UpdateTextAsync(HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
@@ -153,10 +155,11 @@ namespace PiIDE.Editor.Parts {
 
         private async Task HighlightJediNamesPerformanceAsync(FormattedText formattedText, string visibleText, string filePath) {
 
-            Script script = await Script.MakeScript(visibleText, filePath);
 
-            if (OldVisibleText != visibleText || CachedJediNames is null)
+            if (OldVisibleText != visibleText || CachedJediNames is null) {
+                Script script = await Script.MakeScript(visibleText, filePath);
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
+            }
 
             ReturnClasses.Name[] visibleJediNames = CachedJediNames;
 

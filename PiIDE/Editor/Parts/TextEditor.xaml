@@ -32,13 +32,11 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" >
+            <ScrollViewer Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" SizeChanged="MainScrollViewer_SizeChanged" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
 
                 <ScrollViewer.Resources>
                     <Style TargetType="ScrollBar">
                         <Setter Property="SmallChange" Value="60"/>
-                        <!--TODO: Make the scrollbar scroll at 60px sized steps-->
-                        <Setter Property="IsHitTestVisible" Value="False"/>
                     </Style>
                 </ScrollViewer.Resources>
 

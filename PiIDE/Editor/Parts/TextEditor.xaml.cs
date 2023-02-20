@@ -34,6 +34,7 @@ namespace PiIDE {
         private (int row, int col) LastCaretPos = (1, 1);
         private Size TextEditorTextBoxCharacterSize;
         private readonly TextEditorCore? EditorCore;
+        private readonly Canvas? EditorCoreCanvas;
         private readonly PylingUnderliner Underliner;
         protected int AutoSaveDelaySeconds;
         protected bool DoAutoSaves = true;
@@ -43,7 +44,7 @@ namespace PiIDE {
         public bool ContentLoaded { get; private set; }
 
         public string EditorText => TextEditorTextBox.Text;
-        public int FirstVisibleLineNum => (int) Math.Round(MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+        public int FirstVisibleLineNum => (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
         public int LastVisibleLineNum {
             get {
                 int lines = (int) ((MainScrollViewer.VerticalOffset + OuterTextGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
@@ -105,8 +106,10 @@ namespace PiIDE {
 #endif
                     }
                 };
-                Grid.SetColumn(EditorCore, 2);
-                OuterTextGrid.Children.Add(EditorCore);
+                EditorCoreCanvas = new();
+                EditorCoreCanvas.Children.Add(EditorCore);
+                Grid.SetColumn(EditorCoreCanvas, 2);
+                OuterTextGrid.Children.Add(EditorCoreCanvas);
             }
 
             // Pylint underlining stuff
@@ -344,6 +347,10 @@ namespace PiIDE {
             if (DisableAllWrapers || EditorCore is null)
                 return;
 
+            double remainder = MainScrollViewer.VerticalOffset % TextEditorTextBoxCharacterSize.Height;
+            Debug.WriteLine(Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height));
+
+            EditorCoreCanvas.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) <  0.1 ? 0 : -remainder, 0, 0);
             EditorCore.UpdateTextAsync(HighlightingMode, HighlightingPerformanceMode);
         }
 
@@ -422,6 +429,10 @@ namespace PiIDE {
 
             CaretColTextBlock.Text = (col + 1).ToString();
             CaretRowTextBlock.Text = (row + 1).ToString();
+        }
+
+        private void MainScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e) {
+            UpdateHighlighting();
         }
     }
 }
