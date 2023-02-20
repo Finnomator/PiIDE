@@ -12,8 +12,11 @@ namespace PiIDE {
             // GlobalSettings.Default.Reset();
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
 
-            if (GlobalSettings.Default.LastOpenedFilePaths is null)
-                GlobalSettings.Default.LastOpenedFilePaths = new();
+            if (GlobalSettings.Default.LastOpenedBoardFilePaths is null)
+                GlobalSettings.Default.LastOpenedBoardFilePaths = new();
+
+            if (GlobalSettings.Default.LastOpenedLocalFilePaths is null)
+                GlobalSettings.Default.LastOpenedLocalFilePaths = new();
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {

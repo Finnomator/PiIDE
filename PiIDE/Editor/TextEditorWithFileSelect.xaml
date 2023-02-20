@@ -111,7 +111,11 @@
             <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" Padding="3" VerticalAlignment="Center" Width="23" Height="23" >
                 <fa:FontAwesome Icon="FolderOutlinepenOutline" FontSize="14" Foreground="White"/>
             </Button>
-            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="&#x1f4c1;" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" Padding="3" TextBlock.Foreground="White" VerticalAlignment="Center" Width="23" Height="23"/>
+            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" Padding="3" TextBlock.Foreground="White" VerticalAlignment="Center" Width="23" Height="23">
+                <Button.Content>
+                    <TextBlock Text="&#x1f4c1;" Margin="0,-3,0,0"/>
+                </Button.Content>
+            </Button>
             <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="CreateNewFileButton" Click="CreateNewFileButton_Click" ToolTip="Create new file" Padding="3" VerticalAlignment="Center" Height="23" Width="23">
                 <fa:FontAwesome Icon="FileTextOutline" Foreground="White"/>
             </Button>

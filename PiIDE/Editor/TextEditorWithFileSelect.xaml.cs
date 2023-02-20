@@ -32,14 +32,15 @@ namespace PiIDE {
             if (!Directory.Exists(LocalBoardPath))
                 Directory.CreateDirectory(LocalBoardPath);
 
-            // TODO: board files are opened as normals files
-            // TODO: the files are opened in reverse
-            List<string> lastOpenedFiles = GlobalSettings.Default.LastOpenedFilePaths;
+            string[] lastOpenedLocalFiles = GlobalSettings.Default.LastOpenedLocalFilePaths.ToArray();
+            string[] lastOpenedBoardFiles = GlobalSettings.Default.LastOpenedBoardFilePaths.ToArray();
             string? lastOpenedFile = GlobalSettings.Default.LastOpenedFilePath;
-            for (int i = lastOpenedFiles.Count - 1; i >= 0; i--) {
-                string path = lastOpenedFiles[i];
+
+            foreach (string path in lastOpenedLocalFiles)
                 OpenFile(path, path != lastOpenedFile, false);
-            }
+
+            foreach (string path in lastOpenedBoardFiles)
+                OpenFile(path, path != lastOpenedFile, true);
 
             OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
             OpenBoardDirectory();
@@ -60,14 +61,21 @@ namespace PiIDE {
             }
 
             if (!File.Exists(filePath)) {
-                if (GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
-                    GlobalSettings.Default.LastOpenedFilePaths.Remove(filePath);
+                RemoveFileFromSettings(filePath);
                 return;
             }
 
-            TextEditor editor = AddFile(filePath, openInBackground, onBoard);
+            AddFile(filePath, openInBackground, onBoard);
             if (!openInBackground)
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+        }
+
+        private static void RemoveFileFromSettings(string path) {
+            if (GlobalSettings.Default.LastOpenedLocalFilePaths.Contains(path))
+                GlobalSettings.Default.LastOpenedLocalFilePaths.Remove(path);
+
+            if (GlobalSettings.Default.LastOpenedBoardFilePaths.Contains(path))
+                GlobalSettings.Default.LastOpenedBoardFilePaths.Remove(path);
         }
 
         public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
@@ -120,8 +128,13 @@ namespace PiIDE {
 
             OpenTextEditors.Add(textEditor);
 
-            if (!GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
-                GlobalSettings.Default.LastOpenedFilePaths.Add(filePath);
+            if (onBoard) {
+                if (!GlobalSettings.Default.LastOpenedBoardFilePaths.Contains(filePath))
+                    GlobalSettings.Default.LastOpenedBoardFilePaths.Add(filePath);
+            } else {
+                if (!GlobalSettings.Default.LastOpenedLocalFilePaths.Contains(filePath))
+                    GlobalSettings.Default.LastOpenedLocalFilePaths.Add(filePath);
+            }
 
             return textEditor;
         }
@@ -205,8 +218,7 @@ namespace PiIDE {
             if (editor is not null)
                 OpenTextEditors.Remove(editor);
 
-            if (GlobalSettings.Default.LastOpenedFilePaths.Contains(filePath))
-                GlobalSettings.Default.LastOpenedFilePaths.Remove(filePath);
+            RemoveFileFromSettings(filePath);
         }
 
         public void OpenBoardDirectory(string directory = "") {
@@ -278,7 +290,7 @@ namespace PiIDE {
             if (Tools.EnableBoardInteractions)
                 EnableBoardInteractions();
             else {
-                System.Windows.MessageBox.Show("Unable to connect to board, did you select the correct COM port?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Unable to connect to board, did you select the correct COM port?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 DisableBoardInteractions();
             }
         }

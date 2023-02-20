@@ -121,12 +121,23 @@ namespace PiIDE {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> LastOpenedFilePaths {
+        public global::System.Collections.Generic.List<System.String> LastOpenedLocalFilePaths {
             get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedFilePaths"]));
+                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedLocalFilePaths"]));
             }
             set {
-                this["LastOpenedFilePaths"] = value;
+                this["LastOpenedLocalFilePaths"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> LastOpenedBoardFilePaths {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedBoardFilePaths"]));
+            }
+            set {
+                this["LastOpenedBoardFilePaths"] = value;
             }
         }
         

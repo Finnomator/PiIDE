@@ -135,7 +135,7 @@ Performance Mode:
 
                 <WrapPanel>
                     <Label>
-                        <Hyperlink NavigateUri="https://github.com/Finnomator/PiIDE/issues/new" RequestNavigate="GithubIssue_RequestNavigate">
+                        <Hyperlink NavigateUri="https://github.com/Finnomator/PiIDE/issues/new/choose" RequestNavigate="GithubIssue_RequestNavigate">
                             Report an issue
                         </Hyperlink>
                     </Label>

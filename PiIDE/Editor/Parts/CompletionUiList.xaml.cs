@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,7 +18,6 @@ namespace PiIDE {
         private TextBox EditorBox => Editor.TextEditorTextBox;
         private string EditorText => Editor.TextEditorTextBox.Text;
         private string VisibleText => Editor.VisibleText;
-        private string? ExtraText;
 
         public CompletionUiList(TextEditor editor) {
             InitializeComponent();
@@ -37,9 +37,7 @@ namespace PiIDE {
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
 
-        public async void ReloadCompletionsAsync(bool selectFirst, string extraText = "") {
-
-            ExtraText = extraText;
+        public async void ReloadCompletionsAsync(bool selectFirst) {
 
             if (IsBusy) {
                 GotNewerRequest = true;
@@ -48,18 +46,27 @@ namespace PiIDE {
 
             IsBusy = true;
 
+            await ReloadCompletions(selectFirst);
+
+            IsBusy = false;
+
+            if (GotNewerRequest) {
+                GotNewerRequest = false;
+                ReloadCompletionsAsync(selectFirst);
+            }
+        }
+
+        private async Task ReloadCompletions(bool selectFirst) {
+
             SetIntoLoadingState();
 
-            string code = EditorText + extraText;
+            string code = EditorText;
             string filePath = Editor.FilePath;
             (int col, int row) = Editor.GetCaretPosition();
             row++;
-            col += extraText.Length;
 
             Script script = await Script.MakeScript(code, filePath);
             Completion[] completions = await script.Complete(row, col);
-
-            IsBusy = false;
 
             if (completions.Length == 0) {
                 SetIntoNoSuggestionsState();
@@ -72,11 +79,6 @@ namespace PiIDE {
 
             if (selectFirst)
                 SelectFirst();
-
-            if (GotNewerRequest) {
-                ReloadCompletionsAsync(selectFirst, ExtraText);
-                GotNewerRequest = false;
-            }
         }
 
         public void Close() {

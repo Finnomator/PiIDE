@@ -155,10 +155,15 @@ namespace PiIDE {
             return indent;
         }
 
+        private char? LastTypedChar() {
+            int caret = TextEditorTextBox.CaretIndex;
+            if (caret <= 0)
+                return null;
+            return EditorText[caret - 1];
+        }
+
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
-
             switch (e.Key) {
-
                 case Key.Down:
                     if (CompletionUiList.IsOpen) {
                         CompletionUiList.MoveSelectedCompletionDown();
@@ -177,16 +182,18 @@ namespace PiIDE {
                         CompletionUiList.Close();
                         e.Handled = true;
                     } else {
-                        if (TextEditorTextBox.CaretIndex > 0) {
-                            char charInFrontOfCaret = EditorText[TextEditorTextBox.CaretIndex - 1];
-                            int caretRow = GetCaretRow();
+                        char? charInFrontOfCaret = LastTypedChar();
 
-                            int indentAmount = GetIndentOfLine(caretRow);
+                        if (charInFrontOfCaret is null)
+                            break;
 
-                            InsertAtCaretAndMoveCaret("\r\n" + new string(' ', indentAmount + (charInFrontOfCaret == ':' ? 4 : 0)));
+                        int caretRow = GetCaretRow();
 
-                            e.Handled = true;
-                        }
+                        int indentAmount = GetIndentOfLine(caretRow);
+
+                        InsertAtCaretAndMoveCaret("\r\n" + new string(' ', indentAmount + (charInFrontOfCaret == ':' ? 4 : 0)));
+
+                        e.Handled = true;
                     }
                     break;
                 case Key.Tab:
@@ -221,39 +228,9 @@ namespace PiIDE {
                     }
                     break;
             }
-
-            if (e.Handled)
-                return;
-
-            string keyString = e.Key.ToString();
-            char keyChar;
-
-            if (!Shortcuts.IsTheOnlyKeyPressed(e.Key))
-                return;
-
-            if (keyString.Length == 1) {
-                keyChar = keyString[0];
-                if (!char.IsLetter(keyChar)) {
-                    CompletionUiList.Close();
-                    return;
-                }
-            } else if (e.Key == Key.OemPeriod)
-                keyString = ".";
-            else {
-                if (e.Key != Key.LeftCtrl)
-                    CompletionUiList.Close();
-                return;
-            }
-
-            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
-                keyString = keyString.ToLower();
-
-            DisplayCodeCompletionsWithExtraText(keyString);
         }
 
         private void InsertCompletionAtCaret(Completion completion) {
-
-            // TODO: Fix that sometimes the completion is outdated
 
             if (completion.Complete is null || completion.Complete.Length == 0)
                 return;
@@ -278,12 +255,7 @@ namespace PiIDE {
 
         public static string GetLineNumbers(int lines) => string.Join(Environment.NewLine, Enumerable.Range(1, lines));
 
-        private void DisplayCodeCompletionsAsync() => DisplayCodeCompletionsWithExtraText("");
-
-        private void DisplayCodeCompletionsWithExtraText(string extraText) {
-
-            // This method is intended to be used when the user presses a key and the input is not in textbox yet
-            // extraText must be one line!
+        private void DisplayCodeCompletionsAsync() {
 
             if (!EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
@@ -291,7 +263,7 @@ namespace PiIDE {
             Thickness marginAtCaretPos = MarginAtCaretPosition();
             CompletionUiList.Margin = marginAtCaretPos;
 
-            CompletionUiList.ReloadCompletionsAsync(true, extraText);
+            CompletionUiList.ReloadCompletionsAsync(true);
         }
 
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
@@ -299,6 +271,13 @@ namespace PiIDE {
             ContentIsSaved = !ContentLoaded;
             ContentChanged?.Invoke(this, e);
             UpdateHighlighting();
+
+            char? lastChar = LastTypedChar();
+
+            if (lastChar is not null && char.IsLetter((char) lastChar) || lastChar == '.' || lastChar == '_')
+                DisplayCodeCompletionsAsync();
+            else
+                CompletionUiList.Close();
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
 
@@ -348,9 +327,8 @@ namespace PiIDE {
                 return;
 
             double remainder = MainScrollViewer.VerticalOffset % TextEditorTextBoxCharacterSize.Height;
-            Debug.WriteLine(Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height));
 
-            EditorCoreCanvas.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) <  0.1 ? 0 : -remainder, 0, 0);
+            EditorCoreCanvas.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) < 0.1 ? 0 : -remainder, 0, 0);
             EditorCore.UpdateTextAsync(HighlightingMode, HighlightingPerformanceMode);
         }
 

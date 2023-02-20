@@ -6,8 +6,8 @@ namespace PiIDE {
 
     public partial class MainWindow : Window {
 
-        private FontAwesome.WPF.FontAwesome MaximizeIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.WindowMaximize };
-        private FontAwesome.WPF.FontAwesome RestoreIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.WindowRestore };
+        private readonly FontAwesome.WPF.FontAwesome MaximizeIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.WindowMaximize };
+        private readonly FontAwesome.WPF.FontAwesome RestoreIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.WindowRestore };
         private Rect DraggableRect => new(0, 0, ActualWidth, TitleBarRow.ActualHeight);
 
         public MainWindow() {
@@ -63,6 +63,12 @@ namespace PiIDE {
             WindowState = WindowState.Normal;
             MaximizeButton.Content = MaximizeIcon;
             PaddingBorder.BorderThickness = new(2);
+        }
+
+        private void Window_StateChanged(object sender, System.EventArgs e) {
+            // Because the window can maximize without clicking the maximize button
+            if (WindowState == WindowState.Maximized)
+                MaximizeWindow();
         }
     }
 }

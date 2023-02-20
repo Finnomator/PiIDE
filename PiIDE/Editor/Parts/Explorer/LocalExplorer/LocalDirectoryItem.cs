@@ -13,7 +13,7 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
         public override event FileClickEventHandler? OnFileClick;
 
         public LocalDirectoryItem(string fullPath, LocalDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
-            MenuItem newItem = new MenuItem() {
+            MenuItem newItem = new() {
                 Header = "Upload to Pi/",
                 Icon = new FontAwesome.WPF.FontAwesome() {
                     Icon = FontAwesome.WPF.FontAwesomeIcon.Upload,

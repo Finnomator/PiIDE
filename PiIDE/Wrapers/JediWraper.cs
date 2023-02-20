@@ -51,7 +51,7 @@ namespace PiIDE.Wrapers {
                     WraperProcess.OutputDataReceived += (s, e) => {
 #if DEBUG
                         WritenOutput += (e.Data ?? "NULL") + "\n";
-                        Debug.WriteLine($"Output: {e.Data ?? "NULL"}");
+                        //Debug.WriteLine($"Output: {e.Data ?? "NULL"}");
 #endif
                         NewOutputData = e.Data;
                         ReceivedOutputData = true;
@@ -81,7 +81,7 @@ namespace PiIDE.Wrapers {
 
                     await semaphoreSlim.WaitAsync();
 #if DEBUG
-                    Debug.WriteLine("Input: " + line);
+                    //Debug.WriteLine("Input: " + line);
                     WritenInput += line + "\n";
 #endif
 

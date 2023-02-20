@@ -54,6 +54,8 @@
 
                     <TextBlock x:Name="NumsTextBlock" FontSize="14" FontFamily="Cascadia Code" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackground}"/>
 
+                    <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackground}"/>
+
                     <Grid x:Name="TextEditorGrid" Grid.Column="2" >
                         <TextBox x:Name="TextEditorTextBox" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="Cascadia Code" AcceptsReturn="True" AcceptsTab="True" FontSize="14" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
                     </Grid>
