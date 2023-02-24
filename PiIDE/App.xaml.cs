@@ -39,7 +39,5 @@ namespace PiIDE {
             using FileStream fs = File.Create($"Crashlogs/{DateTime.Now:dd-MM-yyyy_HH-mm-ss}.txt");
             fs.Write(new UTF8Encoding(true).GetBytes(fileContent));
         }
-
-
     }
 }

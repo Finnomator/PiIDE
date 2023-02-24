@@ -239,7 +239,7 @@ namespace PiIDE.Wrapers {
                 public required string Type {
                     get => _type; init {
                         _type = value;
-                        Foreground = TypeColors.TypeToColor(value);
+                        Foreground = ColorResources.HighlighterColors.GetBrush(value);
                         Icon = TypeIcons.TypeToIcon(value);
                     }
                 }

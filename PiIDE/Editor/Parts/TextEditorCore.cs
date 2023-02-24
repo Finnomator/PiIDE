@@ -105,16 +105,16 @@ namespace PiIDE.Editor.Parts {
             // The highlighting order is critical, so it overlaps the highlighted strings in comments
 
             foreach (Match keyword in keywordMatches)
-                formattedText.SetForegroundBrush(RegexColors.Keyword, keyword.Index, keyword.Length);
+                formattedText.SetForegroundBrush(ColorResources.HighlighterColors.Keyword, keyword.Index, keyword.Length);
 
             foreach (Match number in numberMatches)
-                formattedText.SetForegroundBrush(RegexColors.Number, number.Index, number.Length);
+                formattedText.SetForegroundBrush(ColorResources.HighlighterColors.Number, number.Index, number.Length);
 
             foreach (Match stringMatch in stringMatches)
-                formattedText.SetForegroundBrush(RegexColors.String, stringMatch.Index, stringMatch.Length);
+                formattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, stringMatch.Index, stringMatch.Length);
 
             foreach (Match comment in commentMatches)
-                formattedText.SetForegroundBrush(RegexColors.Comment, comment.Index, comment.Length);
+                formattedText.SetForegroundBrush(ColorResources.HighlighterColors.Comment, comment.Index, comment.Length);
         }
 
         private async Task HighlightJediNamesAsync(FormattedText formattedText, string visibleText, string filePath, HighlightingPerformanceMode performanceMode) {
@@ -149,7 +149,7 @@ namespace PiIDE.Editor.Parts {
             for (int i = 0; i < visibleJediNames.Length; ++i) {
                 ReturnClasses.Name name = visibleJediNames[i];
                 int index = jediIndexes[i];
-                formattedText.SetForegroundBrush(TypeColors.TypeToColor(name.Type), index, name.Name.Length);
+                formattedText.SetForegroundBrush(ColorResources.HighlighterColors.GetBrush(name.Type), index, name.Name.Length);
             }
         }
 
@@ -176,7 +176,7 @@ namespace PiIDE.Editor.Parts {
             for (int i = 0; i < visibleJediNames.Length; ++i) {
                 ReturnClasses.Name name = visibleJediNames[i];
                 int index = jediIndexes[i];
-                formattedText.SetForegroundBrush(TypeColors.TypeToColor(name.Type), index, name.Name.Length);
+                formattedText.SetForegroundBrush(ColorResources.HighlighterColors.GetBrush(name.Type), index, name.Name.Length);
             }
         }
 

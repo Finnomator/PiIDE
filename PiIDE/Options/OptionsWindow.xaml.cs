@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,6 +60,8 @@ namespace PiIDE {
 
             GlobalSettings.Default.SelectedCOMPort = selectedCOMPort;
             GlobalSettings.Default.Save();
+
+            ColorResources.SaveResource(ColorOptions.ColorsJsonPath, ColorResources.HighlighterColors.Colors);
         }
 
         private void GithubIssue_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {

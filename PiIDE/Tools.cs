@@ -9,6 +9,9 @@ using System.Windows.Media;
 
 namespace PiIDE {
     public static class Tools {
+
+        public readonly static BrushConverter BrushConverter = new();
+
         public readonly static string[] PythonKeywords = new string[] {
             "False", "None", "True", "and", "await", "async", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
         };

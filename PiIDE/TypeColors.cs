@@ -4,49 +4,6 @@ using System.Windows.Media;
 
 namespace PiIDE {
 
-    public static class RegexColors {
-        public static Brush Keyword => (Brush) Application.Current.Resources["KeywordColor"];
-        public static Brush Comment => (Brush) Application.Current.Resources["CommentColor"];
-        public static Brush String => (Brush) Application.Current.Resources["StringColor"];
-        public static Brush Number => (Brush) Application.Current.Resources["NumberColor"];
-    }
-
-    public static class TypeColors {
-
-        // TODO: Make these colors customizable
-        public static Brush Keyword => (Brush) Application.Current.Resources["KeywordColor"];
-        public static Brush Class => (Brush) Application.Current.Resources["ClassColor"];
-        public static Brush Function => (Brush) Application.Current.Resources["FunctionColor"];
-        public static Brush Instance => (Brush) Application.Current.Resources["InstanceColor"]; // What is this?
-        public static Brush Statement => (Brush) Application.Current.Resources["StatementColor"];
-        public static Brush Module => (Brush) Application.Current.Resources["ModuleColor"];
-        public static Brush Param => (Brush) Application.Current.Resources["ParamColor"];
-        public static Brush Property => (Brush) Application.Current.Resources["PropertyColor"]; // What is this?
-        public static Brush Path => (Brush) Application.Current.Resources["PathColor"]; // What is this?
-        public static readonly Brush EverythingElse = Brushes.Gray;
-
-        private static readonly Dictionary<string, Brush> TypeToColorMap = new() {
-            { "keyword", Keyword },
-            { "class", Class },
-            { "function", Function },
-            { "instance", Instance },
-            { "statement", Statement },
-            { "module", Module },
-            { "param", Param},
-            { "property", Property},
-            { "path", Path },
-        };
-
-        public static Brush TypeToColor(string type) {
-            if (TypeToColorMap.TryGetValue(type, out Brush? value))
-                return value;
-# if DEBUG
-            MessageBox.Show($"Type '{type}' not found");
-# endif
-            return EverythingElse;
-        }
-    }
-
     public static class TypeIcons {
 
         public static readonly FontAwesome.WPF.FontAwesome Keyword = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.AlignLeft };

@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="PiIDE.Options.Editor.SyntaxHighlighter.Colors.ColorOption"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter.Colors"
+             mc:Ignorable="d" 
+             d:DesignHeight="26" d:DesignWidth="800">
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Label Name="TypeLabel" Foreground="White"/>
+
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="ColorTextBox" MaxLength="9" Style="{StaticResource TextBoxStyle}" FontFamily="Cascadia Code"/>
+
+            <Grid Grid.Column="1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <DrawingBrush Stretch="Uniform" TileMode="Tile" ViewportUnits="Absolute" Viewport="0,0,13,13">
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Geometry="M0,0 L2,0 2,2, 0,2Z" Brush="LightGray"/>
+                                    <GeometryDrawing Geometry="M0,0 H1 V1 H2 V2 H1 V1 H0Z" Brush="White"/>
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Rectangle Name="ColorRect" Fill="{Binding Text, ElementName=ColorTextBox}"/>
+                <Label Background="{StaticResource EditorBackground}" Grid.Column="1" Padding="0" Content="Text" Foreground="{Binding Fill, ElementName=ColorRect}" FontFamily="Cascadia Code" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+            </Grid>
+            
+            <Button x:Name="ResetButton" Grid.Column="2" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="Reset" Foreground="White" Padding="7, 0, 7, 0"/>
+        </Grid>
+    </Grid>
+</UserControl>

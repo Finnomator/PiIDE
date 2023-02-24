@@ -20,6 +20,7 @@
                 <ResourceDictionary Source="Themes/ComboBoxTheme.xaml"/>
                 <ResourceDictionary Source="Themes/ComboBoxItemTheme.xaml"/>
                 <ResourceDictionary Source="Themes/TextBoxTheme.xaml"/>
+                <ResourceDictionary Source="Themes/ExpanderTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
