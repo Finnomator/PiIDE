@@ -1,0 +1,14 @@
+﻿{
+  "instance": "#FF9CDCFE",
+  "function": "#FFDCDCAA",
+  "path": "#FF5192C5",
+  "property": "#FF9CDCFE",
+  "statement": "#FF9CDCFE",
+  "class": "#FF4EC99D",
+  "module": "#FF4EC9A2",
+  "param": "#FF9CDCFE",
+  "keyword": "#FFC586C0",
+  "comment": "#FF6A9955",
+  "number": "#FFB5CEA8",
+  "string": "#FFCE916A"
+}
