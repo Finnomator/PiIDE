@@ -9,10 +9,11 @@
              xmlns:localExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.LocalExplorer"
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:logo="clr-namespace:PiIDE.Assets.Icons"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800" Background="{DynamicResource ExplorerBackground}">
 
-    <Grid>
+    <Grid Background="{StaticResource WindowBackground}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -27,7 +28,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.RowSpan="2">
+        <Grid Background="{DynamicResource PanelBackground}" Grid.RowSpan="2">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -56,7 +57,7 @@
                 </TextBox.Style>
             </TextBox>
 
-            <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{DynamicResource PanelBackground}" >
+            <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <localExplorer:LocalExplorer x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackground}"/>
             </ScrollViewer>
 
@@ -92,7 +93,10 @@
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource SplitterBackground}"/>
 
-        <TabControl Template="{DynamicResource TabControlStyle}" Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+        <logo:Logo Grid.Column="2" Grid.Row="1" MaxHeight="314" MaxWidth="314" Opacity="0.3"/>
+
+        <TabControl Template="{DynamicResource TabControlStyle}" Background="Transparent"  Grid.Column="2" Grid.RowSpan="2" x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+
             <TabControl.Resources>
                 <Style TargetType="TabControl">
                     <Setter Property="BorderThickness" Value="0,1,0,0"/>
@@ -127,7 +131,7 @@
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="{DynamicResource SplitterBackground}"/>
 
-        <TabControl Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
+        <TabControl Background="{StaticResource WindowBackground}"  Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 
             <TabItem Style="{DynamicResource TabItemStyle}" Header="Error List">
                 <local:LintMessagesWindow  x:Name="MessagesWindow" />
