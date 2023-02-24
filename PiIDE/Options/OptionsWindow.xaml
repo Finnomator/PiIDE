@@ -9,7 +9,7 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
-    <TabControl Template="{StaticResource TabControlStyle}">
+    <TabControl Template="{StaticResource TabControlStyle}" Background="{StaticResource WindowBackground}">
         <TabItem Header="General" Style="{StaticResource TabItemStyle}">
             <WrapPanel>
                 <Label Content="Select COM Port:" Foreground="White"/>
@@ -19,8 +19,8 @@
             </WrapPanel>
         </TabItem>
 
-        <TabItem Header="Editor" Style="{StaticResource TabItemStyle}">
-            <TabControl Margin="-2,-2,0,0" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
+        <TabItem Header="Editor" Style="{StaticResource TabItemStyle}" >
+            <TabControl Background="{StaticResource WindowBackground}" Margin="-2,-2,0,0" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
                 <TabItem Header="General" Style="{StaticResource TabItemStyle}">
                     <Grid>
 
