@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE"
         xmlns:editorColors="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter.Colors"
+        xmlns:editorShortcuts="clr-namespace:PiIDE.Options.Editor.Shortcuts"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
@@ -129,6 +130,11 @@ Performance Mode:
                         </ComboBox>
                     </Grid>
                 </TabItem>
+
+                <TabItem Header="Shortcuts" Style="{StaticResource TabItemStyle}">
+                    <editorShortcuts:Shortcuts/>
+                </TabItem>
+                
             </TabControl>
         </TabItem>
 

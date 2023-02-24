@@ -140,8 +140,8 @@ namespace PiIDE.Editor.Parts {
             int[] rows = new int[visibleJediNames.Length];
 
             for (int i = 0; i < cols.Length; ++i) {
-                cols[i] = (int) visibleJediNames[i].Column;
-                rows[i] = (int) visibleJediNames[i].Line - fvl - 1;
+                cols[i] = (int) visibleJediNames[i].Column!;
+                rows[i] = (int) visibleJediNames[i].Line! - fvl - 1;
             }
 
             int[] jediIndexes = Tools.GetIndexesOfColRows(visibleText, rows, cols);
@@ -167,8 +167,8 @@ namespace PiIDE.Editor.Parts {
             int[] rows = new int[visibleJediNames.Length];
 
             for (int i = 0; i < cols.Length; ++i) {
-                cols[i] = (int) visibleJediNames[i].Column;
-                rows[i] = (int) visibleJediNames[i].Line - 1;
+                cols[i] = (int) visibleJediNames[i].Column!;
+                rows[i] = (int) visibleJediNames[i].Line! - 1;
             }
 
             int[] jediIndexes = Tools.GetIndexesOfColRows(visibleText, rows, cols);

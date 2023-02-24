@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PiIDE {
@@ -16,7 +15,7 @@ namespace PiIDE {
         }
 
         private void Maximize_Click(object sender, RoutedEventArgs e) {
-            
+
             if (WindowState == WindowState.Normal) {
                 MaximizeWindow();
             } else if (WindowState == WindowState.Maximized) {

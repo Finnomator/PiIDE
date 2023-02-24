@@ -4,9 +4,9 @@ using System.Diagnostics;
 namespace PiIDE.Wrapers {
     public static class PythonWraper {
 
-        public static DataReceivedEventHandler? PythonOutputDataReceived;
-        public static DataReceivedEventHandler? PythonErrorDataReceived;
-        public static EventHandler? PythonExited;
+        public static event DataReceivedEventHandler? PythonOutputDataReceived;
+        public static event DataReceivedEventHandler? PythonErrorDataReceived;
+        public static event EventHandler? PythonExited;
 
         private static readonly ProcessStartInfo PythonDefaultStartInfo = new() {
             FileName = "python",

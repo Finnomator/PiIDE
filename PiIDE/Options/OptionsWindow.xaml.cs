@@ -24,7 +24,7 @@ namespace PiIDE {
                     Tag = port
                 });
                 COMPortComboBox.SelectedIndex = 1;
-            } else 
+            } else
                 COMPortComboBox.SelectedIndex = 0;
 
             // Editor Tab
@@ -61,6 +61,7 @@ namespace PiIDE {
             GlobalSettings.Default.SelectedCOMPort = selectedCOMPort;
             GlobalSettings.Default.Save();
 
+            Shortcuts.SaveShortcuts(Options.Editor.Shortcuts.Shortcuts.ShortcutsJsonPath, Shortcuts.ShortcutsMap);
             ColorResources.SaveResource(ColorOptions.ColorsJsonPath, ColorResources.HighlighterColors.Colors);
         }
 

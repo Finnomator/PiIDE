@@ -2,7 +2,6 @@
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -186,7 +185,7 @@ namespace PiIDE {
                     break;
                 case Key.Enter:
                     if (CompletionUiList.SelectedAnIndex) {
-                        InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
+                        InsertCompletionAtCaret(CompletionUiList.SelectedCompletion!);
                         CompletionUiList.Close();
                         e.Handled = true;
                     } else {
@@ -208,24 +207,30 @@ namespace PiIDE {
                     HandleTabKey();
                     e.Handled = true;
                     break;
-                case Key.S:
-                    if (Shortcuts.IsShortcutPressed(Shortcut.SaveFile)) {
-                        SaveFile(true);
-                        e.Handled = true;
-                    }
-                    break;
-                case Key.Space:
-                    if (Shortcuts.IsShortcutPressed(Shortcut.OpenCompletionsList)) {
-                        DisplayCodeCompletionsAsync();
-                        e.Handled = true;
-                    }
-                    break;
                 case Key.Escape:
                     if (CompletionUiList.IsOpen) {
                         CompletionUiList.Close();
                         e.Handled = true;
                     }
                     break;
+            }
+
+            foreach(Shortcut shortcut in Shortcuts.ShortcutsMap.Keys) {
+                List<Key> hotkey = Shortcuts.ShortcutsMap[shortcut];
+
+                // because we dont want to save twice when we press ctrl + s (just as example)
+                if (!Shortcuts.IsShortcutPressed(shortcut) || hotkey[^1] != e.Key)
+                    continue;
+
+                switch (shortcut) {
+                    case Shortcut.SaveFile:
+                        SaveFile(true);
+                        break;
+                    case Shortcut.OpenCompletionsList:
+                        DisplayCodeCompletionsAsync();
+                        break;
+                }
+                e.Handled = true;
             }
         }
 
@@ -311,7 +316,7 @@ namespace PiIDE {
             }
 
             if (CompletionUiList.SelectedAnIndex) {
-                InsertCompletionAtCaret(CompletionUiList.SelectedCompletion);
+                InsertCompletionAtCaret(CompletionUiList.SelectedCompletion!);
                 CompletionUiList.Close();
                 return;
             }
@@ -429,7 +434,7 @@ namespace PiIDE {
 
             double remainder = MainScrollViewer.VerticalOffset % TextEditorTextBoxCharacterSize.Height;
 
-            EditorCoreCanvas.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) < 0.1 ? 0 : -remainder, 0, 0);
+            EditorCoreCanvas!.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) < 0.1 ? 0 : -remainder, 0, 0);
             EditorCore.UpdateTextAsync(HighlightingMode, HighlightingPerformanceMode);
         }
 

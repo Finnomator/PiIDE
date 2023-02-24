@@ -48,8 +48,8 @@ namespace PiIDE {
         };
 
         public static FontAwesome.WPF.FontAwesome TypeToIcon(string type) {
-            if (TypeToIconMap.ContainsKey(type))
-                return TypeToIconMap[type];
+            if (TypeToIconMap.TryGetValue(type, out FontAwesome.WPF.FontAwesome value))
+                return value;
 # if DEBUG
             MessageBox.Show($"Type '{type}' not found");
 # endif
@@ -60,11 +60,11 @@ namespace PiIDE {
     public static class PylintMessageColors {
 
         public static Brush Fatal => (Brush) Application.Current.Resources["FatalColor"];
-        public static Brush Error = (Brush) Application.Current.Resources["ErrorColor"];
-        public static Brush Warning = (Brush) Application.Current.Resources["WarningColor"];
-        public static Brush Convention = (Brush) Application.Current.Resources["ConventionColor"];
-        public static Brush Refactor = (Brush) Application.Current.Resources["RefactorColor"];
-        public static Brush Information = (Brush) Application.Current.Resources["InformationColor"];
+        public static Brush Error => (Brush) Application.Current.Resources["ErrorColor"];
+        public static Brush Warning => (Brush) Application.Current.Resources["WarningColor"];
+        public static Brush Convention => (Brush) Application.Current.Resources["ConventionColor"];
+        public static Brush Refactor => (Brush) Application.Current.Resources["RefactorColor"];
+        public static Brush Information => (Brush) Application.Current.Resources["InformationColor"];
         public static readonly Brush EverythingElse = Brushes.Gray;
 
         private static readonly Dictionary<string, Brush> TypeToColorMap = new() {

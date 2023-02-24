@@ -1,12 +1,7 @@
 ﻿using Microsoft.Win32;
-using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace PiIDE.Options.Editor.SyntaxHighlighter.Colors {
 
