@@ -28,11 +28,11 @@ namespace PiIDE {
         public readonly bool EnableJediCompletions;
         public static HighlightingMode HighlightingMode => (HighlightingMode) GlobalSettings.Default.SyntaxhighlighterMode;
         public static HighlightingPerformanceMode HighlightingPerformanceMode => (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode;
+        public Size TextEditorTextBoxCharacterSize => MeasureTextBoxStringSize("A");
 
         private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
         private (int row, int col) LastCaretPos = (1, 1);
-        private Size TextEditorTextBoxCharacterSize;
         private readonly TextEditorCore? EditorCore;
         private readonly Canvas? EditorCoreCanvas;
         private readonly PylingUnderliner Underliner;
@@ -80,7 +80,6 @@ namespace PiIDE {
             EnablePylinting = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
             EnableJediCompletions = IsPythonFile;
-            TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
 
             Loaded += delegate {
                 if (!ContentLoaded)
@@ -120,9 +119,16 @@ namespace PiIDE {
             }
 
             // Pylint underlining stuff
-            Underliner = new(TextEditorTextBoxCharacterSize);
+            Underliner = new(this);
             TextEditorGrid.Children.Add(Underliner);
 
+            GlobalSettings.Default.PropertyChanged += delegate {
+                UpdateHighlighting();
+            };
+
+            ColorResources.HighlighterColors.ColorChanged += delegate {
+                UpdateHighlighting();
+            };
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -215,7 +221,7 @@ namespace PiIDE {
                     break;
             }
 
-            foreach(Shortcut shortcut in Shortcuts.ShortcutsMap.Keys) {
+            foreach (Shortcut shortcut in Shortcuts.ShortcutsMap.Keys) {
                 List<Key> hotkey = Shortcuts.ShortcutsMap[shortcut];
 
                 // because we dont want to save twice when we press ctrl + s (just as example)
@@ -413,7 +419,7 @@ namespace PiIDE {
                 Brushes.Black,
                 new NumberSubstitution(),
                 VisualTreeHelper.GetDpi(TextEditorTextBox).PixelsPerDip);
-            return new Size(formattedText.Width, formattedText.Height);
+            return new(formattedText.Width, formattedText.Height);
         }
 
         private async void AutoSave() {

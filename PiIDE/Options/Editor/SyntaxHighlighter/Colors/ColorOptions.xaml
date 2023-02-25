@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter.Colors"
-             mc:Ignorable="d" d:DesignWidth="800">
+             mc:Ignorable="d" d:DesignWidth="800" Unloaded="UserControl_Unloaded">
 
     <StackPanel>
         <StackPanel Name="MainStackPanel"/>

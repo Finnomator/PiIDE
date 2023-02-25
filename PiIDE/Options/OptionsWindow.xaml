@@ -4,138 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE"
-        xmlns:editorColors="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter.Colors"
-        xmlns:editorShortcuts="clr-namespace:PiIDE.Options.Editor.Shortcuts"
+        xmlns:general="clr-namespace:PiIDE.Options.General"
+        xmlns:editor="clr-namespace:PiIDE.Options.Editor"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
     <TabControl Template="{StaticResource TabControlStyle}" Background="{StaticResource WindowBackground}">
         <TabItem Header="General" Style="{StaticResource TabItemStyle}">
-            <WrapPanel>
-                <Label Content="Select COM Port:" Foreground="White"/>
-                <ComboBox Foreground="White" x:Name="COMPortComboBox" VerticalContentAlignment="Center"  DropDownOpened="COMPortComboBox_DropDownOpened">
-                    <TextBlock Text="&lt;None>"/>
-                </ComboBox>
-            </WrapPanel>
+            <general:General/>
         </TabItem>
 
         <TabItem Header="Editor" Style="{StaticResource TabItemStyle}" >
-            <TabControl Background="{StaticResource WindowBackground}" Margin="-2,-2,0,0" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
-                <TabItem Header="General" Style="{StaticResource TabItemStyle}">
-                    <Grid>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Content="Font Size" HorizontalAlignment="Center" Foreground="White"/>
-                        <TextBox Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Name="FontSizeTextBox" Text="14" VerticalContentAlignment="Center"/>
-
-                        <Separator Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackground}"/>
-
-                        <Label Grid.Row="2" HorizontalAlignment="Center" Content="Font" Foreground="White"/>
-                        <ComboBox Grid.Row="2" Grid.Column="1"  Foreground="White" Name="FontFamilyComboBox"  VerticalContentAlignment="Center">
-                            <ComboBoxItem Content="Cascadia Code"/>
-                        </ComboBox>
-                    </Grid>
-                </TabItem>
-
-                <TabItem Header="Syntax Highlighter" Style="{StaticResource TabItemStyle}">
-                    <ScrollViewer Style="{StaticResource ScrollViewerTheme}" VerticalScrollBarVisibility="Auto">
-                        <Grid>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Content="Highlighting Mode" Foreground="White" HorizontalAlignment="Center"/>
-                            <ComboBox Name="HighlightingModeComboBox" Grid.Column="1" VerticalContentAlignment="Center" SelectionChanged="HighlightingMode_SelectionChanged" Foreground="White">
-                                <ComboBoxItem Content="Jedi + Keywords"/>
-                                <ComboBoxItem Content="Jedi Only"/>
-                                <ComboBoxItem Content="Keywords Only"/>
-                                <ComboBoxItem Content="None"/>
-                            </ComboBox>
-
-                            <Separator Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackground}"/>
-
-                            <Label Grid.Row="2"  Content="Performance" Foreground="White" HorizontalAlignment="Center"/>
-                            <Grid Grid.Row="2" Grid.Column="1">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <ComboBox Foreground="White" Name="HighlighterPerformanceModeComboBox"   VerticalContentAlignment="Center" SelectionChanged="SyntaxHighlighterPerformance_SelectionChanged">
-                                    <ComboBoxItem Content="Normal"/>
-                                    <ComboBoxItem Content="Performance"/>
-                                </ComboBox>
-                                <Button BorderThickness="0" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Padding="0" Background="Transparent" Foreground="#FF6E8EDA" Grid.Column="1">
-                                    <Button.Content>
-                                        <fa:FontAwesome Icon="QuestionCircle"/>
-                                    </Button.Content>
-
-                                    <Button.ToolTip>
-                                        <TextBlock xml:space="preserve">Normal Mode:
-    Standard syntax highlighting, gets slow on large files.
-Performance Mode:
-    Improves performance for large files. Highlighting maight be inaccurate.</TextBlock>
-                                    </Button.ToolTip>
-                                </Button>
-
-                            </Grid>
-
-                            <Separator Grid.Row="3" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackground}"/>
-
-                            <Expander Style="{DynamicResource ExpanderStyle}" Grid.Row="4" Grid.ColumnSpan="2" Foreground="White" Header="Colors" IsExpanded="True">
-                                <Border Margin="20,0,0,0" BorderThickness="1" BorderBrush="{StaticResource SplitterBackground}">
-                                    <editorColors:ColorOptions/>
-                                </Border>
-                            </Expander>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-
-                <TabItem Header="Completions" Style="{StaticResource TabItemStyle}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Label Content="Completions" Foreground="White" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Column="1"  Foreground="White" Name="CompletionsComboBox" VerticalContentAlignment="Center">
-                            <ComboBoxItem Content="Jedi"/>
-                        </ComboBox>
-                    </Grid>
-                </TabItem>
-
-                <TabItem Header="Shortcuts" Style="{StaticResource TabItemStyle}">
-                    <editorShortcuts:Shortcuts/>
-                </TabItem>
-                
-            </TabControl>
+            <editor:Editor/>
         </TabItem>
 
         <TabItem Header="About" Style="{StaticResource TabItemStyle}">

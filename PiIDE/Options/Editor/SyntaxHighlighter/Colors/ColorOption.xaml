@@ -22,7 +22,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox x:Name="ColorTextBox" MaxLength="9" Style="{StaticResource TextBoxStyle}" FontFamily="Cascadia Code"/>
+            <TextBox x:Name="ColorTextBox" MaxLength="9" Style="{StaticResource TextBoxStyle}" FontFamily="Cascadia Code" TextChanged="ColorTextBox_TextChanged"/>
 
             <Grid Grid.Column="1">
 
@@ -47,8 +47,8 @@
                 <Label Background="{StaticResource EditorBackground}" Grid.Column="1" Padding="0" Content="Text" Foreground="{Binding Fill, ElementName=ColorRect}" FontFamily="Cascadia Code" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
             </Grid>
-            
-            <Button x:Name="ResetButton" Grid.Column="2" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="Reset" Foreground="White" Padding="7, 0, 7, 0"/>
+
+            <Button x:Name="ResetButton" Grid.Column="2" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="Reset" Foreground="White" Padding="7, 0, 7, 0" Click="ResetButton_Click"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -156,30 +156,6 @@ namespace PiIDE {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int EditorFontSize {
-            get {
-                return ((int)(this["EditorFontSize"]));
-            }
-            set {
-                this["EditorFontSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string EditorFontFamily {
-            get {
-                return ((string)(this["EditorFontFamily"]));
-            }
-            set {
-                this["EditorFontFamily"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SyntaxhighlighterMode {
             get {
                 return ((int)(this["SyntaxhighlighterMode"]));

@@ -8,13 +8,14 @@ namespace PiIDE {
 
     public partial class PylingUnderliner : UserControl {
 
-        private readonly Size FontSizes;
+        private TextEditor Editor;
+        private Size FontSizes => Editor.TextEditorTextBoxCharacterSize;
         private readonly VisualBrush WavyLine;
         private PylintMessage[] CachedMessages = System.Array.Empty<PylintMessage>();
 
-        public PylingUnderliner(Size fontSizes) {
+        public PylingUnderliner(TextEditor editor) {
             InitializeComponent();
-            FontSizes = fontSizes;
+            Editor = editor;
 
             WavyLine = new() {
                 Viewbox = new Rect(0, 0, 3, 2),

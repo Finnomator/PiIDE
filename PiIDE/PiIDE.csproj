@@ -65,6 +65,7 @@
 
 	<ItemGroup>
 		<Folder Include="Assets\Backgrounds\MainTabControl\" />
+		<Folder Include="Assets\ColorThemes\" />
 		<Folder Include="BoardFiles\" />
 	</ItemGroup>
 

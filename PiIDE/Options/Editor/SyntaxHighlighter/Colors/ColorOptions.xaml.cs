@@ -47,5 +47,9 @@ namespace PiIDE.Options.Editor.SyntaxHighlighter.Colors {
 
             ImportTheme(fileDialog.OpenFile());
         }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
+            ColorResources.SaveResource(ColorOptions.ColorsJsonPath, ColorResources.HighlighterColors.Colors);
+        }
     }
 }

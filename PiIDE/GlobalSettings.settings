@@ -1,57 +1,51 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PiIDE" GeneratedClassName="GlobalSettings">
-	<Profiles />
-	<Settings>
-		<Setting Name="TextEditorFontFamily" Type="System.String" Scope="User">
-			<Value Profile="(Default)">Cascadia Code</Value>
-		</Setting>
-		<Setting Name="TextEditorFontSize" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">14</Value>
-		</Setting>
-		<Setting Name="SelectedCOMPort" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">-1</Value>
-		</Setting>
-		<Setting Name="OpenDirectoryPath" Type="System.String" Scope="User">
-			<Value Profile="(Default)">C:/</Value>
-		</Setting>
-		<Setting Name="PylintIsUsable" Type="System.Boolean" Scope="User">
-			<Value Profile="(Default)">False</Value>
-		</Setting>
-		<Setting Name="JediIsUsable" Type="System.Boolean" Scope="User">
-			<Value Profile="(Default)">False</Value>
-		</Setting>
-		<Setting Name="PythonIsInstalled" Type="System.Boolean" Scope="User">
-			<Value Profile="(Default)">False</Value>
-		</Setting>
-		<Setting Name="AmpyIsUsable" Type="System.Boolean" Scope="User">
-			<Value Profile="(Default)">False</Value>
-		</Setting>
-		<Setting Name="LastOpenedLocalFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
-			<Value Profile="(Default)" />
-		</Setting>
-		<Setting Name="LastOpenedBoardFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
-			<Value Profile="(Default)" />
-		</Setting>
-		<Setting Name="LastOpenedFilePath" Type="System.String" Scope="User">
-			<Value Profile="(Default)" />
-		</Setting>
-		<Setting Name="EditorFontSize" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">0</Value>
-		</Setting>
-		<Setting Name="EditorFontFamily" Type="System.String" Scope="User">
-			<Value Profile="(Default)" />
-		</Setting>
-		<Setting Name="SyntaxhighlighterMode" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">0</Value>
-		</Setting>
-		<Setting Name="SyntaxhighlighterPerformanceMode" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">0</Value>
-		</Setting>
-		<Setting Name="LocalBoardFilesPath" Type="System.String" Scope="User">
-			<Value Profile="(Default)">BoardFiles/</Value>
-		</Setting>
-		<Setting Name="CompletionsMode" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">0</Value>
-		</Setting>
-	</Settings>
+  <Profiles />
+  <Settings>
+    <Setting Name="TextEditorFontFamily" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Cascadia Code</Value>
+    </Setting>
+    <Setting Name="TextEditorFontSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">14</Value>
+    </Setting>
+    <Setting Name="SelectedCOMPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="OpenDirectoryPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:/</Value>
+    </Setting>
+    <Setting Name="PylintIsUsable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="JediIsUsable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="PythonIsInstalled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AmpyIsUsable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LastOpenedLocalFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastOpenedBoardFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastOpenedFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SyntaxhighlighterMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SyntaxhighlighterPerformanceMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="LocalBoardFilesPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BoardFiles/</Value>
+    </Setting>
+    <Setting Name="CompletionsMode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="PiIDE.Options.General.General"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PiIDE.Options.General"
+             mc:Ignorable="d" d:DesignWidth="800" Unloaded="UserControl_Unloaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Pi COM Port" Foreground="White" HorizontalAlignment="Center"/>
+        <ComboBox Grid.Column="1" Foreground="White" x:Name="COMPortComboBox" VerticalContentAlignment="Center"  DropDownOpened="COMPortComboBox_DropDownOpened">
+            <TextBlock Text="&lt;None>"/>
+        </ComboBox>
+    </Grid>
+</UserControl>

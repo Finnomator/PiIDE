@@ -1,4 +1,5 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -54,6 +55,8 @@ namespace PiIDE {
 
         public static class HighlighterColors {
 
+            public static event EventHandler? ColorChanged;
+
             public static Dictionary<string, Brush> Colors { get; private set; } = LoadResource(ColorOptions.ColorsJsonPath);
             public static Dictionary<string, Brush> DefaultColors { get; private set; } = LoadResource(ColorOptions.DefaultColorsJsonPath);
 
@@ -82,7 +85,10 @@ namespace PiIDE {
                 return EverythingElse;
             }
 
-            public static void SetBrush(string key, Brush value) => Colors[key] = value;
+            public static void SetBrush(string key, Brush value) {
+                ColorChanged?.Invoke(null, EventArgs.Empty);
+                Colors[key] = value;
+            }
 
             public static void SetColors(Dictionary<string, Brush> colors) => Colors = colors;
         }

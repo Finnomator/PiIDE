@@ -77,5 +77,9 @@ namespace PiIDE.Options.Editor.Shortcuts {
                 Content = shortcut.ToString().Humanize(LetterCasing.Title);
             }
         }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
+            PiIDE.Shortcuts.SaveShortcuts(ShortcutsJsonPath, PiIDE.Shortcuts.ShortcutsMap);
+        }
     }
 }
