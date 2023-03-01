@@ -8,7 +8,7 @@ using System.Windows.Media;
 namespace PiIDE.Wrapers {
     internal static class PylintWraper {
 
-        public const string PylintPath = "Assets/Lint/pylint.exe";
+        public const string PylintPath = "pylint";
 
         public static async Task<PylintMessage[]> GetLintingAsync(string[] filePaths) {
 

@@ -14,7 +14,6 @@
 		<None Remove="Assets\Icons\Logo16x16.ico" />
 		<None Remove="Assets\Icons\MultiScaleLogo.ico" />
 		<None Remove="Assets\Jedi\jedi_wraper.exe" />
-		<None Remove="Assets\Lint\pylint.exe" />
 		<None Remove="Options\Editor\Shortcuts\Shortcuts.json" />
 		<None Remove="Options\Editor\SyntaxHighlighter\Colors\Colors.json" />
 		<None Remove="Options\Editor\SyntaxHighlighter\Colors\DefaultColors.json" />
@@ -27,9 +26,6 @@
 		</Content>
 		<Content Include="Assets\Jedi\jedi_wraper.exe">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Assets\Lint\pylint.exe">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Options\Editor\Shortcuts\Shortcuts.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

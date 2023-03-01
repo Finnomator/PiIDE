@@ -1,21 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace PiIDE {
+
+
+
+    public static class PipModules {
+        public class PipModule {
+            public required string Name { get; init; }
+            public required string PipInstallCommand { get; init; }
+            public required string CmdCommand { get; init; }
+        }
+
+        public static PipModule Ampy = new() { Name = "Ampy", PipInstallCommand = "pip install adafruit-ampy", CmdCommand = "ampy" };
+        public static PipModule Pylint = new() { Name = "Pylint", PipInstallCommand = "pip install pylint", CmdCommand = "pylint" };
+    }
+
     public static class MissingModulesChecker {
 
-        public static readonly string[] RequiredModules = new string[] {
-            "Python",
-            "Ampy",
+        public static readonly PipModules.PipModule[] RequiredPipModules = new PipModules.PipModule[] {
+            PipModules.Ampy,
+            PipModules.Pylint,
         };
-
-        static MissingModulesChecker() {
-
-        }
-
-        public static bool IsPylintUsable() {
-            return IsPythonIstanlled();
-        }
 
         public static bool IsPythonIstanlled() {
             using Process process = new() {
@@ -37,12 +44,18 @@ namespace PiIDE {
             return process.StandardOutput.ReadToEnd().Contains("Python 3.");
         }
 
-        public static bool IsAmpyInstalled() {
-            return TryToStartProcess("ampy");
-        }
+        public static List<PipModules.PipModule> FindMissingModules() {
+            List<PipModules.PipModule> modules = new();
 
-        public static bool IsAmpyUsable() {
-            return IsPythonIstanlled() && IsAmpyInstalled();
+            if (!IsPythonIstanlled())
+                return RequiredPipModules.ToList();
+
+            foreach (PipModules.PipModule module in RequiredPipModules) {
+                if (!TryToStartProcess(module.CmdCommand))
+                    modules.Add(module);
+            }
+
+            return modules;
         }
 
         public static bool IsJediUsable() {
@@ -70,44 +83,27 @@ namespace PiIDE {
             return true;
         }
 
-        public static List<Module> GetUsableModules() {
-            List<Module> usableModules = new();
-            if (IsAmpyUsable()) {
-                usableModules.Add(Module.Python);
-                usableModules.Add(Module.Ampy);
-            } else if (IsPythonIstanlled())
-                usableModules.Add(Module.Python);
-
-            if (IsJediUsable())
-                usableModules.Add(Module.Jedi);
-
-            return usableModules;
-        }
-
         public static void CheckForUsableModules() {
 
-            GlobalSettings.Default.PylintIsUsable = false;
+            GlobalSettings.Default.PylintIsUsable = true;
             GlobalSettings.Default.PythonIsInstalled = false;
-            GlobalSettings.Default.AmpyIsUsable = false;
+            GlobalSettings.Default.AmpyIsUsable = true;
             GlobalSettings.Default.JediIsUsable = false;
 
-            if (IsAmpyUsable()) {
+            if (IsPythonIstanlled())
                 GlobalSettings.Default.PythonIsInstalled = true;
-                GlobalSettings.Default.AmpyIsUsable = true;
-            } else {
-                if (IsPythonIstanlled())
-                    GlobalSettings.Default.PythonIsInstalled = true;
-                else
-                    ErrorMessager.ModuleIsNotInstalled("Python", "Python was not found", "Add Python to path or install from www.python.org");
-
-                ErrorMessager.ModuleIsNotInstalled("Ampy", "Python is not installed or Ampy was not found", "Add Ampy to path or install with pip install adafruit-ampy");
-            }
-
-            if (IsPylintUsable())
-                GlobalSettings.Default.PylintIsUsable = true;
             else
-                ErrorMessager.ModuleIsNotInstalled("Pylint", "Python was not found", "Add Python to path or install from www.python.org");
+                ErrorMessager.ModuleIsNotInstalled("Python", "Python was not found", "Add Python to path or install from www.python.org");
 
+            foreach (var missingModule in FindMissingModules()) {
+                ErrorMessager.ModuleIsNotInstalled(missingModule.Name, $"Python is not installed or {missingModule.Name} was not found", $"Add {missingModule.Name} to path or install with {missingModule.PipInstallCommand}");
+
+                if (missingModule.Name == "Ampy")
+                    GlobalSettings.Default.AmpyIsUsable = false;
+                else if (missingModule.Name == "Pylint")
+                    GlobalSettings.Default.PylintIsUsable = false;
+            }
+            
             if (IsJediUsable())
                 GlobalSettings.Default.JediIsUsable = true;
             else
@@ -115,12 +111,5 @@ namespace PiIDE {
 
             GlobalSettings.Default.Save();
         }
-    }
-
-
-    public enum Module {
-        Python,
-        Ampy,
-        Jedi,
     }
 }
