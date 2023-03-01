@@ -21,15 +21,14 @@ namespace PiIDE.Editor.Parts {
         private bool IsBusy;
         private bool GotNewerRequest;
 
+        public FormattedText? CurrentHighlighting { get; private set; }
+
         public event EventHandler? StartedHighlighting;
         public event EventHandler? FinishedHighlighting;
 
-
         public TextEditorCore(TextEditor textEditor) {
-
             Editor = textEditor;
             IsHitTestVisible = false;
-
         }
 
         public async void UpdateTextAsync(HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
@@ -38,8 +37,7 @@ namespace PiIDE.Editor.Parts {
                 await Task.Delay(10);
 
             if (VisibleText == "") {
-                DrawingContext c = drawingGroup.Open();
-                c.Close();
+                OpenContext().Close();
                 return;
             }
 
@@ -56,15 +54,7 @@ namespace PiIDE.Editor.Parts {
 
             IsBusy = true;
 
-            FormattedText formattedText = new(
-                textToFormat: visibleText,
-                culture: CultureInfo.GetCultureInfo("en-us"),
-                flowDirection: FlowDirection.LeftToRight,
-                typeface: new Typeface(EditorBox.FontFamily.Source),
-                emSize: EditorBox.FontSize,
-                foreground: Brushes.White,
-                pixelsPerDip: VisualTreeHelper.GetDpi(EditorBox).PixelsPerDip
-            );
+            FormattedText formattedText = GetFormattedText();
 
             switch (highlightingMode) {
                 case HighlightingMode.JediAndKeywords:
@@ -82,9 +72,7 @@ namespace PiIDE.Editor.Parts {
             }
 
             OldVisibleText = visibleText;
-            DrawingContext context = drawingGroup.Open();
-            context.DrawText(formattedText, new(2, 0));
-            context.Close();
+            DrawHighlighting(formattedText);
 
             IsBusy = false;
 
@@ -94,6 +82,34 @@ namespace PiIDE.Editor.Parts {
             }
 
             FinishedHighlighting?.Invoke(this, EventArgs.Empty);
+        }
+
+        public FormattedText GetFormattedText() {
+            return new(
+                textToFormat: VisibleText,
+                culture: CultureInfo.GetCultureInfo("en-us"),
+                flowDirection: FlowDirection.LeftToRight,
+                typeface: new Typeface(EditorBox.FontFamily.Source),
+                emSize: EditorBox.FontSize,
+                foreground: Brushes.White,
+                pixelsPerDip: VisualTreeHelper.GetDpi(EditorBox).PixelsPerDip
+            );
+        }
+
+        public void DrawHighlighting(FormattedText formattedText) {
+            DrawingContext context = OpenContext();
+            context.DrawText(formattedText, new(2, 0));
+            CurrentHighlighting = formattedText;
+            context.Close();
+        }
+
+        public DrawingContext OpenContext() => drawingGroup.Open();
+
+        public DrawingContext OpenContextAndKeepHighlighting() {
+            DrawingContext context = OpenContext();
+            if (CurrentHighlighting is not null)
+                context.DrawText(CurrentHighlighting, new(2, 0));
+            return context;
         }
 
         private static void HighlightKeywords(FormattedText formattedText, string visibleText) {
