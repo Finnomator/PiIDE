@@ -21,7 +21,10 @@
             </Grid.RowDefinitions>
 
             <Grid HorizontalAlignment="Center">
-                <Label Content="Pi IDE" Foreground="DarkGray"/>
+                <WrapPanel>
+                    <Label Content="Pi IDE" Foreground="DarkGray"/>
+                    <Label Content="Development Build" Foreground="Red"/>
+                </WrapPanel>
             </Grid>
 
             <Grid HorizontalAlignment="Right">
