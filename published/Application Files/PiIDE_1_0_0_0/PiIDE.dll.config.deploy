@@ -31,6 +31,21 @@
             <setting name="AmpyIsUsable" serializeAs="String">
                 <value>False</value>
             </setting>
+            <setting name="LastOpenedFilePath" serializeAs="String">
+                <value />
+            </setting>
+            <setting name="SyntaxhighlighterMode" serializeAs="String">
+                <value>0</value>
+            </setting>
+            <setting name="SyntaxhighlighterPerformanceMode" serializeAs="String">
+                <value>0</value>
+            </setting>
+            <setting name="LocalBoardFilesPath" serializeAs="String">
+                <value>BoardFiles/</value>
+            </setting>
+            <setting name="CompletionsMode" serializeAs="String">
+                <value>0</value>
+            </setting>
         </PiIDE.GlobalSettings>
     </userSettings>
 </configuration>
