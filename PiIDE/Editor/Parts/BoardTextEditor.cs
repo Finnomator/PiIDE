@@ -18,6 +18,7 @@ namespace PiIDE.Editor.Parts {
             Background = Brushes.Transparent,
             BorderThickness = new(0),
             Padding = new(3),
+            Style = (Style) Application.Current.Resources["CleanButtonStyle"],
             Content = new FontAwesome.WPF.FontAwesome() {
                 Icon = FontAwesome.WPF.FontAwesomeIcon.Play,
             }
