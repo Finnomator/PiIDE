@@ -9,17 +9,24 @@
              d:DesignHeight="100"
              d:DesignWidth="100"
              HorizontalAlignment="Left" VerticalAlignment="Top">
-    <Popup Name="MainPopup" MaxHeight="200" MaxWidth="500" Placement="Right">
-        <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" BorderBrush="{DynamicResource SplitterBackground}" Background="{DynamicResource EditorBackground}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <WrapPanel>
-                        <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding Foreground}"/>
-                        <Rectangle Width="3"/>
-                        <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code" Foreground="White"/>
-                    </WrapPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+    <Popup Name="MainPopup" MaxHeight="200" MaxWidth="500" Placement="Right" AllowsTransparency="True">
+
+        <Border Margin="8,8,0,0" Name="MainBorder" BorderThickness="1" CornerRadius="2" BorderBrush="{DynamicResource SplitterBackground}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="Black" Opacity="0.5" Direction="45"/>
+            </Border.Effect>
+            
+            <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" Background="{DynamicResource EditorBackground}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding Foreground}"/>
+                            <Rectangle Width="3"/>
+                            <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code" Foreground="White"/>
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
     </Popup>
 </UserControl>

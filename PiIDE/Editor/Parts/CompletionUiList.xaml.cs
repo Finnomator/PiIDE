@@ -126,17 +126,17 @@ namespace PiIDE {
         }
 
         private void SetIntoLoadingState() {
-            MainPopup.Child = new LoadingState();
+            MainBorder.Child = new LoadingState();
             MainPopup.IsOpen = true;
         }
 
         private void SetIntoNoSuggestionsState() {
-            MainPopup.Child = new NoSuggestionsState();
+            MainBorder.Child = new NoSuggestionsState();
             MainPopup.IsOpen = true;
         }
 
         private void ResetToNormalState() {
-            MainPopup.Child = MainListBox;
+            MainBorder.Child = MainListBox;
         }
 
         private void SelectFirst() {
