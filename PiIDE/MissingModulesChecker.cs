@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows;
 
 namespace PiIDE {
     public static class MissingModulesChecker {
@@ -63,6 +64,7 @@ namespace PiIDE {
             try {
                 process.Start();
             } catch {
+                MessageBox.Show($"Process failed to start\nFileName: {fileName}\nArguments: {args}\n\nEnvironment Paths:\n{process.StartInfo.EnvironmentVariables["Path"]!.Replace(";", "\n")}");
                 return false;
             }
 
