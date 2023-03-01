@@ -25,6 +25,8 @@
             </StackPanel>
         </Border>
 
+        <editorParts:SearchBox x:Name="TextSearchBox" Grid.Column="2" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,2,15,0"/>
+
         <Grid Name="OuterTextGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>

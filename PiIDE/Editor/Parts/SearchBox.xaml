@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="PiIDE.Editor.Parts.SearchBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PiIDE.Editor.Parts"
+             mc:Ignorable="d">
+
+    <Border BorderBrush="{StaticResource SplitterBackground}" BorderThickness="1" CornerRadius="2" Background="{StaticResource EditorBackground}">
+
+        <Border.Effect>
+            <DropShadowEffect Opacity="0.5"/>
+        </Border.Effect>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Name="SearchTextBox" Style="{StaticResource TextBoxStyle}" TextChanged="SearchTextBox_TextChanged"/>
+            <TextBox Name="RegexTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="1" TextChanged="RegexTextBox_TextChanged"/>
+            <TextBox Name="ReplaceTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="2"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Name="ResultNumTextBlock" Text="0" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Text="/" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Name="TotalResultsTextBlock" Text="0" Foreground="White" VerticalAlignment="Center"/>
+                <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="A" Foreground="White" Padding="2"/>
+                <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="V" Foreground="White" Padding="2"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

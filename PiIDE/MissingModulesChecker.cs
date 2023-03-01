@@ -32,6 +32,7 @@ namespace PiIDE {
             try {
                 process.Start();
             } catch {
+                MessageBox.Show($"Process failed to start\nFileName: python\nArguments: --version\n\nEnvironment Paths:\n{process.StartInfo.EnvironmentVariables["Path"]!.Replace(";", "\n")}");
                 return false;
             }
 
