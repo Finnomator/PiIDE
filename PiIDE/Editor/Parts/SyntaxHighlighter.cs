@@ -8,8 +8,6 @@ namespace PiIDE {
 
     public static class SyntaxHighlighter {
 
-        // TODO: dont highlight keywords in comments and strings etc.
-
         private static readonly Regex KeywordsRx = new(@$"\b({string.Join('|', Tools.PythonKeywords)})\b", RegexOptions.Compiled);
         private static readonly Regex StringsRx = new(@"(['""])(.*?)\1", RegexOptions.Compiled);
         private static readonly Regex CommentsRx = new("#.+", RegexOptions.Compiled);

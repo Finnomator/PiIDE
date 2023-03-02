@@ -2,11 +2,9 @@
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +15,6 @@ using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 namespace PiIDE {
 
     // TODO: Fix tabitems stacking. Replace with scrollbar
-    // TODO: Automaticly insert indentation
 
     public partial class TextEditor : UserControl {
 
