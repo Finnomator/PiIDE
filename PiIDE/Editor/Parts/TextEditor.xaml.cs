@@ -2,6 +2,7 @@
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -124,30 +125,7 @@ namespace PiIDE {
             TextEditorGrid.Children.Add(Underliner);
 
             // Searchbox stuff
-            TextSearchBox.Close();
-            TextSearchBox.SearchChanged += TextSearchBox_SearchChanged;
-        }
-
-        private void TextSearchBox_SearchChanged(object? sender, Regex regex) {
-            /*
-            DrawingContext context = EditorCore!.drawingGroup.Open();
-            Size textSize = TextEditorTextBoxCharacterSize;
-            MatchCollection matches = regex.Matches(VisibleText);
-
-            (int col, int row)[] points = Tools.GetPointsOfIndexes(VisibleText, matches.Select(x=>x.Index).ToArray());
-
-            for (int i = 0; i < matches.Count; i++) {
-                Match match = matches[i];
-                int col = points[i].col;
-                int row = points[i].row;
-
-                context.DrawRectangle((Brush) Tools.BrushConverter.ConvertFromString("#50FFFFFF")!, null, new(col * textSize.Width + 2, row * 2 * textSize.Width, match.Length * textSize.Width, textSize.Height));
-            }
-
-            if (EditorCore.CurrentHighlighting is not null)
-                context.DrawText(EditorCore.CurrentHighlighting, new(2, 0));
-
-            context.Close();*/
+            
         }
 
         private void Python_Exited(object? sender, EventArgs e) {

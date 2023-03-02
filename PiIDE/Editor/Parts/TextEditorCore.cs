@@ -16,11 +16,13 @@ namespace PiIDE.Editor.Parts {
         private TextBox EditorBox => Editor.TextEditorTextBox;
         private string EditorText => Editor.TextEditorTextBox.Text;
         private string VisibleText => Editor.VisibleText;
+        private Size CharSize => Editor.TextEditorTextBoxCharacterSize;
         private string OldVisibleText = "";
         private ReturnClasses.Name[]? CachedJediNames;
         private bool IsBusy;
         private bool GotNewerRequest;
         private HighlightingPerformanceMode OldHighlightingPerformanceMode;
+        private MatchCollection? OldSearchResult;
 
         public FormattedText? CurrentHighlighting { get; private set; }
 
@@ -31,12 +33,34 @@ namespace PiIDE.Editor.Parts {
             Editor = textEditor;
             IsHitTestVisible = false;
             OldHighlightingPerformanceMode = TextEditor.HighlightingPerformanceMode;
-            Editor.MainScrollViewer.ScrollChanged += (s, e) => UpdateView();
-            GlobalSettings.Default.PropertyChanged += (s, e) => UpdateView();
-            ColorResources.HighlighterColors.ColorChanged += (s, e) => UpdateView();
+
+            Editor.MainScrollViewer.ScrollChanged += (s, e) => UpdateView(OldSearchResult);
+            Editor.TextSearchBox.SearchChanged += (s, e) => {
+                MatchCollection? matches = null;
+                if (e is not null) {
+                    matches = e.Matches(EditorText);
+                    Editor.TextSearchBox.SetSearchResults(matches.Count);
+                }
+                UpdateView(matches);
+            };
+            Editor.TextEditorTextBox.TextChanged += (s, e) => {
+                MatchCollection? matches = Editor.TextSearchBox.Searcher?.Matches(EditorText);
+                if (matches is not null)
+                    Editor.TextSearchBox.SetSearchResults(matches.Count);
+                UpdateView(matches);
+            };
+            Editor.TextSearchBox.SelectedResultChanged += (s, e) => {
+                if (OldSearchResult is null)
+                    return;
+                (int col, int row) = EditorText.GetPointOfIndex(OldSearchResult[e].Index);
+                UpdateView(OldSearchResult);
+                Editor.ScrollToPosition(row, col);
+            };
+            GlobalSettings.Default.PropertyChanged += (s, e) => UpdateView(OldSearchResult);
+            ColorResources.HighlighterColors.ColorChanged += (s, e) => UpdateView(OldSearchResult);
         }
 
-        private async void UpdateView() {
+        private async void UpdateView(MatchCollection? searchResult) {
 
             if (Editor.DisableAllWrapers)
                 return;
@@ -60,7 +84,16 @@ namespace PiIDE.Editor.Parts {
             string visibleText = VisibleText;
             FormattedText formattedText = GetFormattedText(visibleText);
 
-            await ApplyHighlighting(formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
+            DrawingContext context = drawingGroup.Open();
+
+            if (searchResult is not null) {
+                ApplySearchResults(context, searchResult);
+                OldSearchResult = searchResult;
+            }
+
+            await ApplyHighlighting(context, formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
+
+            context.Close();
 
             OldVisibleText = visibleText;
             OldHighlightingPerformanceMode = TextEditor.HighlightingPerformanceMode;
@@ -68,12 +101,37 @@ namespace PiIDE.Editor.Parts {
             IsBusy = false;
 
             if (GotNewerRequest) {
-                UpdateView();
+                UpdateView(searchResult);
                 GotNewerRequest = false;
             }
         }
 
-        private async Task ApplyHighlighting(FormattedText formattedText, string filePath, HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
+        private void ApplySearchResults(DrawingContext context, MatchCollection searchResult) {
+
+            Brush foundBrush = (Brush) Tools.BrushConverter.ConvertFrom("#40FFFFFF")!;
+            Brush selectedBrush = (Brush) Tools.BrushConverter.ConvertFrom("#70FFFF00")!;
+
+            int fvl = Editor.FirstVisibleLineNum;
+            int lvl = Editor.LastVisibleLineNum;
+
+            (int col, int row)[] points = EditorText.GetPointsOfIndexes(searchResult.Select(x => x.Index).ToArray());
+
+            Size charSize = CharSize;
+
+            for (int i = 0; i < searchResult.Count; i++) {
+                Match match = searchResult[i];
+                (int col, int row) = points[i];
+
+                if (row < fvl)
+                    continue;
+                if (row > lvl)
+                    break;
+
+                context.DrawRectangle(Editor.TextSearchBox.ResultNo == i ? selectedBrush : foundBrush, null, new(col * charSize.Width + 2, (row - fvl) * charSize.Height, match.Length * charSize.Width, charSize.Height));
+            }
+        }
+
+        private async Task ApplyHighlighting(DrawingContext context, FormattedText formattedText, string filePath, HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
 
             string visibleText = formattedText.Text;
 
@@ -94,7 +152,7 @@ namespace PiIDE.Editor.Parts {
                     break;
             }
 
-            DrawHighlighting(formattedText);
+            DrawHighlighting(context, formattedText);
 
             FinishedHighlighting?.Invoke(this, EventArgs.Empty);
         }
@@ -111,11 +169,9 @@ namespace PiIDE.Editor.Parts {
             );
         }
 
-        private void DrawHighlighting(FormattedText formattedText) {
-            DrawingContext context = drawingGroup.Open();
-            context.DrawText(formattedText, new(2, 0));
+        private void DrawHighlighting(DrawingContext drawingContext, FormattedText formattedText) {
+            drawingContext.DrawText(formattedText, new(2, 0));
             CurrentHighlighting = formattedText;
-            context.Close();
         }
 
         private DrawingContext OpenContextAndKeepHighlighting() {
@@ -214,7 +270,7 @@ namespace PiIDE.Editor.Parts {
         }
 
         protected override void OnRender(DrawingContext drawingContext) {
-            UpdateView();
+            UpdateView(null);
             drawingContext.DrawDrawing(drawingGroup);
         }
     }

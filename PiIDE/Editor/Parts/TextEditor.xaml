@@ -7,7 +7,7 @@
              xmlns:editorParts="clr-namespace:PiIDE.Editor.Parts"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="{StaticResource EditorBackground}">
+             d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource EditorBackground}">
 
     <Grid Grid.IsSharedSizeScope="True">
 
@@ -16,7 +16,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" CornerRadius="0,0,0,3" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="DimGray" BorderThickness="1,0,0,1" Margin="0,0,7,0" Background="{DynamicResource EditorBackground}">
+        <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" CornerRadius="0,0,3,3" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackground}" BorderThickness="1,0,1,1" Margin="0,0,7,0" Background="{DynamicResource EditorBackground}">
+
+            <Border.Effect>
+                <DropShadowEffect Opacity="0.5"/>
+            </Border.Effect>
+
             <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
                 <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
                 <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
@@ -25,7 +30,7 @@
             </StackPanel>
         </Border>
 
-        <editorParts:SearchBox x:Name="TextSearchBox" Grid.Column="2" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,2,15,0"/>
+        <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,50,0" ToolTip="Search"/>
 
         <Grid Name="OuterTextGrid">
             <Grid.ColumnDefinitions>
@@ -59,7 +64,7 @@
                     <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackground}"/>
 
                     <Grid x:Name="TextEditorGrid" Grid.Column="2">
-                        <TextBox x:Name="TextEditorTextBox" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
+                        <TextBox x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" LostFocus="TextEditorTextBox_LostFocus" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
                     </Grid>
 
                     <Rectangle Grid.Row="1" Grid.Column="2" Height="{Binding ActualHeight, ElementName=OuterTextGrid, Mode=OneWay}" Fill="Transparent" Cursor="IBeam" PreviewMouseDown="Rectangle_PreviewMouseDown"/>

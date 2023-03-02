@@ -18,12 +18,6 @@ namespace PiIDE.Wrapers {
 
                 private Process WraperProcess;
 
-#if DEBUG
-                public static string WritenInput { get; private set; } = "";
-                public static string WritenOutput { get; private set; } = "";
-                public static string WritenError { get; private set; } = "";
-# endif
-
                 private bool ReceivedOutputData;
                 private string? NewOutputData;
 
@@ -49,21 +43,15 @@ namespace PiIDE.Wrapers {
                     };
 
                     WraperProcess.OutputDataReceived += (s, e) => {
-#if DEBUG
-                        WritenOutput += (e.Data ?? "NULL") + "\n";
-                        //Debug.WriteLine($"Output: {e.Data ?? "NULL"}");
-#endif
                         NewOutputData = e.Data;
                         ReceivedOutputData = true;
                     };
 
 #if DEBUG
                     WraperProcess.ErrorDataReceived += (s, e) => {
-                        WritenError += (e.Data ?? "NULL") + "\n";
                         Debug.WriteLine($"Error: {e.Data ?? "NULL"}");
                     };
 #endif
-
 
                     WraperProcess.Exited += (s, e) => {
 #if DEBUG
@@ -80,10 +68,6 @@ namespace PiIDE.Wrapers {
                 public async Task<string?> WriteLine(string line, bool expectsOutput) {
 
                     await semaphoreSlim.WaitAsync();
-#if DEBUG
-                    //Debug.WriteLine("Input: " + line);
-                    WritenInput += line + "\n";
-#endif
 
                     IsBusy = true;
 
