@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace PiIDE.Editor.Parts {
     public class EditorTabItem : TabItem {
@@ -17,20 +18,33 @@ namespace PiIDE.Editor.Parts {
         public event EventHandler<string>? SaveLocalClick;
         public event EventHandler<string>? CloseTabClick;
 
+        protected new WrapPanel Header;
+        protected StackPanel IconsStackPanel;
+
+        private BitmapImage PythonLogoBitmap = new(new Uri("../Assets/Icons/Python.png", UriKind.Relative));
+        private BitmapImage TextFileBitmap = new(new Uri("../Assets/Icons/FileIcon.png", UriKind.Relative));
+
         public EditorTabItem(string filePath) {
 
             FilePath = filePath;
             FileName = Path.GetFileName(FilePath);
             Height = 30;
+            Header = new();
 
             Style = (Style) Application.Current.Resources["TabItemStyle"];
+
+            IconsStackPanel = new() {
+                MaxHeight = 16,
+                Orientation = Orientation.Horizontal,
+            };
+            IconsStackPanel.Children.Add(new Image() {
+                Source = Tools.IsPythonFile(filePath) ? PythonLogoBitmap : TextFileBitmap,
+            });
 
             TextBlock fileNameTextBlock = new() {
                 Text = FileName,
                 Foreground = Brushes.White,
             };
-
-            WrapPanel header = new();
 
             CloseTabButton = new() {
                 Content = "⛌",
@@ -60,12 +74,13 @@ namespace PiIDE.Editor.Parts {
 
             SaveLocalButton.Click += (s, e) => SaveLocalClick?.Invoke(this, FilePath);
 
-            header.Children.Add(fileNameTextBlock);
-            header.Children.Add(new Border() { BorderThickness = new(3) });
-            header.Children.Add(SaveLocalButton);
-            header.Children.Add(CloseTabButton);
+            Header.Children.Add(IconsStackPanel);
+            Header.Children.Add(fileNameTextBlock);
+            Header.Children.Add(new Border() { BorderThickness = new(3) });
+            Header.Children.Add(SaveLocalButton);
+            Header.Children.Add(CloseTabButton);
 
-            Header = header;
+            base.Header = Header;
         }
     }
 }

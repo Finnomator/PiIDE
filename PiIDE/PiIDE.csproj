@@ -10,9 +10,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Assets\Backgrounds\**" />
+	  <Compile Remove="Assets\ColorThemes\**" />
+	  <EmbeddedResource Remove="Assets\Backgrounds\**" />
+	  <EmbeddedResource Remove="Assets\ColorThemes\**" />
+	  <None Remove="Assets\Backgrounds\**" />
+	  <None Remove="Assets\ColorThemes\**" />
+	  <Page Remove="Assets\Backgrounds\**" />
+	  <Page Remove="Assets\ColorThemes\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Assets\Icons\FileIcon.png" />
 		<None Remove="Assets\Icons\Logo.ico" />
 		<None Remove="Assets\Icons\Logo16x16.ico" />
 		<None Remove="Assets\Icons\MultiScaleLogo.ico" />
+		<None Remove="Assets\Icons\PiLogo.png" />
+		<None Remove="Assets\Icons\Python.png" />
 		<None Remove="Assets\Jedi\jedi_wraper.exe" />
 		<None Remove="Options\Editor\Shortcuts\Shortcuts.json" />
 		<None Remove="Options\Editor\SyntaxHighlighter\Colors\Colors.json" />
@@ -21,7 +35,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="Assets\Icons\FileIcon.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Assets\Icons\MultiScaleLogo.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\PiLogo.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\Python.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\Jedi\jedi_wraper.exe">
@@ -60,8 +83,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Assets\Backgrounds\MainTabControl\" />
-		<Folder Include="Assets\ColorThemes\" />
 		<Folder Include="BoardFiles\" />
 	</ItemGroup>
 

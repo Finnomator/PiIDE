@@ -124,6 +124,7 @@ namespace PiIDE {
             TextEditorGrid.Children.Add(Underliner);
 
             // Searchbox stuff
+            TextSearchBox.Close();
             TextSearchBox.SearchChanged += TextSearchBox_SearchChanged;
         }
 

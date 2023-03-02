@@ -1,7 +1,4 @@
 ﻿using Humanizer;
-using System;
-using System.Drawing.Text;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,7 +47,7 @@ namespace PiIDE.Options.Editor {
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
-            
+
         }
 
         private void EditorFontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {

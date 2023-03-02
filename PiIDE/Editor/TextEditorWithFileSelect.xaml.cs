@@ -82,18 +82,23 @@ namespace PiIDE {
 
         private TextEditor AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
             TextEditor textEditor;
+            EditorTabItem tabItem;
 
             if (onBoard) {
                 textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..], openInBackground) { DisableAllWrapers = openInBackground };
                 ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Visible; };
                 ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Collapsed; };
                 ((BoardTextEditor) textEditor).StartedPythonExecutionOnBoard += (s, e) => OutputTabControl.SelectedIndex = 1;
-            } else
-                textEditor = new(filePath, openInBackground);
 
-            EditorTabItem tabItem = new(filePath) {
-                Content = textEditor,
-            };
+                tabItem = new BoardEditorTabItem(filePath) {
+                    Content = textEditor,
+                };
+            } else {
+                textEditor = new(filePath, openInBackground);
+                tabItem = new(filePath) {
+                    Content = textEditor,
+                };
+            }
 
             textEditor.ContentChanged += delegate {
                 tabItem.SaveLocalButton.IsEnabled = !textEditor.ContentIsSaved;

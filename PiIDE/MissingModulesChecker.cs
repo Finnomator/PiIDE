@@ -103,7 +103,7 @@ namespace PiIDE {
                 else if (missingModule.Name == "Pylint")
                     GlobalSettings.Default.PylintIsUsable = false;
             }
-            
+
             if (IsJediUsable())
                 GlobalSettings.Default.JediIsUsable = true;
             else
