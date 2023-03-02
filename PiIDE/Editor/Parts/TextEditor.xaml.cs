@@ -125,7 +125,7 @@ namespace PiIDE {
             TextEditorGrid.Children.Add(Underliner);
 
             // Searchbox stuff
-            
+
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -235,6 +235,26 @@ namespace PiIDE {
                 }
                 e.Handled = true;
             }
+        }
+
+        protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+
+            ContentIsSaved = !ContentLoaded;
+            ContentChanged?.Invoke(this, e);
+
+            int textLines = Tools.CountLines(TextEditorTextBox.Text);
+
+            if (textLines != CurrentAmountOfLines) {
+                NumsTextBlock.Text = GetLineNumbers(textLines);
+                CurrentAmountOfLines = textLines;
+            }
+        }
+
+        private void TextEditorTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+            if (e.Text.Length == 1)
+                DisplayCodeCompletionsAsync();
+            else
+                CompletionUiList.Close();
         }
 
         private (int firstSelectedLine, int lastSelectedLine) GetSelectedLines() {
@@ -375,25 +395,7 @@ namespace PiIDE {
             CompletionUiList.ReloadCompletionsAsync(true);
         }
 
-        protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
-            ContentIsSaved = !ContentLoaded;
-            ContentChanged?.Invoke(this, e);
-
-            char? lastChar = LastTypedChar();
-
-            if (lastChar is not null && char.IsLetter((char) lastChar) || lastChar == '.' || lastChar == '_')
-                DisplayCodeCompletionsAsync();
-            else
-                CompletionUiList.Close();
-
-            int textLines = Tools.CountLines(TextEditorTextBox.Text);
-
-            if (textLines != CurrentAmountOfLines) {
-                NumsTextBlock.Text = GetLineNumbers(textLines);
-                CurrentAmountOfLines = textLines;
-            }
-        }
 
         private Thickness MarginAtCaretPosition() {
             (int col, int row) = GetCaretPosition();
@@ -467,7 +469,8 @@ namespace PiIDE {
         }
 
         private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) {
-            CompletionUiList.Close();
+            //if (!CompletionUiList.MainListBox.IsFocused)
+            //    CompletionUiList.Close();
         }
 
         private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionUiList.Close();

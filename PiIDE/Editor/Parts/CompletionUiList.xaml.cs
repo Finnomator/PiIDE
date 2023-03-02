@@ -119,9 +119,14 @@ namespace PiIDE {
             MainListBox.ScrollIntoView(SelectedCompletion);
         }
 
-        private void ListBox_MouseLeftButtonDown(object sender, RoutedEventArgs e) {
-            // This Event has to be implementd (<EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBox_MouseLeftButtonDown"/>)
-            CompletionClicked?.Invoke(sender, (Completion) ((ListBoxItem) sender).Content);
+        private void Completion_Click(object sender, RoutedEventArgs e) {
+            string clickedName = ((TextBlock) ((StackPanel) ((Button) sender).Content).Children[2]).Text;
+            foreach (Completion completion in MainListBox.Items) {
+                if (completion.Name == clickedName) {
+                    CompletionClicked?.Invoke(sender, completion);
+                    break;
+                }
+            }
             Close();
         }
 

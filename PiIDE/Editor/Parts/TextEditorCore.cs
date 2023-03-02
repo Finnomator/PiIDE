@@ -11,7 +11,7 @@ using static PiIDE.Wrapers.JediWraper;
 namespace PiIDE.Editor.Parts {
     public class TextEditorCore : UIElement {
 
-        private readonly DrawingGroup drawingGroup = new();
+        private readonly DrawingGroup DrawingGroup = new();
         private readonly TextEditor Editor;
         private TextBox EditorBox => Editor.TextEditorTextBox;
         private string EditorText => Editor.TextEditorTextBox.Text;
@@ -69,7 +69,9 @@ namespace PiIDE.Editor.Parts {
                 await Task.Delay(10);
 
             if (VisibleText == "") {
-                drawingGroup.Open().Close();
+                try {
+                    DrawingGroup.Open().Close();
+                } catch (InvalidOperationException) { }
                 return;
             }
 
@@ -84,7 +86,7 @@ namespace PiIDE.Editor.Parts {
             string visibleText = VisibleText;
             FormattedText formattedText = GetFormattedText(visibleText);
 
-            DrawingContext context = drawingGroup.Open();
+            DrawingContext context = DrawingGroup.Open();
 
             if (searchResult is not null) {
                 ApplySearchResults(context, searchResult);
@@ -172,13 +174,6 @@ namespace PiIDE.Editor.Parts {
         private void DrawHighlighting(DrawingContext drawingContext, FormattedText formattedText) {
             drawingContext.DrawText(formattedText, new(2, 0));
             CurrentHighlighting = formattedText;
-        }
-
-        private DrawingContext OpenContextAndKeepHighlighting() {
-            DrawingContext context = drawingGroup.Open();
-            if (CurrentHighlighting is not null)
-                context.DrawText(CurrentHighlighting, new(2, 0));
-            return context;
         }
 
         private static void HighlightKeywords(FormattedText formattedText) {
@@ -271,7 +266,7 @@ namespace PiIDE.Editor.Parts {
 
         protected override void OnRender(DrawingContext drawingContext) {
             UpdateView(null);
-            drawingContext.DrawDrawing(drawingGroup);
+            drawingContext.DrawDrawing(DrawingGroup);
         }
     }
 }

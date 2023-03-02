@@ -94,7 +94,7 @@ namespace PiIDE.Wrapers {
             }
 
             private const int AmountOfWrapers = 2;
-            private static Wraper[] Wrapers;
+            private static readonly Wraper[] Wrapers;
 
             static WraperRepl() {
                 Wrapers = new Wraper[AmountOfWrapers];
