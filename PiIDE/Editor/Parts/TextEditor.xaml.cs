@@ -125,19 +125,11 @@ namespace PiIDE {
 
             // Searchbox stuff
             TextSearchBox.SearchChanged += TextSearchBox_SearchChanged;
-
-            GlobalSettings.Default.PropertyChanged += delegate {
-                UpdateHighlighting();
-            };
-
-            ColorResources.HighlighterColors.ColorChanged += delegate {
-                UpdateHighlighting();
-            };
         }
 
         private void TextSearchBox_SearchChanged(object? sender, Regex regex) {
-
-            DrawingContext context = EditorCore!.OpenContext();
+            /*
+            DrawingContext context = EditorCore!.drawingGroup.Open();
             Size textSize = TextEditorTextBoxCharacterSize;
             MatchCollection matches = regex.Matches(VisibleText);
 
@@ -154,7 +146,7 @@ namespace PiIDE {
             if (EditorCore.CurrentHighlighting is not null)
                 context.DrawText(EditorCore.CurrentHighlighting, new(2, 0));
 
-            context.Close();
+            context.Close();*/
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -408,7 +400,6 @@ namespace PiIDE {
 
             ContentIsSaved = !ContentLoaded;
             ContentChanged?.Invoke(this, e);
-            UpdateHighlighting();
 
             char? lastChar = LastTypedChar();
 
@@ -459,7 +450,7 @@ namespace PiIDE {
         public int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         public (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
-        private void UpdateHighlighting() {
+        private void MoveHighlighting() {
 
             if (DisableAllWrapers || EditorCore is null)
                 return;
@@ -467,7 +458,6 @@ namespace PiIDE {
             double remainder = MainScrollViewer.VerticalOffset % TextEditorTextBoxCharacterSize.Height;
 
             EditorCoreCanvas!.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) < 0.1 ? 0 : -remainder, 0, 0);
-            EditorCore.UpdateTextAsync(HighlightingMode, HighlightingPerformanceMode);
         }
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
@@ -475,7 +465,7 @@ namespace PiIDE {
             if (e.HorizontalChange == 0 && e.VerticalChange == 0)
                 return;
 
-            UpdateHighlighting();
+            MoveHighlighting();
             UpdatePylint();
         }
 
@@ -545,10 +535,6 @@ namespace PiIDE {
 
             CaretColTextBlock.Text = (col + 1).ToString();
             CaretRowTextBlock.Text = (row + 1).ToString();
-        }
-
-        private void MainScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e) {
-            UpdateHighlighting();
         }
 
         private void Rectangle_PreviewMouseDown(object sender, MouseButtonEventArgs e) {

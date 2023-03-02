@@ -109,7 +109,7 @@ namespace PiIDE {
             int[] indexes = new int[rows.Length];
 
             for (int i = 0, j = 0; j < indexes.Length; ++i) {
-                if (row == rows[j] && col == cols[j]) {
+                while (row == rows[j] && col == cols[j]) {
                     indexes[j] = i;
                     ++j;
 

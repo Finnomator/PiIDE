@@ -20,6 +20,7 @@ namespace PiIDE.Editor.Parts {
         private ReturnClasses.Name[]? CachedJediNames;
         private bool IsBusy;
         private bool GotNewerRequest;
+        private HighlightingPerformanceMode OldHighlightingPerformanceMode;
 
         public FormattedText? CurrentHighlighting { get; private set; }
 
@@ -29,15 +30,22 @@ namespace PiIDE.Editor.Parts {
         public TextEditorCore(TextEditor textEditor) {
             Editor = textEditor;
             IsHitTestVisible = false;
+            OldHighlightingPerformanceMode = TextEditor.HighlightingPerformanceMode;
+            Editor.MainScrollViewer.ScrollChanged += (s, e) => UpdateView();
+            GlobalSettings.Default.PropertyChanged += (s, e) => UpdateView();
+            ColorResources.HighlighterColors.ColorChanged += (s, e) => UpdateView();
         }
 
-        public async void UpdateTextAsync(HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
+        private async void UpdateView() {
+
+            if (Editor.DisableAllWrapers)
+                return;
 
             for (int i = 0; i < 50 && OldVisibleText == VisibleText; i++)
                 await Task.Delay(10);
 
             if (VisibleText == "") {
-                OpenContext().Close();
+                drawingGroup.Open().Close();
                 return;
             }
 
@@ -45,48 +53,55 @@ namespace PiIDE.Editor.Parts {
                 GotNewerRequest = true;
                 return;
             }
+            IsBusy = true;
+
+            // this is used because the EditorText could change while waiting for jedi to finish
+            string filePath = Editor.FilePath;
+            string visibleText = VisibleText;
+            FormattedText formattedText = GetFormattedText(visibleText);
+
+            await ApplyHighlighting(formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
+
+            OldVisibleText = visibleText;
+            OldHighlightingPerformanceMode = TextEditor.HighlightingPerformanceMode;
+
+            IsBusy = false;
+
+            if (GotNewerRequest) {
+                UpdateView();
+                GotNewerRequest = false;
+            }
+        }
+
+        private async Task ApplyHighlighting(FormattedText formattedText, string filePath, HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
+
+            string visibleText = formattedText.Text;
 
             StartedHighlighting?.Invoke(this, EventArgs.Empty);
 
-            // this is used because the EditorText could change while waiting for jedi to finish
-            string visibleText = VisibleText;
-            string filePath = Editor.FilePath;
-
-            IsBusy = true;
-
-            FormattedText formattedText = GetFormattedText();
-
             switch (highlightingMode) {
                 case HighlightingMode.JediAndKeywords:
-                    HighlightKeywords(formattedText, visibleText);
-                    await HighlightJediNamesAsync(formattedText, visibleText, filePath, performanceMode);
+                    HighlightKeywords(formattedText);
+                    await HighlightJediNamesAsync(formattedText, filePath, performanceMode);
                     break;
                 case HighlightingMode.JediOnly:
-                    await HighlightJediNamesAsync(formattedText, visibleText, filePath, performanceMode);
+                    await HighlightJediNamesAsync(formattedText, filePath, performanceMode);
                     break;
                 case HighlightingMode.KeywordsOnly:
-                    HighlightKeywords(formattedText, visibleText);
+                    HighlightKeywords(formattedText);
                     break;
                 default:
                     break;
             }
 
-            OldVisibleText = visibleText;
             DrawHighlighting(formattedText);
-
-            IsBusy = false;
-
-            if (GotNewerRequest) {
-                UpdateTextAsync(highlightingMode, performanceMode);
-                GotNewerRequest = false;
-            }
 
             FinishedHighlighting?.Invoke(this, EventArgs.Empty);
         }
 
-        public FormattedText GetFormattedText() {
+        private FormattedText GetFormattedText(string text) {
             return new(
-                textToFormat: VisibleText,
+                textToFormat: text,
                 culture: CultureInfo.GetCultureInfo("en-us"),
                 flowDirection: FlowDirection.LeftToRight,
                 typeface: new Typeface(EditorBox.FontFamily.Source),
@@ -96,23 +111,23 @@ namespace PiIDE.Editor.Parts {
             );
         }
 
-        public void DrawHighlighting(FormattedText formattedText) {
-            DrawingContext context = OpenContext();
+        private void DrawHighlighting(FormattedText formattedText) {
+            DrawingContext context = drawingGroup.Open();
             context.DrawText(formattedText, new(2, 0));
             CurrentHighlighting = formattedText;
             context.Close();
         }
 
-        public DrawingContext OpenContext() => drawingGroup.Open();
-
-        public DrawingContext OpenContextAndKeepHighlighting() {
-            DrawingContext context = OpenContext();
+        private DrawingContext OpenContextAndKeepHighlighting() {
+            DrawingContext context = drawingGroup.Open();
             if (CurrentHighlighting is not null)
                 context.DrawText(CurrentHighlighting, new(2, 0));
             return context;
         }
 
-        private static void HighlightKeywords(FormattedText formattedText, string visibleText) {
+        private static void HighlightKeywords(FormattedText formattedText) {
+            string visibleText = formattedText.Text;
+
             Match[] keywordMatches = SyntaxHighlighter.FindKeywords(visibleText);
             Match[] commentMatches = SyntaxHighlighter.FindComments(visibleText);
             Match[] stringMatches = SyntaxHighlighter.FindStrings(visibleText);
@@ -133,22 +148,24 @@ namespace PiIDE.Editor.Parts {
                 formattedText.SetForegroundBrush(ColorResources.HighlighterColors.Comment, comment.Index, comment.Length);
         }
 
-        private async Task HighlightJediNamesAsync(FormattedText formattedText, string visibleText, string filePath, HighlightingPerformanceMode performanceMode) {
+        private async Task HighlightJediNamesAsync(FormattedText formattedText, string filePath, HighlightingPerformanceMode performanceMode) {
             if (performanceMode == HighlightingPerformanceMode.Normal)
-                await HighlightJediNamesNormalAsync(formattedText, visibleText, filePath);
+                await HighlightJediNamesNormalAsync(formattedText, filePath);
             else if (performanceMode == HighlightingPerformanceMode.Performance)
-                await HighlightJediNamesPerformanceAsync(formattedText, visibleText, filePath);
+                await HighlightJediNamesPerformanceAsync(formattedText, filePath);
         }
 
-        private async Task HighlightJediNamesNormalAsync(FormattedText formattedText, string visibleText, string filePath) {
+        private async Task HighlightJediNamesNormalAsync(FormattedText formattedText, string filePath) {
+
+            string visibleText = formattedText.Text;
 
             int fvl = Editor.FirstVisibleLineNum;
             int lvl = Editor.LastVisibleLineNum;
 
-            Script script = await Script.MakeScript(EditorText, filePath);
-
-            if (OldVisibleText != VisibleText || CachedJediNames is null)
+            if (OldVisibleText != visibleText || CachedJediNames is null || OldHighlightingPerformanceMode == HighlightingPerformanceMode.Performance) {
+                Script script = await Script.MakeScript(EditorText, filePath);
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
+            }
 
             ReturnClasses.Name[] visibleJediNames = CachedJediNames.Where(x => x.Line > fvl && x.Line <= lvl).ToArray();
 
@@ -169,10 +186,10 @@ namespace PiIDE.Editor.Parts {
             }
         }
 
-        private async Task HighlightJediNamesPerformanceAsync(FormattedText formattedText, string visibleText, string filePath) {
+        private async Task HighlightJediNamesPerformanceAsync(FormattedText formattedText, string filePath) {
+            string visibleText = formattedText.Text;
 
-
-            if (OldVisibleText != visibleText || CachedJediNames is null) {
+            if (OldVisibleText != visibleText || CachedJediNames is null || OldHighlightingPerformanceMode == HighlightingPerformanceMode.Normal) {
                 Script script = await Script.MakeScript(visibleText, filePath);
                 CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
             }
@@ -197,7 +214,7 @@ namespace PiIDE.Editor.Parts {
         }
 
         protected override void OnRender(DrawingContext drawingContext) {
-            UpdateTextAsync(TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
+            UpdateView();
             drawingContext.DrawDrawing(drawingGroup);
         }
     }
