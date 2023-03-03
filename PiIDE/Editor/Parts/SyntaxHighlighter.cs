@@ -6,12 +6,12 @@ using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
 
 namespace PiIDE {
 
-    public static partial class SyntaxHighlighter {
+    public static class SyntaxHighlighter {
 
         private static readonly Regex KeywordsRx = new(@$"\b({string.Join('|', Tools.PythonKeywords)})\b", RegexOptions.Compiled);
-        private static readonly Regex StringsRx = StringsRegex();
-        private static readonly Regex CommentsRx = CommentsRegex();
-        private static readonly Regex NumbersRx = NumbersRegex();
+        private static readonly Regex StringsRx = new(@"(['""])(.*?)\1", RegexOptions.Compiled);
+        private static readonly Regex CommentsRx = new("#.+", RegexOptions.Compiled);
+        private static readonly Regex NumbersRx = new(@"\d+(\.\d+)?(e[-+]?\d+)?", RegexOptions.Compiled);
 
         public static async Task<JediName[]> FindJediNames(Script script) => await script.GetNames(true, true, true);
 
@@ -19,12 +19,5 @@ namespace PiIDE {
         public static Match[] FindComments(string text) => CommentsRx.Matches(text).ToArray();
         public static Match[] FindStrings(string text) => StringsRx.Matches(text).ToArray();
         public static Match[] FindNumbers(string text) => NumbersRx.Matches(text).ToArray();
-
-        [GeneratedRegex("(['\"])(.*?)\\1", RegexOptions.Compiled)]
-        private static partial Regex StringsRegex();
-        [GeneratedRegex("#.+", RegexOptions.Compiled)]
-        private static partial Regex CommentsRegex();
-        [GeneratedRegex("\\d+(\\.\\d+)?(e[-+]?\\d+)?", RegexOptions.Compiled)]
-        private static partial Regex NumbersRegex();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using PiIDE.Editor.Parts;
+﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace PiIDE {
         public static HighlightingPerformanceMode HighlightingPerformanceMode => (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode;
         public Size TextEditorTextBoxCharacterSize => MeasureTextBoxStringSize("A");
 
-        private readonly CompletionUiList CompletionList;
+        private readonly CompletionUiList CompletionUiList;
         private int CurrentAmountOfLines;
         private (int row, int col) LastCaretPos = (1, 1);
         private readonly TextEditorCore? EditorCore;
@@ -92,13 +91,13 @@ namespace PiIDE {
             PythonWraper.PythonExited += Python_Exited;
 
             // Completion suggestions stuff
-            CompletionList = new(this);
-            CompletionList.CompletionClicked += CompletionUiList_CompletionClick;
-            TextEditorGrid.Children.Add(CompletionList);
+            CompletionUiList = new(this);
+            CompletionUiList.CompletionClicked += CompletionUiList_CompletionClick;
+            TextEditorGrid.Children.Add(CompletionUiList);
 
             // Syntax highlighter
-            EditorCore = new(this);
             if (IsPythonFile) {
+                EditorCore = new(this);
                 EditorCore.StartedHighlighting += delegate {
                     LoadingJediStatus.Visibility = Visibility.Visible;
                 };
@@ -112,18 +111,18 @@ namespace PiIDE {
 #endif
                     }
                 };
+                EditorCoreCanvas = new();
+                EditorCoreCanvas.Children.Add(EditorCore);
+                Grid.SetColumn(EditorCoreCanvas, 2);
+                OuterTextGrid.Children.Add(EditorCoreCanvas);
             }
-            EditorCoreCanvas = new();
-            EditorCoreCanvas.Children.Add(EditorCore);
-            Grid.SetColumn(EditorCoreCanvas, 2);
-            OuterTextGrid.Children.Add(EditorCoreCanvas);
 
             // Pylint underlining stuff
             Underliner = new(this);
             TextEditorGrid.Children.Add(Underliner);
 
             // Searchbox stuff
-            TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
+
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -173,21 +172,21 @@ namespace PiIDE {
         private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
             switch (e.Key) {
                 case Key.Down:
-                    if (CompletionList.IsOpen) {
-                        CompletionList.MoveSelectedCompletionDown();
+                    if (CompletionUiList.IsOpen) {
+                        CompletionUiList.MoveSelectedCompletionDown();
                         e.Handled = true;
                     }
                     break;
                 case Key.Up:
-                    if (CompletionList.SelectedAnIndex) {
-                        CompletionList.MoveSelectedCompletionUp();
+                    if (CompletionUiList.SelectedAnIndex) {
+                        CompletionUiList.MoveSelectedCompletionUp();
                         e.Handled = true;
                     }
                     break;
                 case Key.Enter:
-                    if (CompletionList.SelectedAnIndex) {
-                        InsertCompletionAtCaret(CompletionList.SelectedCompletion!);
-                        CompletionList.Close();
+                    if (CompletionUiList.SelectedAnIndex) {
+                        InsertCompletionAtCaret(CompletionUiList.SelectedCompletion!);
+                        CompletionUiList.Close();
                         e.Handled = true;
                     } else {
                         char? charInFrontOfCaret = LastTypedChar();
@@ -209,8 +208,8 @@ namespace PiIDE {
                     e.Handled = true;
                     break;
                 case Key.Escape:
-                    if (CompletionList.IsOpen) {
-                        CompletionList.Close();
+                    if (CompletionUiList.IsOpen) {
+                        CompletionUiList.Close();
                         e.Handled = true;
                     }
                     break;
@@ -230,12 +229,6 @@ namespace PiIDE {
                     case Shortcut.OpenCompletionsList:
                         DisplayCodeCompletionsAsync();
                         break;
-                    case Shortcut.OpenSearchBox:
-                        if (TextSearchBox.IsOpen)
-                            TextSearchBox.FocusSearchTextBox();
-                        else
-                            TextSearchBox.OpenAndFocus();
-                        break;
                 }
                 e.Handled = true;
             }
@@ -248,17 +241,17 @@ namespace PiIDE {
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
 
-            char? lastChar = LastTypedChar();
-
-            if (lastChar is not null && (char.IsLetter((char) lastChar) || lastChar == '.' || lastChar == '_' || lastChar == ' '))
-                DisplayCodeCompletionsAsync();
-            else
-                CompletionList.Close();
-
             if (textLines != CurrentAmountOfLines) {
                 NumsTextBlock.Text = GetLineNumbers(textLines);
                 CurrentAmountOfLines = textLines;
             }
+        }
+
+        private void TextEditorTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+            if (e.Text.Length == 1)
+                DisplayCodeCompletionsAsync();
+            else
+                CompletionUiList.Close();
         }
 
         private (int firstSelectedLine, int lastSelectedLine) GetSelectedLines() {
@@ -342,9 +335,9 @@ namespace PiIDE {
                 return;
             }
 
-            if (CompletionList.SelectedAnIndex) {
-                InsertCompletionAtCaret(CompletionList.SelectedCompletion!);
-                CompletionList.Close();
+            if (CompletionUiList.SelectedAnIndex) {
+                InsertCompletionAtCaret(CompletionUiList.SelectedCompletion!);
+                CompletionUiList.Close();
                 return;
             }
 
@@ -394,9 +387,9 @@ namespace PiIDE {
                 return;
 
             Thickness marginAtCaretPos = MarginAtCaretPosition();
-            CompletionList.Margin = marginAtCaretPos;
+            CompletionUiList.Margin = marginAtCaretPos;
 
-            CompletionList.ReloadCompletionsAsync(true);
+            CompletionUiList.ReloadCompletionsAsync(true);
         }
 
 
@@ -450,12 +443,6 @@ namespace PiIDE {
             if (e.HorizontalChange == 0 && e.VerticalChange == 0)
                 return;
 
-            if (CompletionList.IsOpen) {
-                // TODO: Why is this not working???
-                CompletionList.MainPopup.VerticalOffset += e.VerticalChange;
-                CompletionList.MainPopup.HorizontalOffset += e.HorizontalChange;
-            }
-
             MoveHighlighting();
             UpdatePylint();
         }
@@ -478,7 +465,12 @@ namespace PiIDE {
             MainScrollViewer.ScrollToHorizontalOffset(horizontalOffset - (ActualHeight / 2));
         }
 
-        private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionList.Close();
+        private void TextEditorTextBox_LostFocus(object sender, RoutedEventArgs e) {
+            //if (!CompletionUiList.MainListBox.IsFocused)
+            //    CompletionUiList.Close();
+        }
+
+        private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionUiList.Close();
 
         private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
             RunFileLocalButton.IsEnabled = false;
@@ -530,11 +522,6 @@ namespace PiIDE {
                 TextEditorTextBox.CaretIndex = EditorText.Length;
                 e.Handled = true;
             }
-        }
-
-        private void UserControl_LostFocus(object sender, RoutedEventArgs e) {
-            // if (!CompletionUiList.MainListBox.IsFocused)
-            //    CompletionUiList.Close();
         }
     }
 }

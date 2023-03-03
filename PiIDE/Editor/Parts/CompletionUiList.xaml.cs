@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 using Script = PiIDE.Wrapers.JediWraper.Script;
@@ -23,14 +22,7 @@ namespace PiIDE {
         public CompletionUiList(TextEditor editor) {
             InitializeComponent();
             Editor = editor;
-
-            Loaded += delegate {
-                Window.GetWindow(Editor).LocationChanged += delegate {
-                    double offset = MainPopup.HorizontalOffset;
-                    MainPopup.HorizontalOffset = offset + 1;
-                    MainPopup.HorizontalOffset = offset;
-                };
-            };
+            Close();
         }
 
         public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;

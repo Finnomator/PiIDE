@@ -21,8 +21,8 @@ namespace PiIDE.Editor.Parts {
         protected new WrapPanel Header;
         protected StackPanel IconsStackPanel;
 
-        private readonly BitmapImage PythonLogoBitmap = new(new Uri("../Assets/Icons/Python.png", UriKind.Relative));
-        private readonly BitmapImage TextFileBitmap = new(new Uri("../Assets/Icons/FileIcon.png", UriKind.Relative));
+        private BitmapImage PythonLogoBitmap = new(new Uri("../Assets/Icons/Python.png", UriKind.Relative));
+        private BitmapImage TextFileBitmap = new(new Uri("../Assets/Icons/FileIcon.png", UriKind.Relative));
 
         public EditorTabItem(string filePath) {
 

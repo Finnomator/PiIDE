@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace PiIDE.Editor.Parts {
@@ -13,17 +10,10 @@ namespace PiIDE.Editor.Parts {
 
         public event EventHandler<Regex?>? SearchChanged;
         public event EventHandler<int>? SelectedResultChanged;
-        public event EventHandler? Closed;
 
         public int SearchResults { get; private set; }
         public int ResultNo { get; private set; }
         public Regex? Searcher { get; private set; }
-        public bool IsOpen => MainExpander.IsExpanded;
-
-        private bool MatchWholeWord;
-        private bool CaseSensitive;
-
-        private bool BlockTextChange;
 
         public SearchBox() {
             InitializeComponent();
@@ -48,63 +38,49 @@ namespace PiIDE.Editor.Parts {
             ResultNumTextBlock.Text = (ResultNo + 1).ToString();
         }
 
-        public void Open() => MainExpander.IsExpanded = true;
-
-        public async void OpenAndFocus() {
-            Open();
-            while (!SearchTextBox.IsLoaded)
-                await Task.Delay(10); // If we dont wait for it to load it wont get focused
-            FocusSearchTextBox();
+        public void Open() {
+            MainExpander.IsExpanded = true;
         }
 
-        public void FocusSearchTextBox() => SearchTextBox.Focus();
+        public void OpenAndFocus() {
+            Open();
+            SearchTextBox.Focus();
+        }
 
         public void Close() {
             MainExpander.IsExpanded = false;
-            Closed?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void UpdateSearch(string text) {
-
-            if (text == "") {
-                SetSearchResults(0);
-                RegexTextBoxHint.Visibility = Visibility.Visible;
-                return;
-            } else
-                RegexTextBoxHint.Visibility = Visibility.Collapsed;
-
-            string regexPattern = $"{text}";
-
-            if (MatchWholeWord) {
-                regexPattern += "\\b";
-                regexPattern = regexPattern.Insert(0, "\\b");
-            }
-
-            BlockTextChange = true;
-            RegexTextBox.Text = regexPattern;
-            BlockTextChange = false;
-
-            try {
-                Searcher = new(regexPattern, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
-                RegexTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
-            } catch (ArgumentException) {
-                SetSearchResults(0);
-                RegexTextBox.Background = Brushes.IndianRed;
-            }
-
-            SearchChanged?.Invoke(this, Searcher);
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-            RegexTextBox.Text = SearchTextBox.Text.Replace("\\", "\\\\");
-            SearchTextBoxHint.Visibility = SearchTextBox.Text == "" ? Visibility.Visible : Visibility.Collapsed;
+            RegexTextBox.Text = SearchTextBox.Text;
+
+            if (SearchTextBox.Text == "") {
+                SearchTextBoxHint.Visibility = Visibility.Visible;
+            } else {
+                SearchTextBoxHint.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void RegexTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-            if (BlockTextChange)
-                return;
-            Searcher = null;
-            UpdateSearch(RegexTextBox.Text);
+            string text = RegexTextBox.Text.Replace("\\", "\\\\");
+
+            if (text == "") {
+                Searcher = null;
+                SetSearchResults(0);
+                RegexTextBoxHint.Visibility = Visibility.Visible;
+            } else {
+                RegexTextBoxHint.Visibility = Visibility.Collapsed;
+                try {
+                    Searcher = new(text);
+                    RegexTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
+                } catch (ArgumentException) {
+                    SetSearchResults(0);
+                    RegexTextBox.Background = Brushes.IndianRed;
+                    return;
+                }
+            }
+
+            SearchChanged?.Invoke(this, Searcher);
         }
 
         private void PreviousResButton_Click(object sender, RoutedEventArgs e) {
@@ -119,24 +95,6 @@ namespace PiIDE.Editor.Parts {
                 ResultNo = 0;
             ResultNumTextBlock.Text = (ResultNo + 1).ToString();
             SelectedResultChanged?.Invoke(this, ResultNo);
-        }
-
-        private void CaseSensitive_Clicked(object sender, RoutedEventArgs e) {
-            CaseSensitive = (bool) ((ToggleButton) sender).IsChecked!;
-            UpdateSearch(SearchTextBox.Text);
-        }
-
-        private void MatchWholeWord_Clicked(object sender, RoutedEventArgs e) {
-            MatchWholeWord = (bool) ((ToggleButton) sender).IsChecked!;
-            UpdateSearch(SearchTextBox.Text);
-        }
-
-        private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e) {
-            switch(e.Key) {
-                case Key.Escape:
-                    Close();
-                    break;
-            }
         }
     }
 }

@@ -21,11 +21,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="Assets\Icons\CaseSensitive.png" />
 		<None Remove="Assets\Icons\FileIcon.png" />
 		<None Remove="Assets\Icons\Logo.ico" />
 		<None Remove="Assets\Icons\Logo16x16.ico" />
-		<None Remove="Assets\Icons\MatchWholeWord.png" />
 		<None Remove="Assets\Icons\MultiScaleLogo.ico" />
 		<None Remove="Assets\Icons\PiLogo.png" />
 		<None Remove="Assets\Icons\Python.png" />
@@ -37,13 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Assets\Icons\CaseSensitive.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
 		<Content Include="Assets\Icons\FileIcon.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Assets\Icons\MatchWholeWord.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\Icons\MultiScaleLogo.ico">
