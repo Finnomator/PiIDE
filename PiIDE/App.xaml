@@ -9,6 +9,7 @@
                 <ResourceDictionary Source="Themes/EditorTextBoxTheme.xaml"/>
                 <ResourceDictionary Source="Themes/TabControlTheme.xaml"/>
                 <ResourceDictionary Source="Themes/CleanButtonTheme.xaml"/>
+                <ResourceDictionary Source="Themes/CleanToggleButtonThemes.xaml"/>
                 <ResourceDictionary Source="Themes/ListViewTheme.xaml"/>
                 <ResourceDictionary Source="Themes/TabItemTheme.xaml"/>
                 <ResourceDictionary Source="Themes/Colors.xaml"/>

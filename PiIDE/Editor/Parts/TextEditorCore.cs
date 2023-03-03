@@ -62,10 +62,7 @@ namespace PiIDE.Editor.Parts {
 
         private async void UpdateView(MatchCollection? searchResult) {
 
-            if (Editor.DisableAllWrapers)
-                return;
-
-            for (int i = 0; i < 50 && OldVisibleText == VisibleText; i++)
+            for (int i = 0; i < 10 && OldVisibleText == VisibleText; i++)
                 await Task.Delay(10);
 
             if (VisibleText == "") {
@@ -93,7 +90,8 @@ namespace PiIDE.Editor.Parts {
                 OldSearchResult = searchResult;
             }
 
-            await ApplyHighlighting(context, formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
+            if (Editor.IsPythonFile && !Editor.DisableAllWrapers)
+                await ApplyHighlighting(context, formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
 
             context.Close();
 
