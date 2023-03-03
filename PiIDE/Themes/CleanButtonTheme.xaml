@@ -19,6 +19,7 @@
     <SolidColorBrush x:Key="Button.Disabled.Background" Color="#33FFFFFF"/>
     <SolidColorBrush x:Key="Button.Disabled.Border" Color="#33FFFFFF"/>
     <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="LightGray"/>
+
     <Style x:Key="CleanButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
@@ -55,7 +56,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="CleanButtonWithRoundCornersStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
