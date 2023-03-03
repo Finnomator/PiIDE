@@ -54,6 +54,15 @@
       </hash>
     </dependentAssembly>
   </dependency>
+  <file name="Assets\Icons\FileIcon.png" size="4354">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>iOuTD1X3rrfPsuY2ZkwC4cU4nsbhznnqdfNAapjfWlA=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Assets\Icons\MultiScaleLogo.ico" size="454721">
     <hash>
       <dsig:Transforms>
@@ -61,6 +70,24 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>fzDSnFqpffmOPC3ZfdN6Tpvm3gCdEJkEVo2rJZ5ljzE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Assets\Icons\PiLogo.png" size="28111">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>lwKy7JOs8CjqgHK6WtRAm1hwRPFtPNrhapzBgDGC/oo=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Assets\Icons\Python.png" size="10926">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>/XSDatN0DgaHhQjS80YLBXBJLlMq2Hq4q2PqJ4CF6G8=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Assets\Jedi\jedi_wraper.exe" size="10435763">
@@ -135,13 +162,13 @@
       <dsig:DigestValue>a7ojNR0ow+zHegRcfX2e5UPVpcl2NvvtcPyPfiBQYXg=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="PiIDE.dll" size="860672">
+  <file name="PiIDE.dll" size="870912">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>hPCWdK2U8ff8wHyOdJ+M9ZF6Eq68b817LlLyzwtovXs=</dsig:DigestValue>
+      <dsig:DigestValue>pT0XXSCUQi5oNmjaKZbX6GNCPlIIKZ3fvaySckiGAuI=</dsig:DigestValue>
     </hash>
   </file>
   <file name="PiIDE.dll.config" size="2358">
@@ -153,13 +180,13 @@
       <dsig:DigestValue>OLEtOcmOre/QE0OTZGmZO9I3of4G8ItvVIEEfzmDenY=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="PiIDE.exe" size="608768">
+  <file name="PiIDE.exe" size="609280">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>OvuuO5WXv2DXgyFQKyVrl+d1NfrA1rWuZazq/3pE46I=</dsig:DigestValue>
+      <dsig:DigestValue>9DWbJdGr5PwmVY2SrFqpA50UX7n+E8LXdY3hcoxLCHU=</dsig:DigestValue>
     </hash>
   </file>
   <file name="PiIDE.runtimeconfig.json" size="372">
