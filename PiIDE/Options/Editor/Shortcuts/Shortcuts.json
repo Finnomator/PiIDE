@@ -1,5 +1,6 @@
 ﻿{
   "SaveFile": [ "LeftCtrl", "S" ],
   "OpenCompletionsList": [ "LeftCtrl", "Space" ],
-  "OpenSearchBox": [ "LeftCtrl", "F" ]
+  "OpenSearchBox": [ "LeftCtrl", "F" ],
+  "FormatDocument": [ "LeftCtrl", "LeftAlt", "F" ]
 }

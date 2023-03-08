@@ -8,7 +8,9 @@
         xmlns:editor="clr-namespace:PiIDE.Options.Editor"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="OptionsWindow" Height="450" Width="800" Closing="Window_Closing">
+        Title="Options" Height="450" Width="800" Closing="Window_Closing"
+        WindowStyle="ToolWindow">
+    
     <TabControl Template="{StaticResource TabControlStyle}" Background="{StaticResource WindowBackground}">
         <TabItem Header="General" Style="{StaticResource TabItemStyle}">
             <general:General/>

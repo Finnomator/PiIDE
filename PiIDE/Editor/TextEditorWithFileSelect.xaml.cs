@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
@@ -248,7 +249,7 @@ namespace PiIDE {
             BoardDirectoryScrollViewer.Content = BoardExplorer;
         }
 
-        private async void SyncButton_Click(object sender, RoutedEventArgs e) {
+        private void SyncButton_Click(object sender, RoutedEventArgs e) {
 
             if (!Tools.EnableBoardInteractions) {
                 DisableBoardInteractions();
@@ -256,13 +257,34 @@ namespace PiIDE {
             }
 
             SyncButton.IsEnabled = false;
-            SyncStatus.Visibility = Visibility.Visible;
-            await AmpyWraper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
-            SyncStatus.Visibility = Visibility.Collapsed;
-            SyncButton.IsEnabled = true;
 
-            for (int i = 0; i < OpenTextEditors.Count; i++)
-                OpenTextEditors[i].ReloadFile();
+            SyncOptionsWindow syncWindow = new();
+            Point mousePos = PointToScreen(Mouse.GetPosition(this));
+            syncWindow.Left = mousePos.X;
+            syncWindow.Top = mousePos.Y;
+            syncWindow.Show();
+            syncWindow.Focus();
+
+            syncWindow.Closed += async delegate {
+
+                switch (syncWindow.SyncOptionResult) {
+                    case SyncOptionResult.Cancel:
+                        break;
+                    case SyncOptionResult.OverwriteAllLocalFiles:
+                        SyncStatus.Visibility = Visibility.Visible;
+
+                        await AmpyWraper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
+
+                        SyncStatus.Visibility = Visibility.Collapsed;
+
+                        for (int i = 0; i < OpenTextEditors.Count; i++)
+                            if (OpenTextEditors[i] is BoardTextEditor)
+                                OpenTextEditors[i].ReloadFile();
+                        break;
+                }
+
+                SyncButton.IsEnabled = true;
+            };
         }
 
         private void GoToPylintMessage(PylintMessage pylintMessage) => GoTo(pylintMessage.Path, pylintMessage.Line, pylintMessage.Column);

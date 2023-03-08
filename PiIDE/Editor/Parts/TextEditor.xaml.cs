@@ -3,6 +3,7 @@ using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -236,9 +237,30 @@ namespace PiIDE {
                         else
                             TextSearchBox.OpenAndFocus();
                         break;
+                    case Shortcut.FormatDocument:
+                        if (GlobalSettings.Default.BlackIsUsable)
+                            FormatDocument();
+                        else
+                            ErrorMessager.ModuleIsNotInstalled(PipModules.Black);
+                        break;
                 }
                 e.Handled = true;
             }
+        }
+
+        private async void FormatDocument() {
+            Process process = new() {
+                StartInfo = new() {
+                    FileName = PipModules.Black.CmdCommand,
+                    Arguments = FilePath,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+
+            process.Start();
+            await process.WaitForExitAsync();
+            ReloadFile();
         }
 
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {

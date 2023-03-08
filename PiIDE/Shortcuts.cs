@@ -16,6 +16,7 @@ namespace PiIDE {
             { Shortcut.SaveFile, new() { Key.LeftCtrl, Key.S } },
             { Shortcut.OpenCompletionsList, new() { Key.LeftCtrl, Key.Space } },
             { Shortcut.OpenSearchBox, new() { Key.LeftCtrl, Key.F} },
+            { Shortcut.FormatDocument, new() { Key.LeftCtrl, Key.LeftAlt, Key.F} },
         };
         public static readonly Shortcut[] DefaultShortcuts = Enum.GetValues(typeof(Shortcut)).Cast<Shortcut>().ToArray();
 
@@ -33,9 +34,17 @@ namespace PiIDE {
             return false;
         }
         public static bool AreKeysPressed(List<Key> keys) => keys.All(Keyboard.IsKeyDown);
+        public static bool AreTheOnlyKeysPressed(List<Key> keys) {
+            for (int i = 1; i < _keys.Length; ++i) {
+                Key key = _keys[i];
+                if (Keyboard.IsKeyDown(key) && !keys.Contains(key))
+                    return false;
+            }
+            return AreKeysPressed(keys);
+        }
         public static bool IsShortcutPressed(Shortcut shortcut) {
             if (ShortcutsMap.ContainsKey(shortcut))
-                return AreKeysPressed(ShortcutsMap[shortcut]);
+                return AreTheOnlyKeysPressed(ShortcutsMap[shortcut]);
             return false;
         }
 
@@ -90,5 +99,6 @@ namespace PiIDE {
         SaveFile,
         OpenCompletionsList,
         OpenSearchBox,
+        FormatDocument,
     }
 }
