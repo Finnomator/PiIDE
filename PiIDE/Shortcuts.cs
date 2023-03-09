@@ -16,7 +16,7 @@ namespace PiIDE {
             { Shortcut.SaveFile, new() { Key.LeftCtrl, Key.S } },
             { Shortcut.OpenCompletionsList, new() { Key.LeftCtrl, Key.Space } },
             { Shortcut.OpenSearchBox, new() { Key.LeftCtrl, Key.F} },
-            { Shortcut.FormatDocument, new() { Key.LeftCtrl, Key.LeftAlt, Key.F} },
+            { Shortcut.FormatDocument, new() { Key.LeftShift, Key.LeftCtrl, Key.F} },
         };
         public static readonly Shortcut[] DefaultShortcuts = Enum.GetValues(typeof(Shortcut)).Cast<Shortcut>().ToArray();
 

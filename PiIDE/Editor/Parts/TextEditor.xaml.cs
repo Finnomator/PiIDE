@@ -146,9 +146,16 @@ namespace PiIDE {
         }
 
         public void ReloadFile() {
+            double oldVScrollOffset = MainScrollViewer.VerticalOffset;
+            double oldHScrollOffset = MainScrollViewer.HorizontalOffset;
+            int oldCaretPos = TextEditorTextBox.CaretIndex;
             try {
                 TextEditorTextBox.Text = File.ReadAllText(FilePath);
                 ContentLoaded = true;
+                MainScrollViewer.ScrollToVerticalOffset(oldVScrollOffset);
+                MainScrollViewer.ScrollToHorizontalOffset(oldHScrollOffset);
+                // TODO: calculate the correct new caretIndex if file changed
+                TextEditorTextBox.CaretIndex = oldCaretPos;
             } catch (Exception ex) {
                 MessageBox.Show($"There was an error loading the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -238,9 +245,9 @@ namespace PiIDE {
                             TextSearchBox.OpenAndFocus();
                         break;
                     case Shortcut.FormatDocument:
-                        if (GlobalSettings.Default.BlackIsUsable)
+                        if (GlobalSettings.Default.BlackIsUsable && IsPythonFile)
                             FormatDocument();
-                        else
+                        else if (IsPythonFile)
                             ErrorMessager.ModuleIsNotInstalled(PipModules.Black);
                         break;
                 }
@@ -249,6 +256,9 @@ namespace PiIDE {
         }
 
         private async void FormatDocument() {
+
+            SaveFile(false);
+
             Process process = new() {
                 StartInfo = new() {
                     FileName = PipModules.Black.CmdCommand,

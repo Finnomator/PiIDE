@@ -2,5 +2,5 @@
   "SaveFile": [ "LeftCtrl", "S" ],
   "OpenCompletionsList": [ "LeftCtrl", "Space" ],
   "OpenSearchBox": [ "LeftCtrl", "F" ],
-  "FormatDocument": [ "LeftCtrl", "LeftAlt", "F" ]
+  "FormatDocument": [ "LeftShift", "LeftCtrl", "F" ]
 }
