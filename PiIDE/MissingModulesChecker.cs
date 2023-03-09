@@ -25,6 +25,7 @@ namespace PiIDE {
         public static readonly PipModules.PipModule[] RequiredPipModules = new PipModules.PipModule[] {
             PipModules.Ampy,
             PipModules.Pylint,
+            PipModules.Black,
         };
 
         public static bool IsPythonIstanlled() {
