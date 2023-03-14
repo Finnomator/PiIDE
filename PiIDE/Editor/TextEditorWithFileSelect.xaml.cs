@@ -107,7 +107,8 @@ namespace PiIDE {
 
             textEditor.OnFileSaved += delegate {
                 tabItem.SaveLocalButton.IsEnabled = false;
-                UpdatePylintMessages(textEditor);
+                if (GlobalSettings.Default.PylintIsUsable)
+                    UpdatePylintMessages(textEditor);
             };
 
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
