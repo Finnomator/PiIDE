@@ -564,9 +564,14 @@ namespace PiIDE {
             }
         }
 
-        private void UserControl_LostFocus(object sender, RoutedEventArgs e) {
-            // if (!CompletionUiList.MainListBox.IsFocused)
-            //    CompletionUiList.Close();
+        private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+            Button listBoxButton;
+            try {
+                listBoxButton = (Button) e.NewFocus;
+            } catch (InvalidCastException) {
+                // its not the completionlist button
+                CompletionList.Close();
+            }
         }
     }
 }
