@@ -65,15 +65,16 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
         }
 
         // TODO: Implement these features
+        // But make sure that all paths get changed correctly
         protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
 
         protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
 
         protected override async void Delete_Click(object sender, RoutedEventArgs e) {
-            if (!Tools.EnableBoardInteractions) {
-                MessageBox.Show("Unable to connect to Pi", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            if (!CheckForBoardConnection())
                 return;
-            }
+
             SetStatus("Deleting");
             await AmpyWraper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard);
             BasicFileActions.DeleteDirectory(DirectoryPath);
@@ -86,5 +87,13 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         // TODO: this method should not be overriden, but as long as the feature is not supported, it will
         protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    
+        public static bool CheckForBoardConnection() {
+            if (!Tools.EnableBoardInteractions) {
+                MessageBox.Show("Unable to connect to Pi", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
     }
 }

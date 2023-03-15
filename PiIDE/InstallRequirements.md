@@ -7,11 +7,9 @@
 - Python
 - Pylint (pip install pylint)
 
-## JediCompletionWraper.cs
-
 
 ## AmpyWraper.cs
-- Python (to installl ampy)
+- Python (to install ampy)
 - ampy (https://learn.adafruit.com/micropython-basics-load-files-and-run-code/install-ampy) (pip install adafruit-ampy)
 
 
