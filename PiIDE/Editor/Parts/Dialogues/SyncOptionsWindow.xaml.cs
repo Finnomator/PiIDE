@@ -6,11 +6,13 @@ namespace PiIDE.Editor.Parts {
 
         public SyncOptionResult SyncOptionResult { get; private set; }
 
+        private bool OkClose;
+
         public SyncOptionsWindow() {
             InitializeComponent();
 
             Loaded += delegate {
-                SyncOptionResult = SyncOptionResult.Cancel;
+                SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
             };
         }
 
@@ -19,12 +21,21 @@ namespace PiIDE.Editor.Parts {
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e) {
+            OkClose = true;
             Close();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e) {
             SyncOptionResult = SyncOptionResult.Cancel;
             Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            if (OkClose) {
+
+            } else {
+                SyncOptionResult = SyncOptionResult.Cancel;
+            }
         }
     }
 

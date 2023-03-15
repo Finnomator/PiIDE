@@ -195,8 +195,8 @@ namespace PiIDE {
 
             CreateNewFileDialogue dialogue = new();
             Point mousePos = PointToScreen(Mouse.GetPosition(this));
-            dialogue.Left = mousePos.X;
-            dialogue.Top = mousePos.Y;
+            //dialogue.Left = mousePos.X;
+            //dialogue.Top = mousePos.Y;
             dialogue.Show();
             dialogue.Focus();
 
@@ -204,15 +204,16 @@ namespace PiIDE {
 
                 switch (dialogue.CreateNewFileDialogueResult) {
                     case CreateNewFileDialogueResult.Local:
-                        File.Create(dialogue.FilePath).Close();
-                        OpenFile(dialogue.FilePath, false, false);
+                        if (Tools.TryCreateFile(dialogue.FilePath))
+                            OpenFile(dialogue.FilePath, false, false);
                         break;
                     case CreateNewFileDialogueResult.Pi:
                         // TODO: Make files on pi creatable in subfolder
                         string localPath = Path.Combine("BoardFiles/", dialogue.FileName);
-                        File.Create(localPath).Close();
-                        await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName);
-                        OpenFile(localPath, false, true);
+                        if (Tools.TryCreateFile(localPath)) {
+                            await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName);
+                            OpenFile(localPath, false, true);
+                        }
                         break;
                 }
 

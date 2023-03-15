@@ -177,5 +177,15 @@ namespace PiIDE {
             }
             return fonts.ToArray();
         }
+
+        public static bool TryCreateFile(string filePath) {
+            try {
+                File.Create(filePath).Close();
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message, "Failed to create file", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
     }
 }

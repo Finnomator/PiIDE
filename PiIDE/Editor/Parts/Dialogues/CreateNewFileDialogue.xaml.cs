@@ -14,11 +14,13 @@ namespace PiIDE.Editor.Parts.Dialogues {
         public string SourceFolder => (string) SourceFolderButton.Content;
         public string FilePath => Path.Combine(SourceFolder, FileName);
 
+        private bool CreateClose;
+
         public CreateNewFileDialogue() {
             InitializeComponent();
 
             Loaded += delegate {
-                CreateNewFileDialogueResult = CreateNewFileDialogueResult.None;
+                CreateNewFileDialogueResult = CreateNewFileDialogueResult.Local;
             };
 
             PiRadioButton.IsEnabled = Tools.EnableBoardInteractions;
@@ -36,12 +38,13 @@ namespace PiIDE.Editor.Parts.Dialogues {
               !File.Exists(FilePath);
 
             if (isValid) {
+                CreateClose = true;
                 Close();
                 return;
             }
 
             // TODO: Make this prettier
-            MessageBox.Show("Invalid File Name");
+            MessageBox.Show("The filename is invalid or the file already exists");
         }
 
         private void Disk_Checked(object sender, RoutedEventArgs e) {
@@ -57,7 +60,7 @@ namespace PiIDE.Editor.Parts.Dialogues {
         private void PiRadioButton_Checked(object sender, RoutedEventArgs e) {
             CreateNewFileDialogueResult = CreateNewFileDialogueResult.Pi;
             SourceFolderButton.IsEnabled = false;
-            SourceFolderButton.Content = "/";
+            SourceFolderButton.Content = "Pi/";
         }
 
         private void SourceFolderButton_Click(object sender, RoutedEventArgs e) {
@@ -70,6 +73,13 @@ namespace PiIDE.Editor.Parts.Dialogues {
 
             if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 SourceFolderButton.Content = fbd.SelectedPath;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            if (CreateClose) {
+            } else {
+                CreateNewFileDialogueResult = CreateNewFileDialogueResult.None;
+            }
         }
     }
 

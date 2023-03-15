@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE.Editor.Parts.Dialogues"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Title="Create New File"
         WindowStyle="None"
         Background="{StaticResource WindowBackground}" Width="280" Height="137">

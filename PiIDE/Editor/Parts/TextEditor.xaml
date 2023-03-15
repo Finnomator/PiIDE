@@ -17,22 +17,26 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border x:Name="ActionsBorder" Grid.Column="2" Panel.ZIndex="1" CornerRadius="0,0,3,3" HorizontalAlignment="Right" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackground}" BorderThickness="1,0,1,1" Margin="0,0,13,0" Background="{DynamicResource EditorBackground}">
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Panel.ZIndex="1" Margin="0,0,13,0" HorizontalAlignment="Right">
+           
+            <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Search"/>
 
-            <Border.Effect>
-                <DropShadowEffect Opacity="0.5"/>
-            </Border.Effect>
+            <Border x:Name="ActionsBorder" CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackground}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackground}">
 
-            <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
-                <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
-                <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
-                    <fa:FontAwesome Icon="Stop"/>
-                </Button>
-            </StackPanel>
-        </Border>
+                <Border.Effect>
+                    <DropShadowEffect Opacity="0.5"/>
+                </Border.Effect>
 
-        <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,53,0" ToolTip="Search"/>
+                <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
+                    <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
+                    <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
+                        <fa:FontAwesome Icon="Stop"/>
+                    </Button>
+                </StackPanel>
+            </Border>
 
+        </StackPanel>
+        
         <Grid Name="OuterTextGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>

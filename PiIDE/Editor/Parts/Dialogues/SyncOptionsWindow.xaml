@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:PiIDE.Editor.Parts"
         mc:Ignorable="d"
         Title="Sync"
+        Closing="Window_Closing"
         Background="{StaticResource WindowBackground}"
         Width="300" Height="116"
         WindowStyle="SingleBorderWindow">
