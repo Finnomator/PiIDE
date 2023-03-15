@@ -22,7 +22,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel>
-                <Label Content="How should the files get synced?" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <Label Content="How should the files be synced?" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
                 <Separator Background="{StaticResource SplitterBackground}"/>
                 <RadioButton Style="{DynamicResource RadioButtonStyle}" Content="Overwrite all local files" IsChecked="True" Foreground="White" Checked="OverwriteAllLocalFile_Checked"/>
             </StackPanel>

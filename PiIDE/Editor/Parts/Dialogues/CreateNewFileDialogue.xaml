@@ -1,0 +1,74 @@
+﻿<Window x:Class="PiIDE.Editor.Parts.Dialogues.CreateNewFileDialogue"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PiIDE.Editor.Parts.Dialogues"
+        mc:Ignorable="d"
+        Title="Create New File"
+        WindowStyle="None"
+        Background="{StaticResource WindowBackground}" Width="280" Height="137">
+    
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="8" CaptionHeight="16" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border BorderThickness="2" BorderBrush="{StaticResource SplitterBackground}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="Create New File" Foreground="White"/>
+                
+                <Separator Background="{StaticResource SplitterBackground}"/>
+                <TextBlock Text="Create File on" Foreground="White"/>
+                <Separator Background="{StaticResource SplitterBackground}"/>
+                <RadioButton Margin="10,0,0,0" Style="{DynamicResource RadioButtonStyle}" Content="Disk" IsChecked="True" Foreground="White" Checked="Disk_Checked"/>
+                <RadioButton Margin="10,0,0,0" Name="PiRadioButton" Style="{DynamicResource RadioButtonStyle}" Content="Pi" Foreground="White" Checked="PiRadioButton_Checked"/>
+                
+                <Separator Background="{StaticResource SplitterBackground}"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="3"/>
+                        <ColumnDefinition MinWidth="200"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Source Folder" Foreground="White"/>
+                    <Button Grid.Column="2" Name="SourceFolderButton" Style="{StaticResource CleanButtonStyle}" Content="C:\" Foreground="White" HorizontalContentAlignment="Left" Click="SourceFolderButton_Click"/>
+
+                    <TextBlock Grid.Row="1" Text="File Name" Foreground="White"/>
+                    <TextBox Grid.Row="1" Name="FileNameTextBox" Grid.Column="2" Style="{StaticResource TextBoxStyle}" Text="file.py"/>
+                </Grid>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="2"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Rectangle Height="2" Fill="{StaticResource SplitterBackground}" Grid.ColumnSpan="3"/>
+
+                <Button Content="Create" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Foreground="White" Click="Create_Click" Grid.Row="1"/>
+                <Rectangle Fill="{StaticResource SplitterBackground}" Grid.Column="1" Grid.Row="1"/>
+                <Button Content="Cancel" Grid.Column="2" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Foreground="White" Click="Cancel_Click" Grid.Row="1"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

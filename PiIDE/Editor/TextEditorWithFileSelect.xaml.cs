@@ -1,4 +1,5 @@
 ﻿using PiIDE.Editor.Parts;
+using PiIDE.Editor.Parts.Dialogues;
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
@@ -188,7 +189,36 @@ namespace PiIDE {
             }
         }
 
-        private void CreateNewFileButton_Click(object sender, RoutedEventArgs e) => AddTempFile();
+        private void CreateNewFileButton_Click(object sender, RoutedEventArgs e) {
+
+            CreateNewFileButton.IsEnabled = false;
+
+            CreateNewFileDialogue dialogue = new();
+            Point mousePos = PointToScreen(Mouse.GetPosition(this));
+            dialogue.Left = mousePos.X;
+            dialogue.Top = mousePos.Y;
+            dialogue.Show();
+            dialogue.Focus();
+
+            dialogue.Closed += async delegate {
+
+                switch (dialogue.CreateNewFileDialogueResult) {
+                    case CreateNewFileDialogueResult.Local:
+                        File.Create(dialogue.FilePath).Close();
+                        OpenFile(dialogue.FilePath, false, false);
+                        break;
+                    case CreateNewFileDialogueResult.Pi:
+                        // TODO: Make files on pi creatable in subfolder
+                        string localPath = Path.Combine("BoardFiles/", dialogue.FileName);
+                        File.Create(localPath).Close();
+                        await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName);
+                        OpenFile(localPath, false, true);
+                        break;
+                }
+
+                CreateNewFileButton.IsEnabled = true;
+            };
+        }
 
         public void OpenDirectory(string directory) {
             RootPathTextBox.Text = Path.GetFullPath(directory);
