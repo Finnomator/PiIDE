@@ -83,17 +83,17 @@ namespace PiIDE.Editor.Parts {
             string visibleText = VisibleText;
             FormattedText formattedText = GetFormattedText(visibleText);
 
-            DrawingContext context = DrawingGroup.Open();
+            using (DrawingContext context = DrawingGroup.Open()) {
 
-            if (searchResult is not null) {
-                ApplySearchResults(context, searchResult);
-                OldSearchResult = searchResult;
+                if (searchResult is not null) {
+                    ApplySearchResults(context, searchResult);
+                    OldSearchResult = searchResult;
+                }
+
+                if (Editor.IsPythonFile && !Editor.DisableAllWrapers)
+                    await ApplyHighlighting(context, formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
+
             }
-
-            if (Editor.IsPythonFile && !Editor.DisableAllWrapers)
-                await ApplyHighlighting(context, formattedText, filePath, TextEditor.HighlightingMode, TextEditor.HighlightingPerformanceMode);
-
-            context.Close();
 
             OldVisibleText = visibleText;
             OldHighlightingPerformanceMode = TextEditor.HighlightingPerformanceMode;

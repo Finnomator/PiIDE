@@ -132,7 +132,7 @@ namespace PiIDE.Editor.Parts {
         }
 
         private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e) {
-            switch(e.Key) {
+            switch (e.Key) {
                 case Key.Escape:
                     Close();
                     break;
