@@ -67,7 +67,6 @@ namespace PiIDE.Editor.Parts {
 
             if (!Tools.EnableBoardInteractions) {
                 ErrorMessager.PromptForCOMPort();
-                DisableBoardInteractions();
                 return;
             }
 
