@@ -87,7 +87,7 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         // TODO: this method should not be overriden, but as long as the feature is not supported, it will
         protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
-    
+
         public static bool CheckForBoardConnection() {
             if (!Tools.EnableBoardInteractions) {
                 MessageBox.Show("Unable to connect to Pi", "Error", MessageBoxButton.OK, MessageBoxImage.Error);

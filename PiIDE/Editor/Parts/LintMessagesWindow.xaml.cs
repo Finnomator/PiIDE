@@ -61,7 +61,7 @@ namespace PiIDE {
                 return viewer;
 
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++) {
-                var sw = FindScrollViewer(VisualTreeHelper.GetChild(d, i));
+                ScrollViewer sw = FindScrollViewer(VisualTreeHelper.GetChild(d, i));
                 if (sw != null)
                     return sw;
             }

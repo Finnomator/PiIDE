@@ -16,11 +16,9 @@ namespace PiIDE {
         public readonly static string[] PythonKeywords = new string[] {
             "False", "None", "True", "and", "await", "async", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
         };
-        public readonly static HashSet<string> PythonKeywordsSet = PythonKeywords.ToHashSet();
-        public readonly static FontFamily CascadiaCodeFont = new("Cascadia Code");
 
         public readonly static string[] PythonExtensions = new string[] { ".py", ".pyi" };
-        public static bool IsPythonFile(string filePath) => PythonExtensions.Contains(Path.GetExtension(filePath));
+        public static bool IsPythonFile(string filePath) => IsPythonExt(Path.GetExtension(filePath));
         public static bool IsPythonExt(string ext) => PythonExtensions.Contains(ext);
 
         public static int GetColOfIndex(string text, int index) {
@@ -132,15 +130,7 @@ namespace PiIDE {
 
         public static bool EnableBoardInteractions => IsValidCOMPort(GlobalSettings.Default.SelectedCOMPort) && GlobalSettings.Default.AmpyIsUsable;
 
-        private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        private static readonly Random random = new();
-
-        public static string GenerateRandomString(int length) => new(Enumerable.Repeat(chars, length)
-        .Select(s => s[random.Next(s.Length)]).ToArray());
-
         public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
-
-        public static readonly Thickness ZeroThichness = new(0);
 
         private static char[] charSizes = new char[] { 'i', 'a', 'Z', '%', '#', 'a', 'B', 'l', 'm', ',', '.' };
         public static bool IsMonospaced(this FontFamily family) {

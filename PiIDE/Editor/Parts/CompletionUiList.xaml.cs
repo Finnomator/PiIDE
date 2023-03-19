@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 using Script = PiIDE.Wrapers.JediWraper.Script;

@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using PiIDE.Editor.Parts;
+﻿using PiIDE.Editor.Parts;
 using PiIDE.Wrapers;
 using System;
 using System.Collections.Generic;
@@ -565,13 +564,8 @@ namespace PiIDE {
         }
 
         private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-            Button listBoxButton;
-            try {
-                listBoxButton = (Button) e.NewFocus;
-            } catch (InvalidCastException) {
-                // its not the completionlist button
+            if (e.NewFocus is not Button)
                 CompletionList.Close();
-            }
         }
     }
 }

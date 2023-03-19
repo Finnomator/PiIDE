@@ -1,6 +1,5 @@
 import jedi
 import orjson
-from sys import stdout
 from jedi import api
 
 
@@ -83,6 +82,7 @@ def print_one_line(s: str, *args, **kwargs):
         print(None, flush=True, *args, **kwargs)
     else:
         print(s.replace("\n", r"\n").replace("\r", r"\r"), flush=True, *args, **kwargs)
+
 
 while True:
     exec(input())
