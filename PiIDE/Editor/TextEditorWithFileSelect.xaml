@@ -107,9 +107,10 @@
 
         <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" Background="#FF181818">
 
-            <WrapPanel x:Name="UploadingFileStatusStackPanel" Orientation="Horizontal" Visibility="Collapsed">
-                <Label Content="UploadingFile" Padding="0" VerticalAlignment="Center" Foreground="White"/>
-                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Background="White"/>
+            <WrapPanel x:Name="UploadingFileStatusStackPanel" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock Text="UploadingFile" VerticalAlignment="Center" Foreground="White" Padding="0,0,2,0"/>
+                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Foreground="White"/>
+                <Rectangle Width="10"/>
             </WrapPanel>
 
             <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" Padding="3" VerticalAlignment="Center" Width="23" Height="23" >
