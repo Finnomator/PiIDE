@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -133,9 +134,9 @@ namespace PiIDE.Editor.Parts {
 
         private async Task ApplyHighlighting(DrawingContext context, FormattedText formattedText, string filePath, HighlightingMode highlightingMode, HighlightingPerformanceMode performanceMode) {
 
-            string visibleText = formattedText.Text;
-
             StartedHighlighting?.Invoke(this, EventArgs.Empty);
+
+            HighlightBrackets(formattedText);
 
             switch (highlightingMode) {
                 case HighlightingMode.JediAndKeywords:
@@ -172,6 +173,28 @@ namespace PiIDE.Editor.Parts {
         private void DrawHighlighting(DrawingContext drawingContext, FormattedText formattedText) {
             drawingContext.DrawText(formattedText, new(2, 0));
             CurrentHighlighting = formattedText;
+        }
+
+        private void HighlightBrackets( FormattedText formattedText) {
+            string visibleText = formattedText.Text;
+
+            int fvl = Editor.FirstVisibleLineNum;
+            int lvl = Editor.LastVisibleLineNum;
+            string wholeText = EditorText;
+
+            List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(visibleText);
+            int maxBracketIndex = brackets.Max(x => x.BracketIndex);
+
+            for (int i = 0; i < brackets.Count; ++i) {
+
+                SyntaxHighlighter.BracketMatch bracket = brackets[i];
+
+                int bci = (int) Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
+
+                Brush brush = new SolidColorBrush(SyntaxHighlighter.BracketColors[bci]);
+
+                formattedText.SetForegroundBrush(brush, bracket.Index, 1);
+            }
         }
 
         private static void HighlightKeywords(FormattedText formattedText) {

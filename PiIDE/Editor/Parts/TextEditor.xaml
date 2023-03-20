@@ -28,6 +28,10 @@
                 </Border.Effect>
 
                 <StackPanel x:Name="ActionsStackPanel"  Orientation="Horizontal">
+                    <Button Style="{StaticResource CleanButtonStyle}" x:Name="SaveFileButton" Click="SaveFileButton_Click" Foreground="White" ToolTip="Save File" Padding="3">
+                        <fa:FontAwesome Icon="Save"/>
+                    </Button>
+                    
                     <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
                     <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
                         <fa:FontAwesome Icon="Stop"/>
@@ -37,8 +41,13 @@
 
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,0">
+        <StackPanel Background="{DynamicResource EditorBackground}"  Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,0">
             <TextBox Name="LocalFilePathTextBlock" BorderThickness="0" Background="Transparent" Text="C:\" Foreground="White" Padding="7,0,0,0" ToolTip="File Path" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
+
+            <WrapPanel x:Name="SavingFileStatusWrapPanel" Visibility="Collapsed" VerticalAlignment="Center">
+                <TextBlock Text="Saving File" VerticalAlignment="Center" Foreground="White" Padding="20,0,2,0"/>
+                <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Foreground="White"/>
+            </WrapPanel>
         </StackPanel>
 
         <Rectangle Fill="{StaticResource SplitterBackground}" Height="1" VerticalAlignment="Top" Margin="0,20,0,0" Panel.ZIndex="1">

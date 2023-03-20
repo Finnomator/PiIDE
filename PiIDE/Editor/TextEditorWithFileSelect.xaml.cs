@@ -88,8 +88,6 @@ namespace PiIDE {
 
             if (onBoard) {
                 textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..], openInBackground) { DisableAllWrapers = openInBackground };
-                ((BoardTextEditor) textEditor).StartedWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Visible; };
-                ((BoardTextEditor) textEditor).DoneWritingToBoard += (s, e) => { UploadingFileStatusStackPanel.Visibility = Visibility.Collapsed; };
                 ((BoardTextEditor) textEditor).StartedPythonExecutionOnBoard += (s, e) => OutputTabControl.SelectedIndex = 1;
 
                 tabItem = new BoardEditorTabItem(filePath) {
@@ -101,16 +99,6 @@ namespace PiIDE {
                     Content = textEditor,
                 };
             }
-
-            textEditor.ContentChanged += delegate {
-                tabItem.SaveLocalButton.IsEnabled = !textEditor.ContentIsSaved;
-            };
-
-            textEditor.OnFileSaved += delegate {
-                tabItem.SaveLocalButton.IsEnabled = false;
-                if (GlobalSettings.Default.PylintIsUsable)
-                    UpdatePylintMessages(textEditor);
-            };
 
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
 
@@ -126,8 +114,6 @@ namespace PiIDE {
                 } else
                     CloseFile(filePath);
             };
-
-            tabItem.SaveLocalClick += (s, filePath) => textEditor.SaveFile(true);
 
             if (atIndex < 0)
                 MainTabControl.Items.Add(tabItem);

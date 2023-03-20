@@ -177,5 +177,16 @@ namespace PiIDE {
             }
             return true;
         }
+
+        public static FontAwesome.WPF.FontAwesome NewWpfSpinner() => new() {
+            Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner,
+            Foreground = Brushes.White,
+            VerticalAlignment = VerticalAlignment.Center,
+            Spin = true,
+        };
+
+        public readonly static ColorConverter ColorConverter = new();
+
+        public static Color ToColor(this string hex) => (Color) ColorConverter.ConvertFromString(hex);
     }
 }

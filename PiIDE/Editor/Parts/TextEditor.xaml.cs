@@ -63,13 +63,8 @@ namespace PiIDE {
         public string VisibleText => string.Join('\n', EditorText.Split('\n')[FirstVisibleLineNum..LastVisibleLineNum]);
 
         public delegate void EditorFileSavedEventArgs(TextEditor sender);
-        public event EditorFileSavedEventArgs? OnFileSaved;
 
-        public event EventHandler? ContentChanged;
         public event EventHandler? StartedPythonExecution;
-
-        public TextEditor() : this("TempFiles/temp_file1.py") {
-        }
 
         public TextEditor(string filePath, bool disableAllWrapers = false) {
             InitializeComponent();
@@ -138,14 +133,21 @@ namespace PiIDE {
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
 
-        public virtual void SaveFile(bool savedByUser) {
+        public virtual async Task SaveFileAsync(bool savedByUser) {
+            SavingFileStatusWrapPanel.Visibility = Visibility.Visible;
+
             try {
-                File.WriteAllText(FilePath, TextEditorTextBox.Text);
-                ContentIsSaved = true;
-                OnFileSaved?.Invoke(this);
+                await File.WriteAllTextAsync(FilePath, TextEditorTextBox.Text);
             } catch (Exception ex) {
                 MessageBox.Show($"There was an error saving the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                SaveFileButton.IsEnabled = true;
             }
+
+            ContentIsSaved = true;
+
+            SaveFileButton.IsEnabled = false;
+            SaveFileButton.ToolTip = "Save File";
+            SavingFileStatusWrapPanel.Visibility = Visibility.Collapsed;
         }
 
         public void ReloadFile() {
@@ -181,7 +183,7 @@ namespace PiIDE {
             return EditorText[caret - 1];
         }
 
-        private void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
+        private async void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
             switch (e.Key) {
                 case Key.Down:
                     if (CompletionList.IsOpen) {
@@ -236,7 +238,7 @@ namespace PiIDE {
 
                 switch (shortcut) {
                     case Shortcut.SaveFile:
-                        SaveFile(true);
+                        await SaveFileAsync(true);
                         break;
                     case Shortcut.OpenCompletionsList:
                         DisplayCodeCompletionsAsync();
@@ -260,7 +262,7 @@ namespace PiIDE {
 
         private async void FormatDocument() {
 
-            SaveFile(false);
+            await SaveFileAsync(false);
 
             Process process = new() {
                 StartInfo = new() {
@@ -279,7 +281,7 @@ namespace PiIDE {
         protected virtual void TextEditorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 
             ContentIsSaved = !ContentLoaded;
-            ContentChanged?.Invoke(this, e);
+            SaveFileButton.IsEnabled = !ContentIsSaved;
 
             int textLines = Tools.CountLines(TextEditorTextBox.Text);
 
@@ -463,7 +465,7 @@ namespace PiIDE {
             while (DoAutoSaves) {
                 await Task.Delay(AutoSaveDelaySeconds * 1000);
                 if (!ContentIsSaved)
-                    SaveFile(false);
+                    await SaveFileAsync(false);
             }
         }
 
@@ -517,9 +519,9 @@ namespace PiIDE {
 
         private void TextEditorTextBox_MouseDown(object sender, MouseButtonEventArgs e) => CompletionList.Close();
 
-        private void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
+        private async void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
             RunFileLocalButton.IsEnabled = false;
-            SaveFile(false);
+            await SaveFileAsync(false);
             PythonWraper.AsyncFileRunner.RunFileAsync(FilePath);
             StartedPythonExecution?.Invoke(this, EventArgs.Empty);
         }
@@ -572,6 +574,10 @@ namespace PiIDE {
         private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
             if (e.NewFocus is not Button)
                 CompletionList.Close();
+        }
+
+        private async void SaveFileButton_Click(object sender, RoutedEventArgs e) {
+            await SaveFileAsync(true);
         }
     }
 }

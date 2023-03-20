@@ -1,5 +1,6 @@
 ﻿using PiIDE.Wrapers;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,11 +8,11 @@ using System.Windows.Media;
 namespace PiIDE.Editor.Parts {
     public class BoardTextEditor : TextEditor {
 
-        public event EventHandler? StartedWritingToBoard;
-        public event EventHandler? DoneWritingToBoard;
         public event EventHandler? StartedPythonExecutionOnBoard;
 
         private readonly string BoardFilePath;
+
+        // Additional UI Elements
         private readonly Button RunFileOnBoardButton = new() {
             ToolTip = "Upload to Board and run",
             Foreground = Brushes.LightGreen,
@@ -23,28 +24,43 @@ namespace PiIDE.Editor.Parts {
                 Icon = FontAwesome.WPF.FontAwesomeIcon.Play,
             }
         };
+        private readonly WrapPanel UploadingFileWrapPanel = new();
 
         public BoardTextEditor(string filePath, string boardFilePath, bool disableAllWrapers = false) : base(filePath, disableAllWrapers) {
             BoardFilePath = boardFilePath;
             RunFileOnBoardButton.Click += RunFileOnBoardButton_Click;
             AmpyWraper.AmpyExited += Ampy_Exited;
+
             ActionsStackPanel.Children.Add(RunFileOnBoardButton);
+
+
+            UploadingFileWrapPanel.Visibility = Visibility.Collapsed;
+            UploadingFileWrapPanel.Children.Add(new TextBlock() {
+                Text = "Uploading File",
+                Foreground = Brushes.White,
+                VerticalAlignment = VerticalAlignment.Center,
+                Padding = new(20, 0, 2, 0),
+            });
+            UploadingFileWrapPanel.Children.Add(Tools.NewWpfSpinner());
+
+            InformationWrapPanel.Children.Add(UploadingFileWrapPanel);
         }
 
-        public override async void SaveFile(bool savedByUser) {
-            base.SaveFile(savedByUser);
+        public override async Task SaveFileAsync(bool savedByUser) {
+            await base.SaveFileAsync(savedByUser);
 
             if (!savedByUser)
                 return;
 
             if (!Tools.EnableBoardInteractions) {
                 MessageBox.Show("Unable to save file on board", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                SaveFileButton.IsEnabled = true;
                 return;
             }
 
-            StartedWritingToBoard?.Invoke(this, EventArgs.Empty);
+            UploadingFileWrapPanel.Visibility = Visibility.Visible;
             await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, BoardFilePath);
-            DoneWritingToBoard?.Invoke(this, EventArgs.Empty);
+            UploadingFileWrapPanel.Visibility = Visibility.Collapsed;
         }
 
         private void DisableBoardInteractions() => RunFileOnBoardButton.IsEnabled = false;
@@ -61,7 +77,7 @@ namespace PiIDE.Editor.Parts {
                 DisableBoardInteractions();
         }
 
-        private void RunFileOnBoardButton_Click(object sender, RoutedEventArgs e) {
+        private async void RunFileOnBoardButton_Click(object sender, RoutedEventArgs e) {
 
             DisableBoardInteractions();
 
@@ -70,6 +86,7 @@ namespace PiIDE.Editor.Parts {
                 return;
             }
 
+            await SaveFileAsync(true);
             AmpyWraper.FileRunner.RunFileOnBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath);
             StartedPythonExecutionOnBoard?.Invoke(this, EventArgs.Empty);
         }
