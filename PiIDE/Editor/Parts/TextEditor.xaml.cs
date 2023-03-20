@@ -20,6 +20,7 @@ namespace PiIDE {
     public partial class TextEditor : UserControl {
 
         public readonly string FilePath;
+        public readonly string AbsolutePath;
         public readonly string FileName;
         public readonly string FileExt;
         public readonly bool IsPythonFile;
@@ -73,6 +74,7 @@ namespace PiIDE {
         public TextEditor(string filePath, bool disableAllWrapers = false) {
             InitializeComponent();
             FilePath = filePath;
+            AbsolutePath = Path.GetFullPath(FilePath);
             DisableAllWrapers = disableAllWrapers;
             FileName = Path.GetFileName(filePath);
             FileExt = Path.GetExtension(filePath);
@@ -87,6 +89,8 @@ namespace PiIDE {
                 AutoSaveDelaySeconds = Tools.CountLines(EditorText) / 500 + 5;
                 AutoSave();
             };
+
+            LocalFilePathTextBlock.Text = AbsolutePath;
 
             RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
             PythonWraper.PythonExited += Python_Exited;
@@ -486,6 +490,8 @@ namespace PiIDE {
                 CompletionList.MainPopup.VerticalOffset += e.VerticalChange;
                 CompletionList.MainPopup.HorizontalOffset += e.HorizontalChange;
             }
+
+            InformationSepperatorDropShadow.Opacity = e.VerticalOffset == 0 ? 0 : 0.6;
 
             MoveHighlighting();
             UpdatePylint();

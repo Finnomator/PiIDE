@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="2" Panel.ZIndex="1" Margin="0,0,13,0" HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Panel.ZIndex="2" Margin="0,0,13,0" HorizontalAlignment="Right" VerticalAlignment="Top">
            
             <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Search"/>
 
@@ -36,8 +36,18 @@
             </Border>
 
         </StackPanel>
-        
-        <Grid Name="OuterTextGrid">
+
+        <StackPanel Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,0">
+            <TextBox Name="LocalFilePathTextBlock" BorderThickness="0" Background="Transparent" Text="C:\" Foreground="White" Padding="7,0,0,0" ToolTip="File Path" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
+        </StackPanel>
+
+        <Rectangle Fill="{StaticResource SplitterBackground}" Height="1" VerticalAlignment="Top" Margin="0,20,0,0" Panel.ZIndex="1">
+            <Rectangle.Effect>
+                <DropShadowEffect x:Name="InformationSepperatorDropShadow" Direction="270" ShadowDepth="3" Opacity="0"/>
+            </Rectangle.Effect>
+        </Rectangle>
+
+        <Grid Name="OuterTextGrid" Margin="0,21,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
                 <ColumnDefinition Width="1"/>
