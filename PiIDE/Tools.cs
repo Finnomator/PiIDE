@@ -132,13 +132,13 @@ namespace PiIDE {
 
         public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
-        private static char[] charSizes = new char[] { 'i', 'a', 'Z', '%', '#', 'a', 'B', 'l', 'm', ',', '.' };
+        private static readonly char[] charSizes = new char[] { 'i', 'a', 'Z', '%', '#', 'a', 'B', 'l', 'm', ',', '.' };
         public static bool IsMonospaced(this FontFamily family) {
             foreach (Typeface typeface in family.GetTypefaces()) {
                 double firstWidth = 0d;
 
                 foreach (char ch in charSizes) {
-                    FormattedText formattedText = new FormattedText(
+                    FormattedText formattedText = new(
                         ch.ToString(),
                         CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
@@ -158,7 +158,7 @@ namespace PiIDE {
 
             return true;
         }
-        public static FontFamily[] MonospaceFonts = GetMonospaceFonts();
+        public readonly static FontFamily[] MonospaceFonts = GetMonospaceFonts();
         private static FontFamily[] GetMonospaceFonts() {
             List<FontFamily> fonts = new();
             foreach (FontFamily fontFamily in Fonts.SystemFontFamilies) {

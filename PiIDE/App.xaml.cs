@@ -12,6 +12,11 @@ namespace PiIDE {
             // GlobalSettings.Default.Reset();
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
 
+            if (GlobalSettings.Default.CallUpgrade) {
+                GlobalSettings.Default.Upgrade();
+                GlobalSettings.Default.CallUpgrade = false;
+            }
+
             if (GlobalSettings.Default.LastOpenedBoardFilePaths is null)
                 GlobalSettings.Default.LastOpenedBoardFilePaths = new();
 
