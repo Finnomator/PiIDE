@@ -155,12 +155,6 @@ namespace PiIDE {
 
         private TextEditor? GetEditorFromPath(string path) => OpenTextEditors.Find(x => x.FilePath == path);
 
-        public void AddTempFile() {
-            string newFilePath = $"TempFiles/temp_file{Directory.GetFiles("TempFiles").Length + 1}.py";
-            File.Create(newFilePath).Close();
-            OpenFile(newFilePath, false, false);
-        }
-
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 
             if (MainTabControl.SelectedItem is null)
