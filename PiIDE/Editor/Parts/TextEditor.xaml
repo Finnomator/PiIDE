@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Column="2" Panel.ZIndex="2" Margin="0,0,13,0" HorizontalAlignment="Right" VerticalAlignment="Top">
-           
+
             <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Search"/>
 
             <Border x:Name="ActionsBorder" CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackground}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackground}">
@@ -31,7 +31,7 @@
                     <Button Style="{StaticResource CleanButtonStyle}" x:Name="SaveFileButton" Click="SaveFileButton_Click" Foreground="White" ToolTip="Save File" Padding="3">
                         <fa:FontAwesome Icon="Save"/>
                     </Button>
-                    
+
                     <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
                     <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
                         <fa:FontAwesome Icon="Stop"/>
@@ -41,7 +41,7 @@
 
         </StackPanel>
 
-        <StackPanel Background="{DynamicResource EditorBackground}"  Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,0">
+        <StackPanel Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,0" Panel.ZIndex="5">
             <TextBox Name="LocalFilePathTextBlock" BorderThickness="0" Background="Transparent" Text="C:\" Foreground="White" Padding="7,0,0,0" ToolTip="File Path" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
 
             <WrapPanel x:Name="SavingFileStatusWrapPanel" Visibility="Collapsed" VerticalAlignment="Center">
@@ -88,7 +88,10 @@
                     <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackground}"/>
 
                     <Grid x:Name="TextEditorGrid" Grid.Column="2">
-                        <TextBox x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
+                        <!-- Old
+                            <TextBox x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
+                        -->
+                        <editorParts:TextBoxWithDrawingGroup x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
                     </Grid>
 
                     <Rectangle Grid.Row="1" Grid.Column="2" Height="{Binding ActualHeight, ElementName=OuterTextGrid, Mode=OneWay}" Fill="Transparent" Cursor="IBeam" PreviewMouseDown="Rectangle_PreviewMouseDown"/>

@@ -34,8 +34,6 @@ namespace PiIDE {
         private readonly CompletionUiList CompletionList;
         private int CurrentAmountOfLines;
         private (int row, int col) LastCaretPos = (1, 1);
-        private readonly TextEditorCore? EditorCore;
-        private readonly Canvas? EditorCoreCanvas;
         private readonly PylingUnderliner Underliner;
         protected int AutoSaveDelaySeconds;
         protected bool DoAutoSaves = true;
@@ -96,6 +94,7 @@ namespace PiIDE {
             TextEditorGrid.Children.Add(CompletionList);
 
             // Syntax highlighter
+            /*
             EditorCore = new(this);
             if (IsPythonFile) {
                 EditorCore.StartedHighlighting += delegate {
@@ -116,6 +115,9 @@ namespace PiIDE {
             EditorCoreCanvas.Children.Add(EditorCore);
             Grid.SetColumn(EditorCoreCanvas, 2);
             OuterTextGrid.Children.Add(EditorCoreCanvas);
+            */
+
+            HighlightingRenderer renderer = new(this);
 
             // Pylint underlining stuff
             Underliner = new(this);
@@ -144,9 +146,7 @@ namespace PiIDE {
             }
 
             ContentIsSaved = true;
-
             SaveFileButton.IsEnabled = false;
-            SaveFileButton.ToolTip = "Save File";
             SavingFileStatusWrapPanel.Visibility = Visibility.Collapsed;
         }
 
@@ -472,16 +472,6 @@ namespace PiIDE {
         public int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         public (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
-        private void MoveHighlighting() {
-
-            if (DisableAllWrapers || EditorCore is null)
-                return;
-
-            double remainder = MainScrollViewer.VerticalOffset % TextEditorTextBoxCharacterSize.Height;
-
-            EditorCoreCanvas!.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) < 0.1 ? 0 : -remainder, 0, 0);
-        }
-
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
 
             if (e.HorizontalChange == 0 && e.VerticalChange == 0)
@@ -495,7 +485,6 @@ namespace PiIDE {
 
             InformationSepperatorDropShadow.Opacity = e.VerticalOffset == 0 ? 0 : 0.6;
 
-            MoveHighlighting();
             UpdatePylint();
         }
 

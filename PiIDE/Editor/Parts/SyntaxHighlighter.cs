@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
+using Point = System.Drawing.Point;
 
 namespace PiIDE {
 
@@ -36,33 +37,43 @@ namespace PiIDE {
 
             List<BracketMatch> matches = new();
             int openBrackets = -1;
+            int row = 0;
+            int col = 0;
 
             for (int i = 0; i < text.Length; ++i) {
                 char c = text[i];
 
                 if (c == '(' || c == '[' || c == '{') {
                     ++openBrackets;
-                    matches.Add(new(i, c, openBrackets));
+                    matches.Add(new(i, row, col, c, openBrackets));
                 } else if (c == ')' || c == ']' || c == '}') {
-                    matches.Add(new(i, c, openBrackets));
+                    matches.Add(new(i, row, col, c, openBrackets));
                     --openBrackets;
-                }
+                } else if (c == '\n') {
+                    col = 0;
+                    ++row;
+                } else
+                    ++col;
             }
 
             return matches;
         }
-    
+
         public readonly struct BracketMatch {
             public int Index { get; init; }
             public char BracketChar { get; init; }
+            public int Row { get; init; }
+            public int Column { get; init; }
 
             // the amount of open brackets that have not been closed before this bracket
             public int BracketIndex { get; init; }
 
-            public BracketMatch(int index, char bracketChar, int bracketIndex) {
+            public BracketMatch(int index, int row, int col, char bracketChar, int bracketIndex) {
                 Index = index;
                 BracketChar = bracketChar;
                 BracketIndex = bracketIndex;
+                Row = row;
+                Column = col;
             }
         }
     }
