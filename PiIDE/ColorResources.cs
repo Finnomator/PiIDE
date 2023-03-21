@@ -1,6 +1,7 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -68,6 +69,7 @@ namespace PiIDE {
             public static Brush Param => Colors["param"];
             public static Brush Property => Colors["property"]; // What is this?
             public static Brush Path => Colors["path"]; // What is this?
+            public static Brush Namespace => Colors["namespace"]; // What is this?
 
             public static Brush Comment => Colors["comment"];
             public static Brush String => Colors["string"];

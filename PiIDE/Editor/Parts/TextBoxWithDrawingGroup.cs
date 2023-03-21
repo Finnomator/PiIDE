@@ -11,13 +11,19 @@ namespace PiIDE.Editor.Parts {
     public class TextBoxWithDrawingGroup : TextBox {
         private readonly DrawingGroup DrawingGroup = new();
 
+        public event EventHandler? StartedRender;
+        public event EventHandler? FinishedRender;
+
         private readonly List<Action<DrawingContext>> RenderActions = new();
         private readonly List<Func<DrawingContext, Task>> AsyncRenderActions = new();
 
         public Action<DrawingContext> DefaultRenderAction { get; init; }
-        public FormattedText TextAsFormattedText { get; private set; }
+        public FormattedText VisibleTextAsFormattedText { get; private set; }
+
         private bool IsBusy;
         private bool GotNewerRequest;
+
+        public TextEditor? TextEditor { get; set; }
 
         // TODO: Make it work with backgrounds
 
@@ -27,26 +33,37 @@ namespace PiIDE.Editor.Parts {
             CaretBrush = Brushes.White;
 
             DefaultRenderAction = (dc) => {
-                TextAsFormattedText.SetForegroundBrush(CaretBrush);
+                VisibleTextAsFormattedText.SetForegroundBrush(CaretBrush);
             };
 
-            TextAsFormattedText = GetTextAsFormattedText();
+            VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
 
-            //AddRenderAction(DefaultRenderAction);
+            AddRenderAction(DefaultRenderAction);
 
             TextChanged += (s, e) => {
-                TextAsFormattedText = GetTextAsFormattedText();
+                VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
                 Render();
+            };
+
+            Loaded += delegate {
+                if (TextEditor is null)
+                    return;
+                TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
+                    VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
+                    Render();
+                };
             };
         }
 
-        private FormattedText GetTextAsFormattedText() {
+        private FormattedText GetVisibleTextAsFormattedText() => TextEditor is null ? GetTextAsFormattedText("") : GetTextAsFormattedText(TextEditor.VisibleText);
+
+        private FormattedText GetTextAsFormattedText(string text) {
             return new(
-                textToFormat: Text,
+                textToFormat: text,
                 culture: CultureInfo.GetCultureInfo("en-us"),
                 flowDirection: FlowDirection.LeftToRight,
                 typeface: new Typeface(FontFamily, FontStyle, FontWeight, FontStretch),
-                emSize: base.FontSize,
+                emSize: FontSize,
                 foreground: Brushes.White,
                 pixelsPerDip: VisualTreeHelper.GetDpi(this).PixelsPerDip
             );
@@ -58,7 +75,7 @@ namespace PiIDE.Editor.Parts {
 
         public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
-        private async void Render() {
+        public async void Render() {
 
             if (IsBusy) {
                 GotNewerRequest = true;
@@ -67,13 +84,17 @@ namespace PiIDE.Editor.Parts {
 
             IsBusy = true;
 
+            StartedRender?.Invoke(this, EventArgs.Empty);
+
             using (DrawingContext dc = DrawingGroup.Open()) {
                 foreach (Action<DrawingContext> action in RenderActions)
                     action(dc);
                 foreach (Func<DrawingContext, Task> func in AsyncRenderActions)
                     await func(dc);
-                dc.DrawText(TextAsFormattedText, new(2, 0));
+                dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor is null? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
             }
+
+            FinishedRender?.Invoke(this, EventArgs.Empty);
 
             IsBusy = false;
 

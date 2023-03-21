@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -11,21 +13,24 @@ namespace PiIDE.Editor.Parts {
         private readonly TextEditor Editor;
         private TextBoxWithDrawingGroup TextRenderer => Editor.TextEditorTextBox;
         private string EditorText => Editor.EditorText;
-        private FormattedText RendererFormattedText => TextRenderer.TextAsFormattedText;
+        private FormattedText RendererFormattedText => TextRenderer.VisibleTextAsFormattedText;
 
         public HighlightingRenderer(TextEditor textEditor) {
             Editor = textEditor;
-            //TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
+            TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
+            TextRenderer.AddRenderAction(HighlightBrackets);
             TextRenderer.AddRenderAction(HighlightKeywords);
-            TextRenderer.AddAsyncRenderAction(HighlightJediNamesAsync);
+            TextRenderer.AddRenderAction(HighlightJediNames);
         }
 
         private void HighlightKeywords(DrawingContext context) {
 
-            Match[] keywordMatches = SyntaxHighlighter.FindKeywords(EditorText);
-            Match[] commentMatches = SyntaxHighlighter.FindComments(EditorText);
-            Match[] stringMatches = SyntaxHighlighter.FindStrings(EditorText);
-            Match[] numberMatches = SyntaxHighlighter.FindNumbers(EditorText);
+            string visibleText = RendererFormattedText.Text;
+
+            Match[] keywordMatches = SyntaxHighlighter.FindKeywords(visibleText);
+            Match[] commentMatches = SyntaxHighlighter.FindComments(visibleText);
+            Match[] stringMatches = SyntaxHighlighter.FindStrings(visibleText);
+            Match[] numberMatches = SyntaxHighlighter.FindNumbers(visibleText);
 
             // The highlighting order is critical, so it overlaps the highlighted strings in comments
 
@@ -42,26 +47,41 @@ namespace PiIDE.Editor.Parts {
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Comment, comment.Index, comment.Length);
         }
 
-        private async Task HighlightJediNamesAsync(DrawingContext context) {
+        private void HighlightJediNames(DrawingContext context) {
 
-            Script script = await Script.MakeScript(EditorText, Editor.FilePath);
+            string visibleText = RendererFormattedText.Text;
 
-            Name[] jediNames = await SyntaxHighlighter.FindJediNames(script);
+            Script script = Script.MakeScript(visibleText, Editor.FilePath);
 
-            int[] cols = new int[jediNames.Length];
-            int[] rows = new int[jediNames.Length];
+            Name[] jediNames = SyntaxHighlighter.FindJediNames(script);
 
-            for (int i = 0; i < cols.Length; ++i) {
-                cols[i] = (int) jediNames[i].Column!;
-                rows[i] = (int) jediNames[i].Line! - 1;
-            }
-
-            int[] jediIndexes = EditorText.GetIndexesOfColRows(rows, cols);
+            int[] cols = jediNames.Select(x => x.Column).Cast<int>().ToArray();
+            int[] rows = jediNames.Select(x => x.Line - 1).Cast<int>().ToArray();
+            int[] jediIndexes = visibleText.GetIndexesOfColRows(rows, cols);
 
             for (int i = 0; i < jediNames.Length; i++) {
                 Name jediName = jediNames[i];
                 int index = jediIndexes[i];
+
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.GetBrush(jediName.Type), index, jediName.Name.Length);
+            }
+        }
+
+        private void HighlightBrackets(DrawingContext context) {
+
+            string visibleText = RendererFormattedText.Text;
+
+            List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(visibleText);
+
+            for (int i = 0; i < brackets.Count; ++i) {
+
+                SyntaxHighlighter.BracketMatch bracket = brackets[i];
+
+                int bci = Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
+
+                Brush brush = new SolidColorBrush(SyntaxHighlighter.BracketColors[bci]);
+
+                RendererFormattedText.SetForegroundBrush(brush, bracket.Index, 1);
             }
         }
     }

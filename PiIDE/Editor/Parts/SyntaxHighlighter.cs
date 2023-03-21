@@ -16,7 +16,8 @@ namespace PiIDE {
         private static readonly Regex CommentsRx = CommentsRegex();
         private static readonly Regex NumbersRx = NumbersRegex();
 
-        public static async Task<JediName[]> FindJediNames(Script script) => await script.GetNames(true, true, true);
+        public static async Task<JediName[]> FindJediNamesAsync(Script script) => await script.GetNamesAsync(true, true, true);
+        public static JediName[] FindJediNames(Script script) => script.GetNames(true, true, true);
 
         public static Match[] FindKeywords(string text) => KeywordsRx.Matches(text).ToArray();
         public static Match[] FindComments(string text) => CommentsRx.Matches(text).ToArray();

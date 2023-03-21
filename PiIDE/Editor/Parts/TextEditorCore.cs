@@ -240,8 +240,8 @@ namespace PiIDE.Editor.Parts {
             int lvl = Editor.LastVisibleLineNum;
 
             if (OldVisibleText != visibleText || CachedJediNames is null || OldHighlightingPerformanceMode == HighlightingPerformanceMode.Performance) {
-                Script script = await Script.MakeScript(EditorText, filePath);
-                CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
+                Script script = await Script.MakeScriptAsync(EditorText, filePath);
+                CachedJediNames = await SyntaxHighlighter.FindJediNamesAsync(script);
             }
 
             ReturnClasses.Name[] visibleJediNames = CachedJediNames.Where(x => x.Line > fvl && x.Line <= lvl).ToArray();
@@ -267,8 +267,8 @@ namespace PiIDE.Editor.Parts {
             string visibleText = formattedText.Text;
 
             if (OldVisibleText != visibleText || CachedJediNames is null || OldHighlightingPerformanceMode == HighlightingPerformanceMode.Normal) {
-                Script script = await Script.MakeScript(visibleText, filePath);
-                CachedJediNames = await SyntaxHighlighter.FindJediNames(script);
+                Script script = await Script.MakeScriptAsync(visibleText, filePath);
+                CachedJediNames = await SyntaxHighlighter.FindJediNamesAsync(script);
             }
 
             ReturnClasses.Name[] visibleJediNames = CachedJediNames;

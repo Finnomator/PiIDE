@@ -53,7 +53,7 @@ namespace PiIDE {
 
         public int LastVisibleLineNum {
             get {
-                int lines = (int) ((MainScrollViewer.VerticalOffset + OuterTextGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
+                int lines = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
                 int textLines = Tools.CountLines(EditorText);
                 return textLines < lines ? textLines : lines;
             }
@@ -93,31 +93,18 @@ namespace PiIDE {
             CompletionList.CompletionClicked += CompletionUiList_CompletionClick;
             TextEditorGrid.Children.Add(CompletionList);
 
-            // Syntax highlighter
-            /*
-            EditorCore = new(this);
-            if (IsPythonFile) {
-                EditorCore.StartedHighlighting += delegate {
-                    LoadingJediStatus.Visibility = Visibility.Visible;
-                };
-                EditorCore.FinishedHighlighting += delegate {
-                    LoadingJediStatus.Visibility = Visibility.Collapsed;
-                    if (TextEditorTextBox.Foreground is not null) {
-#if DEBUG
-                        TextEditorTextBox.Foreground = Brushes.Red;
-#else
-                        TextEditorTextBox.Foreground = null;
-#endif
-                    }
-                };
-            }
-            EditorCoreCanvas = new();
-            EditorCoreCanvas.Children.Add(EditorCore);
-            Grid.SetColumn(EditorCoreCanvas, 2);
-            OuterTextGrid.Children.Add(EditorCoreCanvas);
-            */
+            TextEditorTextBox.TextEditor = this;
 
-            HighlightingRenderer renderer = new(this);
+            if (IsPythonFile) {
+                HighlightingRenderer renderer = new(this);
+            }
+
+            TextEditorTextBox.StartedRender += delegate {
+                LoadingJediStatus.Visibility = Visibility.Visible;
+            };
+            TextEditorTextBox.FinishedRender += delegate {
+                LoadingJediStatus.Visibility = Visibility.Collapsed;
+            };
 
             // Pylint underlining stuff
             Underliner = new(this);
