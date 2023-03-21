@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -176,24 +177,28 @@ namespace PiIDE.Editor.Parts {
         }
 
         private void HighlightBrackets( FormattedText formattedText) {
-            string visibleText = formattedText.Text;
-
             int fvl = Editor.FirstVisibleLineNum;
             int lvl = Editor.LastVisibleLineNum;
             string wholeText = EditorText;
 
-            List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(visibleText);
+            List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(wholeText);
             int maxBracketIndex = brackets.Max(x => x.BracketIndex);
+            int visibleTextIndex = wholeText.GetIndexOfColRow(fvl, 0);
 
             for (int i = 0; i < brackets.Count; ++i) {
 
                 SyntaxHighlighter.BracketMatch bracket = brackets[i];
 
-                int bci = (int) Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
+                if (bracket.Row < fvl)
+                    continue;
+                if (bracket.Row >= lvl)
+                    break;
+
+                int bci = Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
 
                 Brush brush = new SolidColorBrush(SyntaxHighlighter.BracketColors[bci]);
 
-                formattedText.SetForegroundBrush(brush, bracket.Index, 1);
+                formattedText.SetForegroundBrush(brush, bracket.Index - visibleTextIndex, 1);
             }
         }
 
@@ -288,6 +293,7 @@ namespace PiIDE.Editor.Parts {
         protected override void OnRender(DrawingContext drawingContext) {
             UpdateView(null);
             drawingContext.DrawDrawing(DrawingGroup);
+            Debug.WriteLine("OnRender");
         }
     }
 }
