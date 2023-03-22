@@ -95,9 +95,7 @@ namespace PiIDE {
 
             TextEditorTextBox.TextEditor = this;
 
-            if (IsPythonFile) {
-                HighlightingRenderer renderer = new(this);
-            }
+            HighlightingRenderer renderer = new(this);
 
             TextEditorTextBox.StartedRender += delegate {
                 LoadingJediStatus.Visibility = Visibility.Visible;
@@ -112,6 +110,7 @@ namespace PiIDE {
 
             // Searchbox stuff
             TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
+            TextSearchBox.ResultRenderBox = renderer;
         }
 
         private void Python_Exited(object? sender, EventArgs e) {

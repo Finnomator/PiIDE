@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using static PiIDE.Wrapers.JediWraper.ReturnClasses;
@@ -10,17 +9,20 @@ using static PiIDE.Wrapers.JediWraper.ReturnClasses;
 namespace PiIDE.Editor.Parts {
     public class HighlightingRenderer {
 
-        private readonly TextEditor Editor;
-        private TextBoxWithDrawingGroup TextRenderer => Editor.TextEditorTextBox;
-        private string EditorText => Editor.EditorText;
-        private FormattedText RendererFormattedText => TextRenderer.VisibleTextAsFormattedText;
+        public readonly TextEditor Editor;
+        public TextBoxWithDrawingGroup TextRenderer => Editor.TextEditorTextBox;
+        public string EditorText => Editor.EditorText;
+        public FormattedText RendererFormattedText => TextRenderer.VisibleTextAsFormattedText;
 
         public HighlightingRenderer(TextEditor textEditor) {
             Editor = textEditor;
-            TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
-            TextRenderer.AddRenderAction(HighlightBrackets);
-            TextRenderer.AddRenderAction(HighlightKeywords);
-            TextRenderer.AddRenderAction(HighlightJediNames);
+
+            if (Editor.IsPythonFile) {
+                TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
+                TextRenderer.AddRenderAction(HighlightBrackets);
+                TextRenderer.AddRenderAction(HighlightKeywords);
+                TextRenderer.AddRenderAction(HighlightJediNames);
+            }
         }
 
         private void HighlightKeywords(DrawingContext context) {

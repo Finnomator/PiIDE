@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
-using Point = System.Drawing.Point;
 
 namespace PiIDE {
 

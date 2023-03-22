@@ -37,6 +37,7 @@ namespace PiIDE.Editor.Parts {
             OldHighlightingPerformanceMode = TextEditor.HighlightingPerformanceMode;
 
             Editor.MainScrollViewer.ScrollChanged += (s, e) => UpdateView(OldSearchResult);
+            /*
             Editor.TextSearchBox.SearchChanged += (s, e) => {
                 MatchCollection? matches = null;
                 if (e is not null) {
@@ -58,6 +59,7 @@ namespace PiIDE.Editor.Parts {
                 UpdateView(OldSearchResult);
                 Editor.ScrollToPosition(row, col);
             };
+            */
             GlobalSettings.Default.PropertyChanged += (s, e) => UpdateView(OldSearchResult);
             ColorResources.HighlighterColors.ColorChanged += (s, e) => UpdateView(OldSearchResult);
         }
@@ -129,7 +131,7 @@ namespace PiIDE.Editor.Parts {
                 if (row > lvl)
                     break;
 
-                context.DrawRectangle(Editor.TextSearchBox.ResultNo == i ? selectedBrush : foundBrush, null, new(col * charSize.Width + 2, (row - fvl) * charSize.Height, match.Length * charSize.Width, charSize.Height));
+                context.DrawRectangle(Editor.TextSearchBox.CurrentResultNo == i ? selectedBrush : foundBrush, null, new(col * charSize.Width + 2, (row - fvl) * charSize.Height, match.Length * charSize.Width, charSize.Height));
             }
         }
 

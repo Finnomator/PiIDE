@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,13 +12,11 @@ namespace PiIDE.Editor.Parts {
 
     public partial class SearchBox : UserControl {
 
-        public event EventHandler<Regex?>? SearchChanged;
-        public event EventHandler<int>? SelectedResultChanged;
         public event EventHandler? Closed;
 
-        public int SearchResults { get; private set; }
-        public int ResultNo { get; private set; }
-        public Regex? Searcher { get; private set; }
+        public int CurrentResultNo { get; private set; }
+        private Regex? Searcher;
+        private MatchCollection? SearchResults;
         public bool IsOpen => MainExpander.IsExpanded;
 
         private bool MatchWholeWord;
@@ -25,30 +24,17 @@ namespace PiIDE.Editor.Parts {
 
         private bool BlockTextChange;
 
+        public HighlightingRenderer? ResultRenderBox { get; set; }
+
         public SearchBox() {
             InitializeComponent();
-            SetSearchResults(0);
         }
 
-        public void SetSearchResults(int searchResults) {
-            SearchResults = searchResults;
-
-            if (searchResults == 0) {
-                SetResultNo(-1);
-                ResultsStackPanel.Visibility = Visibility.Collapsed;
-            } else {
-                SetResultNo(0);
-                TotalResultsTextBlock.Text = searchResults.ToString();
-                ResultsStackPanel.Visibility = Visibility.Visible;
-            }
+        public void Open() {
+            Debug.Assert(ResultRenderBox is not null, "ResultRenderBox must not be set");
+            ResultRenderBox.TextRenderer.AddRenderAction(RenderSearchResults);
+            MainExpander.IsExpanded = true;
         }
-
-        public void SetResultNo(int resultNo) {
-            ResultNo = resultNo;
-            ResultNumTextBlock.Text = (ResultNo + 1).ToString();
-        }
-
-        public void Open() => MainExpander.IsExpanded = true;
 
         public async void OpenAndFocus() {
             Open();
@@ -64,11 +50,34 @@ namespace PiIDE.Editor.Parts {
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
+        private void RenderSearchResults(DrawingContext context) {
+
+            if (SearchResults is null)
+                return;
+
+            for (int i = 0; i < SearchResults.Count; ++i) {
+                Match match = SearchResults[i];
+
+                if (i == CurrentResultNo) {
+                    ResultRenderBox.RendererFormattedText.SetForegroundBrush(Brushes.Yellow, match.Index, match.Length);
+                    continue;
+                }
+
+                ResultRenderBox.RendererFormattedText.SetForegroundBrush(Brushes.Blue, match.Index, match.Length);
+            }
+        }
+
+        private void SetResultNo(int resultNo) {
+            CurrentResultNo = resultNo;
+            ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();
+        }
+
         private void UpdateSearch(string text) {
 
             if (text == "") {
-                SetSearchResults(0);
                 RegexTextBoxHint.Visibility = Visibility.Visible;
+                SearchResults = null;
+                ResultRenderBox.TextRenderer.Render();
                 return;
             } else
                 RegexTextBoxHint.Visibility = Visibility.Collapsed;
@@ -86,13 +95,14 @@ namespace PiIDE.Editor.Parts {
 
             try {
                 Searcher = new(regexPattern, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
+                SearchResults = Searcher.Matches(ResultRenderBox.RendererFormattedText.Text);
                 RegexTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
+                SetResultNo(0);
             } catch (ArgumentException) {
-                SetSearchResults(0);
                 RegexTextBox.Background = Brushes.IndianRed;
             }
 
-            SearchChanged?.Invoke(this, Searcher);
+            ResultRenderBox.TextRenderer.Render();
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) {
@@ -108,17 +118,23 @@ namespace PiIDE.Editor.Parts {
         }
 
         private void PreviousResButton_Click(object sender, RoutedEventArgs e) {
-            if (--ResultNo < 0)
-                ResultNo = SearchResults - 1;
-            ResultNumTextBlock.Text = (ResultNo + 1).ToString();
-            SelectedResultChanged?.Invoke(this, ResultNo);
+
+            if (SearchResults is null || SearchResults.Count <= 0)
+                return;
+
+            if (--CurrentResultNo < 0)
+                CurrentResultNo = SearchResults.Count - 1;
+            ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();
         }
 
         private void NextResButton_Click(object sender, RoutedEventArgs e) {
-            if (++ResultNo >= SearchResults)
-                ResultNo = 0;
-            ResultNumTextBlock.Text = (ResultNo + 1).ToString();
-            SelectedResultChanged?.Invoke(this, ResultNo);
+
+            if (SearchResults is null || SearchResults.Count <= 0)
+                return;
+
+            if (++CurrentResultNo >= SearchResults.Count)
+                CurrentResultNo = 0;
+            ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();
         }
 
         private void CaseSensitive_Clicked(object sender, RoutedEventArgs e) {
@@ -136,6 +152,18 @@ namespace PiIDE.Editor.Parts {
                 case Key.Escape:
                     Close();
                     break;
+            }
+        }
+
+        public readonly struct SearchResult {
+            public int Index { get; init; }
+            public int Column { get; init; }
+            public int Row { get; init; }
+
+            public SearchResult(int index, int column, int row) {
+                Index = index;
+                Column = column;
+                Row = row;
             }
         }
     }
