@@ -27,8 +27,6 @@ namespace PiIDE {
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinting;
         public readonly bool EnableJediCompletions;
-        public static HighlightingMode HighlightingMode => (HighlightingMode) GlobalSettings.Default.SyntaxhighlighterMode;
-        public static HighlightingPerformanceMode HighlightingPerformanceMode => (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode;
         public Size TextEditorTextBoxCharacterSize => MeasureTextBoxStringSize("A");
 
         private readonly CompletionUiList CompletionList;
@@ -111,6 +109,7 @@ namespace PiIDE {
             // Searchbox stuff
             TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
             TextSearchBox.ResultRenderBox = renderer;
+            TextSearchBox.Initialize();
         }
 
         private void Python_Exited(object? sender, EventArgs e) {

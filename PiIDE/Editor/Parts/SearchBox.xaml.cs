@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,24 +16,35 @@ namespace PiIDE.Editor.Parts {
         public event EventHandler? Closed;
 
         public int CurrentResultNo { get; private set; }
-        private Regex? Searcher;
-        private MatchCollection? SearchResults;
+        private SearchResultCollection? AllSearchResults;
         public bool IsOpen => MainExpander.IsExpanded;
 
-        private bool MatchWholeWord;
         private bool CaseSensitive;
-
-        private bool BlockTextChange;
+        private bool MatchWholeWord;
+        private bool UseRegex;
+        private bool GotInit;
 
         public HighlightingRenderer? ResultRenderBox { get; set; }
+        private Size TextSize => ResultRenderBox.Editor.TextEditorTextBoxCharacterSize;
+
+        private Brush HighlighedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
+        private Brush CurrentWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#3AFFFFFF")!;
 
         public SearchBox() {
             InitializeComponent();
         }
 
-        public void Open() {
+        public void Initialize() {
             Debug.Assert(ResultRenderBox is not null, "ResultRenderBox must not be set");
             ResultRenderBox.TextRenderer.AddRenderAction(RenderSearchResults);
+            ResultRenderBox.Editor.TextEditorTextBox.TextChanged += (s, e) => {
+                Close();
+            };
+            GotInit = true;
+        }
+
+        public void Open() {
+            Debug.Assert(GotInit, "Initialze must be called");
             MainExpander.IsExpanded = true;
         }
 
@@ -43,108 +55,175 @@ namespace PiIDE.Editor.Parts {
             FocusSearchTextBox();
         }
 
-        public void FocusSearchTextBox() => SearchTextBox.Focus();
+        public void FocusSearchTextBox() {
+            SearchTextBox.Focus();
+            SearchTextBox.SelectAll();
+        }
 
         public void Close() {
             MainExpander.IsExpanded = false;
+            AllSearchResults = null;
+            ResultRenderBox.TextRenderer.Render();
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
         private void RenderSearchResults(DrawingContext context) {
 
-            if (SearchResults is null)
+            if (AllSearchResults is null)
                 return;
 
-            for (int i = 0; i < SearchResults.Count; ++i) {
-                Match match = SearchResults[i];
+            int fvl = ResultRenderBox.Editor.FirstVisibleLineNum;
+            int lvl = ResultRenderBox.Editor.LastVisibleLineNum;
+
+            for (int i = 0; i < AllSearchResults.Count; ++i) {
+                SearchResult match = AllSearchResults[i];
+
+                if (match.Row < fvl)
+                    continue;
+                if (match.Row > lvl)
+                    break;
+
+                Rect highlightRect = new(match.Column * TextSize.Width + 2, match.Row * TextSize.Height, match.Length * TextSize.Width, TextSize.Height);
 
                 if (i == CurrentResultNo) {
-                    ResultRenderBox.RendererFormattedText.SetForegroundBrush(Brushes.Yellow, match.Index, match.Length);
+                    context.DrawRectangle(CurrentWordBrush, null, highlightRect);
                     continue;
                 }
 
-                ResultRenderBox.RendererFormattedText.SetForegroundBrush(Brushes.Blue, match.Index, match.Length);
+                context.DrawRectangle(HighlighedWordBrush, null, highlightRect);
             }
         }
 
         private void SetResultNo(int resultNo) {
             CurrentResultNo = resultNo;
+            SearchResult currentMatch = AllSearchResults[CurrentResultNo];
+            ResultRenderBox.Editor.ScrollToPosition(currentMatch.Row, currentMatch.Column);
+            ResultRenderBox.TextRenderer.Render();
             ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();
         }
 
-        private void UpdateSearch(string text) {
+        private void UpdateSearch() {
 
-            if (text == "") {
-                RegexTextBoxHint.Visibility = Visibility.Visible;
-                SearchResults = null;
+            string userSearch = SearchTextBox.Text;
+
+            if (userSearch == "") {
+                ResultsStackPanel.Visibility = Visibility.Collapsed;
+
+                AllSearchResults = null;
+
                 ResultRenderBox.TextRenderer.Render();
                 return;
-            } else
-                RegexTextBoxHint.Visibility = Visibility.Collapsed;
-
-            string regexPattern = $"{text}";
-
-            if (MatchWholeWord) {
-                regexPattern += "\\b";
-                regexPattern = regexPattern.Insert(0, "\\b");
+            } else {
+                ResultsStackPanel.Visibility = Visibility.Visible;
             }
 
-            BlockTextChange = true;
-            RegexTextBox.Text = regexPattern;
-            BlockTextChange = false;
+            Regex rx;
 
             try {
-                Searcher = new(regexPattern, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
-                SearchResults = Searcher.Matches(ResultRenderBox.RendererFormattedText.Text);
-                RegexTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
-                SetResultNo(0);
+                rx = MakeRegex();
             } catch (ArgumentException) {
-                RegexTextBox.Background = Brushes.IndianRed;
+                SearchTextBox.Background = Brushes.IndianRed;
+                return;
             }
+
+            AllSearchResults = new(ResultRenderBox.EditorText, rx.Matches(ResultRenderBox.EditorText));
+
+            if (AllSearchResults.Count == 0) {
+                ResultsStackPanel.Visibility = Visibility.Collapsed;
+                AllSearchResults = null;
+                ResultRenderBox.TextRenderer.Render();
+                return;
+            }
+
+            TotalResultsTextBlock.Text = AllSearchResults.Count.ToString();
+            SearchTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
+
+            SetResultNo(0);
 
             ResultRenderBox.TextRenderer.Render();
         }
 
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-            RegexTextBox.Text = SearchTextBox.Text.Replace("\\", "\\\\");
-            SearchTextBoxHint.Visibility = SearchTextBox.Text == "" ? Visibility.Visible : Visibility.Collapsed;
+        private Regex MakeRegex() {
+            string pattern = SearchTextBox.Text;
+
+            if (UseRegex)
+                return new(pattern);
+
+            pattern = pattern.Replace("\\", "\\\\");
+
+            if (MatchWholeWord) {
+                pattern += "\\b";
+                pattern = pattern.Insert(0, "\\b");
+            }
+
+            return new(pattern, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
         }
 
-        private void RegexTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-            if (BlockTextChange)
-                return;
-            Searcher = null;
-            UpdateSearch(RegexTextBox.Text);
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+            SearchTextBoxHint.Visibility = SearchTextBox.Text == "" ? Visibility.Visible : Visibility.Collapsed;
+            UpdateSearch();
         }
 
         private void PreviousResButton_Click(object sender, RoutedEventArgs e) {
 
-            if (SearchResults is null || SearchResults.Count <= 0)
+            if (AllSearchResults is null || AllSearchResults.Count <= 0)
                 return;
 
             if (--CurrentResultNo < 0)
-                CurrentResultNo = SearchResults.Count - 1;
-            ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();
+                CurrentResultNo = AllSearchResults.Count - 1;
+
+            SetResultNo(CurrentResultNo);
         }
 
         private void NextResButton_Click(object sender, RoutedEventArgs e) {
 
-            if (SearchResults is null || SearchResults.Count <= 0)
+            if (AllSearchResults is null || AllSearchResults.Count <= 0)
                 return;
 
-            if (++CurrentResultNo >= SearchResults.Count)
+            if (++CurrentResultNo >= AllSearchResults.Count)
                 CurrentResultNo = 0;
-            ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();
+
+            SetResultNo(CurrentResultNo);
         }
 
         private void CaseSensitive_Clicked(object sender, RoutedEventArgs e) {
-            CaseSensitive = (bool) ((ToggleButton) sender).IsChecked!;
-            UpdateSearch(SearchTextBox.Text);
+            CaseSensitive = !CaseSensitive;
+
+            if (CaseSensitive) {
+                CaseSensitiveButton.BorderBrush = ColorResources.AccentColorBrush;
+            } else {
+                CaseSensitiveButton.BorderBrush = Brushes.Transparent;
+            }
+
+            UpdateSearch();
         }
 
         private void MatchWholeWord_Clicked(object sender, RoutedEventArgs e) {
-            MatchWholeWord = (bool) ((ToggleButton) sender).IsChecked!;
-            UpdateSearch(SearchTextBox.Text);
+            MatchWholeWord = !MatchWholeWord;
+
+            if (MatchWholeWord) {
+                MatchWholeWordButton.BorderBrush = ColorResources.AccentColorBrush;
+            } else {
+                MatchWholeWordButton.BorderBrush = Brushes.Transparent;
+            }
+
+            UpdateSearch();
+        }
+
+        private void UseRegex_Click(object sender, RoutedEventArgs e) {
+            UseRegex = !UseRegex;
+
+            if (UseRegex) {
+                UseRegexButton.BorderBrush = ColorResources.AccentColorBrush;
+                MatchWholeWordButton.IsEnabled = false;
+                CaseSensitiveButton.IsEnabled = false;
+            } else {
+                UseRegexButton.BorderBrush = Brushes.Transparent;
+                MatchWholeWordButton.IsEnabled = true;
+                CaseSensitiveButton.IsEnabled = true;
+            }
+
+            UpdateSearch();
         }
 
         private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -155,15 +234,38 @@ namespace PiIDE.Editor.Parts {
             }
         }
 
+        public class SearchResultCollection {
+
+            public int Count { get; private set; }
+
+            private readonly SearchResult[] SearchResults;
+
+            public SearchResultCollection(string text, MatchCollection matchCollection) {
+                (int col, int row)[] points = text.GetPointsOfIndexes(matchCollection.Select(x => x.Index).ToArray());
+                SearchResults = new SearchResult[matchCollection.Count];
+
+                for (int i = 0; i < matchCollection.Count; i++)
+                    SearchResults[i] = new(points[i].col, points[i].row, matchCollection[i].Index, matchCollection[i].Length);
+
+                Count = matchCollection.Count;
+            }
+
+            public SearchResult this[int index] {
+                get => SearchResults[index];
+            }
+        }
+
         public readonly struct SearchResult {
-            public int Index { get; init; }
             public int Column { get; init; }
             public int Row { get; init; }
+            public int Index { get; init; }
+            public int Length { get; init; }
 
-            public SearchResult(int index, int column, int row) {
-                Index = index;
+            public SearchResult(int column, int row, int index, int length) {
                 Column = column;
                 Row = row;
+                Index = index;
+                Length = length;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -12,12 +13,13 @@ namespace PiIDE {
             // GlobalSettings.Default.Reset();
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
 
-
             // TODO: i think this doesnt quite work
             if (GlobalSettings.Default.CallUpgrade) {
                 GlobalSettings.Default.Upgrade();
                 GlobalSettings.Default.CallUpgrade = false;
             }
+
+            Debug.WriteLine(TypeIcons.Instance);
 
             if (GlobalSettings.Default.LastOpenedBoardFilePaths is null)
                 GlobalSettings.Default.LastOpenedBoardFilePaths = new();

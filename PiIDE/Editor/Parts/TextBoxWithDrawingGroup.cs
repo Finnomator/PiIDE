@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,9 +20,6 @@ namespace PiIDE.Editor.Parts {
 
         public Action<DrawingContext> DefaultRenderAction { get; init; }
         public FormattedText VisibleTextAsFormattedText { get; private set; }
-
-        private bool IsBusy;
-        private bool GotNewerRequest;
 
         public TextEditor? TextEditor { get; set; }
 
@@ -75,33 +73,17 @@ namespace PiIDE.Editor.Parts {
 
         public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
-        public async void Render() {
-
-            if (IsBusy) {
-                GotNewerRequest = true;
-                return;
-            }
-
-            IsBusy = true;
+        public void Render() {
 
             StartedRender?.Invoke(this, EventArgs.Empty);
 
             using (DrawingContext dc = DrawingGroup.Open()) {
                 foreach (Action<DrawingContext> action in RenderActions)
                     action(dc);
-                foreach (Func<DrawingContext, Task> func in AsyncRenderActions)
-                    await func(dc);
                 dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor is null? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
             }
 
             FinishedRender?.Invoke(this, EventArgs.Empty);
-
-            IsBusy = false;
-
-            if (GotNewerRequest) {
-                Render();
-                GotNewerRequest = false;
-            }
         }
 
         protected override void OnRender(DrawingContext drawingContext) {

@@ -19,6 +19,7 @@ namespace PiIDE.Editor.Parts {
 
             if (Editor.IsPythonFile) {
                 TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
+
                 TextRenderer.AddRenderAction(HighlightBrackets);
                 TextRenderer.AddRenderAction(HighlightKeywords);
                 TextRenderer.AddRenderAction(HighlightJediNames);

@@ -155,30 +155,6 @@ namespace PiIDE {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SyntaxhighlighterMode {
-            get {
-                return ((int)(this["SyntaxhighlighterMode"]));
-            }
-            set {
-                this["SyntaxhighlighterMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SyntaxhighlighterPerformanceMode {
-            get {
-                return ((int)(this["SyntaxhighlighterPerformanceMode"]));
-            }
-            set {
-                this["SyntaxhighlighterPerformanceMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("BoardFiles/")]
         public string LocalBoardFilesPath {
             get {

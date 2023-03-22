@@ -10,6 +10,8 @@ using System.Windows.Media;
 namespace PiIDE {
     public static class ColorResources {
 
+        public static Brush AccentColorBrush = (Brush) Application.Current.Resources["Accentcolor"];
+
         public static Dictionary<string, Brush> LoadResource(string filePath) {
             using Stream stream = File.OpenRead(filePath);
             return LoadResource(stream);
@@ -52,7 +54,6 @@ namespace PiIDE {
             using StreamWriter writer = new(stream);
             writer.Write(serialized);
         }
-
 
         public static class HighlighterColors {
 

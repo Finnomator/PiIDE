@@ -29,17 +29,7 @@ namespace PiIDE.Options.Editor {
             FontSizeTextBox.Text = settings.TextEditorFontSize.ToString();
             EditorFontComboBox.ItemsSource = comboBoxFontItems;
             EditorFontComboBox.SelectedIndex = fontIndex;
-            HighlightingModeComboBox.SelectedIndex = settings.SyntaxhighlighterMode;
-            HighlighterPerformanceModeComboBox.SelectedIndex = settings.SyntaxhighlighterPerformanceMode;
             CompletionsComboBox.SelectedIndex = settings.CompletionsMode;
-        }
-
-        private void SyntaxHighlighterPerformance_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            GlobalSettings.Default.SyntaxhighlighterPerformanceMode = ((ComboBox) sender).SelectedIndex;
-        }
-
-        private void HighlightingMode_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            GlobalSettings.Default.SyntaxhighlighterMode = ((ComboBox) sender).SelectedIndex;
         }
 
         private void FontSizeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
