@@ -27,15 +27,11 @@ namespace PiIDE {
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinting;
         public readonly bool EnableJediCompletions;
-        public static HighlightingMode HighlightingMode => (HighlightingMode) GlobalSettings.Default.SyntaxhighlighterMode;
-        public static HighlightingPerformanceMode HighlightingPerformanceMode => (HighlightingPerformanceMode) GlobalSettings.Default.SyntaxhighlighterPerformanceMode;
         public Size TextEditorTextBoxCharacterSize => MeasureTextBoxStringSize("A");
 
         private readonly CompletionUiList CompletionList;
         private int CurrentAmountOfLines;
         private (int row, int col) LastCaretPos = (1, 1);
-        private readonly TextEditorCore? EditorCore;
-        private readonly Canvas? EditorCoreCanvas;
         private readonly PylingUnderliner Underliner;
         protected int AutoSaveDelaySeconds;
         protected bool DoAutoSaves = true;
@@ -55,7 +51,7 @@ namespace PiIDE {
 
         public int LastVisibleLineNum {
             get {
-                int lines = (int) ((MainScrollViewer.VerticalOffset + OuterTextGrid.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
+                int lines = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
                 int textLines = Tools.CountLines(EditorText);
                 return textLines < lines ? textLines : lines;
             }
@@ -95,27 +91,16 @@ namespace PiIDE {
             CompletionList.CompletionClicked += CompletionUiList_CompletionClick;
             TextEditorGrid.Children.Add(CompletionList);
 
-            // Syntax highlighter
-            EditorCore = new(this);
-            if (IsPythonFile) {
-                EditorCore.StartedHighlighting += delegate {
-                    LoadingJediStatus.Visibility = Visibility.Visible;
-                };
-                EditorCore.FinishedHighlighting += delegate {
-                    LoadingJediStatus.Visibility = Visibility.Collapsed;
-                    if (TextEditorTextBox.Foreground is not null) {
-#if DEBUG
-                        TextEditorTextBox.Foreground = Brushes.Red;
-#else
-                        TextEditorTextBox.Foreground = null;
-#endif
-                    }
-                };
-            }
-            EditorCoreCanvas = new();
-            EditorCoreCanvas.Children.Add(EditorCore);
-            Grid.SetColumn(EditorCoreCanvas, 2);
-            OuterTextGrid.Children.Add(EditorCoreCanvas);
+            TextEditorTextBox.TextEditor = this;
+
+            HighlightingRenderer renderer = new(this);
+
+            TextEditorTextBox.StartedRender += delegate {
+                LoadingJediStatus.Visibility = Visibility.Visible;
+            };
+            TextEditorTextBox.FinishedRender += delegate {
+                LoadingJediStatus.Visibility = Visibility.Collapsed;
+            };
 
             // Pylint underlining stuff
             Underliner = new(this);
@@ -123,6 +108,8 @@ namespace PiIDE {
 
             // Searchbox stuff
             TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
+            TextSearchBox.ResultRenderBox = renderer;
+            TextSearchBox.Initialize();
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -144,9 +131,7 @@ namespace PiIDE {
             }
 
             ContentIsSaved = true;
-
             SaveFileButton.IsEnabled = false;
-            SaveFileButton.ToolTip = "Save File";
             SavingFileStatusWrapPanel.Visibility = Visibility.Collapsed;
         }
 
@@ -472,16 +457,6 @@ namespace PiIDE {
         public int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         public (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
 
-        private void MoveHighlighting() {
-
-            if (DisableAllWrapers || EditorCore is null)
-                return;
-
-            double remainder = MainScrollViewer.VerticalOffset % TextEditorTextBoxCharacterSize.Height;
-
-            EditorCoreCanvas!.Margin = new(-MainScrollViewer.HorizontalOffset, Math.Abs(remainder - TextEditorTextBoxCharacterSize.Height) < 0.1 ? 0 : -remainder, 0, 0);
-        }
-
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
 
             if (e.HorizontalChange == 0 && e.VerticalChange == 0)
@@ -495,7 +470,6 @@ namespace PiIDE {
 
             InformationSepperatorDropShadow.Opacity = e.VerticalOffset == 0 ? 0 : 0.6;
 
-            MoveHighlighting();
             UpdatePylint();
         }
 

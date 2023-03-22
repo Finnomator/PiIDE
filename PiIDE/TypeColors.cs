@@ -31,6 +31,9 @@ namespace PiIDE {
         public static readonly FontAwesome.WPF.FontAwesome Path = new() {
             Icon = FontAwesome.WPF.FontAwesomeIcon.Close
         };
+        public static readonly FontAwesome.WPF.FontAwesome Namespace = new() {
+            Icon = FontAwesome.WPF.FontAwesomeIcon.Cubes
+        };
         public static readonly FontAwesome.WPF.FontAwesome EverythingElse = new() {
             Icon = FontAwesome.WPF.FontAwesomeIcon.Question
         };
@@ -45,6 +48,7 @@ namespace PiIDE {
             { "param", Param},
             { "property", Property},
             { "path", Path },
+            { "namespace", Namespace },
         };
 
         public static FontAwesome.WPF.FontAwesome TypeToIcon(string type) {

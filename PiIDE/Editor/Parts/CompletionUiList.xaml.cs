@@ -72,7 +72,7 @@ namespace PiIDE {
             (int col, int row) = Editor.GetCaretPosition();
             row++;
 
-            Script script = await Script.MakeScript(code, filePath);
+            Script script = await Script.MakeScriptAsync(code, filePath);
             Completion[] completions = await script.Complete(row, col);
 
             if (completions.Length == 0) {

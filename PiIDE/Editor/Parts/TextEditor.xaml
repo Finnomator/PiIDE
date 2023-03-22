@@ -10,15 +10,16 @@
              d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource EditorBackground}"
              LostKeyboardFocus="UserControl_LostKeyboardFocus">
 
-    <Grid Grid.IsSharedSizeScope="True">
+    <Grid>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="2" Panel.ZIndex="2" Margin="0,0,13,0" HorizontalAlignment="Right" VerticalAlignment="Top">
-           
+        <StackPanel Orientation="Horizontal" Panel.ZIndex="2" Margin="0,0,13,0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.RowSpan="2">
+
             <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Search"/>
 
             <Border x:Name="ActionsBorder" CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackground}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackground}">
@@ -31,7 +32,7 @@
                     <Button Style="{StaticResource CleanButtonStyle}" x:Name="SaveFileButton" Click="SaveFileButton_Click" Foreground="White" ToolTip="Save File" Padding="3">
                         <fa:FontAwesome Icon="Save"/>
                     </Button>
-                    
+
                     <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
                     <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
                         <fa:FontAwesome Icon="Stop"/>
@@ -41,7 +42,7 @@
 
         </StackPanel>
 
-        <StackPanel Background="{DynamicResource EditorBackground}"  Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,0">
+        <StackPanel Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,3" Panel.ZIndex="1">
             <TextBox Name="LocalFilePathTextBlock" BorderThickness="0" Background="Transparent" Text="C:\" Foreground="White" Padding="7,0,0,0" ToolTip="File Path" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
 
             <WrapPanel x:Name="SavingFileStatusWrapPanel" Visibility="Collapsed" VerticalAlignment="Center">
@@ -50,53 +51,45 @@
             </WrapPanel>
         </StackPanel>
 
-        <Rectangle Fill="{StaticResource SplitterBackground}" Height="1" VerticalAlignment="Top" Margin="0,20,0,0" Panel.ZIndex="1">
+        <Rectangle Fill="{StaticResource SplitterBackground}" Height="1" VerticalAlignment="Bottom" Panel.ZIndex="1">
             <Rectangle.Effect>
                 <DropShadowEffect x:Name="InformationSepperatorDropShadow" Direction="270" ShadowDepth="3" Opacity="0"/>
             </Rectangle.Effect>
         </Rectangle>
 
-        <Grid Name="OuterTextGrid" Margin="0,21,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
-                <ColumnDefinition Width="1"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
 
-            <ScrollViewer Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+            <ScrollViewer.Resources>
+                <Style TargetType="ScrollBar">
+                    <Setter Property="SmallChange" Value="60"/>
+                </Style>
+            </ScrollViewer.Resources>
 
-                <ScrollViewer.Resources>
-                    <Style TargetType="ScrollBar">
-                        <Setter Property="SmallChange" Value="60"/>
-                    </Style>
-                </ScrollViewer.Resources>
+            <Grid Background="{DynamicResource EditorBackground}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-                <Grid Background="{DynamicResource EditorBackground}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
-                        <ColumnDefinition Width="1"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <TextBlock x:Name="NumsTextBlock" FontSize="{Binding FontSize, ElementName=TextEditorTextBox}" FontFamily="{Binding FontFamily, ElementName=TextEditorTextBox}" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackground}"/>
 
-                    <TextBlock x:Name="NumsTextBlock" FontSize="{Binding FontSize, ElementName=TextEditorTextBox}" FontFamily="{Binding FontFamily, ElementName=TextEditorTextBox}" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackground}"/>
+                <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackground}"/>
 
-                    <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackground}"/>
-
-                    <Grid x:Name="TextEditorGrid" Grid.Column="2">
-                        <TextBox x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" Background="{DynamicResource EditorBackground}" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" PreviewMouseDown="TextEditorTextBox_MouseDown" Foreground="White"/>
-                    </Grid>
-
-                    <Rectangle Grid.Row="1" Grid.Column="2" Height="{Binding ActualHeight, ElementName=OuterTextGrid, Mode=OneWay}" Fill="Transparent" Cursor="IBeam" PreviewMouseDown="Rectangle_PreviewMouseDown"/>
+                <Grid x:Name="TextEditorGrid" Grid.Column="2">
+                    <editorParts:TextBoxWithDrawingGroup x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
                 </Grid>
-            </ScrollViewer>
-        </Grid>
 
-        <Border BorderThickness="0,1,0,0" Height="24" Grid.Row="1" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource SplitterBackground}">
+                <Rectangle Grid.Row="1" Grid.Column="2" Height="{Binding ActualHeight, ElementName=MainScrollViewer, Mode=OneWay}" Fill="Transparent" Cursor="IBeam" PreviewMouseDown="Rectangle_PreviewMouseDown"/>
+            </Grid>
+        </ScrollViewer>
+
+        <Border BorderThickness="0,1,0,0" Height="24" Grid.Row="2" Background="{DynamicResource WindowBackground}" BorderBrush="{DynamicResource SplitterBackground}">
             <Grid>
                 <StackPanel Orientation="Horizontal">
                     <WrapPanel ToolTip="Errors" VerticalAlignment="Center">

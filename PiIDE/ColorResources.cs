@@ -1,6 +1,7 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -8,6 +9,8 @@ using System.Windows.Media;
 
 namespace PiIDE {
     public static class ColorResources {
+
+        public static Brush AccentColorBrush = (Brush) Application.Current.Resources["Accentcolor"];
 
         public static Dictionary<string, Brush> LoadResource(string filePath) {
             using Stream stream = File.OpenRead(filePath);
@@ -52,7 +55,6 @@ namespace PiIDE {
             writer.Write(serialized);
         }
 
-
         public static class HighlighterColors {
 
             public static event EventHandler? ColorChanged;
@@ -68,6 +70,7 @@ namespace PiIDE {
             public static Brush Param => Colors["param"];
             public static Brush Property => Colors["property"]; // What is this?
             public static Brush Path => Colors["path"]; // What is this?
+            public static Brush Namespace => Colors["namespace"]; // What is this?
 
             public static Brush Comment => Colors["comment"];
             public static Brush String => Colors["string"];
