@@ -132,41 +132,10 @@ namespace PiIDE {
 
         public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
-        private static readonly char[] charSizes = new char[] { 'i', 'a', 'Z', '%', '#', 'a', 'B', 'l', 'm', ',', '.' };
-        public static bool IsMonospaced(this FontFamily family) {
-            foreach (Typeface typeface in family.GetTypefaces()) {
-                double firstWidth = 0d;
-
-                foreach (char ch in charSizes) {
-                    FormattedText formattedText = new(
-                        ch.ToString(),
-                        CultureInfo.CurrentCulture,
-                        FlowDirection.LeftToRight,
-                        typeface,
-                        10d,
-                        Brushes.Black,
-                        new NumberSubstitution(),
-                        1);
-                    if (ch == 'i') {
-                        firstWidth = formattedText.Width;
-                    } else {
-                        if (formattedText.Width != firstWidth)
-                            return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        public readonly static FontFamily[] MonospaceFonts = GetMonospaceFonts();
-        private static FontFamily[] GetMonospaceFonts() {
-            List<FontFamily> fonts = new();
-            foreach (FontFamily fontFamily in Fonts.SystemFontFamilies) {
-                if (fontFamily.IsMonospaced())
-                    fonts.Add(fontFamily);
-            }
-            return fonts.ToArray();
-        }
+        public readonly static FontFamily[] MonospaceFonts = new FontFamily[] {
+            new("Cascadia Code"),
+            new("Consolas"),
+        };
 
         public static bool TryCreateFile(string filePath) {
             try {
