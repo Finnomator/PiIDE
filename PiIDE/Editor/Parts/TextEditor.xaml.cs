@@ -392,8 +392,10 @@ namespace PiIDE {
             int completionStart = oldCaretIndex - (completion.Name.Length - completion.Complete.Length);
             int toRemoveLen = completion.Name.Length - completion.Complete.Length;
 
-            TextEditorTextBox.Text = TextEditorTextBox.Text.Remove(completionStart, toRemoveLen);
-            TextEditorTextBox.Text = TextEditorTextBox.Text.Insert(completionStart, completion.Name);
+            string newText = TextEditorTextBox.Text;
+            newText = newText.Remove(completionStart, toRemoveLen);
+            newText = newText.Insert(completionStart, completion.Name);
+            TextEditorTextBox.Text = newText;
 
             int newIndex = oldCaretIndex + completion.Complete.Length;
 
