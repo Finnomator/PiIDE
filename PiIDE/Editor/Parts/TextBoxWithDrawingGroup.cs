@@ -14,6 +14,7 @@ namespace PiIDE.Editor.Parts {
 
         public event EventHandler? StartedRender;
         public event EventHandler? FinishedRender;
+        int RenderCalls;
 
         private readonly List<Action<DrawingContext>> RenderActions = new();
         private readonly List<Func<DrawingContext, Task>> AsyncRenderActions = new();
@@ -82,6 +83,8 @@ namespace PiIDE.Editor.Parts {
                     action(dc);
                 dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor is null? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
             }
+
+            Debug.WriteLine("Render " + ++RenderCalls);
 
             FinishedRender?.Invoke(this, EventArgs.Empty);
         }

@@ -10,7 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource EditorBackground}"
              LostKeyboardFocus="UserControl_LostKeyboardFocus">
 
-    <Grid>
+    <Grid Name="MainGrid">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

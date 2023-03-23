@@ -141,8 +141,6 @@ namespace PiIDE.Editor.Parts {
             SearchTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
 
             SetResultNo(0);
-
-            ResultRenderBox.TextRenderer.Render();
         }
 
         private Regex MakeRegex() {

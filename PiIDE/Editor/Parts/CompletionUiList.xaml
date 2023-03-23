@@ -1,34 +1,32 @@
-﻿<UserControl x:Class="PiIDE.CompletionUiList"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PiIDE"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
-             mc:Ignorable="d" 
-             d:DesignHeight="100"
-             d:DesignWidth="100"
-             HorizontalAlignment="Left" VerticalAlignment="Top">
-    <Popup Name="MainPopup" MaxHeight="200" Width="250" Placement="Right" AllowsTransparency="True" Focusable="True">
-
-        <Border Name="MainBorder" BorderThickness="1" CornerRadius="2" BorderBrush="{DynamicResource SplitterBackground}" Margin="0,0,8,8">
-            <Border.Effect>
-                <DropShadowEffect Opacity="0.5"/>
-            </Border.Effect>
-            
-            <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" Background="{DynamicResource EditorBackground}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Button Style="{StaticResource CleanButtonStyle}" Click="Completion_Click" HorizontalContentAlignment="Stretch">
-                            <StackPanel Orientation="Horizontal">
-                                <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding Foreground}"/>
-                                <Rectangle Width="3"/>
-                                <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code" Foreground="White"/>
-                            </StackPanel>
-                        </Button>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>
-    </Popup>
-</UserControl>
+﻿<Window x:Class="PiIDE.CompletionUiList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:PiIDE"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d" 
+        d:DesignHeight="100"
+        d:DesignWidth="160"
+        MaxWidth="200"
+        MaxHeight="150"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        AllowsTransparency="True" Background="{x:Null}">
+    <Border Name="MainBorder" BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource SplitterBackground}">
+        <ListBox BorderThickness="0"  d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" Background="{DynamicResource EditorBackground}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Button Style="{StaticResource CleanButtonStyle}" Click="Completion_Click" HorizontalContentAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding Foreground}"/>
+                            <Rectangle Width="3"/>
+                            <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code" Foreground="White"/>
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Border>
+</Window>

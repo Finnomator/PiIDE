@@ -88,8 +88,8 @@ namespace PiIDE {
 
             // Completion suggestions stuff
             CompletionList = new(this);
+            Application.Current.MainWindow.Activated += MainWindow_Activated;
             CompletionList.CompletionClicked += CompletionUiList_CompletionClick;
-            TextEditorGrid.Children.Add(CompletionList);
 
             TextEditorTextBox.TextEditor = this;
 
@@ -110,6 +110,11 @@ namespace PiIDE {
             TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
             TextSearchBox.ResultRenderBox = renderer;
             TextSearchBox.Initialize();
+        }
+
+        private void MainWindow_Activated(object? sender, EventArgs e) {
+            CompletionList.Owner = Application.Current.MainWindow;
+            Application.Current.MainWindow.Activated -= MainWindow_Activated;
         }
 
         private void Python_Exited(object? sender, EventArgs e) {
@@ -415,22 +420,17 @@ namespace PiIDE {
             if (!EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
-            Thickness marginAtCaretPos = MarginAtCaretPosition();
-            CompletionList.Margin = marginAtCaretPos;
+            Point pointAtCaretPos = GetCaretPointRelativeToScreen();
+            CompletionList.Left = pointAtCaretPos.X;
+            CompletionList.Top = pointAtCaretPos.Y;
 
             CompletionList.ReloadCompletionsAsync(true);
         }
 
-
-
-        private Thickness MarginAtCaretPosition() {
+        private Point GetCaretPointRelativeToScreen() {
             (int col, int row) = GetCaretPosition();
-            return new(
-                (col + 0.5) * TextEditorTextBoxCharacterSize.Width,
-                (row + 1) * TextEditorTextBoxCharacterSize.Height,
-                0,
-                0
-            );
+            Point relativeToTextBox = new((col + 0.5) * TextEditorTextBoxCharacterSize.Width, (row + 1) * TextEditorTextBoxCharacterSize.Height);
+            return TextEditorTextBox.PointToScreen(relativeToTextBox);
         }
 
         private Size MeasureTextBoxStringSize(string candidate) {
@@ -463,9 +463,7 @@ namespace PiIDE {
                 return;
 
             if (CompletionList.IsOpen) {
-                // TODO: Why is this not working???
-                CompletionList.MainPopup.VerticalOffset += e.VerticalChange;
-                CompletionList.MainPopup.HorizontalOffset += e.HorizontalChange;
+                CompletionList.Close();
             }
 
             InformationSepperatorDropShadow.Opacity = e.VerticalOffset == 0 ? 0 : 0.6;
@@ -546,7 +544,7 @@ namespace PiIDE {
         }
 
         private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-            if (e.NewFocus is not Button)
+            if (e.NewFocus != CompletionList)
                 CompletionList.Close();
         }
 

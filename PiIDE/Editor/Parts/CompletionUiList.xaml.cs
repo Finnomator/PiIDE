@@ -8,38 +8,31 @@ using Script = PiIDE.Wrapers.JediWraper.Script;
 
 namespace PiIDE {
 
-    public partial class CompletionUiList : UserControl {
+    public partial class CompletionUiList : Window {
 
         public EventHandler<Completion>? CompletionClicked;
         private bool IsBusy;
         private bool GotNewerRequest;
 
         private readonly TextEditor Editor;
-        private TextBox EditorBox => Editor.TextEditorTextBox;
         private string EditorText => Editor.TextEditorTextBox.Text;
-        private string VisibleText => Editor.VisibleText;
+        private bool CalledClose;
 
         public CompletionUiList(TextEditor editor) {
             InitializeComponent();
             Editor = editor;
-
-            Loaded += delegate {
-                Window.GetWindow(Editor).LocationChanged += delegate {
-                    double offset = MainPopup.HorizontalOffset;
-                    MainPopup.HorizontalOffset = offset + 1;
-                    MainPopup.HorizontalOffset = offset;
-                };
-            };
+            ShowActivated = false;
+            ShowInTaskbar = false;
         }
 
         public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;
         public int CompletionsCount => MainListBox.Items.Count;
         public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
-        public bool IsOpen => MainPopup.IsOpen;
+        public bool IsOpen => Visibility == Visibility.Visible;
 
         private void AddCompletions(Completion[] completions) {
             MainListBox.ItemsSource = completions;
-            MainPopup.IsOpen = true;
+            Show();
         }
 
         private void ClearCompletions() => MainListBox.ItemsSource = null;
@@ -75,6 +68,9 @@ namespace PiIDE {
             Script script = await Script.MakeScriptAsync(code, filePath);
             Completion[] completions = await script.Complete(row, col);
 
+            if (CalledClose)
+                return;
+
             if (completions.Length == 0) {
                 SetIntoNoSuggestionsState();
                 return;
@@ -88,16 +84,24 @@ namespace PiIDE {
                 SelectFirst();
         }
 
-        public void Close() {
-            ClearCompletions();
-            MainPopup.IsOpen = false;
+        public new void Show() {
+            CalledClose = false;
+            base.Show();
         }
 
-        public void CloseTemporary() => MainPopup.IsOpen = false;
+        public new void Close() {
+            ClearCompletions();
+            CloseTemporary();
+        }
+
+        public void CloseTemporary() {
+            CalledClose = true;
+            Hide();
+        }
 
         public void LoadCached() {
             if (MainListBox.Items.Count > 0)
-                MainPopup.IsOpen = true;
+                Show();
         }
 
         public void MoveSelectedCompletionUp() {
@@ -139,12 +143,11 @@ namespace PiIDE {
 
         private void SetIntoLoadingState() {
             MainBorder.Child = new LoadingState();
-            MainPopup.IsOpen = true;
+            Show();
         }
 
         private void SetIntoNoSuggestionsState() {
             MainBorder.Child = new NoSuggestionsState();
-            MainPopup.IsOpen = true;
         }
 
         private void ResetToNormalState() {
@@ -164,8 +167,8 @@ namespace PiIDE {
 
                 WrapPanel wrapPanel = new();
 
-                wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center });
-                wrapPanel.Children.Add(new TextBlock() { Text = "Loading..." });
+                wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.White });
+                wrapPanel.Children.Add(new TextBlock() { Text = "Loading...", Foreground=Brushes.White });
 
                 Child = wrapPanel;
             }
@@ -176,7 +179,7 @@ namespace PiIDE {
                 BorderThickness = new(1);
                 BorderBrush = (Brush) Application.Current.Resources["SplitterBackground"];
                 Background = (Brush) Application.Current.Resources["EditorBackground"];
-                Child = new TextBlock() { Text = "No Suggestions" };
+                Child = new TextBlock() { Text = "No Suggestions", Foreground = Brushes.White };
             }
         }
     }
