@@ -61,6 +61,8 @@ namespace PiIDE.Editor.Parts {
         }
 
         public void Close() {
+            if (!IsOpen)
+                return;
             MainExpander.IsExpanded = false;
             AllSearchResults = null;
             ResultRenderBox.TextRenderer.Render();
