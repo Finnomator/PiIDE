@@ -8,13 +8,17 @@
         mc:Ignorable="d" 
         d:DesignHeight="100"
         d:DesignWidth="160"
-        MaxWidth="200"
+        MaxWidth="241"
         MaxHeight="150"
         WindowStyle="None"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         AllowsTransparency="True" Background="{x:Null}">
-    <Border Name="MainBorder" BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource SplitterBackground}">
+    
+    <Border Name="MainBorder"  BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource SplitterBackground}" Margin="0,0,5,5">
+        <Border.Effect>
+            <DropShadowEffect Opacity="0.5"/>
+        </Border.Effect>
         <ListBox BorderThickness="0"  d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" Background="{DynamicResource EditorBackground}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
