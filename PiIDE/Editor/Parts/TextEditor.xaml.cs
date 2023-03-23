@@ -29,6 +29,8 @@ namespace PiIDE {
         public readonly bool EnableJediCompletions;
         public Size TextEditorTextBoxCharacterSize => MeasureTextBoxStringSize("A");
 
+        public event EventHandler? SavedFile;
+
         private readonly CompletionUiList CompletionList;
         private int CurrentAmountOfLines;
         private (int row, int col) LastCaretPos = (1, 1);
@@ -72,14 +74,7 @@ namespace PiIDE {
             IsPythonFile = Tools.IsPythonExt(FileExt);
             EnablePylinting = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
-            EnableJediCompletions = IsPythonFile;
-
-            Loaded += delegate {
-                if (!ContentLoaded)
-                    ReloadFile();
-                AutoSaveDelaySeconds = Tools.CountLines(EditorText) / 500 + 5;
-                AutoSave();
-            };
+            EnableJediCompletions = IsPythonFile;            
 
             LocalFilePathTextBlock.Text = AbsolutePath;
 
@@ -89,10 +84,11 @@ namespace PiIDE {
             // Completion suggestions stuff
             CompletionList = new(this);
             Application.Current.MainWindow.Activated += MainWindow_Activated;
+            Application.Current.MainWindow.LocationChanged += (s, e) => CompletionList.Close();
             CompletionList.CompletionClicked += CompletionUiList_CompletionClick;
 
+            // Text rendering stuff
             TextEditorTextBox.TextEditor = this;
-
             HighlightingRenderer renderer = new(this);
 
             // Pylint underlining stuff
@@ -103,6 +99,13 @@ namespace PiIDE {
             TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
             TextSearchBox.ResultRenderBox = renderer;
             TextSearchBox.Initialize();
+
+            Loaded += delegate {
+                if (!ContentLoaded)
+                    ReloadFile();
+                AutoSaveDelaySeconds = Tools.CountLines(EditorText) / 500 + 5;
+                AutoSave();
+            };
         }
 
         private void MainWindow_Activated(object? sender, EventArgs e) {
@@ -131,6 +134,7 @@ namespace PiIDE {
             ContentIsSaved = true;
             SaveFileButton.IsEnabled = false;
             SavingFileStatusWrapPanel.Visibility = Visibility.Collapsed;
+            SavedFile?.Invoke(this, EventArgs.Empty);
         }
 
         public void ReloadFile() {
@@ -139,14 +143,16 @@ namespace PiIDE {
             int oldCaretPos = TextEditorTextBox.CaretIndex;
             try {
                 TextEditorTextBox.Text = File.ReadAllText(FilePath);
-                ContentLoaded = true;
-                MainScrollViewer.ScrollToVerticalOffset(oldVScrollOffset);
-                MainScrollViewer.ScrollToHorizontalOffset(oldHScrollOffset);
-                // TODO: calculate the correct new caretIndex if file changed
-                TextEditorTextBox.CaretIndex = oldCaretPos;
             } catch (Exception ex) {
                 MessageBox.Show($"There was an error loading the file \"{FilePath}\"\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            ContentLoaded = true;
+            MainScrollViewer.ScrollToVerticalOffset(oldVScrollOffset);
+            MainScrollViewer.ScrollToHorizontalOffset(oldHScrollOffset);
+            // TODO: calculate the correct new caretIndex if file changed
+            TextEditorTextBox.CaretIndex = oldCaretPos;
         }
 
         public void ReloadFile(string fileContent) => TextEditorTextBox.Text = fileContent;
