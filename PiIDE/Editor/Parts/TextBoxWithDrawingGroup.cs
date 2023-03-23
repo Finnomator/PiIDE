@@ -12,10 +12,6 @@ namespace PiIDE.Editor.Parts {
     public class TextBoxWithDrawingGroup : TextBox {
         private readonly DrawingGroup DrawingGroup = new();
 
-        public event EventHandler? StartedRender;
-        public event EventHandler? FinishedRender;
-        int RenderCalls;
-
         private readonly List<Action<DrawingContext>> RenderActions = new();
         private readonly List<Func<DrawingContext, Task>> AsyncRenderActions = new();
 
@@ -32,7 +28,7 @@ namespace PiIDE.Editor.Parts {
             CaretBrush = Brushes.White;
 
             DefaultRenderAction = (dc) => {
-                VisibleTextAsFormattedText.SetForegroundBrush(CaretBrush);
+                VisibleTextAsFormattedText!.SetForegroundBrush(CaretBrush);
             };
 
             VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
@@ -75,18 +71,10 @@ namespace PiIDE.Editor.Parts {
         public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
         public void Render() {
-
-            StartedRender?.Invoke(this, EventArgs.Empty);
-
-            using (DrawingContext dc = DrawingGroup.Open()) {
-                foreach (Action<DrawingContext> action in RenderActions)
-                    action(dc);
-                dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor is null? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
-            }
-
-            Debug.WriteLine("Render " + ++RenderCalls);
-
-            FinishedRender?.Invoke(this, EventArgs.Empty);
+            using DrawingContext dc = DrawingGroup.Open();
+            foreach (Action<DrawingContext> action in RenderActions)
+                action(dc);
+            dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor is null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
         }
 
         protected override void OnRender(DrawingContext drawingContext) {

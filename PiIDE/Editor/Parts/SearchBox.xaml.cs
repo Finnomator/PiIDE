@@ -27,8 +27,8 @@ namespace PiIDE.Editor.Parts {
         public HighlightingRenderer? ResultRenderBox { get; set; }
         private Size TextSize => ResultRenderBox.Editor.TextEditorTextBoxCharacterSize;
 
-        private Brush HighlighedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
-        private Brush CurrentWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#3AFFFFFF")!;
+        private readonly Brush HighlighedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
+        private readonly Brush CurrentWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#3AFFFFFF")!;
 
         public SearchBox() {
             InitializeComponent();

@@ -95,13 +95,6 @@ namespace PiIDE {
 
             HighlightingRenderer renderer = new(this);
 
-            TextEditorTextBox.StartedRender += delegate {
-                LoadingJediStatus.Visibility = Visibility.Visible;
-            };
-            TextEditorTextBox.FinishedRender += delegate {
-                LoadingJediStatus.Visibility = Visibility.Collapsed;
-            };
-
             // Pylint underlining stuff
             Underliner = new(this);
             TextEditorGrid.Children.Add(Underliner);

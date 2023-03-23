@@ -105,11 +105,6 @@
                     </WrapPanel>
 
                     <Rectangle Width="10"/>
-
-                    <WrapPanel Visibility="Collapsed" Name="LoadingJediStatus" VerticalAlignment="Center">
-                        <fa:FontAwesome Icon="Spinner" Spin="True" VerticalAlignment="Center" Foreground="White"/>
-                        <Label Content="Loading Jedi..." Foreground="White" Padding="4,0,0,0"/>
-                    </WrapPanel>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0" >
