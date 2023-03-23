@@ -100,6 +100,7 @@ namespace PiIDE {
                 };
             }
 
+            textEditor.SavedFile += (s, e) => UpdatePylintMessages(textEditor);
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
 
             tabItem.CloseTabClick += (s, filePath) => {
