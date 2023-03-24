@@ -421,7 +421,7 @@ namespace PiIDE {
             if (!EnableJediCompletions || !GlobalSettings.Default.JediIsUsable)
                 return;
 
-            Point pointAtCaretPos = GetCaretPointRelativeToScreen();
+            Point pointAtCaretPos = GetCaretPointRelativeToScreen().ConvertToDevice();
             CompletionList.Left = pointAtCaretPos.X;
             CompletionList.Top = pointAtCaretPos.Y;
 

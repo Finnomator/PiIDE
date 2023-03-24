@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.HighPerformance;
+using Humanizer;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 
@@ -157,5 +159,32 @@ namespace PiIDE {
         public readonly static ColorConverter ColorConverter = new();
 
         public static Color ToColor(this string hex) => (Color) ColorConverter.ConvertFromString(hex);
+
+        public static double WindowsScalingFactor {
+            get {
+                if (_windowsScalingFactor > 0)
+                    return _windowsScalingFactor;
+                (bool success, double scalingFactor) = GetWindowsScalingFactor();
+                if (!success)
+                    return 1.0;
+
+                _windowsScalingFactor = scalingFactor;
+                return _windowsScalingFactor;
+            }
+        }
+        public static double _windowsScalingFactor;
+
+        private static (bool success, double scalingFactor) GetWindowsScalingFactor() {
+            PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+            double dpiX;
+            if (source != null && source.CompositionTarget != null)
+                dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
+            else
+                return (false, -1);
+            double scalingFactor = dpiX / 96.0;  // assume dpiX == dpiY
+            return (true, scalingFactor);
+        }
+
+        public static Point ConvertToDevice(this Point p) => new(p.X / WindowsScalingFactor, p.Y / WindowsScalingFactor);
     }
 }

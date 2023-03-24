@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
@@ -175,9 +176,9 @@ namespace PiIDE {
             CreateNewFileButton.IsEnabled = false;
 
             CreateNewFileDialogue dialogue = new();
-            Point mousePos = PointToScreen(Mouse.GetPosition(this));
-            //dialogue.Left = mousePos.X;
-            //dialogue.Top = mousePos.Y;
+            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
+            dialogue.Left = mousePos.X - dialogue.Width / 2;
+            dialogue.Top = mousePos.Y;
             dialogue.Show();
             dialogue.Focus();
 
@@ -272,8 +273,8 @@ namespace PiIDE {
             SyncButton.IsEnabled = false;
 
             SyncOptionsWindow syncWindow = new();
-            Point mousePos = PointToScreen(Mouse.GetPosition(this));
-            syncWindow.Left = mousePos.X;
+            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
+            syncWindow.Left = mousePos.X - syncWindow.Width / 2;
             syncWindow.Top = mousePos.Y;
             syncWindow.Show();
             syncWindow.Focus();
