@@ -27,7 +27,7 @@ namespace PiIDE {
         public readonly bool EnablePythonSyntaxhighlighting;
         public readonly bool EnablePylinting;
         public readonly bool EnableJediCompletions;
-        public Size TextEditorTextBoxCharacterSize => MeasureTextBoxStringSize("A");
+        public Size TextEditorTextBoxCharacterSize;
 
         public event EventHandler? SavedFile;
 
@@ -74,7 +74,7 @@ namespace PiIDE {
             IsPythonFile = Tools.IsPythonExt(FileExt);
             EnablePylinting = IsPythonFile;
             EnablePythonSyntaxhighlighting = IsPythonFile;
-            EnableJediCompletions = IsPythonFile;            
+            EnableJediCompletions = IsPythonFile;
 
             LocalFilePathTextBlock.Text = AbsolutePath;
 
@@ -101,10 +101,22 @@ namespace PiIDE {
             TextSearchBox.Initialize();
 
             Loaded += delegate {
+                TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
                 if (!ContentLoaded)
                     ReloadFile();
                 AutoSaveDelaySeconds = Tools.CountLines(EditorText) / 500 + 5;
                 AutoSave();
+            };
+
+            GlobalSettings.Default.PropertyChanged += (s, e) => {
+                switch (e.PropertyName) {
+                    case nameof(GlobalSettings.Default.TextEditorFontSize):
+                        TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
+                        break;
+                    case nameof(GlobalSettings.Default.TextEditorFontFamily):
+                        TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
+                        break;
+                };
             };
         }
 

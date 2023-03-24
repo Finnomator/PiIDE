@@ -10,13 +10,21 @@ namespace PiIDE {
 
     public partial class CompletionUiList : Window {
 
+        public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;
+        public int CompletionsCount => MainListBox.Items.Count;
+        public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
+        public bool IsOpen => IsVisible;
+
         public EventHandler<Completion>? CompletionClicked;
-        private bool IsBusy;
+
+        public bool IsBusy { get; private set; }
         private bool GotNewerRequest;
 
         private readonly TextEditor Editor;
         private string EditorText => Editor.TextEditorTextBox.Text;
         private bool CalledClose;
+        private readonly LoadingState loadingState = new();
+        private readonly NoSuggestionsState noSuggestionsState = new();
 
         public CompletionUiList(TextEditor editor) {
             InitializeComponent();
@@ -24,11 +32,6 @@ namespace PiIDE {
             ShowActivated = false;
             ShowInTaskbar = false;
         }
-
-        public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;
-        public int CompletionsCount => MainListBox.Items.Count;
-        public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
-        public bool IsOpen => Visibility == Visibility.Visible;
 
         private void AddCompletions(Completion[] completions) {
             MainListBox.ItemsSource = completions;
@@ -86,7 +89,8 @@ namespace PiIDE {
 
         public new void Show() {
             CalledClose = false;
-            base.Show();
+            if (!IsOpen)
+                base.Show();
         }
 
         public new void Close() {
@@ -96,7 +100,8 @@ namespace PiIDE {
 
         public void CloseTemporary() {
             CalledClose = true;
-            Hide();
+            if (IsOpen)
+                Hide();
         }
 
         public void LoadCached() {
@@ -142,12 +147,12 @@ namespace PiIDE {
         }
 
         private void SetIntoLoadingState() {
-            MainBorder.Child = new LoadingState();
+            MainBorder.Child = loadingState;
             Show();
         }
 
         private void SetIntoNoSuggestionsState() {
-            MainBorder.Child = new NoSuggestionsState();
+            MainBorder.Child = noSuggestionsState;
         }
 
         private void ResetToNormalState() {
@@ -168,7 +173,7 @@ namespace PiIDE {
                 WrapPanel wrapPanel = new();
 
                 wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.White });
-                wrapPanel.Children.Add(new TextBlock() { Text = "Loading...", Foreground=Brushes.White });
+                wrapPanel.Children.Add(new TextBlock() { Text = "Loading...", Foreground = Brushes.White });
 
                 Child = wrapPanel;
             }
