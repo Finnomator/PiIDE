@@ -7,6 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>True</UseWindowsForms>
 		<ApplicationIcon>Assets\Icons\MultiScaleLogo.ico</ApplicationIcon>
+		<SignAssembly>True</SignAssembly>
 	</PropertyGroup>
 
 	<ItemGroup>
