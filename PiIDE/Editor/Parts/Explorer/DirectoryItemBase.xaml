@@ -13,10 +13,14 @@
                     <ColumnDefinition Name="IndentColumn"/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="IsExpandedTextBlock" Grid.Column="1" Text=">" Padding="0,0,2,0"/>
-                <WrapPanel Grid.Column="2">
-                    <TextBlock x:Name="FileNameTextBlock" Text="Directory Name"/>
+                <TextBlock x:Name="IsExpandedTextBlock" Grid.Column="1" Foreground="White" Text=">" Margin="0,-2,0,2" Padding="0,0,2,0"/>
+                <ContentControl x:Name="FileIconControl" Grid.Column="2" VerticalAlignment="Center">
+                    <fa:FontAwesome Icon="Folder"/>
+                </ContentControl>
+                <WrapPanel Grid.Column="3">
+                    <TextBlock x:Name="FileNameTextBlock" Text="Directory Name" Padding="2,0,0,0"/>
                     <WrapPanel x:Name="Status" Visibility="Collapsed">
                         <Rectangle Width="3"/>
                         <TextBlock Text="["/>

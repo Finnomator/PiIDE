@@ -12,19 +12,23 @@ namespace PiIDE.Editor.Parts.Explorer {
         public int Indent { get; private set; }
 
         public delegate void FileDeletedEventHandler(DirectoryItemBase sender, string deletedFilePath);
-        public abstract event FileDeletedEventHandler? OnFileDeleted;
+        public virtual event FileDeletedEventHandler? OnFileDeleted;
 
         public delegate void FileRenamedEventHandler(DirectoryItemBase sender, string oldFilePath, string newFilePath);
-        public abstract event FileRenamedEventHandler? OnFileRenamed;
+        public virtual event FileRenamedEventHandler? OnFileRenamed;
 
         public delegate void FileClickEventHandler(FileItemBase sender);
-        public abstract event FileClickEventHandler? OnFileClick;
+        public virtual event FileClickEventHandler? OnFileClick;
 
         private bool IsExpanded;
 
         protected readonly DirectoryItemBase? ParentDirectory;
         protected string DirectoryName;
+        protected FileSystemWatcher? Watcher;
+
         protected readonly string DirectoryNameForTextBlock;
+        private static readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon=FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
+        private static readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon=FontAwesome.WPF.FontAwesomeIcon.Folder };
 
         public DirectoryItemBase(string fullPath, DirectoryItemBase? parentDirectory) {
             InitializeComponent();
@@ -44,13 +48,40 @@ namespace PiIDE.Editor.Parts.Explorer {
             FileNameTextBlock.Text = DirectoryNameForTextBlock;
         }
 
-        protected abstract void Expand();
-        protected abstract void Collapse();
-        protected abstract void RenameDirectory(string oldPath, string newPath, string newName);
+        protected virtual void Expand() {
+            IsExpandedTextBlock.Text = "V";
+            FileIconControl.Content = FolderOpenIcon;
+        }
+
+        protected virtual void Collapse() {
+            ChildrenStackPanel.Children.Clear();
+            IsExpandedTextBlock.Text = ">";
+            FileIconControl.Content = FolderClosedIcon;
+
+            if (Watcher != null) {
+                Watcher.Dispose();
+                Watcher = null;
+            }
+        }
+
 
         protected void ReloadContent() {
             ChildrenStackPanel.Children.Clear();
             Expand();
+        }
+
+        protected void Watcher_Renamed(object sender, RenamedEventArgs e) {
+            Dispatcher.Invoke(() => {
+                OnFileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
+                ReloadContent();
+            });
+        }
+
+        protected void Watcher_Deleted(object sender, FileSystemEventArgs e) {
+            Dispatcher.Invoke(() => {
+                OnFileDeleted?.Invoke(this, e.FullPath);
+                ReloadContent();
+            });
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e) {
@@ -61,10 +92,15 @@ namespace PiIDE.Editor.Parts.Explorer {
             IsExpanded = !IsExpanded;
         }
 
-        protected abstract void Copy_Click(object sender, RoutedEventArgs e);
-        protected abstract void Cut_Click(object sender, RoutedEventArgs e);
-        protected abstract void Paste_Click(object sender, RoutedEventArgs e);
-        protected abstract void Delete_Click(object sender, RoutedEventArgs e);
+        protected virtual void RenameDirectory(string oldPath, string newPath, string newName) => BasicFileActions.RenameDirectory(oldPath, newName);
+
+        protected virtual void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(DirectoryPath, true);
+
+        protected virtual void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(DirectoryPath, true);
+
+        protected virtual void Delete_Click(object sender, RoutedEventArgs e) => BasicFileActions.DeleteDirectory(DirectoryPath);
+
+        protected virtual void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(DirectoryPath);
 
         protected virtual void Rename_Click(object sender, RoutedEventArgs e) {
             RenameTextBox.Visibility = Visibility.Visible;

@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 
 namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
-    public class BoardDirectoryItem : LocalDirectoryItem {
+    public class BoardDirectoryItem : DirectoryItemBase {
 
         public string DirectoryPathOnBoard { get; private set; }
 
@@ -19,6 +19,8 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
         }
 
         protected override void Expand() {
+            base.Expand();
+            
             Watcher = new(DirectoryPath) {
                 NotifyFilter = NotifyFilters.Attributes
                                   | NotifyFilters.CreationTime
@@ -60,8 +62,6 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
                 item.OnClick += (s) => OnFileClick?.Invoke(s);
                 ChildrenStackPanel.Children.Add(item);
             }
-
-            IsExpandedTextBlock.Text = "V";
         }
 
         // TODO: Implement these features

@@ -6,8 +6,6 @@ using System.Windows.Controls;
 namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
     public class LocalDirectoryItem : DirectoryItemBase {
 
-        protected FileSystemWatcher? Watcher;
-
         public override event FileDeletedEventHandler? OnFileDeleted;
         public override event FileRenamedEventHandler? OnFileRenamed;
         public override event FileClickEventHandler? OnFileClick;
@@ -25,16 +23,9 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
             DirContextMenu.Items.Add(newItem);
         }
 
-        protected override void Collapse() {
-            if (Watcher is not null) {
-                Watcher.Dispose();
-                Watcher = null;
-            }
-            ChildrenStackPanel.Children.Clear();
-            IsExpandedTextBlock.Text = ">";
-        }
-
         protected override void Expand() {
+            base.Expand();
+
             Watcher = new(DirectoryPath) {
                 NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
@@ -76,33 +67,7 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
                 item.OnClick += (s) => OnFileClick?.Invoke(s);
                 ChildrenStackPanel.Children.Add(item);
             }
-
-            IsExpandedTextBlock.Text = "V";
         }
-
-        protected void Watcher_Renamed(object sender, RenamedEventArgs e) {
-            Dispatcher.Invoke(() => {
-                OnFileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
-                ReloadContent();
-            });
-        }
-
-        protected void Watcher_Deleted(object sender, FileSystemEventArgs e) {
-            Dispatcher.Invoke(() => {
-                OnFileDeleted?.Invoke(this, e.FullPath);
-                ReloadContent();
-            });
-        }
-
-        protected override void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(DirectoryPath, true);
-
-        protected override void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(DirectoryPath, true);
-
-        protected override void Delete_Click(object sender, RoutedEventArgs e) => BasicFileActions.DeleteDirectory(DirectoryPath);
-
-        protected override void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(DirectoryPath);
-
-        protected override void RenameDirectory(string oldPath, string newPath, string newName) => BasicFileActions.RenameDirectory(oldPath, newName);
 
         private async void Upload_Click(object sender, RoutedEventArgs e) {
             if (!Tools.EnableBoardInteractions) {

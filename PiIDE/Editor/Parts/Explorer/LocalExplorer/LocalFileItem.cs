@@ -6,7 +6,7 @@ using System.Windows.Controls;
 namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
     public class LocalFileItem : FileItemBase {
 
-        public LocalFileItem(string fullPath, LocalDirectoryItem parentDirectory) : base(fullPath, parentDirectory) {
+        public LocalFileItem(string fullPath, DirectoryItemBase parentDirectory) : base(fullPath, parentDirectory) {
             MenuItem newItem = new() {
                 Header = "Upload to Pi/",
                 Icon = new FontAwesome.WPF.FontAwesome() {
