@@ -106,7 +106,7 @@ namespace PiIDE {
 
             tabItem.CloseTabClick += (s, filePath) => {
                 TextEditor? editor = GetEditorFromPath(filePath);
-                if (editor is null)
+                if (editor == null)
                     return;
 
                 if (!editor.ContentIsSaved) {
@@ -145,10 +145,10 @@ namespace PiIDE {
 
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 
-            if (MainTabControl.SelectedItem is null)
+            if (MainTabControl.SelectedItem == null)
                 return;
 
-            if (OpenTextEditor is not null)
+            if (OpenTextEditor != null)
                 OpenTextEditor.DisableAllWrapers = true;
 
             OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
@@ -235,7 +235,7 @@ namespace PiIDE {
 
             MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
             TextEditor? editor = GetEditorFromPath(filePath);
-            if (editor is not null)
+            if (editor != null)
                 OpenTextEditors.Remove(editor);
 
             RemoveFileFromSettings(filePath);
@@ -274,7 +274,8 @@ namespace PiIDE {
 
             SyncOptionsWindow syncWindow = new();
             Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
-            syncWindow.Left = mousePos.X - syncWindow.Width / 2;
+            double left = mousePos.X - syncWindow.Width / 2;
+            syncWindow.Left = left > 0 ? left : 0;
             syncWindow.Top = mousePos.Y;
             syncWindow.Show();
             syncWindow.Focus();
@@ -305,7 +306,7 @@ namespace PiIDE {
 
         private void GoTo(string filePath, int row, int column) {
             OpenFile(filePath, false, false);
-            if (OpenTextEditor is null)
+            if (OpenTextEditor == null)
                 throw new NullReferenceException();
             if (!OpenTextEditor.ContentLoaded)
                 OpenTextEditor.ReloadFile();

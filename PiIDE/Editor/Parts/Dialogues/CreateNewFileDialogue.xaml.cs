@@ -49,7 +49,7 @@ namespace PiIDE.Editor.Parts.Dialogues {
 
         private void Disk_Checked(object sender, RoutedEventArgs e) {
 
-            if (SourceFolderButton is null)
+            if (SourceFolderButton == null)
                 return;
 
             CreateNewFileDialogueResult = CreateNewFileDialogueResult.Local;

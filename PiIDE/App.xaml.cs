@@ -21,10 +21,10 @@ namespace PiIDE {
 
             Debug.WriteLine(TypeIcons.Instance);
 
-            if (GlobalSettings.Default.LastOpenedBoardFilePaths is null)
+            if (GlobalSettings.Default.LastOpenedBoardFilePaths == null)
                 GlobalSettings.Default.LastOpenedBoardFilePaths = new();
 
-            if (GlobalSettings.Default.LastOpenedLocalFilePaths is null)
+            if (GlobalSettings.Default.LastOpenedLocalFilePaths == null)
                 GlobalSettings.Default.LastOpenedLocalFilePaths = new();
         }
 

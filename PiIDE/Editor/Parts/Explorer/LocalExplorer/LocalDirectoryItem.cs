@@ -26,7 +26,7 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
         }
 
         protected override void Collapse() {
-            if (Watcher is not null) {
+            if (Watcher != null) {
                 Watcher.Dispose();
                 Watcher = null;
             }

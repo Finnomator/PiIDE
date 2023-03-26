@@ -34,7 +34,7 @@ namespace PiIDE.Editor.Parts.Explorer {
 
             DirectoryName = Path.GetFileName(DirectoryPath);
 
-            Indent = ParentDirectory is null ? 0 : ParentDirectory.Indent + 1;
+            Indent = ParentDirectory == null ? 0 : ParentDirectory.Indent + 1;
             IndentColumn.Width = new GridLength(Indent * 10);
 
             DirectoryNameForTextBlock = DirectoryName;

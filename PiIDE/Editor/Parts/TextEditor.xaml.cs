@@ -206,7 +206,7 @@ namespace PiIDE {
                     } else {
                         char? charInFrontOfCaret = LastTypedChar();
 
-                        if (charInFrontOfCaret is null)
+                        if (charInFrontOfCaret == null)
                             break;
 
                         int caretRow = GetCaretRow();
@@ -288,7 +288,7 @@ namespace PiIDE {
 
             char? lastChar = LastTypedChar();
 
-            if (lastChar is not null && (char.IsLetter((char) lastChar) || lastChar == '.' || lastChar == '_' || lastChar == ' '))
+            if (lastChar != null && (char.IsLetter((char) lastChar) || lastChar == '.' || lastChar == '_' || lastChar == ' '))
                 DisplayCodeCompletionsAsync();
             else
                 CompletionList.Close();
@@ -403,7 +403,7 @@ namespace PiIDE {
 
         private void InsertCompletionAtCaret(Completion completion) {
 
-            if (completion.Complete is null || completion.Complete.Length == 0)
+            if (completion.Complete == null || completion.Complete.Length == 0)
                 return;
 
             int oldCaretIndex = TextEditorTextBox.CaretIndex;

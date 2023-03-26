@@ -77,7 +77,7 @@ namespace PiIDE {
         public static void RenameFile(string oldFilePath, string newFileName) {
             FileInfo fileInfo = new(oldFilePath);
             string newFilePath;
-            if (fileInfo.Directory is null)
+            if (fileInfo.Directory == null)
                 newFilePath = newFileName;
             else
                 newFilePath = Path.Combine(fileInfo.Directory.FullName, newFileName);
@@ -87,7 +87,7 @@ namespace PiIDE {
         public static void RenameDirectory(string oldDirPath, string newDirName) {
             DirectoryInfo dirInfo = new(oldDirPath);
             string newDirPath;
-            if (dirInfo.Parent is null)
+            if (dirInfo.Parent == null)
                 newDirPath = newDirName;
             else
                 newDirPath = Path.Combine(dirInfo.Parent.FullName, newDirName);
@@ -113,7 +113,7 @@ namespace PiIDE {
 
         public static void Paste(string destParentDirectory) {
 
-            Debug.Assert(_copiedPath is not null);
+            Debug.Assert(_copiedPath != null);
 
             string baseName = Path.GetFileName(_copiedPath);
             string destPath = Path.Combine(destParentDirectory, baseName);

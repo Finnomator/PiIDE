@@ -58,7 +58,7 @@ namespace PiIDE {
                     break;
 
                 int column = pylintMessage.Column;
-                int endCol = pylintMessage.EndColumn is null ? 1 : (int) pylintMessage.EndColumn;
+                int endCol = pylintMessage.EndColumn == null ? 1 : (int) pylintMessage.EndColumn;
 
 
                 MainGrid.Children.Add(new Line() {
