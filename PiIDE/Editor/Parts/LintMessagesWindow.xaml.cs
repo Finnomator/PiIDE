@@ -75,7 +75,7 @@ namespace PiIDE {
         }
 
         private void MainListViewSelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (SelectedMessage is not null) {
+            if (SelectedMessage != null) {
                 SelectionChanged?.Invoke(this, SelectedMessage);
             }
             // TODO: Maybe add a click effect

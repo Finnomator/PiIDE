@@ -50,7 +50,7 @@ namespace PiIDE.Wrapers {
             }
 
             public static void KillProcess() {
-                if (process is null)
+                if (process == null)
                     return;
 
                 process.Kill();
@@ -72,7 +72,7 @@ namespace PiIDE.Wrapers {
             process.WaitForExit();
             process.Close();
 
-            if (output is null)
+            if (output == null)
                 return error;
             return output;
         }

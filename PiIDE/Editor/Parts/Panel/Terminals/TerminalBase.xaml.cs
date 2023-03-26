@@ -57,7 +57,7 @@ namespace PiIDE {
 
         protected void PrintEndOfExecution() {
             Dispatcher.Invoke(() => {
-                OutputTextBox.Text += "-----------------------------\r\n";
+                OutputTextBox.Text += "--------------Program Finished--------------\r\n";
                 OutputTextBox.ScrollToEnd();
             });
         }

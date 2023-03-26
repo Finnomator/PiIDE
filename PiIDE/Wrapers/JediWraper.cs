@@ -169,7 +169,7 @@ namespace PiIDE.Wrapers {
             }
 
             public static T[] TryConvert<T>(string? line) where T : ReturnClasses.BaseName {
-                if (line is null)
+                if (line == null)
                     return Array.Empty<T>();
 
                 T[] x;
@@ -231,7 +231,7 @@ namespace PiIDE.Wrapers {
 
             public async Task<ReturnClasses.Name?> GetContext(int line, int column) {
                 string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({WraperVariableName}.get_context({line}, {column})))", true);
-                if (res is null)
+                if (res == null)
                     return null;
                 return JsonSerializer.Deserialize<ReturnClasses.Name>(res);
             }
@@ -284,7 +284,7 @@ namespace PiIDE.Wrapers {
                 public required Script script;
 
                 protected static T? TryConvert<T>(string? line) {
-                    if (line is null)
+                    if (line == null)
                         return default;
                     return JsonSerializer.Deserialize<T>(line);
                 }

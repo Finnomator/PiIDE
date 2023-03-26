@@ -41,7 +41,7 @@ namespace PiIDE.Editor.Parts {
             };
 
             Loaded += delegate {
-                if (TextEditor is null)
+                if (TextEditor == null)
                     return;
                 TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
                     VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
@@ -50,7 +50,7 @@ namespace PiIDE.Editor.Parts {
             };
         }
 
-        private FormattedText GetVisibleTextAsFormattedText() => TextEditor is null ? GetTextAsFormattedText("") : GetTextAsFormattedText(TextEditor.VisibleText);
+        private FormattedText GetVisibleTextAsFormattedText() => TextEditor == null ? GetTextAsFormattedText("") : GetTextAsFormattedText(TextEditor.VisibleText);
 
         private FormattedText GetTextAsFormattedText(string text) {
             return new(
@@ -74,7 +74,7 @@ namespace PiIDE.Editor.Parts {
             using DrawingContext dc = DrawingGroup.Open();
             foreach (Action<DrawingContext> action in RenderActions)
                 action(dc);
-            dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor is null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+            dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor == null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
         }
 
         protected override void OnRender(DrawingContext drawingContext) {

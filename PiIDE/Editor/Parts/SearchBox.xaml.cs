@@ -35,7 +35,7 @@ namespace PiIDE.Editor.Parts {
         }
 
         public void Initialize() {
-            Debug.Assert(ResultRenderBox is not null, "ResultRenderBox must not be set");
+            Debug.Assert(ResultRenderBox != null, "ResultRenderBox must not be set");
             ResultRenderBox.TextRenderer.AddRenderAction(RenderSearchResults);
             ResultRenderBox.Editor.TextEditorTextBox.TextChanged += (s, e) => {
                 Close();
@@ -71,7 +71,7 @@ namespace PiIDE.Editor.Parts {
 
         private void RenderSearchResults(DrawingContext context) {
 
-            if (AllSearchResults is null)
+            if (AllSearchResults == null)
                 return;
 
             int fvl = ResultRenderBox.Editor.FirstVisibleLineNum;
@@ -166,7 +166,7 @@ namespace PiIDE.Editor.Parts {
 
         private void PreviousResButton_Click(object sender, RoutedEventArgs e) {
 
-            if (AllSearchResults is null || AllSearchResults.Count <= 0)
+            if (AllSearchResults == null || AllSearchResults.Count <= 0)
                 return;
 
             if (--CurrentResultNo < 0)
@@ -177,7 +177,7 @@ namespace PiIDE.Editor.Parts {
 
         private void NextResButton_Click(object sender, RoutedEventArgs e) {
 
-            if (AllSearchResults is null || AllSearchResults.Count <= 0)
+            if (AllSearchResults == null || AllSearchResults.Count <= 0)
                 return;
 
             if (++CurrentResultNo >= AllSearchResults.Count)

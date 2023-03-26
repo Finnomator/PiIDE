@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
@@ -105,7 +106,7 @@ namespace PiIDE {
 
             tabItem.CloseTabClick += (s, filePath) => {
                 TextEditor? editor = GetEditorFromPath(filePath);
-                if (editor is null)
+                if (editor == null)
                     return;
 
                 if (!editor.ContentIsSaved) {
@@ -144,10 +145,10 @@ namespace PiIDE {
 
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 
-            if (MainTabControl.SelectedItem is null)
+            if (MainTabControl.SelectedItem == null)
                 return;
 
-            if (OpenTextEditor is not null)
+            if (OpenTextEditor != null)
                 OpenTextEditor.DisableAllWrapers = true;
 
             OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
@@ -175,9 +176,9 @@ namespace PiIDE {
             CreateNewFileButton.IsEnabled = false;
 
             CreateNewFileDialogue dialogue = new();
-            Point mousePos = PointToScreen(Mouse.GetPosition(this));
-            //dialogue.Left = mousePos.X;
-            //dialogue.Top = mousePos.Y;
+            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
+            dialogue.Left = mousePos.X - dialogue.Width / 2;
+            dialogue.Top = mousePos.Y;
             dialogue.Show();
             dialogue.Focus();
 
@@ -234,7 +235,7 @@ namespace PiIDE {
 
             MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
             TextEditor? editor = GetEditorFromPath(filePath);
-            if (editor is not null)
+            if (editor != null)
                 OpenTextEditors.Remove(editor);
 
             RemoveFileFromSettings(filePath);
@@ -272,8 +273,9 @@ namespace PiIDE {
             SyncButton.IsEnabled = false;
 
             SyncOptionsWindow syncWindow = new();
-            Point mousePos = PointToScreen(Mouse.GetPosition(this));
-            syncWindow.Left = mousePos.X;
+            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
+            double left = mousePos.X - syncWindow.Width / 2;
+            syncWindow.Left = left > 0 ? left : 0;
             syncWindow.Top = mousePos.Y;
             syncWindow.Show();
             syncWindow.Focus();
@@ -304,7 +306,7 @@ namespace PiIDE {
 
         private void GoTo(string filePath, int row, int column) {
             OpenFile(filePath, false, false);
-            if (OpenTextEditor is null)
+            if (OpenTextEditor == null)
                 throw new NullReferenceException();
             if (!OpenTextEditor.ContentLoaded)
                 OpenTextEditor.ReloadFile();

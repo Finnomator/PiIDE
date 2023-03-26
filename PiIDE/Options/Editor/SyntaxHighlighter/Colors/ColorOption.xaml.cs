@@ -28,7 +28,7 @@ namespace PiIDE.Options.Editor.SyntaxHighlighter.Colors {
                 newBrush = (Brush?) Tools.BrushConverter.ConvertFromString(ColorTextBox.Text);
             } catch (FormatException) { }
 
-            if (newBrush is not null) {
+            if (newBrush != null) {
                 ColorResources.HighlighterColors.SetBrush(ResourceKey, newBrush);
                 ResetButton.IsEnabled = newBrush.ToString() != DefaultCode;
             } else
