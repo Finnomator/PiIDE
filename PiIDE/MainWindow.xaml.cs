@@ -40,9 +40,10 @@ namespace PiIDE {
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
             Point relativeMousePos = e.GetPosition(TitleBarRow);
-            Point absoluteMousePos = PointToScreen(relativeMousePos);
+
             if (e.ChangedButton == MouseButton.Left && DraggableRect.Contains(relativeMousePos)) {
                 if (WindowState != WindowState.Normal) {
+                    Point absoluteMousePos = PointToScreen(relativeMousePos).ConvertToDevice();
                     NormalizeWindow();
                     Left = absoluteMousePos.X - ActualWidth / 2;
                     Top = absoluteMousePos.Y - TitleBarRow.ActualHeight / 2;
