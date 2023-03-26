@@ -35,6 +35,7 @@ namespace PiIDE {
         private int CurrentAmountOfLines;
         private (int row, int col) LastCaretPos = (1, 1);
         private readonly PylingUnderliner Underliner;
+        private Key? LastPressedKey;
         protected int AutoSaveDelaySeconds;
         protected bool DoAutoSaves = true;
 
@@ -185,6 +186,9 @@ namespace PiIDE {
         }
 
         private async void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e) {
+
+            LastPressedKey = e.Key;
+
             switch (e.Key) {
                 case Key.Down:
                     if (CompletionList.IsOpen) {
@@ -288,7 +292,7 @@ namespace PiIDE {
 
             char? lastChar = LastTypedChar();
 
-            if (lastChar != null && (char.IsLetter((char) lastChar) || lastChar == '.' || lastChar == '_' || lastChar == ' '))
+            if (lastChar != null && (char.IsLetter((char) lastChar) && LastPressedKey != Key.Back || lastChar == '.' || lastChar == '_' || lastChar == ' '))
                 DisplayCodeCompletionsAsync();
             else
                 CompletionList.Close();
@@ -306,32 +310,28 @@ namespace PiIDE {
             return (lines.Min().row, lines.Max().row);
         }
 
-        private void IndentLines(int[] lines) {
+        private void IndentLines(int startLine, int endLine) {
             int oldStart = TextEditorTextBox.SelectionStart;
             int oldLength = TextEditorTextBox.SelectionLength;
             string newText = EditorText;
-            foreach (int line in lines) {
+            for (int line = startLine; line < endLine; ++line) {
                 int indent = 4 - GetIndentOfLine(line) % 4;
                 if (indent == 0)
                     indent = 4;
                 newText = newText.Insert(newText.GetIndexOfColRow(line, 0), new string(' ', indent));
-
-                if (line == lines[0])
-                    oldStart += indent;
-                else
-                    oldLength += indent;
+                oldLength += indent;
             }
             TextEditorTextBox.Text = newText;
             TextEditorTextBox.SelectionStart = oldStart;
             TextEditorTextBox.SelectionLength = oldLength;
         }
 
-        private void OutdentLines(int[] lines) {
+        private void DedentLines(int startLine, int endLine) {
             int oldStart = TextEditorTextBox.SelectionStart;
             int oldLength = TextEditorTextBox.SelectionLength;
             string newText = EditorText;
 
-            foreach (int line in lines) {
+            for (int line = startLine; line < endLine; ++line) {
                 int indent = GetIndentOfLine(line);
 
                 if (indent == 0)
@@ -345,10 +345,7 @@ namespace PiIDE {
                 int index = newText.GetIndexOfColRow(line, 0);
                 newText = newText[..index] + newText[(index + goBack)..];
 
-                if (line == lines[0] && oldStart >= goBack)
-                    oldStart -= goBack;
-                else
-                    oldLength -= goBack;
+                oldLength -= goBack;
             }
             TextEditorTextBox.Text = newText;
             TextEditorTextBox.SelectionStart = oldStart;
@@ -361,7 +358,7 @@ namespace PiIDE {
 
             if (selectionLength != 0) {
                 (int firstSelectedLine, int lastSelectedLine) = GetSelectedLines();
-                int lineDelta = lastSelectedLine - firstSelectedLine;
+                int lineDelta = Math.Abs(lastSelectedLine - firstSelectedLine);
 
                 if (lineDelta == 0) {
                     string text = TextEditorTextBox.Text;
@@ -369,20 +366,11 @@ namespace PiIDE {
                     TextEditorTextBox.Text = $"{text[..index]}    {text[(index + selectionLength)..]}";
                     TextEditorTextBox.CaretIndex = index + 4;
                 } else {
-                    int[] lineNums = new int[lineDelta + 1];
-                    for (int i = 0; i <= lineDelta; i++)
-                        lineNums[i] = firstSelectedLine + i;
                     if (Keyboard.IsKeyDown(Key.LeftShift))
-                        OutdentLines(lineNums);
+                        DedentLines(firstSelectedLine, lastSelectedLine + 1);
                     else
-                        IndentLines(lineNums);
+                        IndentLines(firstSelectedLine, lastSelectedLine + 1);
                 }
-                return;
-            }
-
-            if (CompletionList.SelectedAnIndex) {
-                InsertCompletionAtCaret(CompletionList.SelectedCompletion!);
-                CompletionList.Close();
                 return;
             }
 
@@ -391,6 +379,12 @@ namespace PiIDE {
                 int goBack = col % 4;
                 if (col > 0)
                     TextEditorTextBox.CaretIndex -= goBack == 0 ? 4 : goBack;
+                return;
+            }
+
+            if (CompletionList.SelectedAnIndex) {
+                InsertCompletionAtCaret(CompletionList.SelectedCompletion!);
+                CompletionList.Close();
                 return;
             }
 
