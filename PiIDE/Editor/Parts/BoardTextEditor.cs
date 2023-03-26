@@ -67,11 +67,11 @@ namespace PiIDE.Editor.Parts {
 
         private void EnableBoardInteractions() => RunFileOnBoardButton.IsEnabled = true;
 
-        protected override void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
+        protected async override void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
             base.StopAllRunningTasksButton_Click(sender, e);
             if (Tools.EnableBoardInteractions) {
                 AmpyWraper.FileRunner.KillProcess();
-                AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort);
+                await AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort);
                 EnableBoardInteractions();
             } else
                 DisableBoardInteractions();
