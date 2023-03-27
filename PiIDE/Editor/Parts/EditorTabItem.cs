@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiIDE.Assets.Icons;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,9 +19,6 @@ namespace PiIDE.Editor.Parts {
 
         private readonly Button CloseTabButton;
 
-        private static readonly BitmapImage PythonLogoBitmap = new(new Uri("../Assets/Icons/Python.png", UriKind.Relative));
-        private static readonly BitmapImage TextFileBitmap = new(new Uri("../Assets/Icons/FileIcon.png", UriKind.Relative));
-
         public EditorTabItem(string filePath) {
 
             FilePath = filePath;
@@ -34,8 +32,9 @@ namespace PiIDE.Editor.Parts {
                 MaxHeight = 16,
                 Orientation = Orientation.Horizontal,
             };
+
             IconsStackPanel.Children.Add(new Image() {
-                Source = Tools.IsPythonFile(filePath) ? PythonLogoBitmap : TextFileBitmap,
+                Source = Icons.GetFileIcon(FilePath),
             });
 
             TextBlock fileNameTextBlock = new() {

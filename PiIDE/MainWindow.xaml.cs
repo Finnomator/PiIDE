@@ -27,13 +27,9 @@ namespace PiIDE {
             WindowState = WindowState.Minimized;
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e) {
-            if (!Editor.AreAllFilesSaved()) {
-                MessageBoxResult msgbr = MessageBox.Show("Some files are not saved. Exit anyway?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (msgbr == MessageBoxResult.No)
-                    return;
-            }
-
+        private async void Close_Click(object sender, RoutedEventArgs e) {
+            Editor.StopAllEditorAutoSaving();
+            await Editor.SaveAllFilesAsync();
             GlobalSettings.Default.Save();
             Close();
         }

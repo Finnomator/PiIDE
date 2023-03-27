@@ -3,7 +3,7 @@ using PiIDE.Wrapers;
 using System.Windows;
 
 namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
-    public class BoardFileItem : LocalFileItem {
+    public class BoardFileItem : FileItemBase {
 
         public string FilePathOnBoard { get; private set; }
 

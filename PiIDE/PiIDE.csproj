@@ -24,6 +24,10 @@
 	<ItemGroup>
 		<None Remove="Assets\Icons\CaseSensitive.png" />
 		<None Remove="Assets\Icons\FileIcon.png" />
+		<None Remove="Assets\Icons\IconsByFileExtension\c.png" />
+		<None Remove="Assets\Icons\IconsByFileExtension\cpp.png" />
+		<None Remove="Assets\Icons\IconsByFileExtension\py.png" />
+		<None Remove="Assets\Icons\IconsByFileExtension\txt.png" />
 		<None Remove="Assets\Icons\Logo.ico" />
 		<None Remove="Assets\Icons\Logo16x16.ico" />
 		<None Remove="Assets\Icons\MatchWholeWord.png" />
@@ -41,6 +45,18 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\Icons\FileIcon.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\IconsByFileExtension\c.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\IconsByFileExtension\cpp.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\IconsByFileExtension\py.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\IconsByFileExtension\txt.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\Icons\MatchWholeWord.png">

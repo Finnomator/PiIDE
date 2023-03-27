@@ -7,13 +7,17 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d">
     <StackPanel>
-        <Button Style="{StaticResource CleanButtonStyle}" x:Name="MainButton" Click="MainButton_Click" HorizontalContentAlignment="Left" BorderThickness="0" Background="Transparent" Foreground="White">
+        <Button Padding="2" Style="{StaticResource CleanButtonStyle}" x:Name="MainButton" Click="MainButton_Click" HorizontalContentAlignment="Left" Background="Transparent" Foreground="White">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="IndentColumn"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <WrapPanel Grid.Column="1">
+
+                <ContentControl x:Name="FileIconControl" Grid.Column="1" VerticalAlignment="Center" Width="20" MaxHeight="16"/>
+
+                <WrapPanel Grid.Column="2">
                     <TextBlock x:Name="FileNameTextBlock" Text="File Name"/>
                     <WrapPanel x:Name="Status" Visibility="Collapsed">
                         <Rectangle Width="3"/>
@@ -23,9 +27,9 @@
                         <TextBlock Text="]"/>
                     </WrapPanel>
                 </WrapPanel>
-                <TextBox Grid.Column="1" x:Name="RenameTextBox" Visibility="Collapsed" KeyDown="RenameTextBox_KeyDown" LostFocus="RenameTextBox_LostFocus"/>
+                <TextBox x:Name="RenameTextBox" Style="{StaticResource TextBoxStyle}" Grid.Column="2" Visibility="Collapsed" KeyDown="RenameTextBox_KeyDown" LostFocus="RenameTextBox_LostFocus"/>
             </Grid>
-
+            
             <Button.ContextMenu>
                 <ContextMenu x:Name="FileContextMenu">
                     <MenuItem Header="Copy" Click="Copy_Click">
