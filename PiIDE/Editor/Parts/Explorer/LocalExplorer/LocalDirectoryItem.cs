@@ -6,10 +6,6 @@ using System.Windows.Controls;
 namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
     public class LocalDirectoryItem : DirectoryItemBase {
 
-        public override event FileDeletedEventHandler? OnFileDeleted;
-        public override event FileRenamedEventHandler? OnFileRenamed;
-        public override event FileClickEventHandler? OnFileClick;
-
         public LocalDirectoryItem(string fullPath, LocalDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
             MenuItem newItem = new() {
                 Header = "Upload to Pi/",
@@ -56,15 +52,15 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
 
             for (int i = 0; i < subDirPaths.Length; i++) {
                 LocalDirectoryItem item = new(subDirPaths[i], this);
-                item.OnFileClick += (s) => OnFileClick?.Invoke(s);
-                item.OnFileDeleted += (s, path) => OnFileDeleted?.Invoke(s, path);
-                item.OnFileRenamed += (s, oldPath, newPath) => OnFileRenamed?.Invoke(s, oldPath, newPath);
+                item.FileClick += OnFileClick;
+                item.FileDeleted += OnFileDeleted;
+                item.FileRenamed += OnFileRenamed;
                 ChildrenStackPanel.Children.Add(item);
             }
 
             for (int i = 0; i < subFilePaths.Length; i++) {
                 LocalFileItem item = new(subFilePaths[i], this);
-                item.OnClick += (s) => OnFileClick?.Invoke(s);
+                item.OnClick += OnFileClick;
                 ChildrenStackPanel.Children.Add(item);
             }
         }

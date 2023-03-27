@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,13 +13,16 @@ namespace PiIDE.Editor.Parts.Explorer {
         public int Indent { get; private set; }
 
         public delegate void FileDeletedEventHandler(DirectoryItemBase sender, string deletedFilePath);
-        public virtual event FileDeletedEventHandler? OnFileDeleted;
+        public virtual event FileDeletedEventHandler? FileDeleted;
+        protected void OnFileDeleted(DirectoryItemBase sender, string deletedFilePath) => FileDeleted?.Invoke(sender, deletedFilePath);
 
         public delegate void FileRenamedEventHandler(DirectoryItemBase sender, string oldFilePath, string newFilePath);
-        public virtual event FileRenamedEventHandler? OnFileRenamed;
+        public virtual event FileRenamedEventHandler? FileRenamed;
+        protected void OnFileRenamed(DirectoryItemBase sender, string oldFilePath, string newFilepath) => FileRenamed?.Invoke(sender, oldFilePath, newFilepath);
 
         public delegate void FileClickEventHandler(FileItemBase sender);
-        public virtual event FileClickEventHandler? OnFileClick;
+        public virtual event FileClickEventHandler? FileClick;
+        protected void OnFileClick(FileItemBase fileItem) => FileClick?.Invoke(fileItem);
 
         private bool IsExpanded;
 
@@ -27,8 +31,8 @@ namespace PiIDE.Editor.Parts.Explorer {
         protected FileSystemWatcher? Watcher;
 
         protected readonly string DirectoryNameForTextBlock;
-        private static readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon=FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
-        private static readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon=FontAwesome.WPF.FontAwesomeIcon.Folder };
+        private static readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
+        private static readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Folder };
 
         public DirectoryItemBase(string fullPath, DirectoryItemBase? parentDirectory) {
             InitializeComponent();
@@ -64,7 +68,6 @@ namespace PiIDE.Editor.Parts.Explorer {
             }
         }
 
-
         protected void ReloadContent() {
             ChildrenStackPanel.Children.Clear();
             Expand();
@@ -72,15 +75,17 @@ namespace PiIDE.Editor.Parts.Explorer {
 
         protected void Watcher_Renamed(object sender, RenamedEventArgs e) {
             Dispatcher.Invoke(() => {
-                OnFileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
+                FileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
                 ReloadContent();
             });
         }
 
         protected void Watcher_Deleted(object sender, FileSystemEventArgs e) {
             Dispatcher.Invoke(() => {
-                OnFileDeleted?.Invoke(this, e.FullPath);
-                ReloadContent();
+                FileDeleted?.Invoke(this, e.FullPath);
+                try {
+                    ReloadContent();
+                } catch (ArgumentException) { }
             });
         }
 

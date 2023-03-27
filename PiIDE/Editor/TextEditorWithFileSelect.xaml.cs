@@ -206,13 +206,13 @@ namespace PiIDE {
         public void OpenDirectory(string directory) {
             RootPathTextBox.Text = Path.GetFullPath(directory);
             LocalExplorer = new(directory);
-            LocalExplorer.OnFileClick += (s) => {
+            LocalExplorer.FileClick += (s) => {
                 OpenFile(s.FilePath, false, false);
             };
-            LocalExplorer.OnFileDeleted += (s, filePath) => {
+            LocalExplorer.FileDeleted += (s, filePath) => {
                 CloseFile(filePath);
             };
-            LocalExplorer.OnFileRenamed += (s, oldPath, newPath) => {
+            LocalExplorer.FileRenamed += (s, oldPath, newPath) => {
                 if (File.Exists(newPath)) {
                     OpenRenamedFile(oldPath, newPath);
                 }
@@ -246,15 +246,15 @@ namespace PiIDE {
 
             BoardExplorer = new(LocalBoardPath, directory);
 
-            BoardExplorer.OnFileClick += (s) => {
+            BoardExplorer.FileClick += (s) => {
                 OpenFile(s.FilePath, false, true);
             };
 
-            BoardExplorer.OnFileDeleted += (s, filePath) => {
+            BoardExplorer.FileDeleted += (s, filePath) => {
                 CloseFile(filePath);
             };
 
-            BoardExplorer.OnFileRenamed += (s, oldPath, newPath) => {
+            BoardExplorer.FileRenamed += (s, oldPath, newPath) => {
                 if (File.Exists(newPath)) {
                     OpenRenamedFile(oldPath, newPath);
                 }

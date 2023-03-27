@@ -8,10 +8,6 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         public string DirectoryPathOnBoard { get; private set; }
 
-        public override event FileDeletedEventHandler? OnFileDeleted;
-        public override event FileRenamedEventHandler? OnFileRenamed;
-        public override event FileClickEventHandler? OnFileClick;
-
         public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
         public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, BoardDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
@@ -51,15 +47,15 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
             for (int i = 0; i < subDirPaths.Length; i++) {
                 BoardDirectoryItem item = new(subDirPaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subDirPaths[i])), this);
-                item.OnFileClick += (s) => OnFileClick?.Invoke(s);
-                item.OnFileDeleted += (s, path) => OnFileDeleted?.Invoke(s, path);
-                item.OnFileRenamed += (s, oldPath, newPath) => OnFileRenamed?.Invoke(s, oldPath, newPath);
+                item.FileClick += OnFileClick;
+                item.FileDeleted += OnFileDeleted;
+                item.FileRenamed += OnFileRenamed;
                 ChildrenStackPanel.Children.Add(item);
             }
 
             for (int i = 0; i < subFilePaths.Length; i++) {
                 BoardFileItem item = new(subFilePaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subFilePaths[i])), this);
-                item.OnClick += (s) => OnFileClick?.Invoke(s);
+                item.OnClick += OnFileClick;
                 ChildrenStackPanel.Children.Add(item);
             }
         }
