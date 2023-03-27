@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Media;
 
 namespace PiIDE.Editor.Parts.Explorer {
 
@@ -31,8 +31,9 @@ namespace PiIDE.Editor.Parts.Explorer {
         protected FileSystemWatcher? Watcher;
 
         protected readonly string DirectoryNameForTextBlock;
-        private static readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
-        private static readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Folder };
+        private readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
+        private readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Folder };
+        private static readonly RotateTransform NinetyDegreeTurn = new RotateTransform(90);
 
         public DirectoryItemBase(string fullPath, DirectoryItemBase? parentDirectory) {
             InitializeComponent();
@@ -53,13 +54,13 @@ namespace PiIDE.Editor.Parts.Explorer {
         }
 
         protected virtual void Expand() {
-            IsExpandedTextBlock.Text = "V";
+            IsExpandedTextBlock.RenderTransform = NinetyDegreeTurn;
             FileIconControl.Content = FolderOpenIcon;
         }
 
         protected virtual void Collapse() {
             ChildrenStackPanel.Children.Clear();
-            IsExpandedTextBlock.Text = ">";
+            IsExpandedTextBlock.RenderTransform = null;
             FileIconControl.Content = FolderClosedIcon;
 
             if (Watcher != null) {
