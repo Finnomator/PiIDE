@@ -71,8 +71,8 @@ namespace PiIDE.Editor.Parts {
             base.StopAllRunningTasksButton_Click(sender, e);
             if (Tools.EnableBoardInteractions) {
                 AmpyWraper.FileRunner.KillProcess();
-                await AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort);
-                EnableBoardInteractions();
+                if (await AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort))
+                    EnableBoardInteractions();
             } else
                 DisableBoardInteractions();
         }
@@ -87,7 +87,7 @@ namespace PiIDE.Editor.Parts {
             }
 
             await SaveFileAsync(true);
-            AmpyWraper.FileRunner.RunFileOnBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath);
+            AmpyWraper.FileRunner.BeginRunningFile(GlobalSettings.Default.SelectedCOMPort, FilePath);
             StartedPythonExecutionOnBoard?.Invoke(this, EventArgs.Empty);
         }
 

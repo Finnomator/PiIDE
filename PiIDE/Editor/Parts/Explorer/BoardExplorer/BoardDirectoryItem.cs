@@ -16,7 +16,7 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         protected override void Expand() {
             base.Expand();
-            
+
             Watcher = new(DirectoryPath) {
                 NotifyFilter = NotifyFilters.Attributes
                                   | NotifyFilters.CreationTime
@@ -72,8 +72,8 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
                 return;
 
             SetStatus("Deleting");
-            await AmpyWraper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard);
-            BasicFileActions.DeleteDirectory(DirectoryPath);
+            if (await AmpyWraper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard))
+                BasicFileActions.DeleteDirectory(DirectoryPath);
             UnsetStatus();
         }
 

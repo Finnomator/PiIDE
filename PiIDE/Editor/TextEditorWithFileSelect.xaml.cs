@@ -193,10 +193,8 @@ namespace PiIDE {
                     case CreateNewFileDialogueResult.Pi:
                         // TODO: Make files on pi creatable in subfolder
                         string localPath = Path.Combine("BoardFiles/", dialogue.FileName);
-                        if (Tools.TryCreateFile(localPath)) {
-                            await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName);
+                        if (await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName) && Tools.TryCreateFile(localPath))
                             OpenFile(localPath, false, true);
-                        }
                         break;
                 }
 
@@ -295,9 +293,9 @@ namespace PiIDE {
 
                         SyncStatus.Visibility = Visibility.Collapsed;
 
-                        for (int i = 0; i < OpenTextEditors.Count; i++)
-                            if (OpenTextEditors[i] is BoardTextEditor)
-                                OpenTextEditors[i].ReloadFile();
+                        foreach (TextEditor editor in OpenTextEditors)
+                            if (editor is BoardTextEditor)
+                                editor.ReloadFile();
                         break;
                 }
 

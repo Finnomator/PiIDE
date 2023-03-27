@@ -22,11 +22,11 @@ namespace PiIDE.Wrapers {
             CreateNoWindow = true,
         };
 
-        private static async Task<string?> TryRunAmpy(string arguments, bool expectsOutput) {
+        private static async Task<(bool success, string? output)> TryRunAmpy(string arguments, bool expectsOutput) {
 
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
-                return null;
+                return (false, null);
             }
 
             IsBusy = true;
@@ -48,38 +48,39 @@ namespace PiIDE.Wrapers {
 
             if (!string.IsNullOrEmpty(error)) {
                 MessageBox.Show(error, "Failed to run ampy", MessageBoxButton.OK, MessageBoxImage.Error);
-                output = null;
+                IsBusy = false;
+                return (false, null);
             }
 
             IsBusy = false;
 
-            return output;
+            return (true, output);
         }
 
-        public static async Task<string?> ReadFileOnBoardAsync(int comport, string filePath)
+        public static async Task<(bool success, string? output)> ReadFileOnBoardAsync(int comport, string filePath)
             => await TryRunAmpy($"--port COM{comport} get \"{filePath.Replace("\\", "/")}\"", true);
 
-        public static async Task ReadFileOnBoardIntoFileAsync(int comport, string filePath, string destPath)
-            => await TryRunAmpy($"--port COM{comport} get \"{filePath}\" \"{destPath.Replace("\\", "/")}\"", false);
+        public static async Task<bool> ReadFileOnBoardIntoFileAsync(int comport, string filePath, string destPath)
+            => (await TryRunAmpy($"--port COM{comport} get \"{filePath}\" \"{destPath.Replace("\\", "/")}\"", false)).success;
 
-        public static async Task WriteToBoardAsync(int comport, string fileOrDirPath, string destPath)
-            => await TryRunAmpy($"--port COM{comport} put \"{fileOrDirPath}\" \"{destPath.Replace("\\", "/")}\"", false);
+        public static async Task<bool> WriteToBoardAsync(int comport, string fileOrDirPath, string destPath)
+            => (await TryRunAmpy($"--port COM{comport} put \"{fileOrDirPath}\" \"{destPath.Replace("\\", "/")}\"", false)).success;
 
-        public static async Task CreateDirectoryAsync(int comport, string newDirPath)
-            => await TryRunAmpy($"--port COM{comport} mkdir \"{newDirPath.Replace("\\", "/")}\"", false);
+        public static async Task<bool> CreateDirectoryAsync(int comport, string newDirPath)
+            => (await TryRunAmpy($"--port COM{comport} mkdir \"{newDirPath.Replace("\\", "/")}\"", false)).success;
 
-        public static async Task<string[]?> ListFilesOnBoardAsync(int comport, string dirPath = "/") {
-            string? output = await TryRunAmpy($"--port COM{comport} ls \"{dirPath.Replace("\\", "/")}\"", true);
-            if (output == null || output.Length == 0)
-                return null;
-            return output[1..].Trim().Split("\r\n/");
+        public static async Task<(bool success, string[]?)> ListFilesOnBoardAsync(int comport, string dirPath = "/") {
+            (bool success, string? output) = await TryRunAmpy($"--port COM{comport} ls \"{dirPath.Replace("\\", "/")}\"", true);
+            if (output == null || output.Length == 0 || !success)
+                return (false, null);
+            return (true, output[1..].Trim().Split("\r\n/"));
         }
 
         public static class FileRunner {
 
             private static Process? RunnerProcess;
 
-            public static async void RunFileOnBoardAsync(int comport, string filePath) {
+            public static async void BeginRunningFile(int comport, string filePath) {
                 if (IsBusy) {
                     ErrorMessager.AmpyIsBusy();
                     return;
@@ -119,47 +120,45 @@ namespace PiIDE.Wrapers {
             }
         }
 
-        public static async Task RemoveFileFromBoardAsync(int comport, string filePath)
-            => await TryRunAmpy($"--port COM{comport} rm \"{filePath.Replace("\\", "/")}\"", false);
+        public static async Task<bool> RemoveFileFromBoardAsync(int comport, string filePath)
+            => (await TryRunAmpy($"--port COM{comport} rm \"{filePath.Replace("\\", "/")}\"", false)).success;
 
-        public static async Task RemoveDirectoryFromBoardAsync(int comport, string dirPath)
-            => await TryRunAmpy($"--port COM{comport} rmdir \"{dirPath.Replace("\\", "/")}\"", false);
+        public static async Task<bool> RemoveDirectoryFromBoardAsync(int comport, string dirPath)
+            => (await TryRunAmpy($"--port COM{comport} rmdir \"{dirPath.Replace("\\", "/")}\"", false)).success;
 
-        public static async Task Softreset(int comport) 
-            => await TryRunAmpy($"--port COM{comport} reset", false);
+        public static async Task<bool> Softreset(int comport) 
+            => (await TryRunAmpy($"--port COM{comport} reset", false)).success;
 
-        public static async Task DownloadDirectoryFromBoardAsync(int comport, string dirPath, string destDirPath) {
+        public static async Task<bool> DownloadDirectoryFromBoardAsync(int comport, string dirPath, string destDirPath) {
 
             if (IsBusy) {
                 ErrorMessager.AmpyIsBusy();
-                return;
+                return false;
             }
 
-            string[]? subPaths = await ListFilesOnBoardAsync(comport, dirPath);
+            (bool success, string[]? subPaths) = await ListFilesOnBoardAsync(comport, dirPath);
 
-            if (subPaths == null)
-                return;
+            if (subPaths == null || !success)
+                return false;
 
-            for (int i = 0; i < subPaths.Length; ++i) {
+            for (int i = 0; i < subPaths.Length && success; ++i) {
                 string subPath = subPaths[i];
                 bool isDirectory = !Path.HasExtension(subPath);
 
                 string fullDestPath = Path.Combine(destDirPath, subPath);
 
                 if (isDirectory) {
-
                     if (!Directory.Exists(fullDestPath))
                         Directory.CreateDirectory(fullDestPath);
-
-                    await DownloadDirectoryFromBoardAsync(comport, subPath, destDirPath);
+                    success = await DownloadDirectoryFromBoardAsync(comport, subPath, destDirPath);
                 } else {
-
                     if (!File.Exists(fullDestPath))
                         File.Create(fullDestPath).Close();
-
-                    await ReadFileOnBoardIntoFileAsync(comport, subPath, fullDestPath);
+                    success = await ReadFileOnBoardIntoFileAsync(comport, subPath, fullDestPath);
                 }
             }
+
+            return success;
         }
     }
 }

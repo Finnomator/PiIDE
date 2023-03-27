@@ -25,8 +25,8 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
                 return;
             }
             SetStatus("Uploading");
-            await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, $"/{FileName}");
-            BasicFileActions.CopyFile(FilePath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, FileName));
+            if (await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, $"/{FileName}"))
+                BasicFileActions.CopyFile(FilePath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, FileName));
             UnsetStatus();
         }
     }

@@ -24,8 +24,8 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
                 return;
             }
             SetStatus("Deleting");
-            await AmpyWraper.RemoveFileFromBoardAsync(Port, FilePathOnBoard);
-            BasicFileActions.DeleteFile(FilePath);
+            if (await AmpyWraper.RemoveFileFromBoardAsync(Port, FilePathOnBoard))
+                BasicFileActions.DeleteFile(FilePath);
             UnsetStatus();
         }
 
