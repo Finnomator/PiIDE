@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +38,7 @@ namespace PiIDE {
         private readonly PylingUnderliner Underliner;
         private Key? LastPressedKey;
         protected int AutoSaveDelaySeconds;
-        protected bool DoAutoSaves = true;
+        private CancellationTokenSource AutoSaveCancelToken = new();
 
         public bool DisableAllWrapers { get; set; }
         public bool ContentIsSaved { get; private set; } = true;
@@ -105,8 +106,8 @@ namespace PiIDE {
                 TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
                 if (!ContentLoaded)
                     ReloadFile();
-                AutoSaveDelaySeconds = Tools.CountLines(EditorText) / 500 + 5;
-                AutoSave();
+                AutoSaveDelaySeconds = (int) (Tools.CountLines(EditorText) / 500.0 + 5);
+                BeginAutoSave();
             };
 
             GlobalSettings.Default.PropertyChanged += (s, e) => {
@@ -453,13 +454,15 @@ namespace PiIDE {
             return new(formattedText.Width, formattedText.Height);
         }
 
-        private async void AutoSave() {
-            while (DoAutoSaves) {
+        private async void BeginAutoSave() {
+            while (!AutoSaveCancelToken.IsCancellationRequested) {
                 await Task.Delay(AutoSaveDelaySeconds * 1000);
                 if (!ContentIsSaved)
                     await SaveFileAsync(false);
             }
         }
+
+        public void EndAutoSave() => AutoSaveCancelToken.Cancel();
 
         public int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
         public (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);

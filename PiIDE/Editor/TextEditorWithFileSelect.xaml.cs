@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -235,8 +236,10 @@ namespace PiIDE {
 
             MainTabControl.Items.RemoveAt(GetTabIndexOfOpenFile(filePath));
             TextEditor? editor = GetEditorFromPath(filePath);
-            if (editor != null)
+            if (editor != null) {
+                editor.EndAutoSave();
                 OpenTextEditors.Remove(editor);
+            }
 
             RemoveFileFromSettings(filePath);
         }
@@ -316,9 +319,9 @@ namespace PiIDE {
 
         private int GetTabIndexOfOpenFile(string filePath) {
             for (int i = 0; i < MainTabControl.Items.Count; i++) {
-                TabItem tabItem = (TabItem) MainTabControl.Items[i];
+                EditorTabItem tabItem = (EditorTabItem) MainTabControl.Items[i];
                 TextEditor content = (TextEditor) tabItem.Content;
-                if (Path.GetFullPath(content.FilePath) == Path.GetFullPath(filePath))
+                if (content.AbsolutePath == Path.GetFullPath(filePath))
                     return i;
             }
             return -1;
@@ -337,12 +340,16 @@ namespace PiIDE {
             }
         }
 
-        public bool AreAllFilesSaved() {
-            for (int i = 0; i < OpenTextEditors.Count; ++i) {
-                if (!OpenTextEditors[i].ContentIsSaved)
-                    return false;
+        public async Task SaveAllFilesAsync() {
+            foreach (TextEditor editor in OpenTextEditors) {
+                if (!editor.ContentIsSaved)
+                    await editor.SaveFileAsync(false);
             }
-            return true;
+        }
+
+        public void StopAllEditorAutoSaving() {
+            foreach (TextEditor editor in OpenTextEditors)
+                editor.EndAutoSave();
         }
     }
 }

@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE.Editor.Parts.Explorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             mc:Ignorable="d" d:DesignWidth="200">
+             mc:Ignorable="d">
     <StackPanel>
-        <Button Style="{StaticResource CleanButtonStyle}" x:Name="MainButton" Click="MainButton_Click" HorizontalContentAlignment="Left" BorderThickness="0" Background="Transparent" Foreground="White">
+        <Button Style="{StaticResource CleanButtonStyle}" x:Name="MainButton" Padding="2" Click="MainButton_Click" HorizontalContentAlignment="Left" BorderThickness="0" Background="Transparent" Foreground="White">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Name="IndentColumn"/>
@@ -15,12 +15,12 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="IsExpandedTextBlock" Grid.Column="1" Foreground="White" Text=">" Margin="0,-2,0,2" Padding="0,0,2,0"/>
-                <ContentControl x:Name="FileIconControl" Grid.Column="2" VerticalAlignment="Center">
+                <TextBlock x:Name="IsExpandedTextBlock" Grid.Column="1" Foreground="White" Text="›" FontFamily="Cascadia Code" RenderTransformOrigin="0.5,0.5"/>
+                <ContentControl x:Name="FileIconControl" Grid.Column="2" VerticalAlignment="Center" Width="17">
                     <fa:FontAwesome Icon="Folder"/>
                 </ContentControl>
                 <WrapPanel Grid.Column="3">
-                    <TextBlock x:Name="FileNameTextBlock" Text="Directory Name" Padding="2,0,0,0"/>
+                    <TextBlock x:Name="FileNameTextBlock" Text="Directory Name"/>
                     <WrapPanel x:Name="Status" Visibility="Collapsed">
                         <Rectangle Width="3"/>
                         <TextBlock Text="["/>
@@ -29,7 +29,7 @@
                         <TextBlock Text="]"/>
                     </WrapPanel>
                 </WrapPanel>
-                <TextBox Grid.Column="2" x:Name="RenameTextBox" Visibility="Collapsed" KeyDown="RenameTextBox_KeyDown" LostFocus="RenameTextBox_LostFocus"/>
+                <TextBox x:Name="RenameTextBox" Style="{StaticResource TextBoxStyle}" Grid.Column="3" Visibility="Collapsed" KeyDown="RenameTextBox_KeyDown" LostFocus="RenameTextBox_LostFocus"/>
             </Grid>
 
             <Button.ContextMenu>

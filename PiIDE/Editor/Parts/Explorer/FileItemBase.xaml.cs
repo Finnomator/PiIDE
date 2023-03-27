@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using PiIDE.Assets.Icons;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -32,6 +33,11 @@ namespace PiIDE.Editor.Parts.Explorer {
                 FileNameForTextBlock = FilePath;
 
             FileNameTextBlock.Text = FileNameForTextBlock;
+
+            FileIconControl.Content = new Image() {
+                Source = Icons.GetFileIcon(FilePath),
+                Width = FileIconControl.Width - 4,
+            };
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e) => OnClick?.Invoke(this);
@@ -45,12 +51,11 @@ namespace PiIDE.Editor.Parts.Explorer {
             Status.Visibility = Visibility.Collapsed;
         }
 
-        protected abstract void Copy_Click(object sender, RoutedEventArgs e);
-        protected abstract void Cut_Click(object sender, RoutedEventArgs e);
-        protected abstract void Paste_Click(object sender, RoutedEventArgs e);
-        protected abstract void Delete_Click(object sender, RoutedEventArgs e);
-
-        protected abstract void RenameFile(string oldPath, string newPath, string newName);
+        protected virtual void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(FilePath, false);
+        protected virtual void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(FilePath, false);
+        protected virtual void Delete_Click(object sender, RoutedEventArgs e) => BasicFileActions.DeleteFile(FilePath);
+        protected virtual void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(ParentDirectory.DirectoryPath);
+        protected virtual void RenameFile(string oldPath, string newPath, string newName) => BasicFileActions.RenameFile(oldPath, newName);
 
         protected virtual void Rename_Click(object sender, RoutedEventArgs e) {
             RenameTextBox.Visibility = Visibility.Visible;

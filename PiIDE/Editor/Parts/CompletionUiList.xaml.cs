@@ -31,6 +31,10 @@ namespace PiIDE {
             Editor = editor;
             ShowActivated = false;
             ShowInTaskbar = false;
+
+            Application.Current.MainWindow.Closed += delegate {
+                base.Close();
+            };
         }
 
         private void AddCompletions(Completion[] completions) {
