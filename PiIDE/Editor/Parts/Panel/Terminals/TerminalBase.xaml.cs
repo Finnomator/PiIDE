@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace PiIDE {
     public abstract partial class TerminalBase : UserControl {
+
+        private bool RecivingErrorData;
 
         public TerminalBase() {
             InitializeComponent();
@@ -29,12 +32,16 @@ namespace PiIDE {
                 return;
             }
 
+            RecivingErrorData = true;
+
             data += "\r\n";
 
             Dispatcher.Invoke(() => {
                 OutputTextBox.Text += data;
                 OutputTextBox.ScrollToEnd();
             });
+
+            RecivingErrorData = false;
         }
 
         protected void OutputDataReceived(object sender, DataReceivedEventArgs e) {
@@ -43,7 +50,11 @@ namespace PiIDE {
             string? data = e.Data;
 
             if (data == null) {
-                PrintEndOfExecution();
+                Thread.Sleep(10); // Wait for possible Error Output
+                for (int i = 0; i < 10 && RecivingErrorData; ++i)
+                    Thread.Sleep(10);
+
+                PrintEndOfExecution("Programm Finished");
                 return;
             }
 
@@ -55,9 +66,9 @@ namespace PiIDE {
             });
         }
 
-        protected void PrintEndOfExecution() {
+        protected void PrintEndOfExecution(string message) {
             Dispatcher.Invoke(() => {
-                OutputTextBox.Text += "--------------Program Finished--------------\r\n";
+                OutputTextBox.Text += $"--------------{message}--------------\r\n";
                 OutputTextBox.ScrollToEnd();
             });
         }
