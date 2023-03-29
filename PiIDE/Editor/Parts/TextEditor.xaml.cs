@@ -38,7 +38,7 @@ namespace PiIDE {
         private readonly PylingUnderliner Underliner;
         private Key? LastPressedKey;
         protected int AutoSaveDelaySeconds;
-        private CancellationTokenSource AutoSaveCancelToken = new();
+        private readonly CancellationTokenSource AutoSaveCancelToken = new();
 
         public bool DisableAllWrapers { get; set; }
         public bool ContentIsSaved { get; private set; } = true;

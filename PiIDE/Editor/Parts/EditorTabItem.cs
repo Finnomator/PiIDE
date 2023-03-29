@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace PiIDE.Editor.Parts {
     public class EditorTabItem : TabItem {
@@ -43,12 +42,14 @@ namespace PiIDE.Editor.Parts {
             };
 
             CloseTabButton = new() {
-                Content = new Image() {
-                    Source = Icons.GetIcon("Cross", 16),
-                    Width = 16,
-                },
+                Content = "⛌",
+                FontSize = 9,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
                 ToolTip = "Close",
                 Style = (Style) Application.Current.Resources["CleanButtonWithRoundCornersStyle"],
+                Foreground = Brushes.White,
                 Padding = new(2),
             };
 

@@ -8,7 +8,7 @@ namespace PiIDE {
 
     public partial class PylingUnderliner : UserControl {
 
-        private TextEditor Editor;
+        private readonly TextEditor Editor;
         private Size FontSizes => Editor.TextEditorTextBoxCharacterSize;
         private readonly VisualBrush WavyLine;
         private PylintMessage[] CachedMessages = System.Array.Empty<PylintMessage>();

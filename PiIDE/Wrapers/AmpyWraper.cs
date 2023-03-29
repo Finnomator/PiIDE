@@ -126,7 +126,7 @@ namespace PiIDE.Wrapers {
         public static async Task<bool> RemoveDirectoryFromBoardAsync(int comport, string dirPath)
             => (await TryRunAmpy($"--port COM{comport} rmdir \"{dirPath.Replace("\\", "/")}\"", false)).success;
 
-        public static async Task<bool> Softreset(int comport) 
+        public static async Task<bool> Softreset(int comport)
             => (await TryRunAmpy($"--port COM{comport} reset", false)).success;
 
         public static async Task<bool> DownloadDirectoryFromBoardAsync(int comport, string dirPath, string destDirPath) {

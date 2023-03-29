@@ -1,7 +1,6 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
