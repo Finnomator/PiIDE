@@ -43,14 +43,12 @@ namespace PiIDE.Editor.Parts {
             };
 
             CloseTabButton = new() {
-                Content = "⛌",
-                FontSize = 9,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Center,
+                Content = new Image() {
+                    Source = Icons.GetIcon("Cross", 16),
+                    Width = 16,
+                },
                 ToolTip = "Close",
                 Style = (Style) Application.Current.Resources["CleanButtonWithRoundCornersStyle"],
-                Foreground = Brushes.White,
                 Padding = new(2),
             };
 

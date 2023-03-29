@@ -22,6 +22,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Remove="Assets\Icons\16x16\AddFile.png" />
+		<None Remove="Assets\Icons\16x16\AddFolder.png" />
+		<None Remove="Assets\Icons\16x16\Cross.png" />
+		<None Remove="Assets\Icons\16x16\FileIcon.png" />
+		<None Remove="Assets\Icons\16x16\RaspberryPi.png" />
 		<None Remove="Assets\Icons\CaseSensitive.png" />
 		<None Remove="Assets\Icons\FileIcon.png" />
 		<None Remove="Assets\Icons\IconsByFileExtension\c.png" />
@@ -41,10 +46,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Assets\Icons\CaseSensitive.png">
+		<Content Include="Assets\Icons\16x16\AddFile.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="Assets\Icons\FileIcon.png">
+		<Content Include="Assets\Icons\16x16\AddFolder.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\16x16\FileIcon.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\Icons\16x16\RaspberryPi.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\Icons\IconsByFileExtension\c.png">
@@ -83,6 +94,12 @@
 		<Content Include="Options\Editor\SyntaxHighlighter\Colors\Colors.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Assets\Icons\16x16\Cross.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
