@@ -61,18 +61,6 @@ namespace PiIDE {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:/")]
-        public string OpenDirectoryPath {
-            get {
-                return ((string)(this["OpenDirectoryPath"]));
-            }
-            set {
-                this["OpenDirectoryPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool PylintIsUsable {
             get {
@@ -116,6 +104,17 @@ namespace PiIDE {
             }
             set {
                 this["AmpyIsUsable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> LastOpenedLocalFolderPaths {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedLocalFolderPaths"]));
+            }
+            set {
+                this["LastOpenedLocalFolderPaths"] = value;
             }
         }
         

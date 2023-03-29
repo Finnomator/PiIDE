@@ -6,7 +6,15 @@ using System.Windows.Controls;
 namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
     public class LocalDirectoryItem : DirectoryItemBase {
 
-        public LocalDirectoryItem(string fullPath, LocalDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
+        public LocalDirectoryItem(string fullPath, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) {
+            Init();
+        }
+
+        private LocalDirectoryItem(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) : base(fullPath, parentDirectory, parentExplorer) {
+            Init();
+        }
+
+        private void Init() {
             MenuItem newItem = new() {
                 Header = "Upload to Pi/",
                 Icon = new FontAwesome.WPF.FontAwesome() {
@@ -51,16 +59,12 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
             }
 
             for (int i = 0; i < subDirPaths.Length; i++) {
-                LocalDirectoryItem item = new(subDirPaths[i], this);
-                item.FileClick += OnFileClick;
-                item.FileDeleted += OnFileDeleted;
-                item.FileRenamed += OnFileRenamed;
+                LocalDirectoryItem item = new(subDirPaths[i], this, ParentExplorer);
                 ChildrenStackPanel.Children.Add(item);
             }
 
             for (int i = 0; i < subFilePaths.Length; i++) {
-                LocalFileItem item = new(subFilePaths[i], this);
-                item.OnClick += OnFileClick;
+                LocalFileItem item = new(subFilePaths[i], this, ParentExplorer);
                 ChildrenStackPanel.Children.Add(item);
             }
         }

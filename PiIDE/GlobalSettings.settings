@@ -11,9 +11,6 @@
 		<Setting Name="SelectedCOMPort" Type="System.Int32" Scope="User">
 			<Value Profile="(Default)">-1</Value>
 		</Setting>
-		<Setting Name="OpenDirectoryPath" Type="System.String" Scope="User">
-			<Value Profile="(Default)">C:/</Value>
-		</Setting>
 		<Setting Name="PylintIsUsable" Type="System.Boolean" Scope="User">
 			<Value Profile="(Default)">False</Value>
 		</Setting>
@@ -25,6 +22,9 @@
 		</Setting>
 		<Setting Name="AmpyIsUsable" Type="System.Boolean" Scope="User">
 			<Value Profile="(Default)">False</Value>
+		</Setting>
+		<Setting Name="LastOpenedLocalFolderPaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
+			<Value Profile="(Default)" />
 		</Setting>
 		<Setting Name="LastOpenedLocalFilePaths" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
 			<Value Profile="(Default)" />

@@ -12,38 +12,44 @@ namespace PiIDE.Editor.Parts.Explorer {
         public string DirectoryPath { get; private set; }
         public int Indent { get; private set; }
 
-        public delegate void FileDeletedEventHandler(DirectoryItemBase sender, string deletedFilePath);
-        public virtual event FileDeletedEventHandler? FileDeleted;
-        protected void OnFileDeleted(DirectoryItemBase sender, string deletedFilePath) => FileDeleted?.Invoke(sender, deletedFilePath);
-
-        public delegate void FileRenamedEventHandler(DirectoryItemBase sender, string oldFilePath, string newFilePath);
-        public virtual event FileRenamedEventHandler? FileRenamed;
-        protected void OnFileRenamed(DirectoryItemBase sender, string oldFilePath, string newFilepath) => FileRenamed?.Invoke(sender, oldFilePath, newFilepath);
-
-        public delegate void FileClickEventHandler(FileItemBase sender);
-        public virtual event FileClickEventHandler? FileClick;
-        protected void OnFileClick(FileItemBase fileItem) => FileClick?.Invoke(fileItem);
-
         private bool IsExpanded;
 
-        protected readonly DirectoryItemBase? ParentDirectory;
+        protected readonly ExplorerBase ParentExplorer;
         protected string DirectoryName;
         protected FileSystemWatcher? Watcher;
 
         protected readonly string DirectoryNameForTextBlock;
         private readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
         private readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Folder };
-        private static readonly RotateTransform NinetyDegreeTurn = new RotateTransform(90);
+        private static readonly RotateTransform NinetyDegreeTurn = new(90);
 
-        public DirectoryItemBase(string fullPath, DirectoryItemBase? parentDirectory) {
+        public DirectoryItemBase(string fullPath, ExplorerBase parentExplorer) {
             InitializeComponent();
 
             DirectoryPath = fullPath;
-            ParentDirectory = parentDirectory;
+            ParentExplorer = parentExplorer;
 
             DirectoryName = Path.GetFileName(DirectoryPath);
 
-            Indent = ParentDirectory == null ? 0 : ParentDirectory.Indent + 1;
+            IndentColumn.Width = new GridLength(Indent * 10);
+
+            DirectoryNameForTextBlock = DirectoryName;
+            if (string.IsNullOrEmpty(DirectoryNameForTextBlock))
+                DirectoryNameForTextBlock = DirectoryPath;
+
+            FileNameTextBlock.Text = DirectoryNameForTextBlock;
+            ToolTip = DirectoryPath;
+        }
+
+        public DirectoryItemBase(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) {
+            InitializeComponent();
+
+            DirectoryPath = fullPath;
+            ParentExplorer = parentExplorer;
+
+            DirectoryName = Path.GetFileName(DirectoryPath);
+
+            Indent = parentDirectory.Indent + 1;
             IndentColumn.Width = new GridLength(Indent * 10);
 
             DirectoryNameForTextBlock = DirectoryName;
@@ -76,14 +82,14 @@ namespace PiIDE.Editor.Parts.Explorer {
 
         protected void Watcher_Renamed(object sender, RenamedEventArgs e) {
             Dispatcher.Invoke(() => {
-                FileRenamed?.Invoke(this, e.OldFullPath, e.FullPath);
+                ParentExplorer.OnFileRenamed(this, e.OldFullPath, e.FullPath);
                 ReloadContent();
             });
         }
 
         protected void Watcher_Deleted(object sender, FileSystemEventArgs e) {
             Dispatcher.Invoke(() => {
-                FileDeleted?.Invoke(this, e.FullPath);
+                ParentExplorer.OnFileDeleted(this, e.FullPath);
                 try {
                     ReloadContent();
                 } catch (ArgumentException) { }

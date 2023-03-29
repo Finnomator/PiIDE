@@ -37,29 +37,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBox BorderThickness="0" IsReadOnly="True" x:Name="RootPathTextBox" Foreground="White">
-                <TextBox.Style>
-                    <Style TargetType="TextBox">
-                        <Setter Property="Background" Value="#FF353535" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="false">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <TextBlock Text="{TemplateBinding Text}"  TextTrimming="CharacterEllipsis" Background="#FF353535" />
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-
-                </TextBox.Style>
-            </TextBox>
-
-            <ScrollViewer Grid.Row="1" x:Name="LocalDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <localExplorer:LocalExplorer x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackground}"/>
-            </ScrollViewer>
+            <localExplorer:LocalExplorer Grid.Row="1"  x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackground}"/>
 
             <GridSplitter Background="#4CFFFFFF" Grid.Row="2" HorizontalAlignment="Stretch"/>
 
@@ -84,9 +62,7 @@
                     </Button.Content>
                 </Button>
 
-                <ScrollViewer Grid.Row="1"  x:Name="BoardDirectoryScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <boardExplorer:BoardExplorer x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackground}"/>
-                </ScrollViewer>
+                <boardExplorer:BoardExplorer Grid.Row="1"  x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackground}"/>
             </Grid>
 
         </Grid>
@@ -107,7 +83,7 @@
 
         <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right" Background="#FF181818">
 
-            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Open directory" Padding="3" VerticalAlignment="Center" Width="23" Height="23" >
+            <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenDirectoryButton" Click="OpenDirectoryButton_Click" ToolTip="Add folder to workspace" Padding="3" VerticalAlignment="Center" Width="23" Height="23" >
                 <fa:FontAwesome Icon="FolderOutlinepenOutline" FontSize="14" Foreground="White"/>
             </Button>
             <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" x:Name="OpenFileButton" Click="OpenFileButton_Click" ToolTip="Open file" Padding="3" TextBlock.Foreground="White" VerticalAlignment="Center" Width="23" Height="23">

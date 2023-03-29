@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using UserControl = System.Windows.Controls.UserControl;
@@ -46,7 +45,8 @@ namespace PiIDE {
             foreach (string path in lastOpenedBoardFiles)
                 OpenFile(path, path != lastOpenedFile, true);
 
-            OpenDirectory(GlobalSettings.Default.OpenDirectoryPath);
+            foreach (string path in GlobalSettings.Default.LastOpenedLocalFolderPaths)
+                AddExistingDirectory(path);
             OpenBoardDirectory();
 
             if (Tools.EnableBoardInteractions)
@@ -168,7 +168,7 @@ namespace PiIDE {
             DialogResult result = fbd.ShowDialog();
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath)) {
-                OpenDirectory(fbd.SelectedPath);
+                AddExistingDirectory(fbd.SelectedPath);
             }
         }
 
@@ -202,9 +202,8 @@ namespace PiIDE {
             };
         }
 
-        public void OpenDirectory(string directory) {
-            RootPathTextBox.Text = Path.GetFullPath(directory);
-            LocalExplorer = new(directory);
+        public void AddExistingDirectory(string directory) {
+            LocalExplorer.AddFolder(directory);
             LocalExplorer.FileClick += (s) => {
                 OpenFile(s.FilePath, false, false);
             };
@@ -216,8 +215,9 @@ namespace PiIDE {
                     OpenRenamedFile(oldPath, newPath);
                 }
             };
-            LocalDirectoryScrollViewer.Content = LocalExplorer;
-            GlobalSettings.Default.OpenDirectoryPath = directory;
+
+            if (!GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(directory))
+                GlobalSettings.Default.LastOpenedLocalFolderPaths.Add(directory);
         }
 
         private void OpenRenamedFile(string oldPath, string newPath) {
@@ -242,11 +242,7 @@ namespace PiIDE {
             RemoveFileFromSettings(filePath);
         }
 
-        public void OpenBoardDirectory(string directory = "") {
-            // "" is the default path, do not use "/"!
-
-            BoardExplorer = new(LocalBoardPath, directory);
-
+        public void OpenBoardDirectory() {
             BoardExplorer.FileClick += (s) => {
                 OpenFile(s.FilePath, false, true);
             };
@@ -260,8 +256,6 @@ namespace PiIDE {
                     OpenRenamedFile(oldPath, newPath);
                 }
             };
-
-            BoardDirectoryScrollViewer.Content = BoardExplorer;
         }
 
         private void SyncButton_Click(object sender, RoutedEventArgs e) {
@@ -289,7 +283,7 @@ namespace PiIDE {
                     case SyncOptionResult.OverwriteAllLocalFiles:
                         SyncStatus.Visibility = Visibility.Visible;
 
-                        await AmpyWraper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, BoardExplorer.DirectoryPathOnBoard, BoardExplorer.DirectoryPath);
+                        await AmpyWraper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, "", LocalBoardPath);
 
                         SyncStatus.Visibility = Visibility.Collapsed;
 

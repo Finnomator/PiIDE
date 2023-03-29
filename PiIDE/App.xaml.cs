@@ -26,6 +26,9 @@ namespace PiIDE {
 
             if (GlobalSettings.Default.LastOpenedLocalFilePaths == null)
                 GlobalSettings.Default.LastOpenedLocalFilePaths = new();
+
+            if (GlobalSettings.Default.LastOpenedLocalFolderPaths == null)
+                GlobalSettings.Default.LastOpenedLocalFolderPaths = new();
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {

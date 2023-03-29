@@ -17,7 +17,7 @@ namespace PiIDE.Editor.Parts.Explorer {
         protected string FileName;
         protected readonly string FileNameForTextBlock;
 
-        public FileItemBase(string fullPath, DirectoryItemBase parentDirectory) {
+        public FileItemBase(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase explorer) {
             InitializeComponent();
 
             FilePath = fullPath;
@@ -27,6 +27,8 @@ namespace PiIDE.Editor.Parts.Explorer {
             IndentColumn.Width = new GridLength(indent * 10);
 
             FileName = Path.GetFileName(FilePath);
+
+            OnClick += (_) => explorer.OnFileClick(this);
 
             FileNameForTextBlock = FileName;
             if (string.IsNullOrEmpty(FileNameForTextBlock))

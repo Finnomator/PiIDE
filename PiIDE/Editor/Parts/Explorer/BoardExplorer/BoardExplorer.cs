@@ -1,17 +1,17 @@
 ﻿namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
-    public class BoardExplorer : BoardDirectoryItem {
+    public class BoardExplorer : ExplorerBase {
 
-        public BoardExplorer() : base("BoardFiles", "", null) {
-            // TODO: replace "Pi" with something dynamic
-            FileNameTextBlock.Text = "Pi";
-            MainButton.ContextMenu = null;
+        public BoardExplorer() {
+            Header.Content = "Board Files";
+            BoardDirectoryItem folderItem = new(GlobalSettings.Default.LocalBoardFilesPath, "", this);
+            folderItem.FileNameTextBlock.Text = "Pi";
+            base.AddFolder(folderItem);
         }
 
-        public BoardExplorer(string fullPath, string directoryPathOnBoard) : base(fullPath, directoryPathOnBoard, null) {
-            FileNameTextBlock.Text = "Pi";
-            if (directoryPathOnBoard != "")
-                FileNameTextBlock.Text += $"/{directoryPathOnBoard}";
-            MainButton.ContextMenu = null;
-        }
+        public new static void AddFolder(DirectoryItemBase _) => throw new System.Exception("This feature should not be used");
+
+        public new static void ClearFolders() => throw new System.Exception("This feature should not be used");
+
+        public new static void RemoveFolder(DirectoryItemBase _) => throw new System.Exception("This feature should not be used");
     }
 }

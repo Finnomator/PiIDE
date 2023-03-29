@@ -1,5 +1,4 @@
-﻿using PiIDE.Editor.Parts.Explorer.LocalExplorer;
-using PiIDE.Wrapers;
+﻿using PiIDE.Wrapers;
 using System.IO;
 using System.Windows;
 
@@ -10,7 +9,11 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
-        public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, BoardDirectoryItem? parentDirectory) : base(fullPath, parentDirectory) {
+        public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) {
+            DirectoryPathOnBoard = directoryPathOnBoard;
+        }
+
+        private BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer, BoardDirectoryItem parentDirectory) : base(fullPath, parentDirectory, parentExplorer) {
             DirectoryPathOnBoard = directoryPathOnBoard;
         }
 
@@ -46,16 +49,12 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
             }
 
             for (int i = 0; i < subDirPaths.Length; i++) {
-                BoardDirectoryItem item = new(subDirPaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subDirPaths[i])), this);
-                item.FileClick += OnFileClick;
-                item.FileDeleted += OnFileDeleted;
-                item.FileRenamed += OnFileRenamed;
+                BoardDirectoryItem item = new(subDirPaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subDirPaths[i])), ParentExplorer, this);
                 ChildrenStackPanel.Children.Add(item);
             }
 
             for (int i = 0; i < subFilePaths.Length; i++) {
-                BoardFileItem item = new(subFilePaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subFilePaths[i])), this);
-                item.OnClick += OnFileClick;
+                BoardFileItem item = new(subFilePaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subFilePaths[i])), this, ParentExplorer);
                 ChildrenStackPanel.Children.Add(item);
             }
         }

@@ -1,5 +1,4 @@
-﻿using PiIDE.Editor.Parts.Explorer.LocalExplorer;
-using PiIDE.Wrapers;
+﻿using PiIDE.Wrapers;
 using System.Windows;
 
 namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
@@ -9,7 +8,7 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
-        public BoardFileItem(string fullLocalPath, string pathOnBoard, BoardDirectoryItem parentDirectory) : base(fullLocalPath, parentDirectory) {
+        public BoardFileItem(string fullLocalPath, string pathOnBoard, BoardDirectoryItem parentDirectory, ExplorerBase parentExplorer) : base(fullLocalPath, parentDirectory, parentExplorer) {
             FilePathOnBoard = pathOnBoard;
         }
 
