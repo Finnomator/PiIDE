@@ -8,6 +8,17 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
 
         public LocalDirectoryItem(string fullPath, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) {
             Init();
+
+            MenuItem removeFolderMenuItem = new() {
+                Header = "Remove folder from workspace",
+                Icon = new FontAwesome.WPF.FontAwesome() {
+                    Icon = FontAwesome.WPF.FontAwesomeIcon.Close,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                },
+            };
+            removeFolderMenuItem.Click += (s, e) => ((LocalExplorer)ParentExplorer).RemoveFolder(this);
+            DirContextMenu.Items.Add(removeFolderMenuItem);
         }
 
         private LocalDirectoryItem(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) : base(fullPath, parentDirectory, parentExplorer) {
@@ -15,7 +26,7 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
         }
 
         private void Init() {
-            MenuItem newItem = new() {
+            MenuItem uploadMenuItem = new() {
                 Header = "Upload to Pi/",
                 Icon = new FontAwesome.WPF.FontAwesome() {
                     Icon = FontAwesome.WPF.FontAwesomeIcon.Upload,
@@ -23,8 +34,8 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
                     VerticalAlignment = VerticalAlignment.Center,
                 },
             };
-            newItem.Click += Upload_Click;
-            DirContextMenu.Items.Add(newItem);
+            uploadMenuItem.Click += Upload_Click;
+            DirContextMenu.Items.Add(uploadMenuItem);
         }
 
         protected override void Expand() {

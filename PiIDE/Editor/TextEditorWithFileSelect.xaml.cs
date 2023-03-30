@@ -215,9 +215,6 @@ namespace PiIDE {
                     OpenRenamedFile(oldPath, newPath);
                 }
             };
-
-            if (!GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(directory))
-                GlobalSettings.Default.LastOpenedLocalFolderPaths.Add(directory);
         }
 
         private void OpenRenamedFile(string oldPath, string newPath) {

@@ -21,16 +21,10 @@ namespace PiIDE.Editor.Parts.Explorer {
             InitializeComponent();
         }
 
-        public void AddFolder(DirectoryItemBase folder) {
-            DirectoryItemsWrapPanel.Children.Add(folder);
-        }
+        protected void AddFolder(DirectoryItemBase folder) => DirectoryItemsWrapPanel.Children.Add(folder);
 
-        public void ClearFolders() {
-            DirectoryItemsWrapPanel.Children.Clear();
-        }
+        protected void ClearFolders() => DirectoryItemsWrapPanel.Children.Clear();
 
-        public void RemoveFolder(DirectoryItemBase folder) {
-            DirectoryItemsWrapPanel.Children.Remove(folder);
-        }
+        protected void RemoveFolder(DirectoryItemBase folder) => DirectoryItemsWrapPanel.Children.Remove(folder);
     }
 }
