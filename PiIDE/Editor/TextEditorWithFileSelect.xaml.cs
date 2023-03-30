@@ -167,9 +167,8 @@ namespace PiIDE {
             using FolderBrowserDialog fbd = new();
             DialogResult result = fbd.ShowDialog();
 
-            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath)) {
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath) && !GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(fbd.SelectedPath))
                 AddExistingDirectory(fbd.SelectedPath);
-            }
         }
 
         private void CreateNewFileButton_Click(object sender, RoutedEventArgs e) {
