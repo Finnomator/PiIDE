@@ -5,8 +5,8 @@
     <SolidColorBrush x:Key="TextBox.Focus.Border" Color="{StaticResource AccentColor}"/>
     
     <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{StaticResource PanelBackground}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource SplitterBackground}"/>
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PanelBackgroundBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>

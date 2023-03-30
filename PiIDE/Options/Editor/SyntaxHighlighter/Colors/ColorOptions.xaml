@@ -8,7 +8,7 @@
 
     <StackPanel>
         <StackPanel Name="MainStackPanel"/>
-        <Separator Background="{StaticResource SplitterBackground}"/>
+        <Separator Background="{StaticResource PanelBackgroundBrush}"/>
 
         <Grid>
             <Grid.ColumnDefinitions>

@@ -31,9 +31,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
                     <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
-                        <Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderThickness="1,1,1,0" Margin="0" BorderBrush="{DynamicResource SplitterBackground}">
-                            <Border x:Name="innerBorder" Background="{StaticResource TabItem.Selected.Background}" BorderBrush="{DynamicResource SplitterBackground}" BorderThickness="1,1,1,0" Margin="-1" Opacity="0">
-                                <Border x:Name="accentBorder" BorderBrush="{DynamicResource Accentcolor}"/>
+                        <Border x:Name="mainBorder" Background="{TemplateBinding Background}" BorderThickness="1,1,1,0" Margin="0" BorderBrush="{DynamicResource PanelBackgroundBrush}">
+                            <Border x:Name="innerBorder" Background="{StaticResource TabItem.Selected.Background}" BorderBrush="{DynamicResource PanelBackgroundBrush}" BorderThickness="1,1,1,0" Margin="-1" Opacity="0">
+                                <Border x:Name="accentBorder" BorderBrush="{DynamicResource AccentBrush}"/>
                             </Border>
                         </Border>
                         <ContentPresenter x:Name="contentPresenter" ContentSource="Header" Focusable="False" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>

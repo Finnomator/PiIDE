@@ -11,9 +11,9 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:logo="clr-namespace:PiIDE.Assets.Icons"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800" Background="{DynamicResource ExplorerBackground}">
+             d:DesignHeight="500" d:DesignWidth="800" Background="{DynamicResource ExplorerBackgroundBrush}">
 
-    <Grid Background="{StaticResource WindowBackground}">
+    <Grid Background="{StaticResource WindowBackgroundBrush}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -28,7 +28,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Background="{DynamicResource PanelBackground}" Grid.RowSpan="2">
+        <Grid Background="{DynamicResource PanelBackgroundBrush}" Grid.RowSpan="2">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -37,7 +37,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <localExplorer:LocalExplorer Grid.Row="1"  x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackground}"/>
+            <localExplorer:LocalExplorer Grid.Row="1"  x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackgroundBrush}"/>
 
             <GridSplitter Background="#4CFFFFFF" Grid.Row="2" HorizontalAlignment="Stretch"/>
 
@@ -62,12 +62,12 @@
                     </Button.Content>
                 </Button>
 
-                <boardExplorer:BoardExplorer Grid.Row="1"  x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackground}"/>
+                <boardExplorer:BoardExplorer Grid.Row="1"  x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackgroundBrush}"/>
             </Grid>
 
         </Grid>
 
-        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource SplitterBackground}"/>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource PanelBackgroundBrush}"/>
 
         <logo:Logo Grid.Column="2" Grid.Row="1" MaxHeight="314" MaxWidth="314" Opacity="0.3"/>
 
@@ -100,9 +100,9 @@
             </Button>
         </StackPanel>
 
-        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="{DynamicResource SplitterBackground}"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="{DynamicResource PanelBackgroundBrush}"/>
 
-        <TabControl Background="{StaticResource WindowBackground}"  Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
+        <TabControl Background="{StaticResource WindowBackgroundBrush}"  Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 
             <TabItem Style="{DynamicResource TabItemStyle}" Header="Error List">
                 <local:LintMessagesWindow  x:Name="MessagesWindow" />

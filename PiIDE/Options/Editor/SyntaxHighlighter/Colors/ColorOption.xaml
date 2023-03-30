@@ -44,7 +44,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
                 <Rectangle Name="ColorRect" Fill="{Binding Text, ElementName=ColorTextBox}"/>
-                <Label Background="{StaticResource EditorBackground}" Grid.Column="1" Padding="0" Content="Text" Foreground="{Binding Fill, ElementName=ColorRect}" FontFamily="Cascadia Code" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                <Label Background="{StaticResource EditorBackgroundBrush}" Grid.Column="1" Padding="0" Content="Text" Foreground="{Binding Fill, ElementName=ColorRect}" FontFamily="Cascadia Code" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
             </Grid>
 

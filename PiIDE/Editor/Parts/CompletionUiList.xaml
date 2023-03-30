@@ -15,11 +15,11 @@
         SizeToContent="WidthAndHeight"
         AllowsTransparency="True" Background="{x:Null}">
     
-    <Border Name="MainBorder"  BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource SplitterBackground}" Margin="0,0,5,5">
+    <Border Name="MainBorder"  BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource PanelBackgroundBrush}" Margin="0,0,5,5">
         <Border.Effect>
             <DropShadowEffect Opacity="0.5"/>
         </Border.Effect>
-        <ListBox BorderThickness="0"  d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" Background="{DynamicResource EditorBackground}">
+        <ListBox BorderThickness="0"  d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListBox" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemContainerStyle="{DynamicResource ListBoxItemStyle}" Background="{DynamicResource EditorBackgroundBrush}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Button Style="{StaticResource CleanButtonStyle}" Click="Completion_Click" HorizontalContentAlignment="Stretch">

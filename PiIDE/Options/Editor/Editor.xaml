@@ -9,7 +9,7 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Unloaded="UserControl_Unloaded">
-    <TabControl Background="{StaticResource WindowBackground}" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
+    <TabControl Background="{StaticResource WindowBackgroundBrush}" Template="{StaticResource TabControlStyle}" TabStripPlacement="Left">
         <TabItem Header="General" Style="{StaticResource TabItemStyle}">
             <Grid>
 
@@ -27,7 +27,7 @@
                 <Label Content="Font Size" HorizontalAlignment="Center" Foreground="White"/>
                 <TextBox Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Name="FontSizeTextBox" VerticalContentAlignment="Center" PreviewTextInput="FontSizeTextBox_PreviewTextInput" TextChanged="FontSizeTextBox_TextChanged"/>
 
-                <Separator Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackground}"/>
+                <Separator Grid.Row="1" Grid.ColumnSpan="2" Background="{StaticResource PanelBackgroundBrush}"/>
 
                 <Label Grid.Row="2" HorizontalAlignment="Center" Content="Font" Foreground="White"/>
                 <ComboBox Name="EditorFontComboBox" Grid.Row="2" Grid.Column="1" Foreground="White" VerticalContentAlignment="Center" SelectionChanged="EditorFontComboBox_SelectionChanged">
@@ -45,7 +45,7 @@
                 <StackPanel>
 
                     <Expander Style="{DynamicResource ExpanderStyle}" Foreground="White" Header="Colors" IsExpanded="True">
-                        <Border Margin="20,0,0,0" BorderThickness="1" BorderBrush="{StaticResource SplitterBackground}">
+                        <Border Margin="20,0,0,0" BorderThickness="1" BorderBrush="{StaticResource PanelBackgroundBrush}">
                             <editorColors:ColorOptions/>
                         </Border>
                     </Expander>

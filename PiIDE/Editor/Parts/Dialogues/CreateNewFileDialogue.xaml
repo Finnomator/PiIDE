@@ -8,13 +8,13 @@
         Closing="Window_Closing"
         Title="Create New File"
         WindowStyle="None"
-        Background="{StaticResource WindowBackground}" Width="280" Height="137">
+        Background="{StaticResource WindowBackgroundBrush}" Width="280" Height="137">
     
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="8" CaptionHeight="16" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
-    <Border BorderThickness="2" BorderBrush="{StaticResource SplitterBackground}">
+    <Border BorderThickness="2" BorderBrush="{StaticResource PanelBackgroundBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -24,13 +24,13 @@
             <StackPanel>
                 <TextBlock Text="Create New File" Foreground="White"/>
                 
-                <Separator Background="{StaticResource SplitterBackground}"/>
+                <Separator Background="{StaticResource PanelBackgroundBrush}"/>
                 <TextBlock Text="Create File on" Foreground="White"/>
-                <Separator Background="{StaticResource SplitterBackground}"/>
+                <Separator Background="{StaticResource PanelBackgroundBrush}"/>
                 <RadioButton Margin="10,0,0,0" Style="{DynamicResource RadioButtonStyle}" Content="Disk" IsChecked="True" Foreground="White" Checked="Disk_Checked"/>
                 <RadioButton Margin="10,0,0,0" Name="PiRadioButton" Style="{DynamicResource RadioButtonStyle}" Content="Pi" Foreground="White" Checked="PiRadioButton_Checked"/>
                 
-                <Separator Background="{StaticResource SplitterBackground}"/>
+                <Separator Background="{StaticResource PanelBackgroundBrush}"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -64,10 +64,10 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <Rectangle Height="2" Fill="{StaticResource SplitterBackground}" Grid.ColumnSpan="3"/>
+                <Rectangle Height="2" Fill="{StaticResource PanelBackgroundBrush}" Grid.ColumnSpan="3"/>
 
                 <Button Content="Create" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Foreground="White" Click="Create_Click" Grid.Row="1"/>
-                <Rectangle Fill="{StaticResource SplitterBackground}" Grid.Column="1" Grid.Row="1"/>
+                <Rectangle Fill="{StaticResource PanelBackgroundBrush}" Grid.Column="1" Grid.Row="1"/>
                 <Button Content="Cancel" Grid.Column="2" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Foreground="White" Click="Cancel_Click" Grid.Row="1"/>
             </Grid>
         </Grid>

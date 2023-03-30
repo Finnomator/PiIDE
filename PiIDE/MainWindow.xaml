@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:PiIDE"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Pi IDE" Height="450" Width="800" Background="{DynamicResource WindowBackground}" WindowStyle="SingleBorderWindow" MouseDown="Window_MouseDown" StateChanged="Window_StateChanged" >
+        Title="Pi IDE" Height="450" Width="800" Background="{DynamicResource WindowBackgroundBrush}" WindowStyle="SingleBorderWindow" MouseDown="Window_MouseDown" StateChanged="Window_StateChanged" >
 
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="8" CaptionHeight="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
-    <Border Name="PaddingBorder" BorderThickness="2" BorderBrush="{StaticResource SplitterBackground}" CornerRadius="8">
+    <Border Name="PaddingBorder" BorderThickness="2" BorderBrush="{StaticResource PanelBackgroundBrush}" CornerRadius="8">
         <Grid Panel.ZIndex="4" x:Name="MainGrid" Grid.Row="1">
 
             <Grid.RowDefinitions>
