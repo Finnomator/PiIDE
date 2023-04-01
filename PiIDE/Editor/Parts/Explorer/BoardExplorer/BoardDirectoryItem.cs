@@ -80,6 +80,18 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         protected override void RenameDirectory(string oldPath, string newPath, string newName) => ErrorMessager.FeatureNotSupported();
 
+        protected override async void AddFile_Click(object sender, RoutedEventArgs e) {
+            string newFileLocalPath = Path.Combine(DirectoryPath, "new_file.py");
+            if (Tools.TryCreateFile(newFileLocalPath))
+                await AmpyWraper.WriteToBoardAsync(Port, newFileLocalPath, Path.Combine(DirectoryPathOnBoard, "new_file.py"));
+        }
+
+        protected override async void AddFolder_Click(object sender, RoutedEventArgs e) {
+            string newDirLocalPath = Path.Combine(DirectoryPath, "NewFolder");
+            if (await AmpyWraper.CreateDirectoryAsync(Port, Path.Combine(DirectoryPathOnBoard, "NewFolder")))
+                Tools.TryCreateDirectory(newDirLocalPath);
+        }
+
         // TODO: this method should not be overriden, but as long as the feature is not supported, it will
         protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
 

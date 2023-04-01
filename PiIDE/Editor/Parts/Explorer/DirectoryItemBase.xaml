@@ -35,8 +35,19 @@
             <Button.ContextMenu>
                 <ContextMenu x:Name="DirContextMenu">
                     <MenuItem Header="Add">
-                        <MenuItem Header="File" Click="AddFile_Click"/>
-                        <MenuItem Header="Folder" Click="AddFolder_Click"/>
+                        <MenuItem.Icon>
+                            <fa:FontAwesome Icon="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="File" Click="AddFile_Click">
+                            <MenuItem.Icon>
+                                <fa:FontAwesome Icon="File" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Folder" Click="AddFolder_Click">
+                            <MenuItem.Icon>
+                                <fa:FontAwesome Icon="Folder" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Copy" Click="Copy_Click">
                         <MenuItem.Icon>

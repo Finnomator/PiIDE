@@ -138,9 +138,23 @@ namespace PiIDE {
 
         public static bool TryCreateFile(string filePath) {
             try {
+                if (File.Exists(filePath))
+                    throw new Exception("File Exists");
                 File.Create(filePath).Close();
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Failed to create file", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
+
+        public static bool TryCreateDirectory(string dirPath) {
+            try {
+                if (Directory.Exists(dirPath))
+                    throw new Exception("Directory Exists");
+                Directory.CreateDirectory(dirPath);
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message, "Failed to create directory", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             return true;

@@ -123,12 +123,11 @@ namespace PiIDE.Editor.Parts.Explorer {
         }
 
         protected virtual void AddFile_Click(object sender, RoutedEventArgs e) {
-            CreateNewFileDialogue dialogue = new();
-            
+            Tools.TryCreateFile(Path.Combine(DirectoryPath, "new_file.py"));
         }
 
         protected virtual void AddFolder_Click(object sender, RoutedEventArgs e) {
-
+            Tools.TryCreateDirectory(Path.Combine(DirectoryPath, "NewFolder"));
         }
 
         protected void SetStatus(string status) {
