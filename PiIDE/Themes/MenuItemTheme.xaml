@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--
     <SolidColorBrush x:Key="Menu.Static.Foreground" Color="White"/>
     <SolidColorBrush x:Key="Menu.Static.Background" Color="{StaticResource WindowBackgroundColor}"/>
     <SolidColorBrush x:Key="Menu.Static.Border" Color="{StaticResource SplitterBackgroundColor}"/>
@@ -84,4 +85,5 @@
             </MultiTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+    -->
 </ResourceDictionary>
