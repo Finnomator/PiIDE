@@ -151,11 +151,13 @@ namespace PiIDE {
         }
 
         private void SetIntoLoadingState() {
+            MainListBox.SelectedIndex = -1;
             MainBorder.Child = loadingState;
             Show();
         }
 
         private void SetIntoNoSuggestionsState() {
+            MainListBox.SelectedIndex = -1;
             MainBorder.Child = noSuggestionsState;
         }
 
