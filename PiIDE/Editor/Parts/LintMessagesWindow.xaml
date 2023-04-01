@@ -24,29 +24,75 @@
         <ListView Grid.Row="1" BorderThickness="0" Style="{StaticResource ListViewStyle}" Background="#FF181818" Foreground="White" d:ItemsSource="{d:SampleData ItemCount=5}" x:Name="MainListView" SelectionChanged="MainListViewSelectionChanged" ItemContainerStyle="{StaticResource ListViewItemStyle}">
 
             <ListView.View>
-                <GridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
-                    <GridViewColumn>
+                <GridView>
+                    <GridViewColumn Width="100">
+
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Type"/>
+                        </GridViewColumn.Header>
+
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <fa:FontAwesome Icon="{Binding Icon.Icon}" Foreground="{Binding Icon.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:FontAwesome Icon="{Binding Icon.Icon}" Foreground="{Binding Icon.Foreground}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Padding="0,0,5,0"/>
+                                    <TextBlock Text="{Binding Type}" TextAlignment="Center"  TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
-                    <GridViewColumn Header="Code">
+
+                    <GridViewColumn Width="50">
+
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Code"/>
+                        </GridViewColumn.Header>
+
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                <Hyperlink Click="CodeHyperlink_Click" Tag="{Binding MessageId}">
-                                    <TextBlock x:Name="CodeHyperlinkTextBlock" Text="{Binding MessageId}"/>
-                                </Hyperlink>
-                            </TextBlock>
+                                    <Hyperlink Click="CodeHyperlink_Click" Tag="{Binding MessageId}">
+                                        <TextBlock x:Name="CodeHyperlinkTextBlock" Text="{Binding MessageId}"  TextTrimming="CharacterEllipsis"/>
+                                    </Hyperlink>
+                                </TextBlock>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}"/>
-                    <GridViewColumn Header="File" DisplayMemberBinding="{Binding Module}"/>
-                    <GridViewColumn Header="Line" DisplayMemberBinding="{Binding Line}"/>
+
+                    <GridViewColumn Width="480">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Message"/>
+                        </GridViewColumn.Header>
+
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="100">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="File"/>
+                        </GridViewColumn.Header>
+
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Module}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="50">
+                        <GridViewColumn.Header>
+                            <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Line"/>
+                        </GridViewColumn.Header>
+
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Line}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
 
@@ -54,7 +100,10 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock FontSize="15" Text="{Binding Name}"/>
+                            <WrapPanel>
+                                <TextBlock FontSize="14" Text="{Binding Name}"/>
+                                <TextBlock Text=">" FontSize="14"/>
+                            </WrapPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
