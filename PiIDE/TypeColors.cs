@@ -63,12 +63,12 @@ namespace PiIDE {
 
     public static class PylintMessageColors {
 
-        public static Brush Fatal => (Brush) Application.Current.Resources["FatalColor"];
-        public static Brush Error => (Brush) Application.Current.Resources["ErrorColor"];
-        public static Brush Warning => (Brush) Application.Current.Resources["WarningColor"];
-        public static Brush Convention => (Brush) Application.Current.Resources["ConventionColor"];
-        public static Brush Refactor => (Brush) Application.Current.Resources["RefactorColor"];
-        public static Brush Information => (Brush) Application.Current.Resources["InformationColor"];
+        public static Brush Fatal => (Brush) Application.Current.Resources["FatalBrush"];
+        public static Brush Error => (Brush) Application.Current.Resources["ErrorBrush"];
+        public static Brush Warning => (Brush) Application.Current.Resources["WarningBrush"];
+        public static Brush Convention => (Brush) Application.Current.Resources["ConventionBrush"];
+        public static Brush Refactor => (Brush) Application.Current.Resources["RefactorBrush"];
+        public static Brush Information => (Brush) Application.Current.Resources["InformationBrush"];
         public static readonly Brush EverythingElse = Brushes.Gray;
 
         private static readonly Dictionary<string, Brush> TypeToColorMap = new() {
