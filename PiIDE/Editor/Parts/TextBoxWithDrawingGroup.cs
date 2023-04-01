@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ namespace PiIDE.Editor.Parts {
         public FormattedText VisibleTextAsFormattedText { get; private set; }
 
         public TextEditor? TextEditor { get; set; }
+        int i;
 
         // TODO: Make it work with backgrounds
 
@@ -39,7 +41,8 @@ namespace PiIDE.Editor.Parts {
                 if (TextEditor == null)
                     return;
                 TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
-                    Render();
+                    if (e.VerticalChange != 0)
+                        Render();
                 };
             };
         }
@@ -63,6 +66,7 @@ namespace PiIDE.Editor.Parts {
         public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
         public void Render() {
+            Debug.WriteLine("Render " + i++);
             VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
             using DrawingContext dc = DrawingGroup.Open();
             foreach (Action<DrawingContext> action in RenderActions)
