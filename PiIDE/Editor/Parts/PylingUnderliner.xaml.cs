@@ -46,6 +46,7 @@ namespace PiIDE {
         private void UpdateVisualChildren(PylintMessage[] pylintMessages, int upperLineLimit, int lowerLineLimit) {
 
             MainGrid.Children.Clear();
+            VisualBrush brush = (VisualBrush) Resources["asdf"];
 
             for (int i = 0; i < pylintMessages.Length; ++i) {
                 PylintMessage pylintMessage = pylintMessages[i];
@@ -60,15 +61,15 @@ namespace PiIDE {
                 int column = pylintMessage.Column;
                 int endCol = pylintMessage.EndColumn == null ? 1 : (int) pylintMessage.EndColumn;
 
+                ((Path) brush.Visual).Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type);
 
                 MainGrid.Children.Add(new Line() {
-                    //Stroke = (VisualBrush) Resources["asdf"],
-                    StrokeThickness = 2,
+                    Stroke = brush,
+                    StrokeThickness = 3,
                     X1 = column * FontSizes.Width + 2,
                     X2 = endCol * FontSizes.Width + 2,
                     Y1 = line * FontSizes.Height,
                     Y2 = line * FontSizes.Height,
-                    Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type),
                 });
             }
         }
