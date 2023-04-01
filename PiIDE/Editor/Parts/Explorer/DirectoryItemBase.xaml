@@ -33,7 +33,7 @@
             </Grid>
 
             <Button.ContextMenu>
-                <ContextMenu x:Name="DirContextMenu">
+                <ContextMenu x:Name="DirContextMenu" BorderThickness="0" Padding="0" Margin="0" BorderBrush="Red" Background="Blue">
                     <MenuItem Header="Copy" Click="Copy_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="Copy" HorizontalAlignment="Center" VerticalAlignment="Center"/>
