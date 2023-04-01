@@ -11,7 +11,7 @@
              TextOptions.TextFormattingMode="Display"
              PreviewKeyDown="UserControl_PreviewKeyDown">
 
-    <Border BorderBrush="{StaticResource PanelBackgroundBrush}" BorderThickness="1,0,1,1" CornerRadius="0,0,2,2" Background="{StaticResource EditorBackgroundBrush}">
+    <Border BorderBrush="{StaticResource SplitterBackgroundBrush}" BorderThickness="1,0,1,1" CornerRadius="0,0,2,2" Background="{StaticResource EditorBackgroundBrush}">
 
         <Border.Effect>
             <DropShadowEffect Opacity="0.5"/>

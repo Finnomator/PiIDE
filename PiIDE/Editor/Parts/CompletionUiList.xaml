@@ -14,8 +14,8 @@
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         AllowsTransparency="True" Background="{x:Null}">
-    
-    <Border Name="MainBorder"  BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource PanelBackgroundBrush}" Margin="0,0,5,5">
+
+    <Border Name="MainBorder"  BorderThickness="1" CornerRadius="1" BorderBrush="{DynamicResource SplitterBackgroundBrush}" Margin="0,0,5,5">
         <Border.Effect>
             <DropShadowEffect Opacity="0.5"/>
         </Border.Effect>

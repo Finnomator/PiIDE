@@ -5,7 +5,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
                     <!--
-                    <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource PanelBackgroundBrush}" Background="Transparent">
+                    <Border BorderThickness="0,0,0,2" BorderBrush="{DynamicResource SplitterBackgroundBrush}" Background="Transparent">
                         <Label x:Name="ContentHeader" Content="{TemplateBinding Content}"  Width="{TemplateBinding Width}" Foreground="White"/>
                     </Border>
                     -->

@@ -22,7 +22,7 @@
 
             <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Search"/>
 
-            <Border x:Name="ActionsBorder" CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource PanelBackgroundBrush}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackgroundBrush}">
+            <Border x:Name="ActionsBorder" CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackgroundBrush}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackgroundBrush}">
 
                 <Border.Effect>
                     <DropShadowEffect Opacity="0.5"/>
@@ -51,7 +51,7 @@
             </WrapPanel>
         </StackPanel>
 
-        <Rectangle Fill="{StaticResource PanelBackgroundBrush}" Height="1" VerticalAlignment="Bottom" Panel.ZIndex="1">
+        <Rectangle Fill="{StaticResource SplitterBackgroundBrush}" Height="1" VerticalAlignment="Bottom" Panel.ZIndex="1">
             <Rectangle.Effect>
                 <DropShadowEffect x:Name="InformationSepperatorDropShadow" Direction="270" ShadowDepth="3" Opacity="0"/>
             </Rectangle.Effect>
@@ -79,7 +79,7 @@
 
                 <TextBlock x:Name="NumsTextBlock" FontSize="{Binding FontSize, ElementName=TextEditorTextBox}" FontFamily="{Binding FontFamily, ElementName=TextEditorTextBox}" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackgroundBrush}"/>
 
-                <Rectangle Grid.Column="1" Fill="{StaticResource PanelBackgroundBrush}"/>
+                <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackgroundBrush}"/>
 
                 <Grid x:Name="TextEditorGrid" Grid.Column="2">
                     <editorParts:TextBoxWithDrawingGroup x:Name="TextEditorTextBox" PreviewKeyDown="TextEditor_PreviewKeyDown" SelectionChanged="TextEditorTextBox_SelectionChanged" TextChanged="TextEditorTextBox_TextChanged" BorderThickness="0" FontFamily="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontFamily}" AcceptsReturn="True" AcceptsTab="True" FontSize="{Binding Source={x:Static local:GlobalSettings.Default}, Path=TextEditorFontSize}" UndoLimit="10000" PreviewMouseDown="TextEditorTextBox_MouseDown"/>
@@ -89,7 +89,7 @@
             </Grid>
         </ScrollViewer>
 
-        <Border BorderThickness="0,1,0,0" Height="24" Grid.Row="2" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource PanelBackgroundBrush}">
+        <Border BorderThickness="0,1,0,0" Height="24" Grid.Row="2" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource SplitterBackgroundBrush}">
             <Grid>
                 <StackPanel Orientation="Horizontal">
                     <WrapPanel ToolTip="Errors" VerticalAlignment="Center">

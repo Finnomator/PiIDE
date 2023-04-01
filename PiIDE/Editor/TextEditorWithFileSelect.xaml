@@ -67,7 +67,7 @@
 
         </Grid>
 
-        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource PanelBackgroundBrush}"/>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" Background="{DynamicResource SplitterBackgroundBrush}"/>
 
         <logo:Logo Grid.Column="2" Grid.Row="1" MaxHeight="314" MaxWidth="314" Opacity="0.3"/>
 
@@ -100,7 +100,7 @@
             </Button>
         </StackPanel>
 
-        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="{DynamicResource PanelBackgroundBrush}"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Background="{DynamicResource SplitterBackgroundBrush}"/>
 
         <TabControl Background="{StaticResource WindowBackgroundBrush}"  Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 
