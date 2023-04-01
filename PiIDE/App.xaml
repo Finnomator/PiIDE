@@ -24,6 +24,7 @@
                 <ResourceDictionary Source="Themes/ExpanderTheme.xaml"/>
                 <ResourceDictionary Source="Themes/RadioButtonTheme.xaml"/>
                 <ResourceDictionary Source="Themes/MenuItemTheme.xaml"/>
+                <ResourceDictionary Source="Themes/CheckBoxTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -5,19 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter.Colors"
              mc:Ignorable="d" d:DesignWidth="800" Unloaded="UserControl_Unloaded">
+    <Border BorderThickness="1" BorderBrush="{StaticResource SplitterBackgroundBrush}">
+        <StackPanel>
+            <StackPanel Name="MainStackPanel"/>
+            <Separator Background="{StaticResource SplitterBackgroundBrush}"/>
 
-    <StackPanel>
-        <StackPanel Name="MainStackPanel"/>
-        <Separator Background="{StaticResource SplitterBackgroundBrush}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-
-            <Button Style="{StaticResource CleanButtonStyle}" Content="Export Theme" Foreground="White" Click="ExportTheme_Click"/>
-            <Button Style="{StaticResource CleanButtonStyle}" Content="Import Theme" Foreground="White" Grid.Column="1" Click="ImportTheme_Click"/>
-        </Grid>
-    </StackPanel>
+                <Button Style="{StaticResource CleanButtonStyle}" Content="Export Theme" Foreground="White" Click="ExportTheme_Click"/>
+                <Button Style="{StaticResource CleanButtonStyle}" Content="Import Theme" Foreground="White" Grid.Column="1" Click="ImportTheme_Click"/>
+            </Grid>
+        </StackPanel>
+    </Border>
 </UserControl>

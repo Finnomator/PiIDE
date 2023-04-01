@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,8 +9,7 @@ namespace PiIDE.Editor.Parts {
     public class TextBoxWithDrawingGroup : TextBox {
         private readonly DrawingGroup DrawingGroup = new();
 
-        private readonly List<Action<DrawingContext>> RenderActions = new();
-        private readonly List<Func<DrawingContext, Task>> AsyncRenderActions = new();
+        private readonly HashSet<Action<DrawingContext>> RenderActions = new();
 
         public Action<DrawingContext> DefaultRenderAction { get; init; }
         public FormattedText VisibleTextAsFormattedText { get; private set; }
@@ -34,7 +32,6 @@ namespace PiIDE.Editor.Parts {
             AddRenderAction(DefaultRenderAction);
 
             TextChanged += (s, e) => {
-                VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
                 Render();
             };
 
@@ -42,7 +39,6 @@ namespace PiIDE.Editor.Parts {
                 if (TextEditor == null)
                     return;
                 TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
-                    VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
                     Render();
                 };
             };
@@ -62,13 +58,12 @@ namespace PiIDE.Editor.Parts {
             );
         }
 
-        public void AddAsyncRenderAction(Func<DrawingContext, Task> action) => AsyncRenderActions.Add(action);
-
         public void AddRenderAction(Action<DrawingContext> action) => RenderActions.Add(action);
 
         public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
         public void Render() {
+            VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
             using DrawingContext dc = DrawingGroup.Open();
             foreach (Action<DrawingContext> action in RenderActions)
                 action(dc);

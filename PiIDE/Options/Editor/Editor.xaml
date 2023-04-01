@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:PiIDE.Options.Editor"
              xmlns:editorShortcuts="clr-namespace:PiIDE.Options.Editor.Shortcuts"
              xmlns:editorColors="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter.Colors"
+             xmlns:editorSyntaxHighlighter="clr-namespace:PiIDE.Options.Editor.SyntaxHighlighter"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Unloaded="UserControl_Unloaded">
@@ -43,11 +44,12 @@
         <TabItem Header="Syntax Highlighter" Style="{StaticResource TabItemStyle}">
             <ScrollViewer Style="{StaticResource ScrollViewerTheme}" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-
+                    <Expander Style="{DynamicResource ExpanderStyle}" IsExpanded="True" Foreground="White" Header="Highlighting">
+                        <editorSyntaxHighlighter:SelectHighlightingModules Margin="20,0,0,0"/>
+                    </Expander>
+                    <Separator Background="{StaticResource SplitterBackgroundBrush}" Margin="-2,2,0,2"/>
                     <Expander Style="{DynamicResource ExpanderStyle}" Foreground="White" Header="Colors" IsExpanded="True">
-                        <Border Margin="20,0,0,0" BorderThickness="1" BorderBrush="{StaticResource SplitterBackgroundBrush}">
-                            <editorColors:ColorOptions/>
-                        </Border>
+                        <editorColors:ColorOptions Margin="20,0,0,0"/>
                     </Expander>
                 </StackPanel>
             </ScrollViewer>

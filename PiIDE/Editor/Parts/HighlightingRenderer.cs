@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using static PiIDE.Wrapers.JediWraper.ReturnClasses;
+using PiIDE.Options.Editor.SyntaxHighlighter;
 
 namespace PiIDE.Editor.Parts {
     public class HighlightingRenderer {
@@ -19,34 +20,47 @@ namespace PiIDE.Editor.Parts {
 
             if (Editor.IsPythonFile) {
                 TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
-
-                TextRenderer.AddRenderAction(HighlightBrackets);
-                TextRenderer.AddRenderAction(HighlightKeywords);
-                TextRenderer.AddRenderAction(HighlightJediNames);
+                SetRenderingAccordingToSettings();
+                SyntaxHighlighterSettings.Default.PropertyChanged += (s, e) => {
+                    SetRenderingAccordingToSettings();
+                    TextRenderer.Render();
+                };
             }
+        }
+
+        private void SetRenderingAccordingToSettings() {
+            if (SyntaxHighlighterSettings.Default.HighlightBrackets)
+                TextRenderer.AddRenderAction(HighlightBrackets);
+            else
+                TextRenderer.RemoveRenderAction(HighlightBrackets);
+
+            if (SyntaxHighlighterSettings.Default.HighlightKeywords)
+                TextRenderer.AddRenderAction(HighlightKeywords);
+            else
+                TextRenderer.RemoveRenderAction(HighlightKeywords);
+
+            if (SyntaxHighlighterSettings.Default.HighlightJediNames)
+                TextRenderer.AddRenderAction(HighlightJediNames);
+            else
+                TextRenderer.RemoveRenderAction(HighlightJediNames);
         }
 
         private void HighlightKeywords(DrawingContext context) {
 
             string visibleText = RendererFormattedText.Text;
 
-            Match[] keywordMatches = SyntaxHighlighter.FindKeywords(visibleText);
-            Match[] commentMatches = SyntaxHighlighter.FindComments(visibleText);
-            Match[] stringMatches = SyntaxHighlighter.FindStrings(visibleText);
-            Match[] numberMatches = SyntaxHighlighter.FindNumbers(visibleText);
-
             // The highlighting order is critical, so it overlaps the highlighted strings in comments
 
-            foreach (Match keyword in keywordMatches)
+            foreach (Match keyword in SyntaxHighlighter.FindKeywords(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Keyword, keyword.Index, keyword.Length);
 
-            foreach (Match number in numberMatches)
+            foreach (Match number in SyntaxHighlighter.FindNumbers(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Number, number.Index, number.Length);
 
-            foreach (Match stringMatch in stringMatches)
+            foreach (Match stringMatch in SyntaxHighlighter.FindStrings(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, stringMatch.Index, stringMatch.Length);
 
-            foreach (Match comment in commentMatches)
+            foreach (Match comment in SyntaxHighlighter.FindComments(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Comment, comment.Index, comment.Length);
         }
 

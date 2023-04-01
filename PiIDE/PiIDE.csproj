@@ -108,6 +108,11 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>GlobalSettings.settings</DependentUpon>
 		</Compile>
+		<Compile Update="Options\Editor\SyntaxHighlighter\SyntaxHighlighterSettings.Designer.cs">
+		  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>SyntaxHighlighterSettings.settings</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -117,6 +122,10 @@
 		<None Update="GlobalSettings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>GlobalSettings.Designer.cs</LastGenOutput>
+		</None>
+		<None Update="Options\Editor\SyntaxHighlighter\SyntaxHighlighterSettings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
+		  <LastGenOutput>SyntaxHighlighterSettings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 
