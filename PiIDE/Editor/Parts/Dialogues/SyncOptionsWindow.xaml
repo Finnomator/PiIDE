@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Sync"
         Closing="Window_Closing"
-        Background="{StaticResource WindowBackground}"
+        Background="{StaticResource WindowBackgroundBrush}"
         Width="300" Height="116"
         WindowStyle="SingleBorderWindow">
 
@@ -15,7 +15,7 @@
         <WindowChrome CornerRadius="8" CaptionHeight="30" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
-    <Border BorderThickness="2" BorderBrush="{StaticResource SplitterBackground}">
+    <Border BorderThickness="2" BorderBrush="{StaticResource PanelBackgroundBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -24,7 +24,7 @@
 
             <StackPanel>
                 <Label Content="How should the files be synced?" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
-                <Separator Background="{StaticResource SplitterBackground}"/>
+                <Separator Background="{StaticResource PanelBackgroundBrush}"/>
                 <RadioButton Style="{DynamicResource RadioButtonStyle}" Content="Overwrite all local files" IsChecked="True" Foreground="White" Checked="OverwriteAllLocalFile_Checked"/>
             </StackPanel>
 
@@ -40,10 +40,10 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <Rectangle Height="2" Fill="{StaticResource SplitterBackground}" Grid.ColumnSpan="3"/>
+                <Rectangle Height="2" Fill="{StaticResource PanelBackgroundBrush}" Grid.ColumnSpan="3"/>
 
                 <Button Content="Ok" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Foreground="White" Click="Ok_Click" Grid.Row="1"/>
-                <Rectangle Fill="{StaticResource SplitterBackground}" Grid.Column="1" Grid.Row="1"/>
+                <Rectangle Fill="{StaticResource PanelBackgroundBrush}" Grid.Column="1" Grid.Row="1"/>
                 <Button Content="Cancel" Grid.Column="2" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Foreground="White" Click="Cancel_Click" Grid.Row="1"/>
             </Grid>
         </Grid>

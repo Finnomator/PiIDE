@@ -11,7 +11,7 @@
         Title="Options" Height="450" Width="800" Closing="Window_Closing"
         WindowStyle="ToolWindow">
     
-    <TabControl Template="{StaticResource TabControlStyle}" Background="{StaticResource WindowBackground}">
+    <TabControl Template="{StaticResource TabControlStyle}" Background="{StaticResource WindowBackgroundBrush}">
         <TabItem Header="General" Style="{StaticResource TabItemStyle}">
             <general:General/>
         </TabItem>

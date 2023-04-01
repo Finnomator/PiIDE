@@ -23,6 +23,7 @@
                 <ResourceDictionary Source="Themes/TextBoxTheme.xaml"/>
                 <ResourceDictionary Source="Themes/ExpanderTheme.xaml"/>
                 <ResourceDictionary Source="Themes/RadioButtonTheme.xaml"/>
+                <ResourceDictionary Source="Themes/MenuItemTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -14,7 +14,7 @@
 
         <Label x:Name="Header" Foreground="White" VerticalContentAlignment="Center"/>
 
-        <Rectangle Height="2" VerticalAlignment="Bottom" Fill="{StaticResource SplitterBackground}"/>
+        <Rectangle Height="2" VerticalAlignment="Bottom" Fill="{StaticResource PanelBackgroundBrush}"/>
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <StackPanel Name="DirectoryItemsWrapPanel"  Orientation="Vertical"/>

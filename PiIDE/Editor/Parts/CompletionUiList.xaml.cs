@@ -171,8 +171,8 @@ namespace PiIDE {
         private class LoadingState : Border {
             public LoadingState() {
                 BorderThickness = new(1);
-                BorderBrush = (Brush) Application.Current.Resources["SplitterBackground"];
-                Background = (Brush) Application.Current.Resources["EditorBackground"];
+                BorderBrush = (Brush) Application.Current.Resources["PanelBackgroundBrush"];
+                Background = (Brush) Application.Current.Resources["EditorBackgroundBrush"];
 
                 WrapPanel wrapPanel = new();
 
@@ -186,8 +186,8 @@ namespace PiIDE {
         private class NoSuggestionsState : Border {
             public NoSuggestionsState() {
                 BorderThickness = new(1);
-                BorderBrush = (Brush) Application.Current.Resources["SplitterBackground"];
-                Background = (Brush) Application.Current.Resources["EditorBackground"];
+                BorderBrush = (Brush) Application.Current.Resources["PanelBackgroundBrush"];
+                Background = (Brush) Application.Current.Resources["EditorBackgroundBrush"];
                 Child = new TextBlock() { Text = "No Suggestions", Foreground = Brushes.White };
             }
         }

@@ -1,20 +1,31 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="FatalColor" Color="DarkRed"/>
-    <SolidColorBrush x:Key="ErrorColor" Color="Red"/>
-    <SolidColorBrush x:Key="WarningColor" Color="Gold"/>
-    <SolidColorBrush x:Key="ConventionColor" Color="LightGray"/>
-    <SolidColorBrush x:Key="RefactorColor" Color="LightCyan"/>
-    <SolidColorBrush x:Key="InformationColor" Color="LightBlue"/>
+    <SolidColorBrush x:Key="FatalBrush" Color="DarkRed"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="Red"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="Gold"/>
+    <SolidColorBrush x:Key="ConventionBrush" Color="LightGray"/>
+    <SolidColorBrush x:Key="RefactorBrush" Color="LightCyan"/>
+    <SolidColorBrush x:Key="InformationBrush" Color="LightBlue"/>
 
     <Color x:Key="AccentColor">#FFDB7093</Color>
-    <SolidColorBrush x:Key="Accentcolor" Color="{DynamicResource AccentColor}"/>
-    <SolidColorBrush x:Key="EditorBackground" Color="#FF1F1F1F"/>
-    <SolidColorBrush x:Key="WindowBackground" Color="#FF1F1F1F"/>
-    <SolidColorBrush x:Key="TabPanelBackground" Color="#FF181818"/>
-    <SolidColorBrush x:Key="ExplorerBackground" Color="#FF181818"/>
-    <SolidColorBrush x:Key="PanelBackground" Color="#FF181818"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}"/>
+
+    <Color x:Key="EditorBackgroundColor">#FF1F1F1F</Color>
+    <SolidColorBrush x:Key="EditorBackgroundBrush" Color="#FF1F1F1F"/>
+
+    <Color x:Key="WindowBackgroundColor">#FF1F1F1F</Color>
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FF1F1F1F"/>
+
+    <Color x:Key="TabPanelBackgroundColor">#FF181818</Color>
+    <SolidColorBrush x:Key="TabPanelBackgroundBrush" Color="#FF181818"/>
+
+    <Color x:Key="ExplorerBackgroundColor">#FF181818</Color>
+    <SolidColorBrush x:Key="ExplorerBackgroundBrush" Color="#FF181818"/>
+
+    <Color x:Key="PanelBackgroundColor">#FF181818</Color>
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#FF181818"/>
+    
     <Color x:Key="SplitterBackgroundColor">#FF2A2A2A</Color>
-    <SolidColorBrush x:Key="SplitterBackground" Color="{DynamicResource SplitterBackgroundColor}"/>
+    <SolidColorBrush x:Key="SplitterBackgroundBrush" Color="{DynamicResource SplitterBackgroundColor}"/>
 </ResourceDictionary>

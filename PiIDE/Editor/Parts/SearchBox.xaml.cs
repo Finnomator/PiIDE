@@ -137,7 +137,7 @@ namespace PiIDE.Editor.Parts {
             }
 
             TotalResultsTextBlock.Text = AllSearchResults.Count.ToString();
-            SearchTextBox.Background = (Brush) Application.Current.Resources["PanelBackground"];
+            SearchTextBox.Background = (Brush) Application.Current.Resources["PanelBackgroundBrush"];
 
             SetResultNo(0);
         }

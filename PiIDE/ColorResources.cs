@@ -9,7 +9,7 @@ using System.Windows.Media;
 namespace PiIDE {
     public static class ColorResources {
 
-        public static Brush AccentColorBrush = (Brush) Application.Current.Resources["Accentcolor"];
+        public static Brush AccentColorBrush = (Brush) Application.Current.Resources["AccentBrush"];
 
         public static Dictionary<string, Brush> LoadResource(string filePath) {
             using Stream stream = File.OpenRead(filePath);

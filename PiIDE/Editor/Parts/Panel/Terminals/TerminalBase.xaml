@@ -13,9 +13,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBox BorderThickness="0" Foreground="White" Background="{DynamicResource PanelBackground}" IsReadOnly="True" x:Name="OutputTextBox" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Code"/>
+        <TextBox BorderThickness="0" Foreground="White" Background="{DynamicResource PanelBackgroundBrush}" IsReadOnly="True" x:Name="OutputTextBox" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Code"/>
 
-        <Border Grid.Row="1" Background="{DynamicResource PanelBackground}" BorderThickness="1" CornerRadius="3" BorderBrush="{StaticResource Accentcolor}">
+        <Border Grid.Row="1" Background="{DynamicResource PanelBackgroundBrush}" BorderThickness="1" CornerRadius="3" BorderBrush="{StaticResource AccentBrush}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -24,7 +24,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Foreground="White" Content="❯" Padding="1,0,1,0" VerticalContentAlignment="Center"/>
-                <TextBox Background="{StaticResource PanelBackground}" VerticalContentAlignment="Center" Foreground="White" Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True" FontFamily="Cascadia Code"/>
+                <TextBox Background="{StaticResource PanelBackgroundBrush}" VerticalContentAlignment="Center" Foreground="White" Grid.Column="1" x:Name="InputTextBox" BorderThickness="0" PreviewKeyDown="InputTextBox_PreviewKeyDown" AcceptsTab="True" AcceptsReturn="True" FontFamily="Cascadia Code"/>
             </Grid>
         </Border>
     </Grid>
