@@ -49,9 +49,7 @@ namespace PiIDE.Editor.Parts.Explorer {
             StatusTextBlock.Text = status;
         }
 
-        protected void UnsetStatus() {
-            Status.Visibility = Visibility.Collapsed;
-        }
+        protected void UnsetStatus() => Status.Visibility = Visibility.Collapsed;
 
         protected virtual void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(FilePath, false);
         protected virtual void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(FilePath, false);

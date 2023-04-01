@@ -11,13 +11,9 @@ namespace PiIDE {
             LoadSettings();
         }
 
-        private void LoadSettings() {
-            VersionLabel.Content = Environment.GetEnvironmentVariable("ClickOnce_CurrentVersion") ?? "Not installed";
-        }
+        private void LoadSettings() => VersionLabel.Content = Environment.GetEnvironmentVariable("ClickOnce_CurrentVersion") ?? "Not installed";
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            GlobalSettings.Default.Save();
-        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => GlobalSettings.Default.Save();
 
         private void GithubIssue_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });

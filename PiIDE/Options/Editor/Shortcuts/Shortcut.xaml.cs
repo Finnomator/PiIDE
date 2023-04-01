@@ -37,9 +37,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
             AllKeysReleased = false;
         }
 
-        private void ShortcutTextBox_KeyUp(object sender, KeyEventArgs e) {
-            AllKeysReleased = !PiIDE.Shortcuts.IsAnyKeyPressed();
-        }
+        private void ShortcutTextBox_KeyUp(object sender, KeyEventArgs e) => AllKeysReleased = !PiIDE.Shortcuts.IsAnyKeyPressed();
 
         private void Reset_Click(object sender, System.Windows.RoutedEventArgs e) {
             Hotkey = PiIDE.Shortcuts.DefaultShortcutsMap[IShortcut];
@@ -47,8 +45,6 @@ namespace PiIDE.Options.Editor.Shortcuts {
             PiIDE.Shortcuts.ShortcutsMap[IShortcut] = PiIDE.Shortcuts.ShortcutsMap[IShortcut];
         }
 
-        private void ShortcutTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-            ResetButton.IsEnabled = !PiIDE.Shortcuts.DefaultShortcutsMap[IShortcut].SequenceEqual(Hotkey);
-        }
+        private void ShortcutTextBox_TextChanged(object sender, TextChangedEventArgs e) => ResetButton.IsEnabled = !PiIDE.Shortcuts.DefaultShortcutsMap[IShortcut].SequenceEqual(Hotkey);
     }
 }

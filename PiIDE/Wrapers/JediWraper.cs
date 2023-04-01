@@ -25,9 +25,7 @@ namespace PiIDE.Wrapers {
 
                 public bool IsBusy { get; private set; }
 
-                public Wraper() {
-                    InitProcess();
-                }
+                public Wraper() => InitProcess();
 
                 private void InitProcess() {
                     WraperProcess = new() {
@@ -215,9 +213,7 @@ namespace PiIDE.Wrapers {
             }
             */
 
-            public async Task<ReturnClasses.Name[]> Help(int line, int column) {
-                return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.help({line}, {column})))", true));
-            }
+            public async Task<ReturnClasses.Name[]> Help(int line, int column) => TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.help({line}, {column})))", true));
 
             public async Task<ReturnClasses.Name[]> GetReferences(int line, int column, Dictionary<object, object>? kwargs = null) {
                 // TODO: implement kwargs
@@ -225,9 +221,7 @@ namespace PiIDE.Wrapers {
                 return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.get_references({line}, {column})))", true));
             }
 
-            public async Task<ReturnClasses.Signature[]> GetSignatures(int line, int column) {
-                return TryConvert<ReturnClasses.Signature>(await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({WraperVariableName}.get_signatures({line} , {column})))", true));
-            }
+            public async Task<ReturnClasses.Signature[]> GetSignatures(int line, int column) => TryConvert<ReturnClasses.Signature>(await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({WraperVariableName}.get_signatures({line} , {column})))", true));
 
             public async Task<ReturnClasses.Name?> GetContext(int line, int column) {
                 string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({WraperVariableName}.get_context({line}, {column})))", true);
@@ -289,9 +283,7 @@ namespace PiIDE.Wrapers {
                     return JsonSerializer.Deserialize<T>(line);
                 }
 
-                public async Task<bool> InBuiltinModule() {
-                    return (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.in_builtin_module())", true)) == "True";
-                }
+                public async Task<bool> InBuiltinModule() => (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.in_builtin_module())", true)) == "True";
 
                 public async Task<(int row, int column)> GetDefinitionStartPosition() {
                     string? res = await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_definition_start_position())", true);
@@ -310,13 +302,9 @@ namespace PiIDE.Wrapers {
                     return res?.Replace("\\n", "\n");
                 }
 
-                public async Task<bool> IsStub() {
-                    return (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.is_stub())", true)) == "True";
-                }
+                public async Task<bool> IsStub() => (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.is_stub())", true)) == "True";
 
-                public async Task<bool> IsSideEffect() {
-                    return (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.is_side_effect())", true)) == "True";
-                }
+                public async Task<bool> IsSideEffect() => (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.is_side_effect())", true)) == "True";
 
                 public async Task<Name[]> Goto(bool followImports = false, bool followBuiltinImports = false, bool onlyStubs = false, bool preferStubs = false) {
                     string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.goto(follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
@@ -328,21 +316,13 @@ namespace PiIDE.Wrapers {
                     return Script.TryConvert<Name>(res);
                 }
 
-                public async Task<Name?> Parent() {
-                    return TryConvert<Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.parent()))", true));
-                }
+                public async Task<Name?> Parent() => TryConvert<Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.parent()))", true));
 
-                public async Task<string?> GetLineCode(int before = 0, int after = 0) {
-                    return await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_line_code({before}, {after}))", true);
-                }
+                public async Task<string?> GetLineCode(int before = 0, int after = 0) => await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_line_code({before}, {after}))", true);
 
-                public async Task<BaseSignature[]> GetSignatures() {
-                    return Script.TryConvert<BaseSignature>(await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({VariableName}.get_signatures()))", true));
-                }
+                public async Task<BaseSignature[]> GetSignatures() => Script.TryConvert<BaseSignature>(await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({VariableName}.get_signatures()))", true));
 
-                public async Task<Name[]> Execute() {
-                    return Script.TryConvert<Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.execute()))", true));
-                }
+                public async Task<Name[]> Execute() => Script.TryConvert<Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.execute()))", true));
 
                 public async Task<string?> GetTypeHint() {
                     string? res = await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_type_hint())", true);

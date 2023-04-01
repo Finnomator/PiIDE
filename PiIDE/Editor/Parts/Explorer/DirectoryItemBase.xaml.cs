@@ -1,5 +1,4 @@
-﻿using PiIDE.Editor.Parts.Dialogues;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -82,21 +81,17 @@ namespace PiIDE.Editor.Parts.Explorer {
             Expand();
         }
 
-        protected void Watcher_Renamed(object sender, RenamedEventArgs e) {
-            Dispatcher.Invoke(() => {
-                ParentExplorer.OnFileRenamed(this, e.OldFullPath, e.FullPath);
-                ReloadContent();
-            });
-        }
+        protected void Watcher_Renamed(object sender, RenamedEventArgs e) => Dispatcher.Invoke(() => {
+            ParentExplorer.OnFileRenamed(this, e.OldFullPath, e.FullPath);
+            ReloadContent();
+        });
 
-        protected void Watcher_Deleted(object sender, FileSystemEventArgs e) {
-            Dispatcher.Invoke(() => {
-                ParentExplorer.OnFileDeleted(this, e.FullPath);
-                try {
-                    ReloadContent();
-                } catch (ArgumentException) { }
-            });
-        }
+        protected void Watcher_Deleted(object sender, FileSystemEventArgs e) => Dispatcher.Invoke(() => {
+            ParentExplorer.OnFileDeleted(this, e.FullPath);
+            try {
+                ReloadContent();
+            } catch (ArgumentException) { }
+        });
 
         private void MainButton_Click(object sender, RoutedEventArgs e) {
             if (IsExpanded)
@@ -123,37 +118,27 @@ namespace PiIDE.Editor.Parts.Explorer {
             RenameTextBox.Focus();
         }
 
-        protected virtual void AddFile_Click(object sender, RoutedEventArgs e) {
-            Tools.TryCreateFile(Path.Combine(DirectoryPath, "new_file.py"));
-        }
+        protected virtual void AddFile_Click(object sender, RoutedEventArgs e) => Tools.TryCreateFile(Path.Combine(DirectoryPath, "new_file.py"));
 
-        protected virtual void AddFolder_Click(object sender, RoutedEventArgs e) {
-            Tools.TryCreateDirectory(Path.Combine(DirectoryPath, "NewFolder"));
-        }
+        protected virtual void AddFolder_Click(object sender, RoutedEventArgs e) => Tools.TryCreateDirectory(Path.Combine(DirectoryPath, "NewFolder"));
 
-        private void OpenInExplorer_Click(object sender, RoutedEventArgs e) {
-            Process.Start(new ProcessStartInfo() {
-                WorkingDirectory = DirectoryPath,
-                Arguments = ".",
-                FileName = "explorer",
-            });
-        }
+        private void OpenInExplorer_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo() {
+            WorkingDirectory = DirectoryPath,
+            Arguments = ".",
+            FileName = "explorer",
+        });
 
-        private void OpenInCmd_Click(object sender, RoutedEventArgs e) {
-            Process.Start(new ProcessStartInfo() {
-                WorkingDirectory = DirectoryPath,
-                FileName = "cmd",
-            });
-        }
+        private void OpenInCmd_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo() {
+            WorkingDirectory = DirectoryPath,
+            FileName = "cmd",
+        });
 
         protected void SetStatus(string status) {
             StatusTextBlock.Text = status;
             Status.Visibility = Visibility.Visible;
         }
 
-        protected void UnsetStatus() {
-            Status.Visibility = Visibility.Collapsed;
-        }
+        protected void UnsetStatus() => Status.Visibility = Visibility.Collapsed;
 
         private void RenameTextBox_KeyDown(object sender, KeyEventArgs e) {
             switch (e.Key) {

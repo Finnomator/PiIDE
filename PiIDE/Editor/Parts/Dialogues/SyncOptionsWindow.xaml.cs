@@ -31,9 +31,7 @@ namespace PiIDE.Editor.Parts {
             Focus();
         }
 
-        private void OverwriteAllLocalFile_Checked(object sender, RoutedEventArgs e) {
-            SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
-        }
+        private void OverwriteAllLocalFile_Checked(object sender, RoutedEventArgs e) => SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
 
         private void Ok_Click(object sender, RoutedEventArgs e) {
             OkClose = true;

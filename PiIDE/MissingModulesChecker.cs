@@ -62,9 +62,7 @@ namespace PiIDE {
             return modules;
         }
 
-        public static bool IsJediUsable() {
-            return true;
-        }
+        public static bool IsJediUsable() => true;
 
         public static bool TryToStartProcess(string fileName, string args = "") {
 

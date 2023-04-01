@@ -20,9 +20,7 @@ namespace PiIDE {
         };
         public static readonly Shortcut[] DefaultShortcuts = Enum.GetValues(typeof(Shortcut)).Cast<Shortcut>().ToArray();
 
-        static Shortcuts() {
-            ShortcutsMap = LoadShortcuts(Options.Editor.Shortcuts.Shortcuts.ShortcutsJsonPath);
-        }
+        static Shortcuts() => ShortcutsMap = LoadShortcuts(Options.Editor.Shortcuts.Shortcuts.ShortcutsJsonPath);
 
         public static bool IsAnyKeyPressed() {
             for (int i = 1; i < _keys.Length; i++) {

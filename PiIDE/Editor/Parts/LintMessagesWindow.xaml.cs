@@ -18,9 +18,7 @@ namespace PiIDE {
 
         public EventHandler<PylintMessage>? SelectionChanged;
 
-        public LintMessagesWindow() {
-            InitializeComponent();
-        }
+        public LintMessagesWindow() => InitializeComponent();
 
         private PylintMessage? SelectedMessage => (PylintMessage?) MainListView.SelectedItem;
 
@@ -48,13 +46,9 @@ namespace PiIDE {
             return pylintMessages;
         }
 
-        private void ResetToNormalState() {
-            PylintStatus.Visibility = Visibility.Collapsed;
-        }
+        private void ResetToNormalState() => PylintStatus.Visibility = Visibility.Collapsed;
 
-        private void SetIntoLoadingState() {
-            PylintStatus.Visibility = Visibility.Visible;
-        }
+        private void SetIntoLoadingState() => PylintStatus.Visibility = Visibility.Visible;
 
         public static ScrollViewer FindScrollViewer(DependencyObject d) {
             if (d is ScrollViewer viewer)

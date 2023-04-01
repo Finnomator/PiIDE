@@ -62,7 +62,7 @@ namespace PiIDE.Wrapers {
 
         [JsonPropertyName("type")]
         public string Type {
-            get { return _type; }
+            get => _type;
             set {
                 ForegroundColor = PylintMessageColors.MessageTypeToColor(value);
                 Icon = PylintMessageIcons.MessageTypeToIcon(value);

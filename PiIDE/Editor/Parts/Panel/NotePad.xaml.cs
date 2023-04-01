@@ -5,8 +5,6 @@ namespace PiIDE {
     /// Interaction logic for NotePad.xaml
     /// </summary>
     public partial class NotePad : UserControl {
-        public NotePad() {
-            InitializeComponent();
-        }
+        public NotePad() => InitializeComponent();
     }
 }

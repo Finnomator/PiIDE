@@ -130,11 +130,9 @@ namespace PiIDE {
             Application.Current.MainWindow.Activated -= MainWindow_Activated;
         }
 
-        private void Python_Exited(object? sender, EventArgs e) {
-            Dispatcher.Invoke(() => {
-                RunFileLocalButton.IsEnabled = true;
-            });
-        }
+        private void Python_Exited(object? sender, EventArgs e) => Dispatcher.Invoke(() => {
+            RunFileLocalButton.IsEnabled = true;
+        });
 
         private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
 
@@ -567,8 +565,6 @@ namespace PiIDE {
                 CompletionList.Close();
         }
 
-        private async void SaveFileButton_Click(object sender, RoutedEventArgs e) {
-            await SaveFileAsync(true);
-        }
+        private async void SaveFileButton_Click(object sender, RoutedEventArgs e) => await SaveFileAsync(true);
     }
 }

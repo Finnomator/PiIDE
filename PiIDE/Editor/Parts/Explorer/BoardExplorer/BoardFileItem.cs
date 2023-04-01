@@ -8,9 +8,7 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
-        public BoardFileItem(string fullLocalPath, string pathOnBoard, BoardDirectoryItem parentDirectory, ExplorerBase parentExplorer) : base(fullLocalPath, parentDirectory, parentExplorer) {
-            FilePathOnBoard = pathOnBoard;
-        }
+        public BoardFileItem(string fullLocalPath, string pathOnBoard, BoardDirectoryItem parentDirectory, ExplorerBase parentExplorer) : base(fullLocalPath, parentDirectory, parentExplorer) => FilePathOnBoard = pathOnBoard;
 
         // TODO: Implement these features
         protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();

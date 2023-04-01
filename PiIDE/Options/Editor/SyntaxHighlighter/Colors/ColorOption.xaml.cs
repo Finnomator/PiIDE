@@ -35,8 +35,6 @@ namespace PiIDE.Options.Editor.SyntaxHighlighter.Colors {
                 ResetButton.IsEnabled = true;
         }
 
-        private void ResetButton_Click(object sender, RoutedEventArgs e) {
-            ColorTextBox.Text = DefaultCode;
-        }
+        private void ResetButton_Click(object sender, RoutedEventArgs e) => ColorTextBox.Text = DefaultCode;
     }
 }

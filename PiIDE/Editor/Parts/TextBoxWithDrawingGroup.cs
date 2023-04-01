@@ -49,8 +49,7 @@ namespace PiIDE.Editor.Parts {
 
         private FormattedText GetVisibleTextAsFormattedText() => TextEditor == null ? GetTextAsFormattedText("") : GetTextAsFormattedText(TextEditor.VisibleText);
 
-        private FormattedText GetTextAsFormattedText(string text) {
-            return new(
+        private FormattedText GetTextAsFormattedText(string text) => new(
                 textToFormat: text,
                 culture: CultureInfo.GetCultureInfo("en-us"),
                 flowDirection: FlowDirection.LeftToRight,
@@ -59,7 +58,6 @@ namespace PiIDE.Editor.Parts {
                 foreground: Brushes.White,
                 pixelsPerDip: VisualTreeHelper.GetDpi(this).PixelsPerDip
             );
-        }
 
         public void AddRenderAction(Action<DrawingContext> action) => RenderActions.Add(action);
 

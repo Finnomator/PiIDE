@@ -91,10 +91,8 @@ namespace PiIDE.Editor.Parts {
             StartedPythonExecutionOnBoard?.Invoke(this, EventArgs.Empty);
         }
 
-        private void Ampy_Exited(object? sender, EventArgs e) {
-            Dispatcher.Invoke(() => {
-                RunFileOnBoardButton.IsEnabled = true;
-            });
-        }
+        private void Ampy_Exited(object? sender, EventArgs e) => Dispatcher.Invoke(() => {
+            RunFileOnBoardButton.IsEnabled = true;
+        });
     }
 }

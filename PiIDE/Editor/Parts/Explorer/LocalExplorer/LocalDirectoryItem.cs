@@ -17,13 +17,11 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
                     VerticalAlignment = VerticalAlignment.Center,
                 },
             };
-            removeFolderMenuItem.Click += (s, e) => ((LocalExplorer)ParentExplorer).RemoveFolder(this);
+            removeFolderMenuItem.Click += (s, e) => ((LocalExplorer) ParentExplorer).RemoveFolder(this);
             DirContextMenu.Items.Add(removeFolderMenuItem);
         }
 
-        private LocalDirectoryItem(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) : base(fullPath, parentDirectory, parentExplorer) {
-            Init();
-        }
+        private LocalDirectoryItem(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) : base(fullPath, parentDirectory, parentExplorer) => Init();
 
         private void Init() {
             MenuItem uploadMenuItem = new() {

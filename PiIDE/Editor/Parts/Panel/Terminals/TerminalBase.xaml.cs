@@ -9,9 +9,7 @@ namespace PiIDE {
 
         private bool RecivingErrorData;
 
-        public TerminalBase() {
-            InitializeComponent();
-        }
+        public TerminalBase() => InitializeComponent();
 
         protected void Exited(object? sender, EventArgs e) {
 
@@ -66,12 +64,10 @@ namespace PiIDE {
             });
         }
 
-        protected void PrintEndOfExecution(string message) {
-            Dispatcher.Invoke(() => {
-                OutputTextBox.Text += $"--------------{message}--------------\r\n";
-                OutputTextBox.ScrollToEnd();
-            });
-        }
+        protected void PrintEndOfExecution(string message) => Dispatcher.Invoke(() => {
+            OutputTextBox.Text += $"--------------{message}--------------\r\n";
+            OutputTextBox.ScrollToEnd();
+        });
 
         protected abstract void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e);
     }

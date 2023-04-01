@@ -23,9 +23,7 @@ namespace PiIDE {
             }
         }
 
-        private void Minimize_Click(object sender, RoutedEventArgs e) {
-            WindowState = WindowState.Minimized;
-        }
+        private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
         private async void Close_Click(object sender, RoutedEventArgs e) {
             Editor.StopAllEditorAutoSaving();

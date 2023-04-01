@@ -9,13 +9,9 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
 
         public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
-        public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) {
-            DirectoryPathOnBoard = directoryPathOnBoard;
-        }
+        public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) => DirectoryPathOnBoard = directoryPathOnBoard;
 
-        private BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer, BoardDirectoryItem parentDirectory) : base(fullPath, parentDirectory, parentExplorer) {
-            DirectoryPathOnBoard = directoryPathOnBoard;
-        }
+        private BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer, BoardDirectoryItem parentDirectory) : base(fullPath, parentDirectory, parentExplorer) => DirectoryPathOnBoard = directoryPathOnBoard;
 
         protected override void Expand() {
             base.Expand();

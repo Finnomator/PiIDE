@@ -32,17 +32,13 @@ namespace PiIDE.Options.Editor {
             CompletionsComboBox.SelectedIndex = settings.CompletionsMode;
         }
 
-        private void FontSizeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
-            e.Handled = numberChecker.IsMatch(e.Text);
-        }
+        private void FontSizeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) => e.Handled = numberChecker.IsMatch(e.Text);
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
 
         }
 
-        private void EditorFontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            GlobalSettings.Default.TextEditorFontFamily = ((ComboBoxFontItem) EditorFontComboBox.SelectedItem).FontFamily.Source;
-        }
+        private void EditorFontComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => GlobalSettings.Default.TextEditorFontFamily = ((ComboBoxFontItem) EditorFontComboBox.SelectedItem).FontFamily.Source;
 
         private void FontSizeTextBox_TextChanged(object sender, TextChangedEventArgs e) {
             if (int.TryParse(FontSizeTextBox.Text, out int p))

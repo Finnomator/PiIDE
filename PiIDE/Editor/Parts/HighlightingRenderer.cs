@@ -1,11 +1,11 @@
-﻿using System;
+﻿using PiIDE.Options.Editor.SyntaxHighlighter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using static PiIDE.Wrapers.JediWraper.ReturnClasses;
-using PiIDE.Options.Editor.SyntaxHighlighter;
 
 namespace PiIDE.Editor.Parts {
     public class HighlightingRenderer {

@@ -45,9 +45,7 @@ namespace PiIDE.Wrapers {
                 process = null;
             }
 
-            public static void WriteLineToInput(string line) {
-                process?.StandardInput.WriteLine(line);
-            }
+            public static void WriteLineToInput(string line) => process?.StandardInput.WriteLine(line);
 
             public static void KillProcess() {
                 if (process == null)

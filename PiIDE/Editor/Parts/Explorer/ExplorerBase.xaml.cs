@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace PiIDE.Editor.Parts.Explorer {
 
@@ -17,9 +16,7 @@ namespace PiIDE.Editor.Parts.Explorer {
         public event FileClickEventHandler? FileClick;
         public void OnFileClick(FileItemBase fileItem) => FileClick?.Invoke(fileItem);
 
-        public ExplorerBase() {
-            InitializeComponent();
-        }
+        public ExplorerBase() => InitializeComponent();
 
         protected void AddFolder(DirectoryItemBase folder) => DirectoryItemsWrapPanel.Children.Add(folder);
 

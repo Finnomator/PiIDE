@@ -161,9 +161,7 @@ namespace PiIDE {
             MainBorder.Child = noSuggestionsState;
         }
 
-        private void ResetToNormalState() {
-            MainBorder.Child = MainListBox;
-        }
+        private void ResetToNormalState() => MainBorder.Child = MainListBox;
 
         private void SelectFirst() {
             if (MainListBox.Items.Count > 0)

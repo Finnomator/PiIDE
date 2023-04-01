@@ -29,9 +29,7 @@ namespace PiIDE.Editor.Parts {
         private readonly Brush HighlighedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
         private readonly Brush CurrentWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#3AFFFFFF")!;
 
-        public SearchBox() {
-            InitializeComponent();
-        }
+        public SearchBox() => InitializeComponent();
 
         public void Initialize(HighlightingRenderer resultRenderBox) {
             ResultRenderBox = resultRenderBox;
@@ -249,9 +247,7 @@ namespace PiIDE.Editor.Parts {
                 Count = matchCollection.Count;
             }
 
-            public SearchResult this[int index] {
-                get => SearchResults[index];
-            }
+            public SearchResult this[int index] => SearchResults[index];
         }
 
         public readonly struct SearchResult {

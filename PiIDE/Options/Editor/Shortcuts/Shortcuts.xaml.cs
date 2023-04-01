@@ -63,9 +63,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
             }
         }
 
-        private void SelectShortcutComboBox_DropDownOpened(object sender, System.EventArgs e) {
-            SelectShortcutComboBox.ItemsSource = GetUnusedShortcuts().Select(x => new ShortcutComboBoxItem(x)).ToArray();
-        }
+        private void SelectShortcutComboBox_DropDownOpened(object sender, System.EventArgs e) => SelectShortcutComboBox.ItemsSource = GetUnusedShortcuts().Select(x => new ShortcutComboBoxItem(x)).ToArray();
 
         private class ShortcutComboBoxItem {
 
@@ -78,8 +76,6 @@ namespace PiIDE.Options.Editor.Shortcuts {
             }
         }
 
-        private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
-            PiIDE.Shortcuts.SaveShortcuts(ShortcutsJsonPath, PiIDE.Shortcuts.ShortcutsMap);
-        }
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e) => PiIDE.Shortcuts.SaveShortcuts(ShortcutsJsonPath, PiIDE.Shortcuts.ShortcutsMap);
     }
 }

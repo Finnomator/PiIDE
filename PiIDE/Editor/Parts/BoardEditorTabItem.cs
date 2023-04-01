@@ -1,5 +1,4 @@
 ﻿using PiIDE.Assets.Icons;
-using System;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 

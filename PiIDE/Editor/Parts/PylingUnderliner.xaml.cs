@@ -32,9 +32,7 @@ namespace PiIDE {
             };
         }
 
-        public void UpdateUnderline(int upperLineLimit, int lowerLineLimit) {
-            UpdateVisualChildren(CachedMessages, upperLineLimit, lowerLineLimit);
-        }
+        public void UpdateUnderline(int upperLineLimit, int lowerLineLimit) => UpdateVisualChildren(CachedMessages, upperLineLimit, lowerLineLimit);
 
         public void Underline(PylintMessage[] pylintMessages, int upperLineLimit, int lowerLineLimit) {
             CachedMessages = new PylintMessage[pylintMessages.Length];

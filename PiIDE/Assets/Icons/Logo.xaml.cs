@@ -5,8 +5,6 @@ namespace PiIDE.Assets.Icons {
     /// Interaction logic for Logo.xaml
     /// </summary>
     public partial class Logo : UserControl {
-        public Logo() {
-            InitializeComponent();
-        }
+        public Logo() => InitializeComponent();
     }
 }
