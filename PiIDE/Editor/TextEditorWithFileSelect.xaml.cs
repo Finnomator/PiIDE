@@ -176,11 +176,6 @@ namespace PiIDE {
             CreateNewFileButton.IsEnabled = false;
 
             CreateNewFileDialogue dialogue = new();
-            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
-            dialogue.Left = mousePos.X - dialogue.Width / 2;
-            dialogue.Top = mousePos.Y;
-            dialogue.Show();
-            dialogue.Focus();
 
             dialogue.Closed += async delegate {
 
@@ -264,12 +259,6 @@ namespace PiIDE {
             SyncButton.IsEnabled = false;
 
             SyncOptionsWindow syncWindow = new();
-            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
-            double left = mousePos.X - syncWindow.Width / 2;
-            syncWindow.Left = left > 0 ? left : 0;
-            syncWindow.Top = mousePos.Y;
-            syncWindow.Show();
-            syncWindow.Focus();
 
             syncWindow.Closed += async delegate {
 

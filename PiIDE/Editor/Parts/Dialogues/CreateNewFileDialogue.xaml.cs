@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
 
 
@@ -21,9 +22,24 @@ namespace PiIDE.Editor.Parts.Dialogues {
 
             Loaded += delegate {
                 CreateNewFileDialogueResult = CreateNewFileDialogueResult.Local;
+
+                Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
+                (int sw, int sh) = Tools.GetActiveScreenSize();
+                double left = mousePos.X - ActualWidth / 2;
+
+                if (left < 0 && left > -ActualWidth / 2)
+                    left = 0;
+                else if (left + ActualWidth > sw && left < sw + ActualWidth / 2)
+                    left = sw - ActualWidth;
+
+                Left = left;
+                Top = mousePos.Y;
             };
 
             PiRadioButton.IsEnabled = Tools.EnableBoardInteractions;
+
+            Show();
+            Focus();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e) {
@@ -76,8 +92,7 @@ namespace PiIDE.Editor.Parts.Dialogues {
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            if (CreateClose) {
-            } else {
+            if (!CreateClose) {
                 CreateNewFileDialogueResult = CreateNewFileDialogueResult.None;
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiIDE.Editor.Parts.Dialogues;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -119,6 +120,15 @@ namespace PiIDE.Editor.Parts.Explorer {
             RenameTextBox.Text = DirectoryNameForTextBlock;
             RenameTextBox.SelectAll();
             RenameTextBox.Focus();
+        }
+
+        protected virtual void AddFile_Click(object sender, RoutedEventArgs e) {
+            CreateNewFileDialogue dialogue = new();
+            
+        }
+
+        protected virtual void AddFolder_Click(object sender, RoutedEventArgs e) {
+
         }
 
         protected void SetStatus(string status) {

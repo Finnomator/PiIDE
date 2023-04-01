@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using Screen = System.Windows.Forms.Screen;
 
 namespace PiIDE {
     public static class Tools {
@@ -182,5 +183,10 @@ namespace PiIDE {
         }
 
         public static Point ConvertToDevice(this Point p) => new(p.X / WindowsScalingFactor, p.Y / WindowsScalingFactor);
+
+        public static (int width, int height) GetActiveScreenSize() {
+            Screen s = Screen.FromPoint(System.Windows.Forms.Cursor.Position);
+            return (s.Bounds.Width, s.Bounds.Height);
+        }
     }
 }
