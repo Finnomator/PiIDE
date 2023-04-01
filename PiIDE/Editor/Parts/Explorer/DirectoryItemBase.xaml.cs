@@ -1,5 +1,6 @@
 ﻿using PiIDE.Editor.Parts.Dialogues;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -128,6 +129,21 @@ namespace PiIDE.Editor.Parts.Explorer {
 
         protected virtual void AddFolder_Click(object sender, RoutedEventArgs e) {
             Tools.TryCreateDirectory(Path.Combine(DirectoryPath, "NewFolder"));
+        }
+
+        private void OpenInExplorer_Click(object sender, RoutedEventArgs e) {
+            Process.Start(new ProcessStartInfo() {
+                WorkingDirectory = DirectoryPath,
+                Arguments = ".",
+                FileName = "explorer",
+            });
+        }
+
+        private void OpenInCmd_Click(object sender, RoutedEventArgs e) {
+            Process.Start(new ProcessStartInfo() {
+                WorkingDirectory = DirectoryPath,
+                FileName = "cmd",
+            });
         }
 
         protected void SetStatus(string status) {

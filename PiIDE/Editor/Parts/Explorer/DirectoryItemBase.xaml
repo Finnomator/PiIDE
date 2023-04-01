@@ -49,6 +49,21 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
+                    <MenuItem Header="Open In">
+                        <MenuItem.Icon>
+                            <fa:FontAwesome Icon="ArrowCircleRight" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Explorer" Click="OpenInExplorer_Click">
+                            <MenuItem.Icon>
+                                <fa:FontAwesome Icon="Folder" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Cmd" Click="OpenInCmd_Click">
+                            <MenuItem.Icon>
+                                <fa:FontAwesome Icon="Terminal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
                     <MenuItem Header="Copy" Click="Copy_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="Copy" HorizontalAlignment="Center" VerticalAlignment="Center"/>
