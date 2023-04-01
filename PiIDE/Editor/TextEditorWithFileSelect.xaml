@@ -18,13 +18,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition/>
-            <RowDefinition Height="1"/>
+            <RowDefinition Height="2"/>
             <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150"/>
-            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="2"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
@@ -33,26 +33,26 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
-                <RowDefinition Height="1"/>
+                <RowDefinition Height="2"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
             <localExplorer:LocalExplorer Grid.Row="1"  x:Name="LocalExplorer" Background="{DynamicResource ExplorerBackgroundBrush}"/>
 
-            <GridSplitter Background="#4CFFFFFF" Grid.Row="2" HorizontalAlignment="Stretch"/>
+            <GridSplitter Background="{StaticResource SplitterBackgroundBrush}" Grid.Row="2" HorizontalAlignment="Stretch"/>
 
             <Grid Grid.Row="3">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <Button Style="{DynamicResource CleanButtonStyle}"  x:Name="SyncButton" ToolTip="Overwrite local file system with board files" Click="SyncButton_Click" Foreground="White">
+                <Button Style="{DynamicResource CleanButtonStyle}"  x:Name="SyncButton" ToolTip="Overwrite local filesystem with board files" Click="SyncButton_Click" Foreground="White">
                     <Button.Content>
                         <WrapPanel>
-                            <fa:FontAwesome Icon="Download" VerticalAlignment="Center"/>
-                            <Rectangle Width="5"/>
+                            <fa:FontAwesome Icon="Download" VerticalAlignment="Center" Padding="0,0,5,0"/>
                             <TextBlock Text="Sync"/>
                             <WrapPanel Name="SyncStatus" Visibility="Collapsed">
                                 <TextBlock Text="ing..."/>
@@ -62,7 +62,9 @@
                     </Button.Content>
                 </Button>
 
-                <boardExplorer:BoardExplorer Grid.Row="1"  x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackgroundBrush}"/>
+                <Rectangle Fill="{StaticResource SplitterBackgroundBrush}" Grid.Row="1" Height="1"/>
+
+                <boardExplorer:BoardExplorer Grid.Row="2"  x:Name="BoardExplorer" Background="{DynamicResource ExplorerBackgroundBrush}"/>
             </Grid>
 
         </Grid>
