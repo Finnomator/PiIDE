@@ -23,7 +23,7 @@ namespace PiIDE.Editor.Parts {
         private bool UseRegex;
         private bool GotInit;
 
-        public HighlightingRenderer? ResultRenderBox { get; set; }
+        public HighlightingRenderer ResultRenderBox { get; set; }
         private Size TextSize => ResultRenderBox.Editor.TextEditorTextBoxCharacterSize;
 
         private readonly Brush HighlighedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
@@ -33,8 +33,8 @@ namespace PiIDE.Editor.Parts {
             InitializeComponent();
         }
 
-        public void Initialize() {
-            Debug.Assert(ResultRenderBox != null, "ResultRenderBox must not be set");
+        public void Initialize(HighlightingRenderer resultRenderBox) {
+            ResultRenderBox = resultRenderBox;
             ResultRenderBox.TextRenderer.AddRenderAction(RenderSearchResults);
             ResultRenderBox.Editor.TextEditorTextBox.TextChanged += (s, e) => {
                 Close();

@@ -99,8 +99,7 @@ namespace PiIDE {
 
             // Searchbox stuff
             TextSearchBox.Closed += (s, e) => TextEditorTextBox.Focus();
-            TextSearchBox.ResultRenderBox = renderer;
-            TextSearchBox.Initialize();
+            TextSearchBox.Initialize(renderer);
 
             Loaded += delegate {
                 TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
