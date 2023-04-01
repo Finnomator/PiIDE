@@ -217,9 +217,15 @@ namespace PiIDE {
                         if (charInFrontOfCaret == null)
                             break;
 
-                        int caretRow = GetCaretRow();
+                        (int caretCol, int caretRow) = GetCaretPosition();
 
                         int indentAmount = GetIndentOfLine(caretRow);
+
+                        if (caretCol == indentAmount)
+                            break;
+
+                        if (indentAmount > caretCol)
+                            indentAmount = caretCol;
 
                         InsertAtCaretAndMoveCaret("\r\n" + new string(' ', indentAmount + (charInFrontOfCaret == ':' ? 4 : 0)));
 
