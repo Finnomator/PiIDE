@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,6 +26,7 @@ namespace PiIDE {
         private bool CalledClose;
         private readonly LoadingState loadingState = new();
         private readonly NoSuggestionsState noSuggestionsState = new();
+        private readonly Stopwatch sw = new();
 
         public CompletionUiList(TextEditor editor) {
             InitializeComponent();
@@ -53,7 +55,13 @@ namespace PiIDE {
 
             IsBusy = true;
 
-            await ReloadCompletions(selectFirst);
+            if (Tools.UpdateStats && Tools.StatsWindow != null) {
+                sw.Restart();
+                await ReloadCompletions(selectFirst);
+                sw.Stop();
+                Tools.StatsWindow.AddCompletionStat(sw.ElapsedMilliseconds);
+            } else
+                await ReloadCompletions(selectFirst);
 
             IsBusy = false;
 

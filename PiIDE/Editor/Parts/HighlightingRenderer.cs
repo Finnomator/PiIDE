@@ -56,7 +56,6 @@ namespace PiIDE.Editor.Parts {
 
             string visibleText = RendererFormattedText.Text;
             List<Rect> rects = OptimizeIndentRectsForDrawing(SyntaxHighlighter.FindIndents(visibleText));
-            Debug.WriteLine("Optimized Rects: " + rects.Count);
             foreach (Rect rect in rects)
                 context.DrawRectangle(SyntaxHighlighter.IndentationColors[0], null, rect);
         }

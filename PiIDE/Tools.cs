@@ -10,6 +10,9 @@ using Screen = System.Windows.Forms.Screen;
 namespace PiIDE {
     public static class Tools {
 
+        public static bool UpdateStats { get; set; }
+        public static StatisticsWindow? StatsWindow { get; set; }
+
         public readonly static BrushConverter BrushConverter = new();
 
         public readonly static string[] PythonKeywords = new string[] {
@@ -204,5 +207,7 @@ namespace PiIDE {
         }
 
         public static Brush ToBrush(this string hex) => (Brush) BrushConverter.ConvertFromString(hex)!;
+
+        public static string GetTimestamp(this DateTime value) => value.ToString("HH:mm:ss:fff");
     }
 }

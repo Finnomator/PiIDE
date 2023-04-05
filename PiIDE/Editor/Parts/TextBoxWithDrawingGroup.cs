@@ -16,7 +16,8 @@ namespace PiIDE.Editor.Parts {
         public FormattedText VisibleTextAsFormattedText { get; private set; }
 
         public TextEditor? TextEditor { get; set; }
-        int i;
+
+        private readonly Stopwatch sw = new();
 
         // TODO: Make it work with backgrounds
 
@@ -67,12 +68,31 @@ namespace PiIDE.Editor.Parts {
         public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
         public void Render() {
-            Debug.WriteLine("Render " + i++);
+
+            if (Tools.UpdateStats && Tools.StatsWindow != null) {
+
+                sw.Restart();
+
+                VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
+                using (DrawingContext dc1 = DrawingGroup.Open()) {
+                    foreach (Action<DrawingContext> action in RenderActions)
+                        action(dc1);
+                    dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor == null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+                }
+
+                sw.Stop();
+
+                Tools.StatsWindow.AddRenderStat(sw.ElapsedMilliseconds);
+
+                return;
+            }
+
             VisibleTextAsFormattedText = GetVisibleTextAsFormattedText();
             using DrawingContext dc = DrawingGroup.Open();
             foreach (Action<DrawingContext> action in RenderActions)
                 action(dc);
             dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor == null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+
         }
 
         protected override void OnRender(DrawingContext drawingContext) {

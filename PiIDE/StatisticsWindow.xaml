@@ -1,0 +1,115 @@
+﻿<Window x:Class="PiIDE.StatisticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PiIDE"
+        mc:Ignorable="d"
+        WindowStyle="ToolWindow"
+        Background="{StaticResource WindowBackgroundBrush}"
+        Title="Statistics" SizeToContent="WidthAndHeight" Closed="Window_Closed">
+    <Border BorderThickness="5">
+        <StackPanel>
+
+            <Label Foreground="White" Content="Last Renders:"/>
+
+            <ListView Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastRendersListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="40">
+
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="#"/>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Number}" TextAlignment="Center"  TextTrimming="CharacterEllipsis"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Width="100">
+
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Start Time"/>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TimeStamp}" TextTrimming="CharacterEllipsis"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Width="100">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Render Time"/>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding RenderTimeMs}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="ms"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+
+            <Label Content="Last Completions:" Foreground="White"/>
+
+            <ListView Grid.Row="1" Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastCompletionsListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="40">
+
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="#"/>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Number}" TextAlignment="Center"  TextTrimming="CharacterEllipsis"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Width="100">
+
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Start Time"/>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TimeStamp}" TextTrimming="CharacterEllipsis"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Width="100">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Template="{StaticResource GridViewColumnHeaderStyle}" Tag="Completion Time"/>
+                            </GridViewColumn.Header>
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding CompletionTimeMs}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="ms"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+        </StackPanel>
+    </Border>
+</Window>

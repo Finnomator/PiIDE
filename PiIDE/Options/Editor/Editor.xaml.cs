@@ -44,6 +44,16 @@ namespace PiIDE.Options.Editor {
             if (int.TryParse(FontSizeTextBox.Text, out int p))
                 GlobalSettings.Default.TextEditorFontSize = p;
         }
+
+        private void ShowStatistics_Click(object sender, RoutedEventArgs e) {
+            if (Tools.StatsWindow == null) {
+                Tools.StatsWindow = new();
+                Tools.StatsWindow.Show();
+            } else {
+                Tools.StatsWindow.Activate();
+            }
+            Tools.UpdateStats = true;
+        }
     }
 
     public class ComboBoxFontItem {

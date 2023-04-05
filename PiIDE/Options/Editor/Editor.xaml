@@ -18,6 +18,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -38,6 +40,11 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                
+                <Separator Grid.Row="3" Grid.ColumnSpan="2" Background="{StaticResource SplitterBackgroundBrush}"/>
+
+                <Label Content="Statistics" Grid.Row="4" Foreground="White" HorizontalAlignment="Center"/>
+                <Button Style="{StaticResource CleanButtonStyle}" Content="Show Statistics" Grid.Row="4" Grid.Column="1" Foreground="White" Click="ShowStatistics_Click"/>
             </Grid>
         </TabItem>
 
