@@ -1,7 +1,6 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -53,11 +52,12 @@ namespace PiIDE.Editor.Parts {
         }
 
         private void HighlightIndentation(DrawingContext context) {
-
-            string visibleText = RendererFormattedText.Text;
-            List<Rect> rects = OptimizeIndentRectsForDrawing(SyntaxHighlighter.FindIndents(visibleText));
-            foreach (Rect rect in rects)
-                context.DrawRectangle(SyntaxHighlighter.IndentationColors[0], null, rect);
+            List<Rect> rects = OptimizeIndentRectsForDrawing(SyntaxHighlighter.FindIndents(RendererFormattedText.Text));
+            double lineWidth = Editor.TextEditorTextBoxCharacterSize.Width;
+            foreach (Rect rect in rects) {
+                int ici = ((int) ((rect.X - 2) / (lineWidth * 4))) % SyntaxHighlighter.IndentationColors.Length;
+                context.DrawRectangle(SyntaxHighlighter.IndentationColors[ici], null, rect);
+            }
         }
 
         private List<Rect> OptimizeIndentRectsForDrawing(List<SyntaxHighlighter.IndentMatch> indentMatches) {
