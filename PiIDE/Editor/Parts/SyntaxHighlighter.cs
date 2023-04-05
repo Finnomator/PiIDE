@@ -30,8 +30,11 @@ namespace PiIDE {
         [GeneratedRegex("\\d+(\\.\\d+)?(e[-+]?\\d+)?", RegexOptions.Compiled)]
         private static partial Regex NumbersRegex();
 
+        public static readonly string[] IndentationColorsHexValues = new string[] { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
+        public static readonly Brush[] IndentationColors = IndentationColorsHexValues.Select(x => x.ToBrush()).ToArray();
+
         public static readonly string[] BracketColorsHexValues = new string[] { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
-        public static readonly Color[] BracketColors = BracketColorsHexValues.Select(x => x.ToColor()).ToArray();
+        public static readonly Brush[] BracketColors = BracketColorsHexValues.Select(x => x.ToBrush()).ToArray();
 
         public static List<BracketMatch> FindBrackets(string text) {
 
@@ -59,6 +62,37 @@ namespace PiIDE {
             return matches;
         }
 
+        public static List<IndentMatch> FindIndents(string text) {
+            List<IndentMatch> matches = new();
+            int col = 0;
+            int row = 0;
+            int combo = 0;
+            bool continueCombo = text.StartsWith(' ');
+
+            for (int i = 0; i < text.Length; ++i) {
+                char c = text[i];
+
+                if (c == '\n') {
+                    col = 0;
+                    combo = 0;
+                    continueCombo = true;
+                    ++row;
+                } else if (c == ' ' && continueCombo) {
+                    ++combo;
+                    ++col;
+                } else {
+                    continueCombo = false;
+                    combo = 0;
+                    ++col;
+                }
+
+                if (combo != 0 && combo % 4 == 0)
+                    matches.Add(new(i - 3, row, col - 4, combo / 4));
+            }
+
+            return matches;
+        }
+
         public readonly struct BracketMatch {
             public int Index { get; init; }
             public char BracketChar { get; init; }
@@ -74,6 +108,20 @@ namespace PiIDE {
                 BracketIndex = bracketIndex;
                 Row = row;
                 Column = col;
+            }
+        }
+
+        public readonly struct IndentMatch {
+            public int Index { get; init; }
+            public int Row { get; init; }
+            public int Column { get; init; }
+            public int IndentLevel { get; init; }
+
+            public IndentMatch(int index, int row, int col, int indentLevel) {
+                Index = index;
+                Row = row;
+                Column = col;
+                IndentLevel = indentLevel;
             }
         }
     }

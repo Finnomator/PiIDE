@@ -1,8 +1,10 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using static PiIDE.Wrapers.JediWraper.ReturnClasses;
@@ -21,6 +23,7 @@ namespace PiIDE.Editor.Parts {
             if (Editor.IsPythonFile) {
                 TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
                 SetRenderingAccordingToSettings();
+                TextRenderer.AddRenderAction(HighlightIndentation);
                 SyntaxHighlighterSettings.Default.PropertyChanged += (s, e) => {
                     SetRenderingAccordingToSettings();
                     TextRenderer.Render();
@@ -43,6 +46,19 @@ namespace PiIDE.Editor.Parts {
                 TextRenderer.AddRenderAction(HighlightJediNames);
             else
                 TextRenderer.RemoveRenderAction(HighlightJediNames);
+        }
+
+        private void HighlightIndentation(DrawingContext context) {
+            string visibleText = RendererFormattedText.Text;
+            Size charSize = Editor.TextEditorTextBoxCharacterSize;
+            double offset = Editor.FirstVisibleLineNum * charSize.Height;
+
+            foreach (SyntaxHighlighter.IndentMatch match in SyntaxHighlighter.FindIndents(visibleText)) {
+
+                int ili = Math.Abs((match.IndentLevel - 1) % SyntaxHighlighter.BracketColors.Length);
+
+                context.DrawRectangle(SyntaxHighlighter.IndentationColors[ili], null, new(match.Column * charSize.Width + 2, offset + match.Row * charSize.Height, 1, charSize.Height));
+            }
         }
 
         private void HighlightKeywords(DrawingContext context) {
@@ -96,9 +112,7 @@ namespace PiIDE.Editor.Parts {
 
                 int bci = Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
 
-                Brush brush = new SolidColorBrush(SyntaxHighlighter.BracketColors[bci]);
-
-                RendererFormattedText.SetForegroundBrush(brush, bracket.Index, 1);
+                RendererFormattedText.SetForegroundBrush(SyntaxHighlighter.BracketColors[bci], bracket.Index, 1);
             }
         }
     }
