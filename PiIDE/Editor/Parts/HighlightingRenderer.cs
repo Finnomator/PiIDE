@@ -1,6 +1,7 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -52,16 +53,42 @@ namespace PiIDE.Editor.Parts {
         }
 
         private void HighlightIndentation(DrawingContext context) {
+
             string visibleText = RendererFormattedText.Text;
+            List<Rect> rects = OptimizeIndentRectsForDrawing(SyntaxHighlighter.FindIndents(visibleText));
+            Debug.WriteLine("Optimized Rects: " + rects.Count);
+            foreach (Rect rect in rects)
+                context.DrawRectangle(SyntaxHighlighter.IndentationColors[0], null, rect);
+        }
+
+        private List<Rect> OptimizeIndentRectsForDrawing(List<SyntaxHighlighter.IndentMatch> indentMatches) {
+            List<Rect> optimized = new();
             Size charSize = Editor.TextEditorTextBoxCharacterSize;
             double offset = Editor.FirstVisibleLineNum * charSize.Height;
+            HashSet<int> optimizedIndexes = new();
 
-            foreach (SyntaxHighlighter.IndentMatch match in SyntaxHighlighter.FindIndents(visibleText)) {
+            for (int i = 0; i < indentMatches.Count; i++) {
 
-                int ili = Math.Abs((match.IndentLevel - 1) % SyntaxHighlighter.BracketColors.Length);
+                if (optimizedIndexes.Contains(i))
+                    continue;
 
-                context.DrawRectangle(SyntaxHighlighter.IndentationColors[ili], null, new(match.Column * charSize.Width + 2, offset + match.Row * charSize.Height, 1, charSize.Height));
+                SyntaxHighlighter.IndentMatch currentMatch = indentMatches[i];
+                Rect optimizedRect = new(currentMatch.Column * charSize.Width + 2, offset + currentMatch.Row * charSize.Height, 1, charSize.Height);
+
+                for (int j = i + 1; j < indentMatches.Count; ++j) {
+
+                    SyntaxHighlighter.IndentMatch nextMatch = indentMatches[j];
+                    if (nextMatch.Column == currentMatch.Column && nextMatch.Row == currentMatch.Row + 1) {
+                        optimizedRect.Height += charSize.Height;
+                        currentMatch = nextMatch;
+                        optimizedIndexes.Add(j);
+                    }
+                }
+
+                optimized.Add(optimizedRect);
             }
+
+            return optimized;
         }
 
         private void HighlightKeywords(DrawingContext context) {
