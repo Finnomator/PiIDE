@@ -7,13 +7,13 @@
         mc:Ignorable="d"
         WindowStyle="ToolWindow"
         Background="{StaticResource WindowBackgroundBrush}"
-        Title="Statistics" SizeToContent="WidthAndHeight" Closed="Window_Closed">
+        Title="Statistics" Closed="Window_Closed" SizeToContent="Width" Height="400">
     <Border BorderThickness="5">
         <StackPanel>
 
             <Label Foreground="White" Content="Last Renders:"/>
 
-            <ListView Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastRendersListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}">
+            <ListView Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastRendersListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}" Height="160">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="40">
@@ -63,7 +63,7 @@
 
             <Label Content="Last Completions:" Foreground="White"/>
 
-            <ListView Grid.Row="1" Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastCompletionsListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}">
+            <ListView Grid.Row="1" Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastCompletionsListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}" Height="160">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="40">
