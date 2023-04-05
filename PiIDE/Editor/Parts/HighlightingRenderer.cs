@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using static PiIDE.Wrapers.JediWraper;
 using static PiIDE.Wrapers.JediWraper.ReturnClasses;
 
@@ -131,17 +132,23 @@ namespace PiIDE.Editor.Parts {
 
         private void HighlightBrackets(DrawingContext context) {
 
-            string visibleText = RendererFormattedText.Text;
-
-            List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(visibleText);
+            List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(EditorText);
+            int fvl = Editor.FirstVisibleLineNum;
+            int lvl = Editor.LastVisibleLineNum;
+            int firstVisibleIndex = Tools.GetIndexOfColRow(EditorText, fvl, 0);
 
             for (int i = 0; i < brackets.Count; ++i) {
 
                 SyntaxHighlighter.BracketMatch bracket = brackets[i];
 
+                if (bracket.Row < fvl)
+                    continue;
+                if (bracket.Row >= lvl)
+                    break;
+
                 int bci = Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
 
-                RendererFormattedText.SetForegroundBrush(SyntaxHighlighter.BracketColors[bci], bracket.Index, 1);
+                RendererFormattedText.SetForegroundBrush(SyntaxHighlighter.BracketColors[bci], bracket.Index - firstVisibleIndex, 1);
             }
         }
     }
