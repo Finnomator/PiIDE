@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using PiIDE.Wrapers;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
+using static PiIDE.Wrapers.PythonTokenizerWraper;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
 
 namespace PiIDE {
@@ -17,6 +19,8 @@ namespace PiIDE {
 
         public static async Task<JediName[]> FindJediNamesAsync(Script script) => await script.GetNamesAsync(true, true, true);
         public static JediName[] FindJediNames(Script script) => script.GetNames(true, true, true);
+
+        public static TokenInfo[] FindTokenInfos(string filePath) => PythonTokenizerWraper.Tokenize(filePath);
 
         public static Match[] FindKeywords(string text) => KeywordsRx.Matches(text).ToArray();
         public static Match[] FindComments(string text) => CommentsRx.Matches(text).ToArray();
@@ -76,5 +80,10 @@ namespace PiIDE {
                 Column = col;
             }
         }
+    }
+
+    public enum HighlightingMethod {
+        Jedi,
+        Tokenizer
     }
 }

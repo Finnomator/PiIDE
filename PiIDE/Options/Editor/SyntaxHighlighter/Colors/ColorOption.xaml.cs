@@ -9,17 +9,19 @@ namespace PiIDE.Options.Editor.SyntaxHighlighter.Colors {
     public partial class ColorOption : UserControl {
 
         private readonly string ResourceKey;
-        private readonly string DefaultCode;
+        // private readonly string DefaultCode;
+        private readonly HighlightingMethod HighlightingMethod;
 
-        public ColorOption(string resourceKey) {
+        public ColorOption(HighlightingMethod highlightingMethod, string resourceKey) {
             InitializeComponent();
 
             ResourceKey = resourceKey;
-            DefaultCode = ColorResources.HighlighterColors.DefaultColors[ResourceKey].ToString();
+            HighlightingMethod = highlightingMethod;
+            // DefaultCode = ColorResources.HighlighterColors.DefaultColors[HighlightingMethod][ResourceKey].ToString();
 
             TypeLabel.Content = resourceKey.Humanize(LetterCasing.Title);
 
-            ColorTextBox.Text = ColorResources.HighlighterColors.GetBrush(ResourceKey).ToString();
+            ColorTextBox.Text = ColorResources.HighlighterColors.GetBrush(HighlightingMethod, ResourceKey).ToString();
         }
 
         private void ColorTextBox_TextChanged(object sender, TextChangedEventArgs e) {
@@ -29,12 +31,14 @@ namespace PiIDE.Options.Editor.SyntaxHighlighter.Colors {
             } catch (FormatException) { }
 
             if (newBrush != null) {
-                ColorResources.HighlighterColors.SetBrush(ResourceKey, newBrush);
-                ResetButton.IsEnabled = newBrush.ToString() != DefaultCode;
+                ColorResources.HighlighterColors.SetBrush(HighlightingMethod, ResourceKey, newBrush);
+                // ResetButton.IsEnabled = newBrush.ToString() != DefaultCode;
             } else
                 ResetButton.IsEnabled = true;
         }
 
-        private void ResetButton_Click(object sender, RoutedEventArgs e) => ColorTextBox.Text = DefaultCode;
+        private void ResetButton_Click(object sender, RoutedEventArgs e) {
+            // ColorTextBox.Text = DefaultCode;
+        }
     }
 }

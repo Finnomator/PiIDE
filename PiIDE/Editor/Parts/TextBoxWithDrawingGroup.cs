@@ -33,9 +33,9 @@ namespace PiIDE.Editor.Parts {
 
             AddRenderAction(DefaultRenderAction);
 
-            TextChanged += (s, e) => {
-                Render();
-            };
+            SizeChanged += (s, e) => Render();
+
+            TextChanged += (s, e) => Render();
 
             Loaded += delegate {
                 if (TextEditor == null)
@@ -44,6 +44,8 @@ namespace PiIDE.Editor.Parts {
                     if (e.VerticalChange != 0)
                         Render();
                 };
+
+                TextEditor.MainScrollViewer.SizeChanged += (s, e) => Render();
             };
         }
 

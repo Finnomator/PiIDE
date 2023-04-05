@@ -255,7 +255,7 @@ namespace PiIDE.Wrapers {
                 public required string Type {
                     get => _type; init {
                         _type = value;
-                        Foreground = ColorResources.HighlighterColors.GetBrush(value);
+                        Foreground = ColorResources.HighlighterColors.GetBrush(HighlightingMethod.Jedi, value);
                         Icon = TypeIcons.TypeToIcon(value);
                     }
                 }

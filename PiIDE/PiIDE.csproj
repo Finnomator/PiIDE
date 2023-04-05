@@ -40,9 +40,8 @@
 		<None Remove="Assets\Icons\PiLogo.png" />
 		<None Remove="Assets\Icons\Python.png" />
 		<None Remove="Assets\Jedi\jedi_wraper.exe" />
+		<None Remove="Assets\Tokenizer\tokenize_python.exe" />
 		<None Remove="Options\Editor\Shortcuts\Shortcuts.json" />
-		<None Remove="Options\Editor\SyntaxHighlighter\Colors\Colors.json" />
-		<None Remove="Options\Editor\SyntaxHighlighter\Colors\DefaultColors.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -85,13 +84,10 @@
 		<Content Include="Assets\Jedi\jedi_wraper.exe">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Assets\Tokenizer\tokenize_python.exe">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Options\Editor\Shortcuts\Shortcuts.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Options\Editor\SyntaxHighlighter\Colors\DefaultColors.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Options\Editor\SyntaxHighlighter\Colors\Colors.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

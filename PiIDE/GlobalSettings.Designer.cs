@@ -199,5 +199,17 @@ namespace PiIDE {
                 this["CallUpgrade"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int HighlightingMethod {
+            get {
+                return ((int)(this["HighlightingMethod"]));
+            }
+            set {
+                this["HighlightingMethod"] = value;
+            }
+        }
     }
 }

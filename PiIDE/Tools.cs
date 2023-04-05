@@ -202,5 +202,11 @@ namespace PiIDE {
             Screen s = Screen.FromPoint(System.Windows.Forms.Cursor.Position);
             return (s.Bounds.Width, s.Bounds.Height);
         }
+
+        public static Brush ToBrush(this string hex) {
+            if (!hex.StartsWith("#"))
+                hex += "#";
+            return (Brush) BrushConverter.ConvertFromString(hex)!;
+        }
     }
 }
