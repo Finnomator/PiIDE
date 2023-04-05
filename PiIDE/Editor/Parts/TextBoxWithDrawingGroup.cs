@@ -40,6 +40,9 @@ namespace PiIDE.Editor.Parts {
             Loaded += delegate {
                 if (TextEditor == null)
                     return;
+
+                TextEditor.MainScrollViewer.SizeChanged += (s, e) => Render();
+
                 TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
                     if (e.VerticalChange != 0)
                         Render();
@@ -72,9 +75,6 @@ namespace PiIDE.Editor.Parts {
             dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor == null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
         }
 
-        protected override void OnRender(DrawingContext drawingContext) {
-            Render();
-            drawingContext.DrawDrawing(DrawingGroup);
-        }
+        protected override void OnRender(DrawingContext drawingContext) => drawingContext.DrawDrawing(DrawingGroup);
     }
 }
