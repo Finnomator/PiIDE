@@ -75,6 +75,9 @@ namespace PiIDE.Editor.Parts {
             dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor == null ? 0 : TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
         }
 
-        protected override void OnRender(DrawingContext drawingContext) => drawingContext.DrawDrawing(DrawingGroup);
+        protected override void OnRender(DrawingContext drawingContext) {
+            Render();
+            drawingContext.DrawDrawing(DrawingGroup);
+        }
     }
 }
