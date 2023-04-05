@@ -58,5 +58,17 @@ namespace PiIDE.Options.Editor.SyntaxHighlighter {
                 this["HighlightBrackets"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HighlightIndentation {
+            get {
+                return ((bool)(this["HighlightIndentation"]));
+            }
+            set {
+                this["HighlightIndentation"] = value;
+            }
+        }
     }
 }

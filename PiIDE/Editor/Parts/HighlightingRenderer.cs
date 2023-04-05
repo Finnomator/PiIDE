@@ -1,7 +1,6 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -23,7 +22,6 @@ namespace PiIDE.Editor.Parts {
             if (Editor.IsPythonFile) {
                 TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
                 SetRenderingAccordingToSettings();
-                TextRenderer.AddRenderAction(HighlightIndentation);
                 SyntaxHighlighterSettings.Default.PropertyChanged += (s, e) => {
                     SetRenderingAccordingToSettings();
                     TextRenderer.Render();
@@ -46,6 +44,11 @@ namespace PiIDE.Editor.Parts {
                 TextRenderer.AddRenderAction(HighlightJediNames);
             else
                 TextRenderer.RemoveRenderAction(HighlightJediNames);
+
+            if (SyntaxHighlighterSettings.Default.HighlightIndentation)
+                TextRenderer.AddRenderAction(HighlightIndentation);
+            else
+                TextRenderer.RemoveRenderAction(HighlightIndentation);
         }
 
         private void HighlightIndentation(DrawingContext context) {

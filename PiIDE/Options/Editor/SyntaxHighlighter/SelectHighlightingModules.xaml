@@ -12,6 +12,7 @@
             <CheckBox Name="JediNamesCheckBox" Click="JediNamesCheckBox_Click"  Content="Jedi Names"/>
             <CheckBox Name="KeywordsCheckBox" Click="KeywordsCheckBox_Click"  Content="Keywords"/>
             <CheckBox Name="BracketsCheckBox" Click="BracketsCheckBox_Click" Content="Brackets"/>
+            <CheckBox Name="IndentationCheckBox" Click="IndentationCheckBox_Click" Content="Indentation"/>
         </StackPanel>
     </Border>
 </UserControl>
