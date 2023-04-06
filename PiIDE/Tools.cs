@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using Screen = System.Windows.Forms.Screen;
@@ -50,17 +51,15 @@ namespace PiIDE {
             for (int i = 0, j = 0; j < indexes.Length; i++) {
 
                 while (i == indexes[j]) {
-                    points[j] = (col, row);
-                    ++j;
+                    points[j++] = (col, row);
                     if (i == text.Length || j == indexes.Length)
                         return points;
                 }
 
                 if (text[i] == '\n') {
-                    col = 0;
+                    col = indexes[j] - i;
                     ++row;
-                } else
-                    ++col;
+                }
             }
 
             return points;
@@ -68,15 +67,14 @@ namespace PiIDE {
 
         public static (int col, int row) GetPointOfIndex(this string text, int index) {
 
-            int col = 0;
+            int col = index;
             int row = 0;
 
             for (int i = 0; i < index; i++) {
                 if (text[i] == '\n') {
-                    col = 0;
-                    row++;
-                } else
-                    col++;
+                    col = index - i;
+                    ++row;
+                }
             }
 
             return (col, row);
@@ -99,7 +97,10 @@ namespace PiIDE {
                     ++c;
             }
 
-            return i - 1;
+            if (text == "")
+                return 0;
+
+            return -1;
         }
 
         public static int[] GetIndexesOfColRows(this string text, int[] rows, int[] cols) {
@@ -110,8 +111,7 @@ namespace PiIDE {
 
             for (int i = 0, j = 0; j < indexes.Length; ++i) {
                 while (row == rows[j] && col == cols[j]) {
-                    indexes[j] = i;
-                    ++j;
+                    indexes[j++] = i;
 
                     if (j == rows.Length)
                         return indexes;
@@ -119,9 +119,9 @@ namespace PiIDE {
 
                 if (text[i] == '\n') {
                     col = 0;
-                    row++;
+                    ++row;
                 } else
-                    col++;
+                    ++col;
             }
 
             return indexes;
@@ -209,5 +209,9 @@ namespace PiIDE {
         public static Brush ToBrush(this string hex) => (Brush) BrushConverter.ConvertFromString(hex)!;
 
         public static string GetTimestamp(this DateTime value) => value.ToString("HH:mm:ss:fff");
+
+        public static (int row, int column) GetRowAndColumn(this Match match, string input) => input.GetPointOfIndex(match.Index);
+
+        public static (int row, int column)[] GetRowsAndColumns(this MatchCollection matches, string input) => input.GetPointsOfIndexes(matches.Select(x => x.Index).ToArray());
     }
 }
