@@ -23,7 +23,7 @@ namespace PiIDE {
         public static Match[] FindStrings(string text) => StringsRx.Matches(text).ToArray();
         public static Match[] FindNumbers(string text) => NumbersRx.Matches(text).ToArray();
 
-        [GeneratedRegex(@"(?s)(?<!\\)(?:'(?:\\.|[^'\\])*'|""(?:\\.|[^""\\])*"")", RegexOptions.Compiled)]
+        [GeneratedRegex("(['\"])(.*?)\\1", RegexOptions.Compiled)]
         private static partial Regex StringsRegex();
         [GeneratedRegex("#.+", RegexOptions.Compiled)]
         private static partial Regex CommentsRegex();
