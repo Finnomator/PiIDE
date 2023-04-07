@@ -11,24 +11,24 @@ namespace PiIDE {
     public static partial class SyntaxHighlighter {
 
         private static readonly Regex KeywordsRx = new(@$"\b({string.Join('|', Tools.PythonKeywords)})\b", RegexOptions.Compiled);
-        private static readonly Regex StringsRx = StringsRegex();
+        private static readonly Regex DefaultStringsRx = DefaultStringsRegex();
         private static readonly Regex CommentsRx = CommentsRegex();
-        private static readonly Regex NumbersRx = NumbersRegex();
+        private static readonly Regex DefaultNumbersRx = DefaultNumbersRegex();
 
         public static async Task<JediName[]> FindJediNamesAsync(Script script) => await script.GetNamesAsync(true, true, true);
         public static JediName[] FindJediNames(Script script) => script.GetNames(true, true, true);
 
-        public static Match[] FindKeywords(string text) => KeywordsRx.Matches(text).ToArray();
-        public static Match[] FindComments(string text) => CommentsRx.Matches(text).ToArray();
-        public static Match[] FindStrings(string text) => StringsRx.Matches(text).ToArray();
-        public static Match[] FindNumbers(string text) => NumbersRx.Matches(text).ToArray();
+        public static MatchCollection FindKeywords(string text, int startAt = 0) => KeywordsRx.Matches(text, startAt);
+        public static MatchCollection FindComments(string text, int startAt = 0) => CommentsRx.Matches(text, startAt);
+        public static MatchCollection FindStrings(string text, int startAt = 0) => DefaultStringsRx.Matches(text, startAt);
+        public static MatchCollection FindNumbers(string text, int startAt = 0) => DefaultNumbersRx.Matches(text, startAt);
 
-        [GeneratedRegex("(['\"])(.*?)\\1", RegexOptions.Compiled)]
-        private static partial Regex StringsRegex();
+        [GeneratedRegex(@"('{3}|""{3}|'|"")[\s\S]*?((?<!\\)|\\\\)\1", RegexOptions.Compiled)]
+        private static partial Regex DefaultStringsRegex();
         [GeneratedRegex("#.+", RegexOptions.Compiled)]
         private static partial Regex CommentsRegex();
-        [GeneratedRegex("\\d+(\\.\\d+)?(e[-+]?\\d+)?", RegexOptions.Compiled)]
-        private static partial Regex NumbersRegex();
+        [GeneratedRegex(@"(\.|\b)\d+([_\.]?\d+)?\2*([eE][+-]?\d+)?(?:(?!\1))?", RegexOptions.Compiled)]
+        private static partial Regex DefaultNumbersRegex();
 
         public static readonly string[] IndentationColorsHexValues = new string[] { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
         public static readonly Brush[] IndentationColors = IndentationColorsHexValues.Select(x => x.ToBrush()).ToArray();

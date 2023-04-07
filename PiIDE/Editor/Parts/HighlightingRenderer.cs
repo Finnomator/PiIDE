@@ -1,6 +1,7 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -23,7 +24,9 @@ namespace PiIDE.Editor.Parts {
             if (Editor.IsPythonFile) {
                 TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
                 SetRenderingAccordingToSettings();
+
                 SyntaxHighlighterSettings.Default.PropertyChanged += (s, e) => {
+                    // For some reason this event gets fired 3 times instead of once
                     SetRenderingAccordingToSettings();
                     TextRenderer.Render();
                 };
@@ -136,6 +139,9 @@ namespace PiIDE.Editor.Parts {
             int fvl = Editor.FirstVisibleLineNum;
             int lvl = Editor.LastVisibleLineNum;
             int firstVisibleIndex = Tools.GetIndexOfColRow(EditorText, fvl, 0);
+
+            if (firstVisibleIndex == -1)
+                return;
 
             for (int i = 0; i < brackets.Count; ++i) {
 
