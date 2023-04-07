@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.HighPerformance;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace PiIDE {
                 }
 
                 if (text[i] == '\n') {
-                    col = indexes[j] - i;
+                    col = indexes[j] - i - 1;
                     ++row;
                 }
             }
@@ -72,7 +73,7 @@ namespace PiIDE {
 
             for (int i = 0; i < index; i++) {
                 if (text[i] == '\n') {
-                    col = index - i;
+                    col = index - i - 1;
                     ++row;
                 }
             }
@@ -99,6 +100,11 @@ namespace PiIDE {
 
             if (text == "")
                 return 0;
+
+            if (r == row && c == col)
+                return i;
+
+            Debug.Assert(false, "this should not happen");
 
             return -1;
         }
