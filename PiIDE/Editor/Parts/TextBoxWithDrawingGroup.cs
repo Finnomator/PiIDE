@@ -9,7 +9,7 @@ using System.Windows.Media;
 namespace PiIDE.Editor.Parts {
     public class TextBoxWithDrawingGroup : TextBox {
         private readonly DrawingGroup DrawingGroup = new();
-        private readonly HashSet<Action<DrawingContext>> RenderActions = new();
+        private readonly SortedList<int, Action<DrawingContext>> RenderActions = new();
         private Typeface cachedTypeface;
         private readonly double cachedPixelsPerDip;
 
@@ -31,7 +31,7 @@ namespace PiIDE.Editor.Parts {
 
             DefaultRenderAction = (dc) => VisibleTextAsFormattedText!.SetForegroundBrush(CaretBrush);
 
-            AddRenderAction(DefaultRenderAction);
+            AddRenderAction(0, DefaultRenderAction);
 
             TextChanged += TextBoxWithDrawingGroup_TextChanged;
             Loaded += TextBoxWithDrawingGroup_Loaded;
@@ -68,15 +68,17 @@ namespace PiIDE.Editor.Parts {
             );
         }
 
-        public bool AddRenderAction(Action<DrawingContext> action) => RenderActions.Add(action);
+        public void AddRenderAction(int priority, Action<DrawingContext> action) {
+            if (!RenderActions.ContainsValue(action))
+                RenderActions.Add(priority, action);
+        }
 
-        public bool RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
+        public void RemoveRenderAction(Action<DrawingContext> action) {
+            if (RenderActions.ContainsValue(action))
+                RenderActions.Remove(RenderActions.IndexOfValue(action));
+        }
 
         public void Render() {
-
-            Debug.WriteLine("Render Actions: ");
-            foreach (Action<DrawingContext> a in RenderActions)
-                Debug.WriteLine("\t" + a.Method);
 
             if (Tools.UpdateStats) {
 
@@ -84,7 +86,7 @@ namespace PiIDE.Editor.Parts {
 
                 SetVisibleTextAsFormattedText();
                 using (DrawingContext dc1 = DrawingGroup.Open()) {
-                    foreach (Action<DrawingContext> action in RenderActions)
+                    foreach (Action<DrawingContext> action in RenderActions.Values)
                         action(dc1);
                     dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
                 }
@@ -98,7 +100,7 @@ namespace PiIDE.Editor.Parts {
 
             SetVisibleTextAsFormattedText();
             using DrawingContext dc = DrawingGroup.Open();
-            foreach (Action<DrawingContext> action in RenderActions)
+            foreach (Action<DrawingContext> action in RenderActions.Values)
                 action(dc);
             dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
         }

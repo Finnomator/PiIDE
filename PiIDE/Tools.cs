@@ -104,8 +104,6 @@ namespace PiIDE {
             if (r == row && c == col)
                 return i;
 
-            Debug.Assert(false, "this should not happen");
-
             return -1;
         }
 
@@ -219,5 +217,21 @@ namespace PiIDE {
         public static (int row, int column) GetRowAndColumn(this Match match, string input) => input.GetPointOfIndex(match.Index);
 
         public static (int row, int column)[] GetRowsAndColumns(this MatchCollection matches, string input) => input.GetPointsOfIndexes(matches.Select(x => x.Index).ToArray());
+
+        public static int GetLengthOfLine(this string text, int line) {
+            int col = 0;
+            int row = 0;
+            for (int i = 0; row < line && i < text.Length; i++) {
+                if (text[i] == '\n') {
+                    ++row;
+                    col = 0;
+                } else
+                    ++col;
+            }
+
+            if (row == line)
+                return col;
+            return -1;
+        }
     }
 }

@@ -11,7 +11,8 @@ namespace PiIDE {
     public static partial class SyntaxHighlighter {
 
         private static readonly Regex KeywordsRx = new(@$"\b({string.Join('|', Tools.PythonKeywords)})\b", RegexOptions.Compiled);
-        private static readonly Regex DefaultStringsRx = DefaultStringsRegex();
+        private static readonly Regex DefaultSingleQuotedStringsRx = DefaultSingleQuotedStringsRegex();
+        private static readonly Regex DefaultTripleQuotedStringsRx = DefaultTripleQuotedStringsRegex();
         private static readonly Regex CommentsRx = CommentsRegex();
         private static readonly Regex DefaultNumbersRx = DefaultNumbersRegex();
 
@@ -20,11 +21,14 @@ namespace PiIDE {
 
         public static MatchCollection FindKeywords(string text, int startAt = 0) => KeywordsRx.Matches(text, startAt);
         public static MatchCollection FindComments(string text, int startAt = 0) => CommentsRx.Matches(text, startAt);
-        public static MatchCollection FindStrings(string text, int startAt = 0) => DefaultStringsRx.Matches(text, startAt);
+        public static MatchCollection FindTripleQuotedStrings(string text, int startAt = 0) => DefaultTripleQuotedStringsRx.Matches(text, startAt);
+        public static MatchCollection FindSingleQuotedStrings(string text, int startAt = 0) => DefaultSingleQuotedStringsRx.Matches(text, startAt);
         public static MatchCollection FindNumbers(string text, int startAt = 0) => DefaultNumbersRx.Matches(text, startAt);
 
-        [GeneratedRegex(@"('{3}|""{3}|'|"")[\s\S]*?((?<!\\)|\\\\)\1", RegexOptions.Compiled)]
-        private static partial Regex DefaultStringsRegex();
+        [GeneratedRegex(@"('{3}|""{3})[\s\S]*?((?<!\\)|\\\\)\1", RegexOptions.Compiled)]
+        private static partial Regex DefaultTripleQuotedStringsRegex();
+        [GeneratedRegex(@"('|"").*?((?<!\\)|\\\\)\1", RegexOptions.Compiled)]
+        private static partial Regex DefaultSingleQuotedStringsRegex();
         [GeneratedRegex("#.+", RegexOptions.Compiled)]
         private static partial Regex CommentsRegex();
         [GeneratedRegex(@"(\.|\b)\d+([_\.]?\d+)?\2*([eE][+-]?\d+)?(?:(?!\1))?", RegexOptions.Compiled)]

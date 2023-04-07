@@ -33,7 +33,7 @@ namespace PiIDE.Editor.Parts {
 
         public void Initialize(HighlightingRenderer resultRenderBox) {
             ResultRenderBox = resultRenderBox;
-            ResultRenderBox.TextRenderer.AddRenderAction(RenderSearchResults);
+            ResultRenderBox.TextRenderer.AddRenderAction(5, RenderSearchResults);
             ResultRenderBox.Editor.TextEditorTextBox.TextChanged += (s, e) => {
                 Close();
             };

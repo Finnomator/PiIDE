@@ -1,12 +1,10 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using static PiIDE.Wrapers.JediWraper;
 using static PiIDE.Wrapers.JediWraper.ReturnClasses;
 
@@ -35,22 +33,22 @@ namespace PiIDE.Editor.Parts {
 
         private void SetRenderingAccordingToSettings() {
             if (SyntaxHighlighterSettings.Default.HighlightBrackets)
-                TextRenderer.AddRenderAction(HighlightBrackets);
+                TextRenderer.AddRenderAction(1, HighlightBrackets);
             else
                 TextRenderer.RemoveRenderAction(HighlightBrackets);
 
             if (SyntaxHighlighterSettings.Default.HighlightKeywords)
-                TextRenderer.AddRenderAction(HighlightKeywords);
+                TextRenderer.AddRenderAction(3, HighlightKeywords);
             else
                 TextRenderer.RemoveRenderAction(HighlightKeywords);
 
             if (SyntaxHighlighterSettings.Default.HighlightJediNames)
-                TextRenderer.AddRenderAction(HighlightJediNames);
+                TextRenderer.AddRenderAction(0, HighlightJediNames);
             else
                 TextRenderer.RemoveRenderAction(HighlightJediNames);
 
             if (SyntaxHighlighterSettings.Default.HighlightIndentation)
-                TextRenderer.AddRenderAction(HighlightIndentation);
+                TextRenderer.AddRenderAction(2, HighlightIndentation);
             else
                 TextRenderer.RemoveRenderAction(HighlightIndentation);
         }
@@ -106,11 +104,48 @@ namespace PiIDE.Editor.Parts {
             foreach (Match number in SyntaxHighlighter.FindNumbers(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Number, number.Index, number.Length);
 
-            foreach (Match stringMatch in SyntaxHighlighter.FindStrings(visibleText))
+            foreach(Match stringMatch in SyntaxHighlighter.FindSingleQuotedStrings(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, stringMatch.Index, stringMatch.Length);
+
+            HighlightTripleQuotedStrings();
 
             foreach (Match comment in SyntaxHighlighter.FindComments(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Comment, comment.Index, comment.Length);
+        }
+
+        private void HighlightTripleQuotedStrings() {
+
+            string editorText = EditorText;
+            string visibleText = RendererFormattedText.Text;
+
+            MatchCollection allStringMatches = SyntaxHighlighter.FindTripleQuotedStrings(editorText);
+            int lvl = Editor.LastVisibleLineNum;
+            int firstVisibleIndex = editorText.GetIndexOfColRow(Editor.FirstVisibleLineNum, 0);
+
+            int lastVisibleIndex = editorText.GetIndexOfColRow(lvl - 1, editorText.GetLengthOfLine(lvl - 1));
+
+            if (firstVisibleIndex == -1 || lastVisibleIndex == -1)
+                return;
+
+            for (int i = 0; i < allStringMatches.Count; i++) {
+                Match stringMatch = allStringMatches[i];
+
+                if (stringMatch.Index + stringMatch.Length < firstVisibleIndex)
+                    continue;
+                if (stringMatch.Index >= lastVisibleIndex)
+                    break;
+
+                int highlightStartIdx = stringMatch.Index - firstVisibleIndex;
+                int highlightEndIdx = highlightStartIdx + stringMatch.Length;
+
+                if (highlightStartIdx < firstVisibleIndex - firstVisibleIndex) 
+                    highlightStartIdx = 0;
+
+                if (highlightEndIdx > lastVisibleIndex - firstVisibleIndex)
+                    highlightEndIdx = visibleText.Length;
+
+                RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, highlightStartIdx, highlightEndIdx - highlightStartIdx);
+            }
         }
 
         private void HighlightJediNames(DrawingContext context) {
