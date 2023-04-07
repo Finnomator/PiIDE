@@ -51,10 +51,7 @@ namespace PiIDE.Editor.Parts {
             };
         }
 
-        private void GetVisibleTextAsFormattedText() {
-            if (VisibleTextAsFormattedText == null || TextEditor.VisibleText != VisibleTextAsFormattedText.Text)
-                VisibleTextAsFormattedText = GetTextAsFormattedText(TextEditor.VisibleText);
-        }
+        private void SetVisibleTextAsFormattedText() => VisibleTextAsFormattedText = GetTextAsFormattedText(TextEditor.VisibleText);
 
         private FormattedText GetTextAsFormattedText(string text) {
 
@@ -71,17 +68,21 @@ namespace PiIDE.Editor.Parts {
             );
         }
 
-        public void AddRenderAction(Action<DrawingContext> action) => RenderActions.Add(action);
+        public bool AddRenderAction(Action<DrawingContext> action) => RenderActions.Add(action);
 
-        public void RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
+        public bool RemoveRenderAction(Action<DrawingContext> action) => RenderActions.Remove(action);
 
         public void Render() {
+
+            Debug.WriteLine("Render Actions: ");
+            foreach (Action<DrawingContext> a in RenderActions)
+                Debug.WriteLine("\t" + a.Method);
 
             if (Tools.UpdateStats) {
 
                 sw.Restart();
 
-                GetVisibleTextAsFormattedText();
+                SetVisibleTextAsFormattedText();
                 using (DrawingContext dc1 = DrawingGroup.Open()) {
                     foreach (Action<DrawingContext> action in RenderActions)
                         action(dc1);
@@ -95,7 +96,7 @@ namespace PiIDE.Editor.Parts {
                 return;
             }
 
-            GetVisibleTextAsFormattedText();
+            SetVisibleTextAsFormattedText();
             using DrawingContext dc = DrawingGroup.Open();
             foreach (Action<DrawingContext> action in RenderActions)
                 action(dc);
