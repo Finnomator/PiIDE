@@ -1,19 +1,19 @@
-﻿namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
-    internal class LocalExplorer : ExplorerBase {
+﻿namespace PiIDE.Editor.Parts.Explorer.LocalExplorer;
 
-        public LocalExplorer() => Header.Content = "Local Files";
+internal class LocalExplorer : ExplorerBase {
 
-        public void AddFolder(string path) {
-            AddFolder(new LocalDirectoryItem(path, this));
+    public LocalExplorer() => Header.Content = "Local Files";
 
-            if (!GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(path))
-                GlobalSettings.Default.LastOpenedLocalFolderPaths.Add(path);
-        }
+    public void AddFolder(string path) {
+        AddFolder(new LocalDirectoryItem(path, this));
 
-        public void RemoveFolder(LocalDirectoryItem directoryItem) {
-            base.RemoveFolder(directoryItem);
-            if (GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(directoryItem.DirectoryPath))
-                GlobalSettings.Default.LastOpenedLocalFolderPaths.Remove(directoryItem.DirectoryPath);
-        }
+        if (!GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(path))
+            GlobalSettings.Default.LastOpenedLocalFolderPaths.Add(path);
+    }
+
+    public void RemoveFolder(LocalDirectoryItem directoryItem) {
+        base.RemoveFolder(directoryItem);
+        if (GlobalSettings.Default.LastOpenedLocalFolderPaths.Contains(directoryItem.DirectoryPath))
+            GlobalSettings.Default.LastOpenedLocalFolderPaths.Remove(directoryItem.DirectoryPath);
     }
 }

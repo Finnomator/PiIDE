@@ -2,23 +2,23 @@
 using System.Windows.Input;
 using PiIDE.Editor.Parts.Panel.Terminals;
 
-namespace PiIDE.Editor.Parts.Panel.Terminal {
-    public class PythonTerminal : TerminalBase {
+namespace PiIDE.Editor.Parts.Panel.Terminal;
 
-        public PythonTerminal() {
-            PythonWraper.PythonOutputDataReceived += OutputDataReceived;
-            PythonWraper.PythonErrorDataReceived += ErrorDataReceveid;
-            PythonWraper.PythonExited += Exited;
-        }
+public class PythonTerminal : TerminalBase {
 
-        protected override void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
-            switch (e.Key) {
-                case Key.Enter:
-                    PythonWraper.AsyncFileRunner.WriteLineToInput(InputTextBox.Text);
-                    InputTextBox.Text = "";
-                    e.Handled = true;
-                    break;
-            }
+    public PythonTerminal() {
+        PythonWraper.PythonOutputDataReceived += OutputDataReceived;
+        PythonWraper.PythonErrorDataReceived += ErrorDataReceveid;
+        PythonWraper.PythonExited += Exited;
+    }
+
+    protected override void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
+        switch (e.Key) {
+            case Key.Enter:
+                PythonWraper.AsyncFileRunner.WriteLineToInput(InputTextBox.Text);
+                InputTextBox.Text = "";
+                e.Handled = true;
+                break;
         }
     }
 }

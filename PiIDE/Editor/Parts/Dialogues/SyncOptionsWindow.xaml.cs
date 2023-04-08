@@ -1,59 +1,58 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace PiIDE.Editor.Parts {
+namespace PiIDE.Editor.Parts;
 
-    public partial class SyncOptionsWindow : Window {
+public partial class SyncOptionsWindow {
 
-        public SyncOptionResult SyncOptionResult { get; private set; }
+    public SyncOptionResult SyncOptionResult { get; private set; }
 
-        private bool OkClose;
+    private bool OkClose;
 
-        public SyncOptionsWindow() {
-            InitializeComponent();
+    public SyncOptionsWindow() {
+        InitializeComponent();
 
-            Loaded += delegate {
-                SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
-                Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
-                (int sw, int sh) = Tools.GetActiveScreenSize();
-                double left = mousePos.X - ActualWidth / 2;
+        Loaded += delegate {
+            SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
+            Point mousePos = PointToScreen(Mouse.GetPosition(this)).ConvertToDevice();
+            (int sw, _) = Tools.GetActiveScreenSize();
+            double left = mousePos.X - ActualWidth / 2;
 
-                if (left < 0 && left > -ActualWidth / 2)
-                    left = 0;
-                else if (left + ActualWidth > sw && left < sw + ActualWidth / 2)
-                    left = sw - ActualWidth;
+            if (left < 0 && left > -ActualWidth / 2)
+                left = 0;
+            else if (left + ActualWidth > sw && left < sw + ActualWidth / 2)
+                left = sw - ActualWidth;
 
-                Left = left;
-                Top = mousePos.Y;
-            };
+            Left = left;
+            Top = mousePos.Y;
+        };
 
-            Show();
-            Focus();
-        }
+        Show();
+        Focus();
+    }
 
-        private void OverwriteAllLocalFile_Checked(object sender, RoutedEventArgs e) => SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
+    private void OverwriteAllLocalFile_Checked(object sender, RoutedEventArgs e) => SyncOptionResult = SyncOptionResult.OverwriteAllLocalFiles;
 
-        private void Ok_Click(object sender, RoutedEventArgs e) {
-            OkClose = true;
-            Close();
-        }
+    private void Ok_Click(object sender, RoutedEventArgs e) {
+        OkClose = true;
+        Close();
+    }
 
-        private void Cancel_Click(object sender, RoutedEventArgs e) {
+    private void Cancel_Click(object sender, RoutedEventArgs e) {
+        SyncOptionResult = SyncOptionResult.Cancel;
+        Close();
+    }
+
+    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+        if (OkClose) {
+
+        } else {
             SyncOptionResult = SyncOptionResult.Cancel;
-            Close();
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            if (OkClose) {
-
-            } else {
-                SyncOptionResult = SyncOptionResult.Cancel;
-            }
         }
     }
+}
 
-    public enum SyncOptionResult {
-        OverwriteAllLocalFiles,
-        Cancel,
-    }
+public enum SyncOptionResult {
+    OverwriteAllLocalFiles,
+    Cancel,
 }

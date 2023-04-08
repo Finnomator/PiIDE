@@ -5,62 +5,62 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace PiIDE.Editor.Parts {
-    public class EditorTabItem : TabItem {
+namespace PiIDE.Editor.Parts;
 
-        public string FilePath { get; }
-        public string FileName { get; }
+public class EditorTabItem : TabItem {
 
-        public event EventHandler<string>? CloseTabClick;
+    public string FilePath { get; }
+    public string FileName { get; }
 
-        protected new WrapPanel Header;
-        protected StackPanel IconsStackPanel;
+    public event EventHandler<string>? CloseTabClick;
 
-        private readonly Button CloseTabButton;
+    protected new WrapPanel Header;
+    protected StackPanel IconsStackPanel;
 
-        public EditorTabItem(string filePath) {
+    private readonly Button CloseTabButton;
 
-            FilePath = filePath;
-            FileName = Path.GetFileName(FilePath);
-            Height = 30;
-            Header = new();
+    public EditorTabItem(string filePath) {
 
-            Style = (Style) Application.Current.Resources["TabItemStyle"];
+        FilePath = filePath;
+        FileName = Path.GetFileName(FilePath);
+        Height = 30;
+        Header = new();
 
-            IconsStackPanel = new() {
-                MaxHeight = 16,
-                Orientation = Orientation.Horizontal,
-            };
+        Style = (Style) Application.Current.Resources["TabItemStyle"];
 
-            IconsStackPanel.Children.Add(new Image() {
-                Source = Icons.GetFileIcon(FilePath),
-            });
+        IconsStackPanel = new() {
+            MaxHeight = 16,
+            Orientation = Orientation.Horizontal,
+        };
 
-            TextBlock fileNameTextBlock = new() {
-                Text = FileName,
-                Foreground = Brushes.White,
-            };
+        IconsStackPanel.Children.Add(new Image() {
+            Source = Icons.GetFileIcon(FilePath),
+        });
 
-            CloseTabButton = new() {
-                Content = "⛌",
-                FontSize = 9,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                ToolTip = "Close",
-                Style = (Style) Application.Current.Resources["CleanButtonWithRoundCornersStyle"],
-                Foreground = Brushes.White,
-                Padding = new(2),
-            };
+        TextBlock fileNameTextBlock = new() {
+            Text = FileName,
+            Foreground = Brushes.White,
+        };
 
-            CloseTabButton.Click += (s, e) => CloseTabClick?.Invoke(this, FilePath);
+        CloseTabButton = new() {
+            Content = "⛌",
+            FontSize = 9,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            ToolTip = "Close",
+            Style = (Style) Application.Current.Resources["CleanButtonWithRoundCornersStyle"],
+            Foreground = Brushes.White,
+            Padding = new(2),
+        };
 
-            Header.Children.Add(IconsStackPanel);
-            Header.Children.Add(fileNameTextBlock);
-            Header.Children.Add(new Border() { BorderThickness = new(3) });
-            Header.Children.Add(CloseTabButton);
+        CloseTabButton.Click += (_, _) => CloseTabClick?.Invoke(this, FilePath);
 
-            base.Header = Header;
-        }
+        Header.Children.Add(IconsStackPanel);
+        Header.Children.Add(fileNameTextBlock);
+        Header.Children.Add(new Border() { BorderThickness = new(3) });
+        Header.Children.Add(CloseTabButton);
+
+        base.Header = Header;
     }
 }

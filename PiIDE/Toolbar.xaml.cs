@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
-namespace PiIDE {
+namespace PiIDE;
 
-    public partial class Toolbar : UserControl {
+public partial class Toolbar {
 
-        public EventHandler? OnOpenOptionsCLick;
+    public EventHandler? OnOpenOptionsCLick;
 
-        public Toolbar() => InitializeComponent();
+    public Toolbar() => InitializeComponent();
 
-        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
-
-        private void OptionsButton_Click(object sender, RoutedEventArgs e) {
-            OnOpenOptionsCLick?.Invoke(sender, e);
-            OptionsWindow optionsWindow = new();
-            optionsWindow.Show();
-        }
+    private void OptionsButton_Click(object sender, RoutedEventArgs e) {
+        OnOpenOptionsCLick?.Invoke(sender, e);
+        OptionsWindow optionsWindow = new();
+        optionsWindow.Show();
     }
 }

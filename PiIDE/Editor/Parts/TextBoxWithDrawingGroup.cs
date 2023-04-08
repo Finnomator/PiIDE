@@ -6,111 +6,111 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace PiIDE.Editor.Parts {
-    public class TextBoxWithDrawingGroup : TextBox {
-        private readonly DrawingGroup DrawingGroup = new();
-        private readonly SortedList<int, Action<DrawingContext>> RenderActions = new();
-        private Typeface? cachedTypeface;
-        private readonly double cachedPixelsPerDip;
+namespace PiIDE.Editor.Parts;
 
-        public Action<DrawingContext> DefaultRenderAction { get; init; }
-        public FormattedText VisibleTextAsFormattedText { get; private set; }
+public class TextBoxWithDrawingGroup : TextBox {
+    private readonly DrawingGroup DrawingGroup = new();
+    private readonly SortedList<int, Action<DrawingContext>> RenderActions = new();
+    private Typeface? cachedTypeface;
+    private readonly double cachedPixelsPerDip;
 
-        public TextEditor TextEditor { get; set; }
+    public Action<DrawingContext> DefaultRenderAction { get; init; }
+    public FormattedText VisibleTextAsFormattedText { get; private set; }
 
-        private readonly Stopwatch sw = new();
+    public TextEditor TextEditor { get; set; }
 
-        private ScrollChangedEventArgs? oldScrollChangedEventArgs;
+    private readonly Stopwatch sw = new();
 
-        // TODO: Make it work with backgrounds
+    private ScrollChangedEventArgs? oldScrollChangedEventArgs;
 
-        public TextBoxWithDrawingGroup() {
-            Foreground = null;
-            Background = null;
-            CaretBrush = Brushes.White;
+    // TODO: Make it work with backgrounds
 
-            cachedPixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+    public TextBoxWithDrawingGroup() {
+        Foreground = null;
+        Background = null;
+        CaretBrush = Brushes.White;
 
-            DefaultRenderAction = (dc) => VisibleTextAsFormattedText!.SetForegroundBrush(CaretBrush);
+        cachedPixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
-            AddRenderAction(0, DefaultRenderAction);
+        DefaultRenderAction = _ => VisibleTextAsFormattedText!.SetForegroundBrush(CaretBrush);
 
-            TextChanged += TextBoxWithDrawingGroup_TextChanged;
-            Loaded += TextBoxWithDrawingGroup_Loaded;
-        }
+        AddRenderAction(0, DefaultRenderAction);
 
-        private void TextBoxWithDrawingGroup_TextChanged(object sender, TextChangedEventArgs e) => Render();
+        TextChanged += TextBoxWithDrawingGroup_TextChanged;
+        Loaded += TextBoxWithDrawingGroup_Loaded;
+    }
 
-        private void TextBoxWithDrawingGroup_Loaded(object sender, RoutedEventArgs e) {
+    private void TextBoxWithDrawingGroup_TextChanged(object sender, TextChangedEventArgs e) => Render();
 
-            Debug.Assert(TextEditor != null);
+    private void TextBoxWithDrawingGroup_Loaded(object sender, RoutedEventArgs e) {
 
-            TextEditor.MainScrollViewer.SizeChanged += (s, e) => Render();
+        Debug.Assert(TextEditor != null);
 
-            TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
-                if (e.VerticalChange != 0 && e != oldScrollChangedEventArgs)
-                    Render();
-                oldScrollChangedEventArgs = e;
-            };
-        }
+        TextEditor.MainScrollViewer.SizeChanged += (_, _) => Render();
 
-        private void SetVisibleTextAsFormattedText() => VisibleTextAsFormattedText = GetTextAsFormattedText(TextEditor.VisibleText);
+        TextEditor.MainScrollViewer.ScrollChanged += (_, e) => {
+            if (e.VerticalChange != 0 && e != oldScrollChangedEventArgs)
+                Render();
+            oldScrollChangedEventArgs = e;
+        };
+    }
 
-        private FormattedText GetTextAsFormattedText(string text) {
+    private void SetVisibleTextAsFormattedText() => VisibleTextAsFormattedText = GetTextAsFormattedText(TextEditor.VisibleText);
 
-            cachedTypeface ??= new Typeface(FontFamily, FontStyle, FontWeight, FontStretch);
+    private FormattedText GetTextAsFormattedText(string text) {
 
-            return new(
-                textToFormat: text,
-                culture: CultureInfo.GetCultureInfo("en-us"),
-                flowDirection: 0,
-                typeface: cachedTypeface,
-                emSize: FontSize,
-                foreground: Brushes.White,
-                pixelsPerDip: cachedPixelsPerDip
-            );
-        }
+        cachedTypeface ??= new Typeface(FontFamily, FontStyle, FontWeight, FontStretch);
 
-        public void AddRenderAction(int priority, Action<DrawingContext> action) {
-            if (!RenderActions.ContainsValue(action))
-                RenderActions.Add(priority, action);
-        }
+        return new(
+            textToFormat: text,
+            culture: CultureInfo.GetCultureInfo("en-us"),
+            flowDirection: 0,
+            typeface: cachedTypeface,
+            emSize: FontSize,
+            foreground: Brushes.White,
+            pixelsPerDip: cachedPixelsPerDip
+        );
+    }
 
-        public void RemoveRenderAction(Action<DrawingContext> action) {
-            if (RenderActions.ContainsValue(action))
-                RenderActions.Remove(RenderActions.IndexOfValue(action));
-        }
+    public void AddRenderAction(int priority, Action<DrawingContext> action) {
+        if (!RenderActions.ContainsValue(action))
+            RenderActions.Add(priority, action);
+    }
 
-        public void Render() {
+    public void RemoveRenderAction(Action<DrawingContext> action) {
+        if (RenderActions.ContainsValue(action))
+            RenderActions.Remove(RenderActions.IndexOfValue(action));
+    }
 
-            if (Tools.UpdateStats) {
+    public void Render() {
 
-                sw.Restart();
+        if (Tools.UpdateStats) {
 
-                SetVisibleTextAsFormattedText();
-                using (DrawingContext dc1 = DrawingGroup.Open()) {
-                    foreach (Action<DrawingContext> action in RenderActions.Values)
-                        action(dc1);
-                    dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
-                }
-
-                sw.Stop();
-
-                Tools.StatsWindow!.AddRenderStat(sw.ElapsedMilliseconds);
-
-                return;
-            }
+            sw.Restart();
 
             SetVisibleTextAsFormattedText();
-            using DrawingContext dc = DrawingGroup.Open();
-            foreach (Action<DrawingContext> action in RenderActions.Values)
-                action(dc);
-            dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+            using (DrawingContext dc1 = DrawingGroup.Open()) {
+                foreach (Action<DrawingContext> action in RenderActions.Values)
+                    action(dc1);
+                dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+            }
+
+            sw.Stop();
+
+            Tools.StatsWindow!.AddRenderStat(sw.ElapsedMilliseconds);
+
+            return;
         }
 
-        protected override void OnRender(DrawingContext drawingContext) {
-            Render();
-            drawingContext.DrawDrawing(DrawingGroup);
-        }
+        SetVisibleTextAsFormattedText();
+        using DrawingContext dc = DrawingGroup.Open();
+        foreach (Action<DrawingContext> action in RenderActions.Values)
+            action(dc);
+        dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+    }
+
+    protected override void OnRender(DrawingContext drawingContext) {
+        Render();
+        drawingContext.DrawDrawing(DrawingGroup);
     }
 }

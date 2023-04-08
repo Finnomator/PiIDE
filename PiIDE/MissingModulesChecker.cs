@@ -3,114 +3,109 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
-namespace PiIDE {
+namespace PiIDE;
 
-
-
-    public static class PipModules {
-        public class PipModule {
-            public required string Name { get; init; }
-            public required string PipInstallCommand { get; init; }
-            public required string CmdCommand { get; init; }
-            public bool SuprressMissingWarning { get; init; }
-        }
-
-        public readonly static PipModule Ampy = new() { Name = "Ampy", PipInstallCommand = "pip install adafruit-ampy", CmdCommand = "ampy" };
-        public readonly static PipModule Pylint = new() { Name = "Pylint", PipInstallCommand = "pip install pylint", CmdCommand = "pylint" };
-        public readonly static PipModule Black = new() { Name = "Black", PipInstallCommand = "pip install black", CmdCommand = "black", SuprressMissingWarning = true };
+public static class PipModules {
+    public class PipModule {
+        public required string Name { get; init; }
+        public required string PipInstallCommand { get; init; }
+        public required string CmdCommand { get; init; }
+        public bool SuprressMissingWarning { get; init; }
     }
 
-    public static class MissingModulesChecker {
+    public readonly static PipModule Ampy = new() { Name = "Ampy", PipInstallCommand = "pip install adafruit-ampy", CmdCommand = "ampy" };
+    public readonly static PipModule Pylint = new() { Name = "Pylint", PipInstallCommand = "pip install pylint", CmdCommand = "pylint" };
+    public readonly static PipModule Black = new() { Name = "Black", PipInstallCommand = "pip install black", CmdCommand = "black", SuprressMissingWarning = true };
+}
 
-        public static readonly PipModules.PipModule[] RequiredPipModules = new PipModules.PipModule[] {
-            PipModules.Ampy,
-            PipModules.Pylint,
-            PipModules.Black,
+public static class MissingModulesChecker {
+
+    public static readonly PipModules.PipModule[] RequiredPipModules = new PipModules.PipModule[] {
+        PipModules.Ampy,
+        PipModules.Pylint,
+        PipModules.Black,
+    };
+
+    public static bool IsPythonIstanlled() {
+        using Process process = new() {
+            StartInfo = new() {
+                FileName = "python",
+                Arguments = "--version",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+            }
         };
 
-        public static bool IsPythonIstanlled() {
-            using Process process = new() {
-                StartInfo = new() {
-                    FileName = "python",
-                    Arguments = "--version",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                }
-            };
-
-            try {
-                process.Start();
-            } catch {
-                return false;
-            }
-
-            return process.StandardOutput.ReadToEnd().Contains("Python 3.");
+        try {
+            process.Start();
+        } catch {
+            return false;
         }
 
-        public static List<PipModules.PipModule> FindMissingModules() {
-            List<PipModules.PipModule> modules = new();
+        return process.StandardOutput.ReadToEnd().Contains("Python 3.");
+    }
 
-            if (!IsPythonIstanlled())
-                return RequiredPipModules.ToList();
+    public static List<PipModules.PipModule> FindMissingModules() {
+        List<PipModules.PipModule> modules = new();
 
-            foreach (PipModules.PipModule module in RequiredPipModules) {
-                if (!TryToStartProcess(module.CmdCommand))
-                    modules.Add(module);
-            }
+        if (!IsPythonIstanlled())
+            return RequiredPipModules.ToList();
 
-            return modules;
+        foreach (PipModules.PipModule module in RequiredPipModules) {
+            if (!TryToStartProcess(module.CmdCommand))
+                modules.Add(module);
         }
 
-        public static bool IsJediUsable() => true;
+        return modules;
+    }
 
-        public static bool TryToStartProcess(string fileName, string args = "") {
+    public static bool TryToStartProcess(string fileName, string args = "") {
 
-            using Process process = new() {
-                StartInfo = new() {
-                    FileName = fileName,
-                    Arguments = args,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                }
-            };
-
-            try {
-                process.Start();
-            } catch {
-                return false;
+        using Process process = new() {
+            StartInfo = new() {
+                FileName = fileName,
+                Arguments = args,
+                UseShellExecute = false,
+                CreateNoWindow = true,
             }
+        };
 
-            process.Kill();
-            return true;
+        try {
+            process.Start();
+        } catch {
+            return false;
         }
 
-        public static void CheckForUsableModules() {
+        process.Kill();
+        return true;
+    }
 
-            GlobalSettings.Default.PylintIsUsable = true;
-            GlobalSettings.Default.PythonIsInstalled = false;
-            GlobalSettings.Default.AmpyIsUsable = true;
-            GlobalSettings.Default.JediIsUsable = true;
-            GlobalSettings.Default.BlackIsUsable = true;
+    public static void CheckForUsableModules() {
 
-            if (IsPythonIstanlled())
-                GlobalSettings.Default.PythonIsInstalled = true;
-            else
-                MessageBox.Show("Python was not found\nAdd Python to path or install from www.python.org", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        GlobalSettings.Default.PylintIsUsable = true;
+        GlobalSettings.Default.PythonIsInstalled = false;
+        GlobalSettings.Default.AmpyIsUsable = true;
+        GlobalSettings.Default.JediIsUsable = true;
+        GlobalSettings.Default.BlackIsUsable = true;
 
-            foreach (PipModules.PipModule missingModule in FindMissingModules()) {
-                if (!missingModule.SuprressMissingWarning)
-                    ErrorMessager.ModuleIsNotInstalled(missingModule);
+        if (IsPythonIstanlled())
+            GlobalSettings.Default.PythonIsInstalled = true;
+        else
+            MessageBox.Show("Python was not found\nAdd Python to path or install from www.python.org", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                if (missingModule.Name == "Ampy")
-                    GlobalSettings.Default.AmpyIsUsable = false;
-                else if (missingModule.Name == "Pylint")
-                    GlobalSettings.Default.PylintIsUsable = false;
-                else if (missingModule.Name == "Black")
-                    GlobalSettings.Default.BlackIsUsable = false;
-            }
+        foreach (PipModules.PipModule missingModule in FindMissingModules()) {
+            if (!missingModule.SuprressMissingWarning)
+                ErrorMessager.ModuleIsNotInstalled(missingModule);
 
-            GlobalSettings.Default.Save();
+            if (missingModule.Name == "Ampy")
+                GlobalSettings.Default.AmpyIsUsable = false;
+            else if (missingModule.Name == "Pylint")
+                GlobalSettings.Default.PylintIsUsable = false;
+            else if (missingModule.Name == "Black")
+                GlobalSettings.Default.BlackIsUsable = false;
         }
+
+        GlobalSettings.Default.Save();
     }
 }

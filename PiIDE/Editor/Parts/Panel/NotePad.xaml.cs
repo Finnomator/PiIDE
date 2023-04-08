@@ -1,10 +1,5 @@
-﻿using System.Windows.Controls;
+﻿namespace PiIDE;
 
-namespace PiIDE {
-    /// <summary>
-    /// Interaction logic for NotePad.xaml
-    /// </summary>
-    public partial class NotePad : UserControl {
-        public NotePad() => InitializeComponent();
-    }
+public partial class NotePad {
+    public NotePad() => InitializeComponent();
 }
