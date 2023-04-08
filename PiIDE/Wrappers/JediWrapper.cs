@@ -67,7 +67,6 @@ public abstract class JediWrapper {
             public string? WriteLine(string line, bool expectsOutput) {
 
                 IsBusy = true;
-
                 WrapperProcess.StandardInput.WriteLine(line);
 
                 if (expectsOutput) {
@@ -82,7 +81,7 @@ public abstract class JediWrapper {
 
             private string? ReadOutput() {
                 while (!ReceivedOutputData)
-                    Thread.Sleep(10);
+                    Thread.Sleep(1);
                 ReceivedOutputData = false;
                 return NewOutputData;
             }
@@ -109,7 +108,7 @@ public abstract class JediWrapper {
 
             private async Task<string?> ReadOutputAsync() {
                 while (!ReceivedOutputData)
-                    await Task.Delay(10);
+                    await Task.Delay(1);
                 ReceivedOutputData = false;
                 return NewOutputData;
             }
