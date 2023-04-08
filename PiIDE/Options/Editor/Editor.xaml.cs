@@ -17,9 +17,9 @@ public partial class Editor {
         GlobalSettings settings = GlobalSettings.Default;
 
         int fontIndex = 0;
-        ComboBoxFontItem[] comboBoxFontItems = new ComboBoxFontItem[Tools.MonospaceFonts.Length];
-        for (int i = 0; i < Tools.MonospaceFonts.Length; i++) {
-            FontFamily font = Tools.MonospaceFonts[i];
+        ComboBoxFontItem[] comboBoxFontItems = new ComboBoxFontItem[Tools.MonospacedFonts.Length];
+        for (int i = 0; i < Tools.MonospacedFonts.Length; i++) {
+            FontFamily font = Tools.MonospacedFonts[i];
             comboBoxFontItems[i] = new(font);
             if (font.Source == settings.TextEditorFontFamily)
                 fontIndex = i;

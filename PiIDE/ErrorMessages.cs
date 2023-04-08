@@ -2,7 +2,7 @@
 
 namespace PiIDE;
 
-internal static class ErrorMessager {
+internal static class ErrorMessages {
 
     public static void PromptForComPort() => MessageBox.Show("Select a COM port first!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     public static void ModuleIsNotInstalled(PipModules.PipModule module) =>

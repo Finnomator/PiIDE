@@ -1,5 +1,5 @@
 ﻿using FontAwesome.WPF;
-using PiIDE.Wrapers;
+using PiIDE.Wrappers;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +27,7 @@ public class LocalFileItem : FileItemBase {
             return;
         }
         SetStatus("Uploading");
-        if (await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, $"/{FileName}"))
+        if (await AmpyWrapper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, $"/{FileName}"))
             BasicFileActions.CopyFile(FilePath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, FileName));
         UnsetStatus();
     }

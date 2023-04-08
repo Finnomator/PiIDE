@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
-using static PiIDE.Wrapers.JediWraper;
-using static PiIDE.Wrapers.JediWraper.ReturnClasses;
+using static PiIDE.Wrappers.JediWrapper;
+using static PiIDE.Wrappers.JediWrapper.ReturnClasses;
 
 namespace PiIDE.Editor.Parts;
 

@@ -1,4 +1,4 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Wrappers;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -37,7 +37,7 @@ public partial class LintMessagesWindow {
     public async Task<PylintMessage[]> UpdateLintMessages(string[] filesToLint) {
 
         SetIntoLoadingState();
-        PylintMessage[] pylintMessages = await PylintWraper.GetLintingAsync(filesToLint);
+        PylintMessage[] pylintMessages = await PylintWrapper.GetLintingAsync(filesToLint);
         ResetToNormalState();
 
         ClearLintMessages();

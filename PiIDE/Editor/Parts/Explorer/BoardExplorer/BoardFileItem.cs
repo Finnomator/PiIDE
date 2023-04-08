@@ -1,4 +1,4 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Wrappers;
 using System.Windows;
 
 namespace PiIDE.Editor.Parts.Explorer.BoardExplorer;
@@ -12,9 +12,9 @@ public class BoardFileItem : FileItemBase {
     public BoardFileItem(string fullLocalPath, string pathOnBoard, BoardDirectoryItem parentDirectory, ExplorerBase parentExplorer) : base(fullLocalPath, parentDirectory, parentExplorer) => FilePathOnBoard = pathOnBoard;
 
     // TODO: Implement these features
-    protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
-    protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
     protected override async void Delete_Click(object sender, RoutedEventArgs e) {
         if (!Tools.EnableBoardInteractions) {
@@ -22,15 +22,15 @@ public class BoardFileItem : FileItemBase {
             return;
         }
         SetStatus("Deleting");
-        if (await AmpyWraper.RemoveFileFromBoardAsync(Port, FilePathOnBoard))
+        if (await AmpyWrapper.RemoveFileFromBoardAsync(Port, FilePathOnBoard))
             BasicFileActions.DeleteFile(FilePath);
         UnsetStatus();
     }
 
-    protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
-    protected override void RenameFile(string oldPath, string newPath, string newName) => ErrorMessager.FeatureNotSupported();
+    protected override void RenameFile(string oldPath, string newPath, string newName) => ErrorMessages.FeatureNotSupported();
 
     // TODO: this method should not be overriden, but as long as the feature is not supported, it will
-    protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 }

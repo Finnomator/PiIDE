@@ -1,5 +1,5 @@
 ﻿using FontAwesome.WPF;
-using PiIDE.Wrapers;
+using PiIDE.Wrappers;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -11,12 +11,12 @@ namespace PiIDE.Editor.Parts;
 
 public partial class CompletionUiList {
 
-    public JediWraper.ReturnClasses.Completion? SelectedCompletion => (JediWraper.ReturnClasses.Completion?) MainListBox.SelectedItem;
+    public JediWrapper.ReturnClasses.Completion? SelectedCompletion => (JediWrapper.ReturnClasses.Completion?) MainListBox.SelectedItem;
     public int CompletionsCount => MainListBox.Items.Count;
     public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
     public bool IsOpen => IsVisible;
 
-    public EventHandler<JediWraper.ReturnClasses.Completion>? CompletionClicked;
+    public EventHandler<JediWrapper.ReturnClasses.Completion>? CompletionClicked;
 
     public bool IsBusy { get; private set; }
     private bool GotNewerRequest;
@@ -39,7 +39,7 @@ public partial class CompletionUiList {
         };
     }
 
-    private void AddCompletions(JediWraper.ReturnClasses.Completion[] completions) {
+    private void AddCompletions(JediWrapper.ReturnClasses.Completion[] completions) {
         MainListBox.ItemsSource = completions;
         Show();
     }
@@ -80,8 +80,8 @@ public partial class CompletionUiList {
         (int col, int row) = Editor.GetCaretPosition();
         row++;
 
-        JediWraper.Script script = await JediWraper.Script.MakeScriptAsync(code, filePath);
-        JediWraper.ReturnClasses.Completion[] completions = await script.Complete(row, col);
+        JediWrapper.Script script = await JediWrapper.Script.MakeScriptAsync(code, filePath);
+        JediWrapper.ReturnClasses.Completion[] completions = await script.Complete(row, col);
 
         if (CalledClose)
             return;
@@ -149,7 +149,7 @@ public partial class CompletionUiList {
 
     private void Completion_Click(object sender, RoutedEventArgs e) {
         string clickedName = ((TextBlock) ((StackPanel) ((Button) sender).Content).Children[2]).Text;
-        foreach (JediWraper.ReturnClasses.Completion completion in MainListBox.Items) {
+        foreach (JediWrapper.ReturnClasses.Completion completion in MainListBox.Items) {
             if (completion.Name == clickedName) {
                 CompletionClicked?.Invoke(sender, completion);
                 break;

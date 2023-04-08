@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace PiIDE.Wrapers;
+namespace PiIDE.Wrappers;
 
-public static class PythonWraper {
+public static class PythonWrapper {
 
     public static event DataReceivedEventHandler? PythonOutputDataReceived;
     public static event DataReceivedEventHandler? PythonErrorDataReceived;
@@ -17,10 +17,6 @@ public static class PythonWraper {
         RedirectStandardInput = true,
         CreateNoWindow = true,
     };
-
-    static PythonWraper() {
-
-    }
 
     public static class AsyncFileRunner {
 

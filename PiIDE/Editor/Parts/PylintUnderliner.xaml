@@ -12,10 +12,5 @@
             </VisualBrush.Visual>
         </VisualBrush>
     </UserControl.Resources>
-    <Grid x:Name="MainGrid" IsHitTestVisible="False">
-        <!--
-        <Line X2="200" Stroke="{Binding Mode=OneWay, Source={StaticResource asdf}}" StrokeThickness="10" />
-        <TextBlock Text="asdf"/>
-        -->
-    </Grid>
+    <Grid x:Name="MainGrid" IsHitTestVisible="False"/>
 </UserControl>

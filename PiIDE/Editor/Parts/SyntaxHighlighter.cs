@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using static PiIDE.Wrapers.JediWraper;
-using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
+using static PiIDE.Wrappers.JediWrapper;
+using JediName = PiIDE.Wrappers.JediWrapper.ReturnClasses.Name;
 
 namespace PiIDE.Editor.Parts;
 

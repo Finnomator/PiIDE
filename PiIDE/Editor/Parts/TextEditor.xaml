@@ -78,7 +78,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock x:Name="NumsTextBlock" FontSize="{Binding FontSize, ElementName=TextEditorTextBox}" FontFamily="{Binding FontFamily, ElementName=TextEditorTextBox}" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackgroundBrush}"/>
+                <TextBlock x:Name="LineNumbersTextBlock" FontSize="{Binding FontSize, ElementName=TextEditorTextBox}" FontFamily="{Binding FontFamily, ElementName=TextEditorTextBox}" Text="1" Foreground="#FF6E7681" TextAlignment="Right" Padding="7,0,7,0" Background="{DynamicResource EditorBackgroundBrush}"/>
 
                 <Rectangle Grid.Column="1" Fill="{StaticResource SplitterBackgroundBrush}"/>
 

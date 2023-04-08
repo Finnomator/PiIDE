@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace PiIDE.Wrapers;
+namespace PiIDE.Wrappers;
 
-internal static class PylintWraper {
+internal static class PylintWrapper {
 
     public const string PylintPath = "pylint";
 

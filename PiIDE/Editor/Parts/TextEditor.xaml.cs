@@ -1,4 +1,4 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace PiIDE.Editor.Parts;
 
-// TODO: Fix tabitems stacking. Replace with scrollbar
+// TODO: Fix tab items stacking. Replace with scrollbar
 
 public partial class TextEditor {
 
@@ -23,7 +23,7 @@ public partial class TextEditor {
     public readonly string FileName;
     public readonly string FileExt;
     public readonly bool IsPythonFile;
-    public readonly bool EnablePythonSyntaxhighlighting;
+    public readonly bool EnablePythonSyntaxHighlighting;
     public readonly bool EnablePylinting;
     public readonly bool EnableJediCompletions;
     public Size TextEditorTextBoxCharacterSize;
@@ -38,7 +38,7 @@ public partial class TextEditor {
     protected int AutoSaveDelaySeconds;
     private readonly CancellationTokenSource AutoSaveCancelToken = new();
 
-    public bool DisableAllWrapers { get; set; }
+    public bool DisableAllWrappers { get; set; }
     public bool ContentIsSaved { get; private set; } = true;
     public bool ContentLoaded { get; private set; }
 
@@ -66,22 +66,22 @@ public partial class TextEditor {
 
     public event EventHandler? StartedPythonExecution;
 
-    public TextEditor(string filePath, bool disableAllWrapers = false) {
+    public TextEditor(string filePath, bool disableAllWrappers = false) {
         InitializeComponent();
         FilePath = filePath;
         AbsolutePath = Path.GetFullPath(FilePath);
-        DisableAllWrapers = disableAllWrapers;
+        DisableAllWrappers = disableAllWrappers;
         FileName = Path.GetFileName(filePath);
         FileExt = Path.GetExtension(filePath);
         IsPythonFile = Tools.IsPythonExt(FileExt);
         EnablePylinting = IsPythonFile;
-        EnablePythonSyntaxhighlighting = IsPythonFile;
+        EnablePythonSyntaxHighlighting = IsPythonFile;
         EnableJediCompletions = IsPythonFile;
 
         LocalFilePathTextBlock.Text = AbsolutePath;
 
         RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
-        PythonWraper.PythonExited += Python_Exited;
+        PythonWrapper.PythonExited += Python_Exited;
 
         // Completion suggestions stuff
         CompletionList = new(this);
@@ -97,7 +97,7 @@ public partial class TextEditor {
         Underliner = new(this);
         TextEditorGrid.Children.Add(Underliner);
 
-        // Searchbox stuff
+        // Search box stuff
         TextSearchBox.Closed += (_, _) => TextEditorTextBox.Focus();
         TextSearchBox.Initialize(renderer);
 
@@ -130,7 +130,7 @@ public partial class TextEditor {
         RunFileLocalButton.IsEnabled = true;
     });
 
-    private void CompletionUiList_CompletionClick(object? sender, JediWraper.ReturnClasses.Completion e) => InsertCompletionAtCaret(e);
+    private void CompletionUiList_CompletionClick(object? sender, JediWrapper.ReturnClasses.Completion e) => InsertCompletionAtCaret(e);
 
     public virtual async Task SaveFileAsync(bool savedByUser) {
         SavingFileStatusWrapPanel.Visibility = Visibility.Visible;
@@ -239,7 +239,7 @@ public partial class TextEditor {
         foreach (Shortcut shortcut in Shortcuts.ShortcutsMap.Keys) {
             List<Key> hotkey = Shortcuts.ShortcutsMap[shortcut];
 
-            // because we dont want to save twice when we press ctrl + s (just as example)
+            // because we don't want to save twice when we press ctrl + s (just as example)
             if (!Shortcuts.IsShortcutPressed(shortcut) || hotkey[^1] != e.Key)
                 continue;
 
@@ -260,7 +260,7 @@ public partial class TextEditor {
                     if (GlobalSettings.Default.BlackIsUsable && IsPythonFile)
                         FormatDocument();
                     else if (IsPythonFile)
-                        ErrorMessager.ModuleIsNotInstalled(PipModules.Black);
+                        ErrorMessages.ModuleIsNotInstalled(PipModules.Black);
                     break;
             }
             e.Handled = true;
@@ -300,7 +300,7 @@ public partial class TextEditor {
             CompletionList.Close();
 
         if (textLines != CurrentAmountOfLines) {
-            NumsTextBlock.Text = GetLineNumbers(textLines);
+            LineNumbersTextBlock.Text = GetLineNumbers(textLines);
             CurrentAmountOfLines = textLines;
         }
     }
@@ -397,7 +397,7 @@ public partial class TextEditor {
         InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
     }
 
-    private void InsertCompletionAtCaret(JediWraper.ReturnClasses.Completion completion) {
+    private void InsertCompletionAtCaret(JediWrapper.ReturnClasses.Completion completion) {
 
         if (string.IsNullOrEmpty(completion.Complete))
             return;
@@ -496,12 +496,12 @@ public partial class TextEditor {
     private async void RunFileLocalButton_Click(object sender, RoutedEventArgs e) {
         RunFileLocalButton.IsEnabled = false;
         await SaveFileAsync(false);
-        PythonWraper.AsyncFileRunner.RunFileAsync(FilePath);
+        PythonWrapper.AsyncFileRunner.RunFileAsync(FilePath);
         StartedPythonExecution?.Invoke(this, EventArgs.Empty);
     }
 
     protected virtual void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
-        PythonWraper.AsyncFileRunner.KillProcess();
+        PythonWrapper.AsyncFileRunner.KillProcess();
         RunFileLocalButton.IsEnabled = GlobalSettings.Default.PythonIsInstalled;
     }
 

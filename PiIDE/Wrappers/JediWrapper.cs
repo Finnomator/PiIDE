@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace PiIDE.Wrapers;
+namespace PiIDE.Wrappers;
 
-public class JediWraper {
+public class JediWrapper {
 
-    public static class WraperRepl {
+    public static class WrapperRepl {
 
-        private class Wraper {
+        private class Wrapper {
 
-            private Process WraperProcess;
+            private Process WrapperProcess;
 
             private bool ReceivedOutputData;
             private string? NewOutputData;
@@ -25,10 +25,10 @@ public class JediWraper {
 
             public bool IsBusy { get; private set; }
 
-            public Wraper() => InitProcess();
+            public Wrapper() => InitProcess();
 
             private void InitProcess() {
-                WraperProcess = new() {
+                WrapperProcess = new() {
                     StartInfo = new ProcessStartInfo {
                         FileName = "Assets/Jedi/jedi_wraper.exe",
                         UseShellExecute = false,
@@ -40,34 +40,34 @@ public class JediWraper {
                     EnableRaisingEvents = true,
                 };
 
-                WraperProcess.OutputDataReceived += (_, e) => {
+                WrapperProcess.OutputDataReceived += (_, e) => {
                     NewOutputData = e.Data;
                     ReceivedOutputData = true;
                 };
 
 #if DEBUG
-                WraperProcess.ErrorDataReceived += (_, e) => {
+                WrapperProcess.ErrorDataReceived += (_, e) => {
                     Debug.WriteLine($"Error: {e.Data ?? "NULL"}");
                 };
 #endif
 
-                WraperProcess.Exited += (_, _) => {
+                WrapperProcess.Exited += (_, _) => {
 #if DEBUG
                     MessageBox.Show("Jedi crashed", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 #endif
                     InitProcess();
                 };
 
-                WraperProcess.Start();
-                WraperProcess.BeginErrorReadLine();
-                WraperProcess.BeginOutputReadLine();
+                WrapperProcess.Start();
+                WrapperProcess.BeginErrorReadLine();
+                WrapperProcess.BeginOutputReadLine();
             }
 
             public string? WriteLine(string line, bool expectsOutput) {
 
                 IsBusy = true;
 
-                WraperProcess.StandardInput.WriteLine(line);
+                WrapperProcess.StandardInput.WriteLine(line);
 
                 if (expectsOutput) {
                     string? res = ReadOutput();
@@ -92,7 +92,7 @@ public class JediWraper {
 
                 IsBusy = true;
 
-                await WraperProcess.StandardInput.WriteLineAsync(line);
+                await WrapperProcess.StandardInput.WriteLineAsync(line);
 
                 if (expectsOutput) {
                     string? res = await ReadOutputAsync();
@@ -114,31 +114,31 @@ public class JediWraper {
             }
         }
 
-        private const int AmountOfWrapers = 2;
-        private static readonly Wraper[] Wrapers;
+        private const int AmountOfWrappers = 2;
+        private static readonly Wrapper[] Wrappers;
 
-        static WraperRepl() {
-            Wrapers = new Wraper[AmountOfWrapers];
-            for (int i = 0; i < AmountOfWrapers; i++)
-                Wrapers[i] = new();
+        static WrapperRepl() {
+            Wrappers = new Wrapper[AmountOfWrappers];
+            for (int i = 0; i < AmountOfWrappers; i++)
+                Wrappers[i] = new();
         }
 
         public static async Task<string?> WriteLineAsync(string line, bool expectsOutput) {
-            Wraper wraper = AquireAvailableWraper();
-            return await wraper.WriteLineAsync(line, expectsOutput);
+            Wrapper wrapper = AcquireAvailableWrapper();
+            return await wrapper.WriteLineAsync(line, expectsOutput);
         }
 
         public static string? WriteLine(string line, bool expectsOutput) {
-            Wraper wraper = AquireAvailableWraper();
-            return wraper.WriteLine(line, expectsOutput);
+            Wrapper wrapper = AcquireAvailableWrapper();
+            return wrapper.WriteLine(line, expectsOutput);
         }
 
-        private static Wraper AquireAvailableWraper() {
-            for (int i = 0; i < AmountOfWrapers; i++) {
-                if (!Wrapers[i].IsBusy)
-                    return Wrapers[i];
+        private static Wrapper AcquireAvailableWrapper() {
+            for (int i = 0; i < AmountOfWrappers; i++) {
+                if (!Wrappers[i].IsBusy)
+                    return Wrappers[i];
             }
-            return Wrapers[0];
+            return Wrappers[0];
         }
     }
 
@@ -147,7 +147,7 @@ public class JediWraper {
         public string Code { get; private set; }
         public string Path { get; private set; }
 
-        public const string WraperVariableName = "script";
+        public const string WrapperVariableName = "script";
         public const string CompletionsVarName = "completions";
         public const string NamesVarName = "names";
 
@@ -157,12 +157,12 @@ public class JediWraper {
         }
 
         public static async Task<Script> MakeScriptAsync(string code, string path) {
-            await WraperRepl.WriteLineAsync($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
+            await WrapperRepl.WriteLineAsync($"{WrapperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
             return new(code, path);
         }
 
         public static Script MakeScript(string code, string path) {
-            WraperRepl.WriteLine($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
+            WrapperRepl.WriteLine($"{WrapperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
             return new(code, path);
         }
 
@@ -189,17 +189,17 @@ public class JediWraper {
         }
 
         public async Task<ReturnClasses.Completion[]> Complete(int line, int column, bool fuzzy = false) {
-            await WraperRepl.WriteLineAsync($"{CompletionsVarName} = {WraperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})", false);
-            return TryConvert<ReturnClasses.Completion>(await WraperRepl.WriteLineAsync("print_obj(dump_completions(completions))", true));
+            await WrapperRepl.WriteLineAsync($"{CompletionsVarName} = {WrapperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})", false);
+            return TryConvert<ReturnClasses.Completion>(await WrapperRepl.WriteLineAsync("print_obj(dump_completions(completions))", true));
         }
 
         public async Task<ReturnClasses.Name[]> Infer(int line, int column, bool onlyStubs = false, bool preferStubs = false) {
-            string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.infer({line}, {column}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
+            string? res = await WrapperRepl.WriteLineAsync($"print_obj(dump_names({WrapperVariableName}.infer({line}, {column}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
             return TryConvert<ReturnClasses.Name>(res);
         }
 
         public async Task<ReturnClasses.Name[]> Goto(int line, int column, bool followImports = false, bool followBuiltinImports = false, bool onlyStubs = false, bool preferStubs = false) {
-            string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.goto({line}, {column}, follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
+            string? res = await WrapperRepl.WriteLineAsync($"print_obj(dump_names({WrapperVariableName}.goto({line}, {column}, follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
             return TryConvert<ReturnClasses.Name>(res);
         }
 
@@ -213,31 +213,31 @@ public class JediWraper {
         }
         */
 
-        public async Task<ReturnClasses.Name[]> Help(int line, int column) => TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.help({line}, {column})))", true));
+        public async Task<ReturnClasses.Name[]> Help(int line, int column) => TryConvert<ReturnClasses.Name>(await WrapperRepl.WriteLineAsync($"print_obj(dump_names({WrapperVariableName}.help({line}, {column})))", true));
 
         public async Task<ReturnClasses.Name[]> GetReferences(int line, int column, Dictionary<object, object>? kwargs = null) {
             // TODO: implement kwargs
             kwargs ??= new();
-            return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({WraperVariableName}.get_references({line}, {column})))", true));
+            return TryConvert<ReturnClasses.Name>(await WrapperRepl.WriteLineAsync($"print_obj(dump_names({WrapperVariableName}.get_references({line}, {column})))", true));
         }
 
-        public async Task<ReturnClasses.Signature[]> GetSignatures(int line, int column) => TryConvert<ReturnClasses.Signature>(await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({WraperVariableName}.get_signatures({line} , {column})))", true));
+        public async Task<ReturnClasses.Signature[]> GetSignatures(int line, int column) => TryConvert<ReturnClasses.Signature>(await WrapperRepl.WriteLineAsync($"print_obj(dump_signatures({WrapperVariableName}.get_signatures({line} , {column})))", true));
 
         public async Task<ReturnClasses.Name?> GetContext(int line, int column) {
-            string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({WraperVariableName}.get_context({line}, {column})))", true);
+            string? res = await WrapperRepl.WriteLineAsync($"print_obj(dump_signatures({WrapperVariableName}.get_context({line}, {column})))", true);
             if (res == null)
                 return null;
             return JsonSerializer.Deserialize<ReturnClasses.Name>(res);
         }
 
         public async Task<ReturnClasses.Name[]> GetNamesAsync(bool allScopes = false, bool definitions = false, bool references = false) {
-            await WraperRepl.WriteLineAsync($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
-            return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync("print_obj(dump_names(names))", true));
+            await WrapperRepl.WriteLineAsync($"{NamesVarName} = {WrapperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
+            return TryConvert<ReturnClasses.Name>(await WrapperRepl.WriteLineAsync("print_obj(dump_names(names))", true));
         }
 
         public ReturnClasses.Name[] GetNames(bool allScopes = false, bool definitions = false, bool references = false) {
-            WraperRepl.WriteLine($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
-            return TryConvert<ReturnClasses.Name>(WraperRepl.WriteLine("print_obj(dump_names(names))", true));
+            WrapperRepl.WriteLine($"{NamesVarName} = {WrapperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
+            return TryConvert<ReturnClasses.Name>(WrapperRepl.WriteLine("print_obj(dump_names(names))", true));
         }
     }
 
@@ -283,49 +283,49 @@ public class JediWraper {
                 return JsonSerializer.Deserialize<T>(line);
             }
 
-            public async Task<bool> InBuiltinModule() => (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.in_builtin_module())", true)) == "True";
+            public async Task<bool> InBuiltinModule() => (await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.in_builtin_module())", true)) == "True";
 
             public async Task<(int row, int column)> GetDefinitionStartPosition() {
-                string? res = await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_definition_start_position())", true);
+                string? res = await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.get_definition_start_position())", true);
                 string[] parts = res.Split(", ");
                 return (int.Parse(parts[0][1..]), int.Parse(parts[1][..1]));
             }
 
             public async Task<(int row, int column)> GetDefinitionEndPosition() {
-                string? res = await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_definition_end_position())", true);
+                string? res = await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.get_definition_end_position())", true);
                 string[] parts = res.Split(", ");
                 return (int.Parse(parts[0][1..]), int.Parse(parts[1][..1]));
             }
 
             public async Task<string?> Docstring(bool raw = false, bool fast = true) {
-                string? res = await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.docstring({(raw ? 1 : 0)}, {(fast ? 1 : 0)}))", true);
+                string? res = await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.docstring({(raw ? 1 : 0)}, {(fast ? 1 : 0)}))", true);
                 return res?.Replace("\\n", "\n");
             }
 
-            public async Task<bool> IsStub() => (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.is_stub())", true)) == "True";
+            public async Task<bool> IsStub() => (await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.is_stub())", true)) == "True";
 
-            public async Task<bool> IsSideEffect() => (await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.is_side_effect())", true)) == "True";
+            public async Task<bool> IsSideEffect() => (await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.is_side_effect())", true)) == "True";
 
             public async Task<Name[]> Goto(bool followImports = false, bool followBuiltinImports = false, bool onlyStubs = false, bool preferStubs = false) {
-                string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.goto(follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
+                string? res = await WrapperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.goto(follow_imports={(followImports ? 1 : 0)}, follow_builtin_imports={(followBuiltinImports ? 1 : 0)}, only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
                 return Script.TryConvert<Name>(res);
             }
 
             public async Task<Name[]> Infer(bool onlyStubs = false, bool preferStubs = false) {
-                string? res = await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.infer(only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
+                string? res = await WrapperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.infer(only_stubs={(onlyStubs ? 1 : 0)}, prefer_stubs={(preferStubs ? 1 : 0)})))", true);
                 return Script.TryConvert<Name>(res);
             }
 
-            public async Task<Name?> Parent() => TryConvert<Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.parent()))", true));
+            public async Task<Name?> Parent() => TryConvert<Name>(await WrapperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.parent()))", true));
 
-            public async Task<string?> GetLineCode(int before = 0, int after = 0) => await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_line_code({before}, {after}))", true);
+            public async Task<string?> GetLineCode(int before = 0, int after = 0) => await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.get_line_code({before}, {after}))", true);
 
-            public async Task<BaseSignature[]> GetSignatures() => Script.TryConvert<BaseSignature>(await WraperRepl.WriteLineAsync($"print_obj(dump_signatures({VariableName}.get_signatures()))", true));
+            public async Task<BaseSignature[]> GetSignatures() => Script.TryConvert<BaseSignature>(await WrapperRepl.WriteLineAsync($"print_obj(dump_signatures({VariableName}.get_signatures()))", true));
 
-            public async Task<Name[]> Execute() => Script.TryConvert<Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.execute()))", true));
+            public async Task<Name[]> Execute() => Script.TryConvert<Name>(await WrapperRepl.WriteLineAsync($"print_obj(dump_names({VariableName}.execute()))", true));
 
             public async Task<string?> GetTypeHint() {
-                string? res = await WraperRepl.WriteLineAsync($"print_one_line({VariableName}.get_type_hint())", true);
+                string? res = await WrapperRepl.WriteLineAsync($"print_one_line({VariableName}.get_type_hint())", true);
                 return res == "None" ? null : res;
             }
         }

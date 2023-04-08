@@ -7,7 +7,7 @@ namespace PiIDE.Editor.Parts.Panel.Terminals;
 
 public abstract partial class TerminalBase {
 
-    private bool RecivingErrorData;
+    private bool ReceivingErrorData;
 
     protected TerminalBase() => InitializeComponent();
 
@@ -23,14 +23,14 @@ public abstract partial class TerminalBase {
         */
     }
 
-    protected void ErrorDataReceveid(object sender, DataReceivedEventArgs e) {
+    protected void ErrorDataReceived(object sender, DataReceivedEventArgs e) {
         string? data = e.Data;
 
         if (data == null) {
             return;
         }
 
-        RecivingErrorData = true;
+        ReceivingErrorData = true;
 
         data += "\r\n";
 
@@ -39,7 +39,7 @@ public abstract partial class TerminalBase {
             OutputTextBox.ScrollToEnd();
         });
 
-        RecivingErrorData = false;
+        ReceivingErrorData = false;
     }
 
     protected void OutputDataReceived(object sender, DataReceivedEventArgs e) {
@@ -49,10 +49,10 @@ public abstract partial class TerminalBase {
 
         if (data == null) {
             Thread.Sleep(10); // Wait for possible Error Output
-            for (int i = 0; i < 10 && RecivingErrorData; ++i)
+            for (int i = 0; i < 10 && ReceivingErrorData; ++i)
                 Thread.Sleep(10);
 
-            PrintEndOfExecution("Programm Finished");
+            PrintEndOfExecution("Program Finished");
             return;
         }
 

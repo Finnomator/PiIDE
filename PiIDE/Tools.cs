@@ -141,7 +141,7 @@ public static class Tools {
 
     public static readonly FontAwesome.WPF.FontAwesome FontAwesomeLoading = new() { Icon = FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
-    public static readonly FontFamily[] MonospaceFonts = {
+    public static readonly FontFamily[] MonospacedFonts = {
         new("Cascadia Code"),
         new("Consolas"),
     };

@@ -42,10 +42,10 @@ public partial class App {
                                            + "\r\nMessage: " + e.Exception.Message
                                            + "\r\nStackTrace: " + e.Exception.StackTrace;
 
-        if (!Directory.Exists("Crashlogs"))
-            Directory.CreateDirectory("Crashlogs");
+        if (!Directory.Exists("Crash-logs"))
+            Directory.CreateDirectory("Crash-logs");
 
-        using FileStream fs = File.Create($"Crashlogs/{DateTime.Now:dd-MM-yyyy_HH-mm-ss}.txt");
+        using FileStream fs = File.Create($"Crash-logs/{DateTime.Now:dd-MM-yyyy_HH-mm-ss}.txt");
         fs.Write(new UTF8Encoding(true).GetBytes(fileContent));
     }
 }

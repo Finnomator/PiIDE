@@ -1,5 +1,5 @@
 ﻿using FontAwesome.WPF;
-using PiIDE.Wrapers;
+using PiIDE.Wrappers;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,10 +28,10 @@ public class BoardTextEditor : TextEditor {
     };
     private readonly WrapPanel UploadingFileWrapPanel = new();
 
-    public BoardTextEditor(string filePath, string boardFilePath, bool disableAllWrapers = false) : base(filePath, disableAllWrapers) {
+    public BoardTextEditor(string filePath, string boardFilePath, bool disableAllWrappers = false) : base(filePath, disableAllWrappers) {
         BoardFilePath = boardFilePath;
         RunFileOnBoardButton.Click += RunFileOnBoardButton_Click;
-        AmpyWraper.AmpyExited += Ampy_Exited;
+        AmpyWrapper.AmpyExited += Ampy_Exited;
 
         ActionsStackPanel.Children.Add(RunFileOnBoardButton);
 
@@ -61,7 +61,7 @@ public class BoardTextEditor : TextEditor {
         }
 
         UploadingFileWrapPanel.Visibility = Visibility.Visible;
-        await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, BoardFilePath);
+        await AmpyWrapper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, FilePath, BoardFilePath);
         UploadingFileWrapPanel.Visibility = Visibility.Collapsed;
     }
 
@@ -72,8 +72,8 @@ public class BoardTextEditor : TextEditor {
     protected override async void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
         base.StopAllRunningTasksButton_Click(sender, e);
         if (Tools.EnableBoardInteractions) {
-            AmpyWraper.FileRunner.KillProcess();
-            if (await AmpyWraper.Softreset(GlobalSettings.Default.SelectedCOMPort))
+            AmpyWrapper.FileRunner.KillProcess();
+            if (await AmpyWrapper.SoftReset(GlobalSettings.Default.SelectedCOMPort))
                 EnableBoardInteractions();
         } else
             DisableBoardInteractions();
@@ -84,12 +84,12 @@ public class BoardTextEditor : TextEditor {
         DisableBoardInteractions();
 
         if (!Tools.EnableBoardInteractions) {
-            ErrorMessager.PromptForComPort();
+            ErrorMessages.PromptForComPort();
             return;
         }
 
         await SaveFileAsync(true);
-        AmpyWraper.FileRunner.BeginRunningFile(GlobalSettings.Default.SelectedCOMPort, FilePath);
+        AmpyWrapper.FileRunner.BeginRunningFile(GlobalSettings.Default.SelectedCOMPort, FilePath);
         StartedPythonExecutionOnBoard?.Invoke(this, EventArgs.Empty);
     }
 

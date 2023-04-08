@@ -26,7 +26,7 @@ public partial class SearchBox {
     public HighlightingRenderer ResultRenderBox { get; set; }
     private Size TextSize => ResultRenderBox.Editor.TextEditorTextBoxCharacterSize;
 
-    private readonly Brush HighlighedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
+    private readonly Brush HighlightedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
     private readonly Brush CurrentWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#3AFFFFFF")!;
 
     public SearchBox() => InitializeComponent();
@@ -41,14 +41,14 @@ public partial class SearchBox {
     }
 
     public void Open() {
-        Debug.Assert(GotInit, "Initialze must be called");
+        Debug.Assert(GotInit, "Initialize must be called");
         MainExpander.IsExpanded = true;
     }
 
     public async void OpenAndFocus() {
         Open();
         while (!SearchTextBox.IsLoaded)
-            await Task.Delay(10); // If we dont wait for it to load it wont get focused
+            await Task.Delay(10); // If we don't wait for it to load it wont get focused
         FocusSearchTextBox();
     }
 
@@ -89,7 +89,7 @@ public partial class SearchBox {
                 continue;
             }
 
-            context.DrawRectangle(HighlighedWordBrush, null, highlightRect);
+            context.DrawRectangle(HighlightedWordBrush, null, highlightRect);
         }
     }
 

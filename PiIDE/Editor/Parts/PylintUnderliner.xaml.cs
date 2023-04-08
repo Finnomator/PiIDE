@@ -1,4 +1,4 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Wrappers;
 using System;
 using System.Windows;
 using System.Windows.Media;

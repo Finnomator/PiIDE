@@ -1,6 +1,6 @@
 ﻿using PiIDE.Editor.Parts;
 using PiIDE.Editor.Parts.Dialogues;
-using PiIDE.Wrapers;
+using PiIDE.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +17,7 @@ namespace PiIDE.Editor;
 public partial class TextEditorWithFileSelect {
 
     // TODO: Reopen board directory when comport gets changed
-    // TODO: Renable RunOnBoardButton when comport gets set or reconnected
+    // TODO: Reenable RunOnBoardButton when comport gets set or reconnected
 
     private TextEditor? OpenTextEditor;
     private readonly List<TextEditor> OpenTextEditors = new();
@@ -87,7 +87,7 @@ public partial class TextEditorWithFileSelect {
         EditorTabItem tabItem;
 
         if (onBoard) {
-            textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..], openInBackground) { DisableAllWrapers = openInBackground };
+            textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..], openInBackground) { DisableAllWrappers = openInBackground };
             ((BoardTextEditor) textEditor).StartedPythonExecutionOnBoard += (_, _) => OutputTabControl.SelectedIndex = 1;
 
             tabItem = new BoardEditorTabItem(filePath) {
@@ -109,8 +109,8 @@ public partial class TextEditorWithFileSelect {
                 return;
 
             if (!editor.ContentIsSaved) {
-                MessageBoxResult msgbr = MessageBox.Show("This file is not saved. Do you want to close it anyway?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (msgbr == MessageBoxResult.Yes)
+                MessageBoxResult result = MessageBox.Show("This file is not saved. Do you want to close it anyway?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
                     CloseFile(path);
             } else
                 CloseFile(path);
@@ -146,10 +146,10 @@ public partial class TextEditorWithFileSelect {
             return;
 
         if (OpenTextEditor != null)
-            OpenTextEditor.DisableAllWrapers = true;
+            OpenTextEditor.DisableAllWrappers = true;
 
         OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
-        OpenTextEditor.DisableAllWrapers = false;
+        OpenTextEditor.DisableAllWrappers = false;
         GlobalSettings.Default.LastOpenedFilePath = OpenTextEditor.FilePath;
     }
 
@@ -183,7 +183,7 @@ public partial class TextEditorWithFileSelect {
                 case CreateNewFileDialogueResult.Pi:
                     // TODO: Make files on pi creatable in subfolder
                     string localPath = Path.Combine("BoardFiles/", dialogue.FileName);
-                    if (await AmpyWraper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName) && Tools.TryCreateFile(localPath))
+                    if (await AmpyWrapper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, localPath, dialogue.FileName) && Tools.TryCreateFile(localPath))
                         OpenFile(localPath, false, true);
                     break;
             }
@@ -264,7 +264,7 @@ public partial class TextEditorWithFileSelect {
                 case SyncOptionResult.OverwriteAllLocalFiles:
                     SyncStatus.Visibility = Visibility.Visible;
 
-                    await AmpyWraper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, "", LocalBoardPath);
+                    await AmpyWrapper.DownloadDirectoryFromBoardAsync(GlobalSettings.Default.SelectedCOMPort, "", LocalBoardPath);
 
                     SyncStatus.Visibility = Visibility.Collapsed;
 

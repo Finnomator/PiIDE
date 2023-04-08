@@ -10,12 +10,12 @@ public static class PipModules {
         public required string Name { get; init; }
         public required string PipInstallCommand { get; init; }
         public required string CmdCommand { get; init; }
-        public bool SuprressMissingWarning { get; init; }
+        public bool SuppressMissingWarning { get; init; }
     }
 
     public static readonly PipModule Ampy = new() { Name = "Ampy", PipInstallCommand = "pip install adafruit-ampy", CmdCommand = "ampy" };
     public static readonly PipModule Pylint = new() { Name = "Pylint", PipInstallCommand = "pip install pylint", CmdCommand = "pylint" };
-    public static readonly PipModule Black = new() { Name = "Black", PipInstallCommand = "pip install black", CmdCommand = "black", SuprressMissingWarning = true };
+    public static readonly PipModule Black = new() { Name = "Black", PipInstallCommand = "pip install black", CmdCommand = "black", SuppressMissingWarning = true };
 }
 
 public static class MissingModulesChecker {
@@ -26,7 +26,7 @@ public static class MissingModulesChecker {
         PipModules.Black,
     };
 
-    public static bool IsPythonIstanlled() {
+    public static bool IsPythonInstalled() {
         using Process process = new() {
             StartInfo = new() {
                 FileName = "python",
@@ -49,7 +49,7 @@ public static class MissingModulesChecker {
     public static List<PipModules.PipModule> FindMissingModules() {
         List<PipModules.PipModule> modules = new();
 
-        if (!IsPythonIstanlled())
+        if (!IsPythonInstalled())
             return RequiredPipModules.ToList();
 
         foreach (PipModules.PipModule module in RequiredPipModules) {
@@ -89,14 +89,14 @@ public static class MissingModulesChecker {
         GlobalSettings.Default.JediIsUsable = true;
         GlobalSettings.Default.BlackIsUsable = true;
 
-        if (IsPythonIstanlled())
+        if (IsPythonInstalled())
             GlobalSettings.Default.PythonIsInstalled = true;
         else
             MessageBox.Show("Python was not found\nAdd Python to path or install from www.python.org", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
         foreach (PipModules.PipModule missingModule in FindMissingModules()) {
-            if (!missingModule.SuprressMissingWarning)
-                ErrorMessager.ModuleIsNotInstalled(missingModule);
+            if (!missingModule.SuppressMissingWarning)
+                ErrorMessages.ModuleIsNotInstalled(missingModule);
 
             if (missingModule.Name == "Ampy")
                 GlobalSettings.Default.AmpyIsUsable = false;

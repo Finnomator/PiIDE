@@ -4,9 +4,9 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PiIDE.Wrapers;
+namespace PiIDE.Wrappers;
 
-internal static class AmpyWraper {
+internal static class AmpyWrapper {
 
     public static DataReceivedEventHandler? AmpyOutputDataReceived;
     public static DataReceivedEventHandler? AmpyErrorDataReceived;
@@ -26,7 +26,7 @@ internal static class AmpyWraper {
     private static async Task<(bool success, string? output)> TryRunAmpy(string arguments, bool expectsOutput) {
 
         if (IsBusy) {
-            ErrorMessager.AmpyIsBusy();
+            ErrorMessages.AmpyIsBusy();
             return (false, null);
         }
 
@@ -83,7 +83,7 @@ internal static class AmpyWraper {
 
         public static async void BeginRunningFile(int comport, string filePath) {
             if (IsBusy) {
-                ErrorMessager.AmpyIsBusy();
+                ErrorMessages.AmpyIsBusy();
                 return;
             }
 
@@ -127,13 +127,13 @@ internal static class AmpyWraper {
     public static async Task<bool> RemoveDirectoryFromBoardAsync(int comport, string dirPath)
         => (await TryRunAmpy($"--port COM{comport} rmdir \"{dirPath.Replace("\\", "/")}\"", false)).success;
 
-    public static async Task<bool> Softreset(int comport)
+    public static async Task<bool> SoftReset(int comport)
         => (await TryRunAmpy($"--port COM{comport} reset", false)).success;
 
     public static async Task<bool> DownloadDirectoryFromBoardAsync(int comport, string dirPath, string destDirPath) {
 
         if (IsBusy) {
-            ErrorMessager.AmpyIsBusy();
+            ErrorMessages.AmpyIsBusy();
             return false;
         }
 

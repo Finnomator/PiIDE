@@ -1,4 +1,4 @@
-﻿using PiIDE.Wrapers;
+﻿using PiIDE.Wrappers;
 using System.IO;
 using System.Windows;
 
@@ -58,9 +58,9 @@ public class BoardDirectoryItem : DirectoryItemBase {
 
     // TODO: Implement these features
     // But make sure that all paths get changed correctly
-    protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
-    protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
     protected override async void Delete_Click(object sender, RoutedEventArgs e) {
 
@@ -68,29 +68,29 @@ public class BoardDirectoryItem : DirectoryItemBase {
             return;
 
         SetStatus("Deleting");
-        if (await AmpyWraper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard))
+        if (await AmpyWrapper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard))
             BasicFileActions.DeleteDirectory(DirectoryPath);
         UnsetStatus();
     }
 
-    protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
-    protected override void RenameDirectory(string oldPath, string newPath, string newName) => ErrorMessager.FeatureNotSupported();
+    protected override void RenameDirectory(string oldPath, string newPath, string newName) => ErrorMessages.FeatureNotSupported();
 
     protected override async void AddFile_Click(object sender, RoutedEventArgs e) {
         string newFileLocalPath = Path.Combine(DirectoryPath, "new_file.py");
         if (Tools.TryCreateFile(newFileLocalPath))
-            await AmpyWraper.WriteToBoardAsync(Port, newFileLocalPath, Path.Combine(DirectoryPathOnBoard, "new_file.py"));
+            await AmpyWrapper.WriteToBoardAsync(Port, newFileLocalPath, Path.Combine(DirectoryPathOnBoard, "new_file.py"));
     }
 
     protected override async void AddFolder_Click(object sender, RoutedEventArgs e) {
         string newDirLocalPath = Path.Combine(DirectoryPath, "NewFolder");
-        if (await AmpyWraper.CreateDirectoryAsync(Port, Path.Combine(DirectoryPathOnBoard, "NewFolder")))
+        if (await AmpyWrapper.CreateDirectoryAsync(Port, Path.Combine(DirectoryPathOnBoard, "NewFolder")))
             Tools.TryCreateDirectory(newDirLocalPath);
     }
 
     // TODO: this method should not be overriden, but as long as the feature is not supported, it will
-    protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessager.FeatureNotSupported();
+    protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
     public static bool CheckForBoardConnection() {
         if (!Tools.EnableBoardInteractions) {
