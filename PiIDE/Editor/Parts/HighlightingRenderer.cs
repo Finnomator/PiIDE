@@ -104,7 +104,7 @@ namespace PiIDE.Editor.Parts {
             foreach (Match number in SyntaxHighlighter.FindNumbers(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Number, number.Index, number.Length);
 
-            foreach(Match stringMatch in SyntaxHighlighter.FindSingleQuotedStrings(visibleText))
+            foreach (Match stringMatch in SyntaxHighlighter.FindSingleQuotedStrings(visibleText))
                 RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, stringMatch.Index, stringMatch.Length);
 
             HighlightTripleQuotedStrings();
@@ -138,7 +138,7 @@ namespace PiIDE.Editor.Parts {
                 int highlightStartIdx = stringMatch.Index - firstVisibleIndex;
                 int highlightEndIdx = highlightStartIdx + stringMatch.Length;
 
-                if (highlightStartIdx < firstVisibleIndex - firstVisibleIndex) 
+                if (highlightStartIdx < firstVisibleIndex - firstVisibleIndex)
                     highlightStartIdx = 0;
 
                 if (highlightEndIdx > lastVisibleIndex - firstVisibleIndex)
@@ -173,15 +173,12 @@ namespace PiIDE.Editor.Parts {
             List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(EditorText);
             int fvl = Editor.FirstVisibleLineNum;
             int lvl = Editor.LastVisibleLineNum;
-            int firstVisibleIndex = Tools.GetIndexOfColRow(EditorText, fvl, 0);
+            int firstVisibleIndex = EditorText.GetIndexOfColRow(fvl, 0);
 
             if (firstVisibleIndex == -1)
                 return;
 
-            for (int i = 0; i < brackets.Count; ++i) {
-
-                SyntaxHighlighter.BracketMatch bracket = brackets[i];
-
+            foreach (SyntaxHighlighter.BracketMatch bracket in brackets) {
                 if (bracket.Row < fvl)
                     continue;
                 if (bracket.Row >= lvl)

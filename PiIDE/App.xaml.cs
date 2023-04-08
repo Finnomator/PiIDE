@@ -21,14 +21,11 @@ namespace PiIDE {
 
             Debug.WriteLine(TypeIcons.Instance);
 
-            if (GlobalSettings.Default.LastOpenedBoardFilePaths == null)
-                GlobalSettings.Default.LastOpenedBoardFilePaths = new();
+            GlobalSettings.Default.LastOpenedBoardFilePaths ??= new();
 
-            if (GlobalSettings.Default.LastOpenedLocalFilePaths == null)
-                GlobalSettings.Default.LastOpenedLocalFilePaths = new();
+            GlobalSettings.Default.LastOpenedLocalFilePaths ??= new();
 
-            if (GlobalSettings.Default.LastOpenedLocalFolderPaths == null)
-                GlobalSettings.Default.LastOpenedLocalFolderPaths = new();
+            GlobalSettings.Default.LastOpenedLocalFolderPaths ??= new();
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {

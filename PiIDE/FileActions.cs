@@ -76,21 +76,13 @@ namespace PiIDE {
 
         public static void RenameFile(string oldFilePath, string newFileName) {
             FileInfo fileInfo = new(oldFilePath);
-            string newFilePath;
-            if (fileInfo.Directory == null)
-                newFilePath = newFileName;
-            else
-                newFilePath = Path.Combine(fileInfo.Directory.FullName, newFileName);
+            string newFilePath = fileInfo.Directory == null ? newFileName : Path.Combine(fileInfo.Directory.FullName, newFileName);
             MoveFile(oldFilePath, newFilePath);
         }
 
         public static void RenameDirectory(string oldDirPath, string newDirName) {
             DirectoryInfo dirInfo = new(oldDirPath);
-            string newDirPath;
-            if (dirInfo.Parent == null)
-                newDirPath = newDirName;
-            else
-                newDirPath = Path.Combine(dirInfo.Parent.FullName, newDirName);
+            string newDirPath = dirInfo.Parent == null ? newDirName : Path.Combine(dirInfo.Parent.FullName, newDirName);
             MoveFile(oldDirPath, newDirPath);
         }
     }

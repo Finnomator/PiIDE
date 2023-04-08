@@ -186,11 +186,7 @@ namespace PiIDE.Editor.Parts {
         private void CaseSensitive_Clicked(object sender, RoutedEventArgs e) {
             CaseSensitive = !CaseSensitive;
 
-            if (CaseSensitive) {
-                CaseSensitiveButton.BorderBrush = ColorResources.AccentColorBrush;
-            } else {
-                CaseSensitiveButton.BorderBrush = Brushes.Transparent;
-            }
+            CaseSensitiveButton.BorderBrush = CaseSensitive ? ColorResources.AccentColorBrush : Brushes.Transparent;
 
             UpdateSearch();
         }
@@ -198,11 +194,7 @@ namespace PiIDE.Editor.Parts {
         private void MatchWholeWord_Clicked(object sender, RoutedEventArgs e) {
             MatchWholeWord = !MatchWholeWord;
 
-            if (MatchWholeWord) {
-                MatchWholeWordButton.BorderBrush = ColorResources.AccentColorBrush;
-            } else {
-                MatchWholeWordButton.BorderBrush = Brushes.Transparent;
-            }
+            MatchWholeWordButton.BorderBrush = MatchWholeWord ? ColorResources.AccentColorBrush : Brushes.Transparent;
 
             UpdateSearch();
         }

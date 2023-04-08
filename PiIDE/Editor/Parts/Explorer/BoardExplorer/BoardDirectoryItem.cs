@@ -44,13 +44,13 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
                 return;
             }
 
-            for (int i = 0; i < subDirPaths.Length; i++) {
-                BoardDirectoryItem item = new(subDirPaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subDirPaths[i])), ParentExplorer, this);
+            foreach (string subDirPath in subDirPaths) {
+                BoardDirectoryItem item = new(subDirPath, Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subDirPath)), ParentExplorer, this);
                 ChildrenStackPanel.Children.Add(item);
             }
 
-            for (int i = 0; i < subFilePaths.Length; i++) {
-                BoardFileItem item = new(subFilePaths[i], Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subFilePaths[i])), this, ParentExplorer);
+            foreach (string subFilePath in subFilePaths) {
+                BoardFileItem item = new(subFilePath, Path.Combine(DirectoryPathOnBoard, Path.GetFileName(subFilePath)), this, ParentExplorer);
                 ChildrenStackPanel.Children.Add(item);
             }
         }

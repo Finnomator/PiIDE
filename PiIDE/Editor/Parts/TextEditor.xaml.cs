@@ -50,7 +50,7 @@ namespace PiIDE {
                 if (TextEditorTextBoxCharacterSize.Height == 0.0)
                     return 0;
                 int line = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
-                int textLines = Tools.CountLines(EditorText);
+                int textLines = EditorText.CountLines();
                 return textLines < line ? textLines : line;
             }
         }
@@ -60,7 +60,7 @@ namespace PiIDE {
                 if (TextEditorTextBoxCharacterSize.Height == 0.0)
                     return 0;
                 int lines = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
-                int textLines = Tools.CountLines(EditorText);
+                int textLines = EditorText.CountLines();
                 return textLines < lines ? textLines : lines;
             }
         }
@@ -109,7 +109,7 @@ namespace PiIDE {
                 TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
                 if (!ContentLoaded)
                     ReloadFile();
-                AutoSaveDelaySeconds = (int) (Tools.CountLines(EditorText) / 500.0 + 5);
+                AutoSaveDelaySeconds = (int) (EditorText.CountLines() / 500.0 + 5);
                 BeginAutoSave();
             };
 
@@ -173,7 +173,7 @@ namespace PiIDE {
         public void ReloadFile(string fileContent) => TextEditorTextBox.Text = fileContent;
 
         private int GetIndentOfLine(int line) {
-            int index = Tools.GetIndexOfColRow(EditorText, line, 0);
+            int index = EditorText.GetIndexOfColRow(line, 0);
             int indent = 0;
             while (indent + index < EditorText.Length && EditorText[index + indent] == ' ')
                 ++indent;
@@ -296,7 +296,7 @@ namespace PiIDE {
             ContentIsSaved = !ContentLoaded;
             SaveFileButton.IsEnabled = !ContentIsSaved;
 
-            int textLines = Tools.CountLines(TextEditorTextBox.Text);
+            int textLines = TextEditorTextBox.Text.CountLines();
 
             char? lastChar = LastTypedChar();
 
@@ -314,7 +314,7 @@ namespace PiIDE {
         private (int firstSelectedLine, int lastSelectedLine) GetSelectedLines() {
             int selectionStart = TextEditorTextBox.SelectionStart;
             int selectionLength = TextEditorTextBox.SelectionLength;
-            (int col, int row)[] lines = Tools.GetPointsOfIndexes(EditorText, new int[] { selectionStart, selectionStart + selectionLength });
+            (int col, int row)[] lines = EditorText.GetPointsOfIndexes(new int[] { selectionStart, selectionStart + selectionLength });
             return (lines.Min().row, lines.Max().row);
         }
 
@@ -471,12 +471,12 @@ namespace PiIDE {
 
         public void EndAutoSave() => AutoSaveCancelToken.Cancel();
 
-        public int GetCaretRow() => Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
-        public (int col, int row) GetCaretPosition() => Tools.GetPointOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex);
+        public int GetCaretRow() => TextEditorTextBox.Text.GetRowOfIndex(TextEditorTextBox.CaretIndex);
+        public (int col, int row) GetCaretPosition() => TextEditorTextBox.Text.GetPointOfIndex(TextEditorTextBox.CaretIndex);
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) {
 
-            if (e.HorizontalChange == 0 && e.VerticalChange == 0)
+            if (e is { HorizontalChange: 0, VerticalChange: 0 })
                 return;
 
             if (CompletionList.IsOpen) {
@@ -488,10 +488,10 @@ namespace PiIDE {
             UpdatePylint();
         }
 
-        public void SetCaretPosition(int line, int column) => TextEditorTextBox.CaretIndex = Tools.GetIndexOfColRow(TextEditorTextBox.Text, line, column);
+        public void SetCaretPosition(int line, int column) => TextEditorTextBox.CaretIndex = TextEditorTextBox.Text.GetIndexOfColRow(line, column);
 
         public void ScrollToCaret() {
-            double verticalOffset = Tools.GetRowOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
+            double verticalOffset = TextEditorTextBox.Text.GetRowOfIndex(TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Height;
             double horizontalOffset = Tools.GetColOfIndex(TextEditorTextBox.Text, TextEditorTextBox.CaretIndex) * TextEditorTextBoxCharacterSize.Width;
 
             MainScrollViewer.ScrollToVerticalOffset(verticalOffset - (ActualHeight / 2));

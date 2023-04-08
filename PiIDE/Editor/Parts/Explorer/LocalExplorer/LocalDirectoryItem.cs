@@ -67,13 +67,13 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer {
                 return;
             }
 
-            for (int i = 0; i < subDirPaths.Length; i++) {
-                LocalDirectoryItem item = new(subDirPaths[i], this, ParentExplorer);
+            foreach (string subDirPath in subDirPaths) {
+                LocalDirectoryItem item = new(subDirPath, this, ParentExplorer);
                 ChildrenStackPanel.Children.Add(item);
             }
 
-            for (int i = 0; i < subFilePaths.Length; i++) {
-                LocalFileItem item = new(subFilePaths[i], this, ParentExplorer);
+            foreach (string subFilePath in subFilePaths) {
+                LocalFileItem item = new(subFilePath, this, ParentExplorer);
                 ChildrenStackPanel.Children.Add(item);
             }
         }

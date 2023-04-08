@@ -195,7 +195,7 @@ namespace PiIDE {
         private static (bool success, double scalingFactor) GetWindowsScalingFactor() {
             PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
             double dpiX;
-            if (source != null && source.CompositionTarget != null)
+            if (source is { CompositionTarget: not null })
                 dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
             else
                 return (false, -1);

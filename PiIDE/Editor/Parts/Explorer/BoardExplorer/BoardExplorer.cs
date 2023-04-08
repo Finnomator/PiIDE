@@ -3,8 +3,12 @@
 
         public BoardExplorer() {
             Header.Content = "Board Files";
-            BoardDirectoryItem folderItem = new(GlobalSettings.Default.LocalBoardFilesPath, "", this);
-            folderItem.FileNameTextBlock.Text = "Pi";
+            BoardDirectoryItem folderItem = new(GlobalSettings.Default.LocalBoardFilesPath, "", this) {
+                FileNameTextBlock =
+                    {
+                        Text = "Pi"
+                    }
+            };
             base.AddFolder(folderItem);
         }
 

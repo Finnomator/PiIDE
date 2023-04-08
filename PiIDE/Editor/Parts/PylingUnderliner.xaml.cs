@@ -46,9 +46,7 @@ namespace PiIDE {
             MainGrid.Children.Clear();
             VisualBrush brush = (VisualBrush) Resources["asdf"];
 
-            for (int i = 0; i < pylintMessages.Length; ++i) {
-                PylintMessage pylintMessage = pylintMessages[i];
-
+            foreach (PylintMessage pylintMessage in pylintMessages) {
                 int line = pylintMessage.Line;
 
                 if (line + 1 < upperLineLimit)
@@ -57,7 +55,7 @@ namespace PiIDE {
                     break;
 
                 int column = pylintMessage.Column;
-                int endCol = pylintMessage.EndColumn == null ? 1 : (int) pylintMessage.EndColumn;
+                int endCol = pylintMessage.EndColumn ?? 1;
 
                 ((Path) brush.Visual).Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type);
 
