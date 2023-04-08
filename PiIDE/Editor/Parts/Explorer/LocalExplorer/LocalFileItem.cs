@@ -1,4 +1,5 @@
-﻿using PiIDE.Wrapers;
+﻿using FontAwesome.WPF;
+using PiIDE.Wrapers;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,8 +11,8 @@ public class LocalFileItem : FileItemBase {
     public LocalFileItem(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) : base(fullPath, parentDirectory, parentExplorer) {
         MenuItem newItem = new() {
             Header = "Upload to Pi/",
-            Icon = new FontAwesome.WPF.FontAwesome() {
-                Icon = FontAwesome.WPF.FontAwesomeIcon.Upload,
+            Icon = new FontAwesome.WPF.FontAwesome {
+                Icon = FontAwesomeIcon.Upload,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },

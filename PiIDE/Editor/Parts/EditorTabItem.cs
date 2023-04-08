@@ -33,7 +33,7 @@ public class EditorTabItem : TabItem {
             Orientation = Orientation.Horizontal,
         };
 
-        IconsStackPanel.Children.Add(new Image() {
+        IconsStackPanel.Children.Add(new Image {
             Source = Icons.GetFileIcon(FilePath),
         });
 
@@ -58,7 +58,7 @@ public class EditorTabItem : TabItem {
 
         Header.Children.Add(IconsStackPanel);
         Header.Children.Add(fileNameTextBlock);
-        Header.Children.Add(new Border() { BorderThickness = new(3) });
+        Header.Children.Add(new Border { BorderThickness = new(3) });
         Header.Children.Add(CloseTabButton);
 
         base.Header = Header;

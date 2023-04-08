@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.HighPerformance;
+using FontAwesome.WPF;
 using System;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
-using Screen = System.Windows.Forms.Screen;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace PiIDE;
 
@@ -17,11 +20,11 @@ public static class Tools {
 
     public static readonly BrushConverter BrushConverter = new();
 
-    public static readonly string[] PythonKeywords = new string[] {
+    public static readonly string[] PythonKeywords = {
         "False", "None", "True", "and", "await", "async", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
     };
 
-    public static readonly string[] PythonExtensions = new string[] { ".py", ".pyi" };
+    public static readonly string[] PythonExtensions = { ".py", ".pyi" };
     public static bool IsPythonFile(string filePath) => IsPythonExt(Path.GetExtension(filePath));
     public static bool IsPythonExt(string ext) => PythonExtensions.Contains(ext);
 
@@ -136,9 +139,9 @@ public static class Tools {
 
     public static bool EnableBoardInteractions => IsValidComPort(GlobalSettings.Default.SelectedCOMPort) && GlobalSettings.Default.AmpyIsUsable;
 
-    public static readonly FontAwesome.WPF.FontAwesome FontAwesomeLoading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
+    public static readonly FontAwesome.WPF.FontAwesome FontAwesomeLoading = new() { Icon = FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
-    public static readonly FontFamily[] MonospaceFonts = new FontFamily[] {
+    public static readonly FontFamily[] MonospaceFonts = {
         new("Cascadia Code"),
         new("Consolas"),
     };
@@ -168,7 +171,7 @@ public static class Tools {
     }
 
     public static FontAwesome.WPF.FontAwesome NewWpfSpinner() => new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner,
+        Icon = FontAwesomeIcon.Spinner,
         Foreground = Brushes.White,
         VerticalAlignment = VerticalAlignment.Center,
         Spin = true,
@@ -202,7 +205,7 @@ public static class Tools {
     public static Point ConvertToDevice(this Point p) => new(p.X / WindowsScalingFactor, p.Y / WindowsScalingFactor);
 
     public static (int width, int height) GetActiveScreenSize() {
-        Screen s = Screen.FromPoint(System.Windows.Forms.Cursor.Position);
+        Screen s = Screen.FromPoint(Cursor.Position);
         return (s.Bounds.Width, s.Bounds.Height);
     }
 

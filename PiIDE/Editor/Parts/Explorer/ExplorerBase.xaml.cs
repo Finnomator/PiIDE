@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace PiIDE.Editor.Parts.Explorer;
+﻿namespace PiIDE.Editor.Parts.Explorer;
 
 public abstract partial class ExplorerBase {
 

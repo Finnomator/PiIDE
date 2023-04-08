@@ -34,10 +34,10 @@ public static partial class SyntaxHighlighter {
     [GeneratedRegex(@"(\.|\b)\d+([_\.]?\d+)?\2*([eE][+-]?\d+)?(?:(?!\1))?", RegexOptions.Compiled)]
     private static partial Regex DefaultNumbersRegex();
 
-    public static readonly string[] IndentationColorsHexValues = new string[] { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
+    public static readonly string[] IndentationColorsHexValues = { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
     public static readonly Brush[] IndentationColors = IndentationColorsHexValues.Select(x => x.ToBrush()).ToArray();
 
-    public static readonly string[] BracketColorsHexValues = new string[] { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
+    public static readonly string[] BracketColorsHexValues = { "#FBB9C5", "#FDD0B1", "#F9EFC7", "#C3EDBF", "#B8DFE6", "#C5BBDE" };
     public static readonly Brush[] BracketColors = BracketColorsHexValues.Select(x => x.ToBrush()).ToArray();
 
     public static List<BracketMatch> FindBrackets(string text) {

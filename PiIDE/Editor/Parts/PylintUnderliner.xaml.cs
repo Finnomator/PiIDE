@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿using PiIDE.Wrapers;
+using System;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using PiIDE.Wrapers;
 
 namespace PiIDE.Editor.Parts;
 
@@ -9,7 +10,7 @@ public partial class PylintUnderliner {
 
     private readonly TextEditor Editor;
     private Size FontSizes => Editor.TextEditorTextBoxCharacterSize;
-    private PylintMessage[] CachedMessages = System.Array.Empty<PylintMessage>();
+    private PylintMessage[] CachedMessages = Array.Empty<PylintMessage>();
 
     public PylintUnderliner(TextEditor editor) {
         InitializeComponent();
@@ -35,7 +36,7 @@ public partial class PylintUnderliner {
 
             if (line + 1 < upperLineLimit)
                 continue;
-            else if (line - 1 > lowerLineLimit)
+            if (line - 1 > lowerLineLimit)
                 break;
 
             int column = pylintMessage.Column;
@@ -43,7 +44,7 @@ public partial class PylintUnderliner {
 
             ((Path) brush.Visual).Stroke = PylintMessageColors.MessageTypeToColor(pylintMessage.Type);
 
-            MainGrid.Children.Add(new Line() {
+            MainGrid.Children.Add(new Line {
                 Stroke = brush,
                 StrokeThickness = 3,
                 X1 = column * FontSizes.Width + 2,

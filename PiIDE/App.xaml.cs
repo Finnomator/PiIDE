@@ -13,7 +13,7 @@ public partial class App {
         // GlobalSettings.Default.Reset();
         Dispatcher.UnhandledException += OnDispatcherUnhandledException;
 
-        // TODO: i think this doesnt quite work
+        // TODO: i think this doesn't quite work
         if (GlobalSettings.Default.CallUpgrade) {
             GlobalSettings.Default.Upgrade();
             GlobalSettings.Default.CallUpgrade = false;

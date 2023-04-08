@@ -16,7 +16,7 @@ internal static class PylintWraper {
         string args = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" -j 0 \"{string.Join("\" \"", filePaths)}\"";
 
         Process pylintProcess = new() {
-            StartInfo = new ProcessStartInfo() {
+            StartInfo = new ProcessStartInfo {
                 UseShellExecute = false,
                 FileName = PylintPath,
                 Arguments = args,

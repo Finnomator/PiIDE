@@ -1,5 +1,5 @@
-﻿using System.Windows.Input;
-using PiIDE.Wrapers;
+﻿using PiIDE.Wrapers;
+using System.Windows.Input;
 
 namespace PiIDE.Editor.Parts.Panel.Terminals;
 

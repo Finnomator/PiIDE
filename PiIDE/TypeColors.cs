@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FontAwesome.WPF;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
@@ -6,36 +7,36 @@ namespace PiIDE;
 
 public static class TypeIcons {
 
-    public static readonly FontAwesome.WPF.FontAwesome Keyword = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.AlignLeft };
+    public static readonly FontAwesome.WPF.FontAwesome Keyword = new() { Icon = FontAwesomeIcon.AlignLeft };
     public static readonly FontAwesome.WPF.FontAwesome Class = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Cubes
+        Icon = FontAwesomeIcon.Cubes
     };
     public static readonly FontAwesome.WPF.FontAwesome Function = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Cube
+        Icon = FontAwesomeIcon.Cube
     };
     public static readonly FontAwesome.WPF.FontAwesome Instance = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.StarOutline
+        Icon = FontAwesomeIcon.StarOutline
     };
     public static readonly FontAwesome.WPF.FontAwesome Statement = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Diamond
+        Icon = FontAwesomeIcon.Diamond
     };
     public static readonly FontAwesome.WPF.FontAwesome Module = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Linode
+        Icon = FontAwesomeIcon.Linode
     };
     public static readonly FontAwesome.WPF.FontAwesome Param = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Chain
+        Icon = FontAwesomeIcon.Chain
     };
     public static readonly FontAwesome.WPF.FontAwesome Property = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Wrench
+        Icon = FontAwesomeIcon.Wrench
     };
     public static readonly FontAwesome.WPF.FontAwesome Path = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Close
+        Icon = FontAwesomeIcon.Close
     };
     public static readonly FontAwesome.WPF.FontAwesome Namespace = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Cubes
+        Icon = FontAwesomeIcon.Cubes
     };
     public static readonly FontAwesome.WPF.FontAwesome EverythingElse = new() {
-        Icon = FontAwesome.WPF.FontAwesomeIcon.Question
+        Icon = FontAwesomeIcon.Question
     };
 
     private static readonly Dictionary<string, FontAwesome.WPF.FontAwesome> TypeToIconMap = new() {
@@ -92,13 +93,13 @@ public static class PylintMessageColors {
 
 public static class PylintMessageIcons {
 
-    public static readonly FontAwesome.WPF.FontAwesome Fatal = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Close };
-    public static readonly FontAwesome.WPF.FontAwesome Error = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Close };
-    public static readonly FontAwesome.WPF.FontAwesome Warning = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Warning };
-    public static readonly FontAwesome.WPF.FontAwesome Convention = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.InfoCircle };
-    public static readonly FontAwesome.WPF.FontAwesome Refactor = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.InfoCircle };
-    public static readonly FontAwesome.WPF.FontAwesome Information = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.InfoCircle };
-    public static readonly FontAwesome.WPF.FontAwesome EverythingElse = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.QuestionCircle };
+    public static readonly FontAwesome.WPF.FontAwesome Fatal = new() { Icon = FontAwesomeIcon.Close };
+    public static readonly FontAwesome.WPF.FontAwesome Error = new() { Icon = FontAwesomeIcon.Close };
+    public static readonly FontAwesome.WPF.FontAwesome Warning = new() { Icon = FontAwesomeIcon.Warning };
+    public static readonly FontAwesome.WPF.FontAwesome Convention = new() { Icon = FontAwesomeIcon.InfoCircle };
+    public static readonly FontAwesome.WPF.FontAwesome Refactor = new() { Icon = FontAwesomeIcon.InfoCircle };
+    public static readonly FontAwesome.WPF.FontAwesome Information = new() { Icon = FontAwesomeIcon.InfoCircle };
+    public static readonly FontAwesome.WPF.FontAwesome EverythingElse = new() { Icon = FontAwesomeIcon.QuestionCircle };
 
     private static readonly Dictionary<string, FontAwesome.WPF.FontAwesome> TypeToIconMap = new() {
         { "fatal", Fatal },

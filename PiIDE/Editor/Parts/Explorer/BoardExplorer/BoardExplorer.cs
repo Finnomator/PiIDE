@@ -1,4 +1,6 @@
-﻿namespace PiIDE.Editor.Parts.Explorer.BoardExplorer;
+﻿using System;
+
+namespace PiIDE.Editor.Parts.Explorer.BoardExplorer;
 
 public class BoardExplorer : ExplorerBase {
 
@@ -13,9 +15,9 @@ public class BoardExplorer : ExplorerBase {
         base.AddFolder(folderItem);
     }
 
-    public new static void AddFolder(DirectoryItemBase _) => throw new System.Exception("This feature should not be used");
+    public new static void AddFolder(DirectoryItemBase _) => throw new Exception("This feature should not be used");
 
-    public new static void ClearFolders() => throw new System.Exception("This feature should not be used");
+    public new static void ClearFolders() => throw new Exception("This feature should not be used");
 
-    public new static void RemoveFolder(DirectoryItemBase _) => throw new System.Exception("This feature should not be used");
+    public new static void RemoveFolder(DirectoryItemBase _) => throw new Exception("This feature should not be used");
 }

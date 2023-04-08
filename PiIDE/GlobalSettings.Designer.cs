@@ -8,14 +8,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
 namespace PiIDE {
     
     
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
-    internal sealed partial class GlobalSettings : global::System.Configuration.ApplicationSettingsBase {
+    [CompilerGenerated()]
+    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
+    internal sealed partial class GlobalSettings : ApplicationSettingsBase {
         
-        private static GlobalSettings defaultInstance = ((GlobalSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new GlobalSettings())));
+        private static GlobalSettings defaultInstance = ((GlobalSettings)(Synchronized(new GlobalSettings())));
         
         public static GlobalSettings Default {
             get {
@@ -23,9 +30,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Cascadia Code")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("Cascadia Code")]
         public string TextEditorFontFamily {
             get {
                 return ((string)(this["TextEditorFontFamily"]));
@@ -35,9 +42,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("14")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("14")]
         public int TextEditorFontSize {
             get {
                 return ((int)(this["TextEditorFontSize"]));
@@ -47,9 +54,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("-1")]
         public int SelectedCOMPort {
             get {
                 return ((int)(this["SelectedCOMPort"]));
@@ -59,9 +66,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("False")]
         public bool PylintIsUsable {
             get {
                 return ((bool)(this["PylintIsUsable"]));
@@ -71,9 +78,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("False")]
         public bool JediIsUsable {
             get {
                 return ((bool)(this["JediIsUsable"]));
@@ -83,9 +90,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("False")]
         public bool PythonIsInstalled {
             get {
                 return ((bool)(this["PythonIsInstalled"]));
@@ -95,9 +102,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("False")]
         public bool AmpyIsUsable {
             get {
                 return ((bool)(this["AmpyIsUsable"]));
@@ -107,42 +114,42 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> LastOpenedLocalFolderPaths {
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        public List<String> LastOpenedLocalFolderPaths {
             get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedLocalFolderPaths"]));
+                return ((List<String>)(this["LastOpenedLocalFolderPaths"]));
             }
             set {
                 this["LastOpenedLocalFolderPaths"] = value;
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> LastOpenedLocalFilePaths {
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        public List<String> LastOpenedLocalFilePaths {
             get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedLocalFilePaths"]));
+                return ((List<String>)(this["LastOpenedLocalFilePaths"]));
             }
             set {
                 this["LastOpenedLocalFilePaths"] = value;
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> LastOpenedBoardFilePaths {
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        public List<String> LastOpenedBoardFilePaths {
             get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["LastOpenedBoardFilePaths"]));
+                return ((List<String>)(this["LastOpenedBoardFilePaths"]));
             }
             set {
                 this["LastOpenedBoardFilePaths"] = value;
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("")]
         public string LastOpenedFilePath {
             get {
                 return ((string)(this["LastOpenedFilePath"]));
@@ -152,9 +159,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("BoardFiles/")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("BoardFiles/")]
         public string LocalBoardFilesPath {
             get {
                 return ((string)(this["LocalBoardFilesPath"]));
@@ -164,9 +171,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("0")]
         public int CompletionsMode {
             get {
                 return ((int)(this["CompletionsMode"]));
@@ -176,9 +183,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("False")]
         public bool BlackIsUsable {
             get {
                 return ((bool)(this["BlackIsUsable"]));
@@ -188,9 +195,9 @@ namespace PiIDE {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("True")]
         public bool CallUpgrade {
             get {
                 return ((bool)(this["CallUpgrade"]));

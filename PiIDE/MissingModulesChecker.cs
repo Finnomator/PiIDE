@@ -20,7 +20,7 @@ public static class PipModules {
 
 public static class MissingModulesChecker {
 
-    public static readonly PipModules.PipModule[] RequiredPipModules = new PipModules.PipModule[] {
+    public static readonly PipModules.PipModule[] RequiredPipModules = {
         PipModules.Ampy,
         PipModules.Pylint,
         PipModules.Black,

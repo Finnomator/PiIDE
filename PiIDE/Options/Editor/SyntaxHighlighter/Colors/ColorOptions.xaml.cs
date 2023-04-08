@@ -47,5 +47,5 @@ public partial class ColorOptions {
         ImportTheme(fileDialog.OpenFile());
     }
 
-    private void UserControl_Unloaded(object sender, RoutedEventArgs e) => ColorResources.SaveResource(ColorOptions.ColorsJsonPath, ColorResources.HighlighterColors.Colors);
+    private void UserControl_Unloaded(object sender, RoutedEventArgs e) => ColorResources.SaveResource(ColorsJsonPath, ColorResources.HighlighterColors.Colors);
 }

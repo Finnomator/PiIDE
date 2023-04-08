@@ -1,4 +1,5 @@
-﻿using PiIDE.Wrapers;
+﻿using FontAwesome.WPF;
+using PiIDE.Wrapers;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,8 +13,8 @@ public class LocalDirectoryItem : DirectoryItemBase {
 
         MenuItem removeFolderMenuItem = new() {
             Header = "Remove folder from workspace",
-            Icon = new FontAwesome.WPF.FontAwesome() {
-                Icon = FontAwesome.WPF.FontAwesomeIcon.Close,
+            Icon = new FontAwesome.WPF.FontAwesome {
+                Icon = FontAwesomeIcon.Close,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },
@@ -27,8 +28,8 @@ public class LocalDirectoryItem : DirectoryItemBase {
     private void Init() {
         MenuItem uploadMenuItem = new() {
             Header = "Upload to Pi/",
-            Icon = new FontAwesome.WPF.FontAwesome() {
-                Icon = FontAwesome.WPF.FontAwesomeIcon.Upload,
+            Icon = new FontAwesome.WPF.FontAwesome {
+                Icon = FontAwesomeIcon.Upload,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             },

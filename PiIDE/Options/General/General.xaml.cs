@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace PiIDE.Options.General;
@@ -11,7 +12,7 @@ public partial class General {
 
         int port = settings.SelectedCOMPort;
         if (port >= 0) {
-            ComPortComboBox.Items.Add(new TextBlock() {
+            ComPortComboBox.Items.Add(new TextBlock {
                 Text = $"COM{port}",
                 Tag = port
             });
@@ -20,11 +21,11 @@ public partial class General {
             ComPortComboBox.SelectedIndex = 0;
     }
 
-    private void COMPortComboBox_DropDownOpened(object sender, System.EventArgs e) {
+    private void COMPortComboBox_DropDownOpened(object sender, EventArgs e) {
         ComPortComboBox.Items.Clear();
         ComPortComboBox.Items.Add("<None>");
         foreach (int port in Tools.GetComPorts())
-            ComPortComboBox.Items.Add(new TextBlock() {
+            ComPortComboBox.Items.Add(new TextBlock {
                 Text = $"COM{port}",
                 Tag = port
             });

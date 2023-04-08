@@ -28,7 +28,7 @@ public abstract partial class FileItemBase {
 
         FileName = Path.GetFileName(FilePath);
 
-        OnClick += (_) => explorer.OnFileClick(this);
+        OnClick += _ => explorer.OnFileClick(this);
 
         FileNameForTextBlock = FileName;
         if (string.IsNullOrEmpty(FileNameForTextBlock))
@@ -36,7 +36,7 @@ public abstract partial class FileItemBase {
 
         FileNameTextBlock.Text = FileNameForTextBlock;
 
-        FileIconControl.Content = new Image() {
+        FileIconControl.Content = new Image {
             Source = Icons.GetFileIcon(FilePath),
             Width = FileIconControl.Width - 4,
         };

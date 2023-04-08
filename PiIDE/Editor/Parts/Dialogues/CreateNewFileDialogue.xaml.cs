@@ -1,9 +1,9 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using MessageBox = System.Windows.MessageBox;
-
 
 namespace PiIDE.Editor.Parts.Dialogues;
 
@@ -92,7 +92,7 @@ public partial class CreateNewFileDialogue {
             SourceFolderButton.Content = fbd.SelectedPath;
     }
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+    private void Window_Closing(object sender, CancelEventArgs e) {
         if (!CreateClose) {
             CreateNewFileDialogueResult = CreateNewFileDialogueResult.None;
         }

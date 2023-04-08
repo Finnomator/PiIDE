@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FontAwesome.WPF;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -20,8 +21,8 @@ public abstract partial class DirectoryItemBase {
     protected FileSystemWatcher? Watcher;
 
     protected readonly string DirectoryNameForTextBlock;
-    private readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.FolderOpen };
-    private readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Folder };
+    private readonly FontAwesome.WPF.FontAwesome FolderOpenIcon = new() { Icon = FontAwesomeIcon.FolderOpen };
+    private readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesomeIcon.Folder };
     private static readonly RotateTransform NinetyDegreeTurn = new(90);
 
     protected DirectoryItemBase(string fullPath, ExplorerBase parentExplorer) {
@@ -122,13 +123,13 @@ public abstract partial class DirectoryItemBase {
 
     protected virtual void AddFolder_Click(object sender, RoutedEventArgs e) => Tools.TryCreateDirectory(Path.Combine(DirectoryPath, "NewFolder"));
 
-    private void OpenInExplorer_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo() {
+    private void OpenInExplorer_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo {
         WorkingDirectory = DirectoryPath,
         Arguments = ".",
         FileName = "explorer",
     });
 
-    private void OpenInCmd_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo() {
+    private void OpenInCmd_Click(object sender, RoutedEventArgs e) => Process.Start(new ProcessStartInfo {
         WorkingDirectory = DirectoryPath,
         FileName = "cmd",
     });

@@ -29,7 +29,7 @@ public class JediWraper {
 
             private void InitProcess() {
                 WraperProcess = new() {
-                    StartInfo = new ProcessStartInfo() {
+                    StartInfo = new ProcessStartInfo {
                         FileName = "Assets/Jedi/jedi_wraper.exe",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,

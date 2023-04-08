@@ -112,9 +112,9 @@ public partial class SearchBox {
 
             ResultRenderBox.TextRenderer.Render();
             return;
-        } else {
-            ResultsStackPanel.Visibility = Visibility.Visible;
         }
+
+        ResultsStackPanel.Visibility = Visibility.Visible;
 
         Regex rx;
 

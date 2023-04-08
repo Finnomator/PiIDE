@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiIDE.Wrapers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -10,8 +11,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using PiIDE.Wrapers;
-using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 
 namespace PiIDE.Editor.Parts;
 
@@ -131,7 +130,7 @@ public partial class TextEditor {
         RunFileLocalButton.IsEnabled = true;
     });
 
-    private void CompletionUiList_CompletionClick(object? sender, Completion e) => InsertCompletionAtCaret(e);
+    private void CompletionUiList_CompletionClick(object? sender, JediWraper.ReturnClasses.Completion e) => InsertCompletionAtCaret(e);
 
     public virtual async Task SaveFileAsync(bool savedByUser) {
         SavingFileStatusWrapPanel.Visibility = Visibility.Visible;
@@ -398,7 +397,7 @@ public partial class TextEditor {
         InsertAtCaretAndMoveCaret(new string(' ', spaceToFillIndent));
     }
 
-    private void InsertCompletionAtCaret(Completion completion) {
+    private void InsertCompletionAtCaret(JediWraper.ReturnClasses.Completion completion) {
 
         if (string.IsNullOrEmpty(completion.Complete))
             return;

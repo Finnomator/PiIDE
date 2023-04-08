@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -63,7 +64,7 @@ public partial class Shortcuts {
         }
     }
 
-    private void SelectShortcutComboBox_DropDownOpened(object sender, System.EventArgs e) => SelectShortcutComboBox.ItemsSource = GetUnusedShortcuts().Select(x => new ShortcutComboBoxItem(x)).ToArray();
+    private void SelectShortcutComboBox_DropDownOpened(object sender, EventArgs e) => SelectShortcutComboBox.ItemsSource = GetUnusedShortcuts().Select(x => new ShortcutComboBoxItem(x)).ToArray();
 
     private class ShortcutComboBoxItem {
 

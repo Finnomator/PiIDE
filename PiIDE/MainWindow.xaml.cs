@@ -1,12 +1,14 @@
-﻿using System.Windows;
+﻿using FontAwesome.WPF;
+using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PiIDE;
 
 public partial class MainWindow {
 
-    private readonly FontAwesome.WPF.FontAwesome MaximizeIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.WindowMaximize };
-    private readonly FontAwesome.WPF.FontAwesome RestoreIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.WindowRestore };
+    private readonly FontAwesome.WPF.FontAwesome MaximizeIcon = new() { Icon = FontAwesomeIcon.WindowMaximize };
+    private readonly FontAwesome.WPF.FontAwesome RestoreIcon = new() { Icon = FontAwesomeIcon.WindowRestore };
     private Rect DraggableRect => new(0, 0, ActualWidth, TitleBarRow.ActualHeight);
 
     public MainWindow() {
@@ -59,7 +61,7 @@ public partial class MainWindow {
         PaddingBorder.BorderThickness = new(2);
     }
 
-    private void Window_StateChanged(object sender, System.EventArgs e) {
+    private void Window_StateChanged(object sender, EventArgs e) {
         // Because the window can maximize without clicking the maximize button
         if (WindowState == WindowState.Maximized)
             MaximizeWindow();

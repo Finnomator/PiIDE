@@ -1,22 +1,22 @@
-﻿using System;
+﻿using FontAwesome.WPF;
+using PiIDE.Wrapers;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
-using Script = PiIDE.Wrapers.JediWraper.Script;
 
 namespace PiIDE.Editor.Parts;
 
 public partial class CompletionUiList {
 
-    public Completion? SelectedCompletion => (Completion?) MainListBox.SelectedItem;
+    public JediWraper.ReturnClasses.Completion? SelectedCompletion => (JediWraper.ReturnClasses.Completion?) MainListBox.SelectedItem;
     public int CompletionsCount => MainListBox.Items.Count;
     public bool SelectedAnIndex => MainListBox.SelectedIndex >= 0;
     public bool IsOpen => IsVisible;
 
-    public EventHandler<Completion>? CompletionClicked;
+    public EventHandler<JediWraper.ReturnClasses.Completion>? CompletionClicked;
 
     public bool IsBusy { get; private set; }
     private bool GotNewerRequest;
@@ -39,7 +39,7 @@ public partial class CompletionUiList {
         };
     }
 
-    private void AddCompletions(Completion[] completions) {
+    private void AddCompletions(JediWraper.ReturnClasses.Completion[] completions) {
         MainListBox.ItemsSource = completions;
         Show();
     }
@@ -80,8 +80,8 @@ public partial class CompletionUiList {
         (int col, int row) = Editor.GetCaretPosition();
         row++;
 
-        Script script = await Script.MakeScriptAsync(code, filePath);
-        Completion[] completions = await script.Complete(row, col);
+        JediWraper.Script script = await JediWraper.Script.MakeScriptAsync(code, filePath);
+        JediWraper.ReturnClasses.Completion[] completions = await script.Complete(row, col);
 
         if (CalledClose)
             return;
@@ -149,7 +149,7 @@ public partial class CompletionUiList {
 
     private void Completion_Click(object sender, RoutedEventArgs e) {
         string clickedName = ((TextBlock) ((StackPanel) ((Button) sender).Content).Children[2]).Text;
-        foreach (Completion completion in MainListBox.Items) {
+        foreach (JediWraper.ReturnClasses.Completion completion in MainListBox.Items) {
             if (completion.Name == clickedName) {
                 CompletionClicked?.Invoke(sender, completion);
                 break;
@@ -184,8 +184,8 @@ public partial class CompletionUiList {
 
             WrapPanel wrapPanel = new();
 
-            wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.White });
-            wrapPanel.Children.Add(new TextBlock() { Text = "Loading...", Foreground = Brushes.White });
+            wrapPanel.Children.Add(new FontAwesome.WPF.FontAwesome { Icon = FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.White });
+            wrapPanel.Children.Add(new TextBlock { Text = "Loading...", Foreground = Brushes.White });
 
             Child = wrapPanel;
         }
@@ -196,7 +196,7 @@ public partial class CompletionUiList {
             BorderThickness = new(1);
             BorderBrush = (Brush) Application.Current.Resources["SplitterBackgroundBrush"];
             Background = (Brush) Application.Current.Resources["EditorBackgroundBrush"];
-            Child = new TextBlock() { Text = "No Suggestions", Foreground = Brushes.White };
+            Child = new TextBlock { Text = "No Suggestions", Foreground = Brushes.White };
         }
     }
 }

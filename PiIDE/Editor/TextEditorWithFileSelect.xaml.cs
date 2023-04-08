@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PiIDE.Editor.Parts;
+using PiIDE.Editor.Parts.Dialogues;
+using PiIDE.Wrapers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,9 +9,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using PiIDE.Editor.Parts;
-using PiIDE.Editor.Parts.Dialogues;
-using PiIDE.Wrapers;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -194,7 +194,7 @@ public partial class TextEditorWithFileSelect {
 
     public void AddExistingDirectory(string directory) {
         LocalExplorer.AddFolder(directory);
-        LocalExplorer.FileClick += (s) => {
+        LocalExplorer.FileClick += s => {
             OpenFile(s.FilePath, false, false);
         };
         LocalExplorer.FileDeleted += (_, filePath) => {
@@ -230,7 +230,7 @@ public partial class TextEditorWithFileSelect {
     }
 
     public void OpenBoardDirectory() {
-        BoardExplorer.FileClick += (s) => {
+        BoardExplorer.FileClick += s => {
             OpenFile(s.FilePath, false, true);
         };
 

@@ -1,6 +1,7 @@
 ﻿using Humanizer;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -40,7 +41,7 @@ public partial class Shortcut {
 
     private void ShortcutTextBox_KeyUp(object sender, KeyEventArgs e) => AllKeysReleased = !PiIDE.Shortcuts.IsAnyKeyPressed();
 
-    private void Reset_Click(object sender, System.Windows.RoutedEventArgs e) {
+    private void Reset_Click(object sender, RoutedEventArgs e) {
         Hotkey = PiIDE.Shortcuts.DefaultShortcutsMap[TheShortcut];
         ShortcutTextBox.Text = string.Join(" + ", Hotkey);
         PiIDE.Shortcuts.ShortcutsMap[TheShortcut] = PiIDE.Shortcuts.ShortcutsMap[TheShortcut];

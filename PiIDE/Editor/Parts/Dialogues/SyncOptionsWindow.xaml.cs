@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PiIDE.Editor.Parts.Dialogues;
@@ -43,7 +44,7 @@ public partial class SyncOptionsWindow {
         Close();
     }
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+    private void Window_Closing(object sender, CancelEventArgs e) {
         if (OkClose) {
 
         } else {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace PiIDE.Options;
 
@@ -13,14 +15,14 @@ public partial class OptionsWindow {
 
     private void LoadSettings() => VersionLabel.Content = Environment.GetEnvironmentVariable("ClickOnce_CurrentVersion") ?? "Not installed";
 
-    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => GlobalSettings.Default.Save();
+    private void Window_Closing(object sender, CancelEventArgs e) => GlobalSettings.Default.Save();
 
-    private void GithubIssue_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
+    private void GithubIssue_RequestNavigate(object sender, RequestNavigateEventArgs e) {
         Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
         e.Handled = true;
     }
 
-    private void GithubRepo_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e) {
+    private void GithubRepo_RequestNavigate(object sender, RequestNavigateEventArgs e) {
         Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
         e.Handled = true;
     }

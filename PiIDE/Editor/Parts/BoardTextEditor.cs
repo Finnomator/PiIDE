@@ -1,4 +1,5 @@
-﻿using PiIDE.Wrapers;
+﻿using FontAwesome.WPF;
+using PiIDE.Wrapers;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,8 +22,8 @@ public class BoardTextEditor : TextEditor {
         BorderThickness = new(0),
         Padding = new(3),
         Style = (Style) Application.Current.Resources["CleanButtonStyle"],
-        Content = new FontAwesome.WPF.FontAwesome() {
-            Icon = FontAwesome.WPF.FontAwesomeIcon.Play,
+        Content = new FontAwesome.WPF.FontAwesome {
+            Icon = FontAwesomeIcon.Play,
         }
     };
     private readonly WrapPanel UploadingFileWrapPanel = new();
@@ -36,7 +37,7 @@ public class BoardTextEditor : TextEditor {
 
 
         UploadingFileWrapPanel.Visibility = Visibility.Collapsed;
-        UploadingFileWrapPanel.Children.Add(new TextBlock() {
+        UploadingFileWrapPanel.Children.Add(new TextBlock {
             Text = "Uploading File",
             Foreground = Brushes.White,
             VerticalAlignment = VerticalAlignment.Center,
