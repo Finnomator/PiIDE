@@ -10,9 +10,9 @@ using System.Windows.Media.Imaging;
 namespace PiIDE.Assets.Icons;
 
 public static class Icons {
-    public const string IconsPath = "/Assets/Icons/";
+    private const string IconsPath = "/Assets/Icons/";
 
-    public static BitmapImage FileIconImg { get; } = new(new(IconsPath + "FileIcon.png", UriKind.Relative));
+    private static BitmapImage FileIconImg { get; } = new(new(IconsPath + "FileIcon.png", UriKind.Relative));
     private static readonly Dictionary<string, BitmapImage> CachedFileImages = new();
     private static readonly Dictionary<(string fileName, int resolution), BitmapImage> CachedResolutionImages = new();
 
@@ -29,8 +29,8 @@ public static class Icons {
             string iconPath = $"{IconsPath}IconsByFileExtension/{extension}.png";
 
             if (Path.Exists(iconPath[1..])) {
-                if (CachedFileImages.ContainsKey(extension))
-                    return CachedFileImages[extension];
+                if (CachedFileImages.TryGetValue(extension, out BitmapImage? fileIcon))
+                    return fileIcon;
 
                 BitmapImage icon = new(new(iconPath, UriKind.Relative));
                 CachedFileImages[extension] = icon;
@@ -41,7 +41,7 @@ public static class Icons {
         return GetAssociatedIcon(filePath);
     }
 
-    public static BitmapSource GetAssociatedIcon(string filePath) {
+    private static BitmapSource GetAssociatedIcon(string filePath) {
         Icon? fileIcon = Icon.ExtractAssociatedIcon(filePath);
 
         if (fileIcon == null)

@@ -19,7 +19,7 @@ public partial class ColorOptions {
         ColorResources.HighlighterColors.SetColors(ColorResources.LoadResource(stream));
 
         MainStackPanel.Children.Clear();
-        foreach (string key in ColorResources.HighlighterColors.Colors.Keys)
+        foreach (string key in ColorResources.HighlighterColors.ColorsMap.Keys)
             MainStackPanel.Children.Add(new ColorOption(key));
     }
 
@@ -32,7 +32,7 @@ public partial class ColorOptions {
         if (fileDialog.FileName == "")
             return;
 
-        ColorResources.SaveResource(fileDialog.OpenFile(), ColorResources.HighlighterColors.Colors);
+        ColorResources.SaveResource(fileDialog.OpenFile(), ColorResources.HighlighterColors.ColorsMap);
     }
 
     private void ImportTheme_Click(object sender, RoutedEventArgs e) {
@@ -47,5 +47,5 @@ public partial class ColorOptions {
         ImportTheme(fileDialog.OpenFile());
     }
 
-    private void UserControl_Unloaded(object sender, RoutedEventArgs e) => ColorResources.SaveResource(ColorsJsonPath, ColorResources.HighlighterColors.Colors);
+    private void UserControl_Unloaded(object sender, RoutedEventArgs e) => ColorResources.SaveResource(ColorsJsonPath, ColorResources.HighlighterColors.ColorsMap);
 }

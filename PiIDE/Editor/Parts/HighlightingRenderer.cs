@@ -15,7 +15,7 @@ public class HighlightingRenderer {
     public readonly TextEditor Editor;
     public TextBoxWithDrawingGroup TextRenderer => Editor.TextEditorTextBox;
     public string EditorText => Editor.EditorText;
-    public FormattedText RendererFormattedText => TextRenderer.VisibleTextAsFormattedText;
+    public FormattedText RendererFormattedText => TextRenderer.VisibleTextAsFormattedText!;
 
     public HighlightingRenderer(TextEditor textEditor) {
         Editor = textEditor;
@@ -153,9 +153,8 @@ public class HighlightingRenderer {
 
         string visibleText = RendererFormattedText.Text;
 
-        Script script = Script.MakeScript(visibleText, Editor.FilePath);
-
-        Name[] jediNames = SyntaxHighlighter.FindJediNames(script);
+        Script.MakeScript(visibleText, Editor.FilePath);
+        Name[] jediNames = SyntaxHighlighter.FindJediNames();
 
         int[] cols = jediNames.Select(x => x.Column).Cast<int>().ToArray();
         int[] rows = jediNames.Select(x => x.Line - 1).Cast<int>().ToArray();

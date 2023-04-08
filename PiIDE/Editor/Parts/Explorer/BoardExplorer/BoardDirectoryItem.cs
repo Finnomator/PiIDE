@@ -75,7 +75,7 @@ public class BoardDirectoryItem : DirectoryItemBase {
 
     protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
-    protected override void RenameDirectory(string oldPath, string newPath, string newName) => ErrorMessages.FeatureNotSupported();
+    protected override void RenameDirectory(string oldPath, string newName) => ErrorMessages.FeatureNotSupported();
 
     protected override async void AddFile_Click(object sender, RoutedEventArgs e) {
         string newFileLocalPath = Path.Combine(DirectoryPath, "new_file.py");

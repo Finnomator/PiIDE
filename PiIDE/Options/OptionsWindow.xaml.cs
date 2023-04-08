@@ -9,7 +9,7 @@ namespace PiIDE.Options;
 public partial class OptionsWindow {
     public OptionsWindow() {
         InitializeComponent();
-        Application.Current.MainWindow.Closed += (_, _) => Close();
+        Application.Current.MainWindow!.Closed += (_, _) => Close();
         LoadSettings();
     }
 

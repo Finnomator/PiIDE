@@ -6,7 +6,7 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d">
     <StackPanel>
-        <Button Padding="2" Style="{StaticResource CleanButtonStyle}" x:Name="MainButton" Click="MainButton_Click" HorizontalContentAlignment="Left" Background="Transparent" Foreground="White">
+        <Button Padding="2" Style="{StaticResource CleanButtonStyle}" Click="MainButton_Click" HorizontalContentAlignment="Left" Background="Transparent" Foreground="White">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="IndentColumn"/>

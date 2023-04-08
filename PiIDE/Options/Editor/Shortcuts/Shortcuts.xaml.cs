@@ -1,6 +1,7 @@
 ﻿using Humanizer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,6 +67,9 @@ public partial class Shortcuts {
 
     private void SelectShortcutComboBox_DropDownOpened(object sender, EventArgs e) => SelectShortcutComboBox.ItemsSource = GetUnusedShortcuts().Select(x => new ShortcutComboBoxItem(x)).ToArray();
 
+#pragma warning disable IDE0079
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+#pragma warning restore IDE0079
     private class ShortcutComboBoxItem {
 
         public PiIDE.Shortcut Shortcut { get; }

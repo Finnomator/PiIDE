@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 
 namespace PiIDE;
@@ -16,7 +17,7 @@ public partial class StatisticsWindow {
         InitializeComponent();
         Topmost = true;
 
-        Application.Current.MainWindow.Closed += delegate {
+        Application.Current.MainWindow!.Closed += delegate {
             Close();
         };
     }
@@ -58,12 +59,18 @@ public partial class StatisticsWindow {
         Tools.UpdateStats = false;
     }
 
+#pragma warning disable IDE0079
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+#pragma warning restore IDE0079
     private readonly struct RenderStat {
         public required long Number { get; init; }
         public required long RenderTimeMs { get; init; }
         public required string TimeStamp { get; init; }
     }
 
+#pragma warning disable IDE0079
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+#pragma warning restore IDE0079
     private readonly struct CompletionStat {
         public required long Number { get; init; }
         public required long CompletionTimeMs { get; init; }

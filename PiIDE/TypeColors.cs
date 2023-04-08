@@ -53,7 +53,7 @@ public static class TypeIcons {
     };
 
     public static FontAwesome.WPF.FontAwesome TypeToIcon(string type) {
-        if (TypeToIconMap.TryGetValue(type, out FontAwesome.WPF.FontAwesome value))
+        if (TypeToIconMap.TryGetValue(type, out FontAwesome.WPF.FontAwesome? value))
             return value;
 # if DEBUG
         MessageBox.Show($"Type '{type}' not found");

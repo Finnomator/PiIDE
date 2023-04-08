@@ -14,10 +14,10 @@ public class TextBoxWithDrawingGroup : TextBox {
     private Typeface? CachedTypeface;
     private readonly double CachedPixelsPerDip;
 
-    public Action<DrawingContext> DefaultRenderAction { get; init; }
-    public FormattedText VisibleTextAsFormattedText { get; private set; }
+    public Action<DrawingContext> DefaultRenderAction { get; }
+    public FormattedText? VisibleTextAsFormattedText { get; private set; }
 
-    public TextEditor TextEditor { get; set; }
+    public TextEditor TextEditor { get; set; } = null!;
 
     private readonly Stopwatch Sw = new();
 
@@ -42,7 +42,7 @@ public class TextBoxWithDrawingGroup : TextBox {
 
     private void TextBoxWithDrawingGroup_TextChanged(object sender, TextChangedEventArgs e) => Render();
 
-    private void TextBoxWithDrawingGroup_Loaded(object sender, RoutedEventArgs e) {
+    private void TextBoxWithDrawingGroup_Loaded(object sender, RoutedEventArgs _) {
 
         Debug.Assert(TextEditor != null);
 

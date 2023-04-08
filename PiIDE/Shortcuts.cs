@@ -12,8 +12,8 @@ internal static class Shortcuts {
 
     // TODO: add all keys to this array
     private static readonly Key[] Keys = Enum.GetValues(typeof(Key)).Cast<Key>().ToArray();
-    public static Dictionary<Shortcut, List<Key>> ShortcutsMap;
-    public static Dictionary<Shortcut, List<Key>> DefaultShortcutsMap = new() {
+    public static readonly Dictionary<Shortcut, List<Key>> ShortcutsMap;
+    public static readonly Dictionary<Shortcut, List<Key>> DefaultShortcutsMap = new() {
         { Shortcut.SaveFile, new() { Key.LeftCtrl, Key.S } },
         { Shortcut.OpenCompletionsList, new() { Key.LeftCtrl, Key.Space } },
         { Shortcut.OpenSearchBox, new() { Key.LeftCtrl, Key.F} },
@@ -41,11 +41,8 @@ internal static class Shortcuts {
         }
         return AreKeysPressed(keys);
     }
-    public static bool IsShortcutPressed(Shortcut shortcut) {
-        if (ShortcutsMap.ContainsKey(shortcut))
-            return AreTheOnlyKeysPressed(ShortcutsMap[shortcut]);
-        return false;
-    }
+
+    public static bool IsShortcutPressed(Shortcut shortcut) => ShortcutsMap.TryGetValue(shortcut, out var value) && AreTheOnlyKeysPressed(value);
 
     public static bool IsTheOnlyKeyPressed(Key key) {
         for (int i = 1; i < Keys.Length; i++) {

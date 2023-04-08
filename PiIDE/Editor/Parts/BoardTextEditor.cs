@@ -28,7 +28,7 @@ public class BoardTextEditor : TextEditor {
     };
     private readonly WrapPanel UploadingFileWrapPanel = new();
 
-    public BoardTextEditor(string filePath, string boardFilePath, bool disableAllWrappers = false) : base(filePath, disableAllWrappers) {
+    public BoardTextEditor(string filePath, string boardFilePath) : base(filePath) {
         BoardFilePath = boardFilePath;
         RunFileOnBoardButton.Click += RunFileOnBoardButton_Click;
         AmpyWrapper.AmpyExited += Ampy_Exited;

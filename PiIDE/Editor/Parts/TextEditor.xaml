@@ -22,7 +22,7 @@
 
             <editorParts:SearchBox x:Name="TextSearchBox" HorizontalAlignment="Right" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Search"/>
 
-            <Border x:Name="ActionsBorder" CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackgroundBrush}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackgroundBrush}">
+            <Border CornerRadius="0,0,3,3" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="{StaticResource SplitterBackgroundBrush}" BorderThickness="1,0,1,1" Background="{DynamicResource EditorBackgroundBrush}">
 
                 <Border.Effect>
                     <DropShadowEffect Opacity="0.5"/>
@@ -34,7 +34,7 @@
                     </Button>
 
                     <Button Style="{StaticResource CleanButtonStyle}" Content="▷" x:Name="RunFileLocalButton" Click="RunFileLocalButton_Click"  ToolTip="Run file" FontWeight="Bold" Foreground="#FF48A400" Padding="3"/>
-                    <Button Style="{StaticResource CleanButtonStyle}" x:Name="StopAllRunningTasksButton" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
+                    <Button Style="{StaticResource CleanButtonStyle}" Click="StopAllRunningTasksButton_Click"  ToolTip="Stop all processes" Foreground="Red" Padding="3">
                         <fa:FontAwesome Icon="Stop"/>
                     </Button>
                 </StackPanel>

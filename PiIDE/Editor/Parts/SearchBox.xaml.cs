@@ -23,7 +23,7 @@ public partial class SearchBox {
     private bool UseRegex;
     private bool GotInit;
 
-    public HighlightingRenderer ResultRenderBox { get; set; }
+    public HighlightingRenderer ResultRenderBox { get; set; } = null!;
     private Size TextSize => ResultRenderBox.Editor.TextEditorTextBoxCharacterSize;
 
     private readonly Brush HighlightedWordBrush = (Brush) Tools.BrushConverter.ConvertFromString("#20FFFFFF")!;
@@ -95,7 +95,7 @@ public partial class SearchBox {
 
     private void SetResultNo(int resultNo) {
         CurrentResultNo = resultNo;
-        SearchResult currentMatch = AllSearchResults[CurrentResultNo];
+        SearchResult currentMatch = AllSearchResults![CurrentResultNo];
         ResultRenderBox.Editor.ScrollToPosition(currentMatch.Row, currentMatch.Column);
         ResultRenderBox.TextRenderer.Render();
         ResultNumTextBlock.Text = (CurrentResultNo + 1).ToString();

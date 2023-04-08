@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -37,6 +38,10 @@ internal static class PylintWrapper {
     }
 }
 
+#pragma warning disable IDE0079
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+#pragma warning restore IDE0079
+// ReSharper disable once ClassNeverInstantiated.Global
 public class PylintMessage {
     [JsonPropertyName("module")]
     public string Module { get; set; } = "";

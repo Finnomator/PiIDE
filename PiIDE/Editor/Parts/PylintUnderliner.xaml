@@ -6,6 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <!-- ReSharper disable once Xaml.RedundantResource -->
         <VisualBrush x:Key="WavyLine" ViewportUnits="Absolute" Viewport="0,2,6,3.7" TileMode="Tile" Stretch="Uniform">
             <VisualBrush.Visual>
                 <Path Data="M 0,0 0.4,0 1.4,1, 1.8,1 2.8,0 3.2,0" Stroke="Red" StrokeThickness="0.5"/>

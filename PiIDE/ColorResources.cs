@@ -1,5 +1,4 @@
 ﻿using PiIDE.Options.Editor.SyntaxHighlighter.Colors;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -56,30 +55,28 @@ public static class ColorResources {
 
     public static class HighlighterColors {
 
-        public static event EventHandler? ColorChanged;
-
-        public static Dictionary<string, Brush> Colors { get; private set; } = LoadResource(ColorOptions.ColorsJsonPath);
+        public static Dictionary<string, Brush> ColorsMap { get; private set; } = LoadResource(ColorOptions.ColorsJsonPath);
         public static Dictionary<string, Brush> DefaultColors { get; private set; } = LoadResource(ColorOptions.DefaultColorsJsonPath);
 
-        public static Brush Class => Colors["class"];
-        public static Brush Function => Colors["function"];
-        public static Brush Instance => Colors["instance"]; // What is this?
-        public static Brush Statement => Colors["statement"];
-        public static Brush Module => Colors["module"];
-        public static Brush Param => Colors["param"];
-        public static Brush Property => Colors["property"]; // What is this?
-        public static Brush Path => Colors["path"]; // What is this?
-        public static Brush Namespace => Colors["namespace"]; // What is this?
+        public static Brush Class => ColorsMap["class"];
+        public static Brush Function => ColorsMap["function"];
+        public static Brush Instance => ColorsMap["instance"]; // What is this?
+        public static Brush Statement => ColorsMap["statement"];
+        public static Brush Module => ColorsMap["module"];
+        public static Brush Param => ColorsMap["param"];
+        public static Brush Property => ColorsMap["property"]; // What is this?
+        public static Brush Path => ColorsMap["path"]; // What is this?
+        public static Brush Namespace => ColorsMap["namespace"]; // What is this?
 
-        public static Brush Comment => Colors["comment"];
-        public static Brush String => Colors["string"];
-        public static Brush Number => Colors["number"];
-        public static Brush Keyword => Colors["keyword"];
+        public static Brush Comment => ColorsMap["comment"];
+        public static Brush String => ColorsMap["string"];
+        public static Brush Number => ColorsMap["number"];
+        public static Brush Keyword => ColorsMap["keyword"];
 
         public static readonly Brush EverythingElse = Brushes.Gray;
 
         public static Brush GetBrush(string key) {
-            if (Colors.TryGetValue(key, out Brush? value))
+            if (ColorsMap.TryGetValue(key, out Brush? value))
                 return value;
 #if DEBUG
             MessageBox.Show($"Type '{key}' not found");
@@ -87,11 +84,8 @@ public static class ColorResources {
             return EverythingElse;
         }
 
-        public static void SetBrush(string key, Brush value) {
-            ColorChanged?.Invoke(null, EventArgs.Empty);
-            Colors[key] = value;
-        }
+        public static void SetBrush(string key, Brush value) => ColorsMap[key] = value;
 
-        public static void SetColors(Dictionary<string, Brush> colors) => Colors = colors;
+        public static void SetColors(Dictionary<string, Brush> colors) => ColorsMap = colors;
     }
 }

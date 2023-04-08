@@ -14,8 +14,8 @@ public class EditorTabItem : TabItem {
 
     public event EventHandler<string>? CloseTabClick;
 
-    protected new WrapPanel Header;
-    protected StackPanel IconsStackPanel;
+    protected new readonly WrapPanel Header;
+    protected readonly StackPanel IconsStackPanel;
 
     private readonly Button CloseTabButton;
 

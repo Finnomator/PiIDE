@@ -20,10 +20,8 @@ public partial class TextEditor {
 
     public readonly string FilePath;
     public readonly string AbsolutePath;
-    public readonly string FileName;
     public readonly string FileExt;
     public readonly bool IsPythonFile;
-    public readonly bool EnablePythonSyntaxHighlighting;
     public readonly bool EnablePylinting;
     public readonly bool EnableJediCompletions;
     public Size TextEditorTextBoxCharacterSize;
@@ -38,7 +36,6 @@ public partial class TextEditor {
     protected int AutoSaveDelaySeconds;
     private readonly CancellationTokenSource AutoSaveCancelToken = new();
 
-    public bool DisableAllWrappers { get; set; }
     public bool ContentIsSaved { get; private set; } = true;
     public bool ContentLoaded { get; private set; }
 
@@ -66,16 +63,14 @@ public partial class TextEditor {
 
     public event EventHandler? StartedPythonExecution;
 
-    public TextEditor(string filePath, bool disableAllWrappers = false) {
+    public TextEditor(string filePath) {
         InitializeComponent();
         FilePath = filePath;
         AbsolutePath = Path.GetFullPath(FilePath);
-        DisableAllWrappers = disableAllWrappers;
-        FileName = Path.GetFileName(filePath);
+        Path.GetFileName(filePath);
         FileExt = Path.GetExtension(filePath);
-        IsPythonFile = Tools.IsPythonExt(FileExt);
+        IsPythonFile = Tools.IsPythonFile(FilePath);
         EnablePylinting = IsPythonFile;
-        EnablePythonSyntaxHighlighting = IsPythonFile;
         EnableJediCompletions = IsPythonFile;
 
         LocalFilePathTextBlock.Text = AbsolutePath;
@@ -85,7 +80,7 @@ public partial class TextEditor {
 
         // Completion suggestions stuff
         CompletionList = new(this);
-        Application.Current.MainWindow.Activated += MainWindow_Activated;
+        Application.Current.MainWindow!.Activated += MainWindow_Activated;
         Application.Current.MainWindow.LocationChanged += (_, _) => CompletionList.Close();
         CompletionList.CompletionClicked += CompletionUiList_CompletionClick;
 
@@ -123,7 +118,7 @@ public partial class TextEditor {
 
     private void MainWindow_Activated(object? sender, EventArgs e) {
         CompletionList.Owner = Application.Current.MainWindow;
-        Application.Current.MainWindow.Activated -= MainWindow_Activated;
+        Application.Current.MainWindow!.Activated -= MainWindow_Activated;
     }
 
     private void Python_Exited(object? sender, EventArgs e) => Dispatcher.Invoke(() => {

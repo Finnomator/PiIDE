@@ -66,7 +66,7 @@ public abstract partial class DirectoryItemBase {
         FileIconControl.Content = FolderOpenIcon;
     }
 
-    protected virtual void Collapse() {
+    protected void Collapse() {
         ChildrenStackPanel.Children.Clear();
         IsExpandedTextBlock.RenderTransform = null;
         FileIconControl.Content = FolderClosedIcon;
@@ -102,7 +102,7 @@ public abstract partial class DirectoryItemBase {
         IsExpanded = !IsExpanded;
     }
 
-    protected virtual void RenameDirectory(string oldPath, string newPath, string newName) => BasicFileActions.RenameDirectory(oldPath, newName);
+    protected virtual void RenameDirectory(string oldPath, string newName) => BasicFileActions.RenameDirectory(oldPath, newName);
 
     protected virtual void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(DirectoryPath, true);
 
@@ -178,8 +178,8 @@ public abstract partial class DirectoryItemBase {
         }
 
         DirectoryName = newName;
-        FileNameTextBlock.Text = DirectoryName;
-        RenameDirectory(DirectoryPath, newPath, DirectoryName);
+        FileNameTextBlock.Text = newName;
+        RenameDirectory(DirectoryPath, newName);
         DirectoryPath = newPath;
     }
 }

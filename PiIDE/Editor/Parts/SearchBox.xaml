@@ -45,8 +45,8 @@
                     <TextBlock Name="ResultNumTextBlock" Text="0" Foreground="White" VerticalAlignment="Center"/>
                     <TextBlock Text="/" Foreground="White" VerticalAlignment="Center"/>
                     <TextBlock Name="TotalResultsTextBlock" Text="0" Foreground="White" VerticalAlignment="Center"/>
-                    <Button Name="PreviousResButton" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="↑" Foreground="White" FontFamily="Calibri" Width="16" Click="PreviousResButton_Click"/>
-                    <Button Name="NextResButton" Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="↓" Foreground="White" FontFamily="Calibri" Width="16" Click="NextResButton_Click"/>
+                    <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="↑" Foreground="White" FontFamily="Calibri" Width="16" Click="PreviousResButton_Click"/>
+                    <Button Style="{StaticResource CleanButtonWithRoundCornersStyle}" Content="↓" Foreground="White" FontFamily="Calibri" Width="16" Click="NextResButton_Click"/>
                 </StackPanel>
             </Grid>
         </Expander>

@@ -6,6 +6,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Application = System.Windows.Application;
@@ -192,7 +193,7 @@ public static class Tools {
     private static double _windowsScalingFactor;
 
     private static (bool success, double scalingFactor) GetWindowsScalingFactor() {
-        PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);
+        PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow!)!;
         double dpiX;
         if (source is { CompositionTarget: not null })
             dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
@@ -231,5 +232,12 @@ public static class Tools {
         if (row == line)
             return col;
         return -1;
+    }
+
+    public static ScrollViewer FindScrollViewer(DependencyObject d) {
+        if (d is ScrollViewer viewer)
+            return viewer;
+        ScrollViewer sw = FindScrollViewer(VisualTreeHelper.GetChild(d, 0));
+        return sw;
     }
 }

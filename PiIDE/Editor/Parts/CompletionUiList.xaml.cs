@@ -34,7 +34,7 @@ public partial class CompletionUiList {
         ShowActivated = false;
         ShowInTaskbar = false;
 
-        Application.Current.MainWindow.Closed += delegate {
+        Application.Current.MainWindow!.Closed += delegate {
             base.Close();
         };
     }
@@ -80,8 +80,8 @@ public partial class CompletionUiList {
         (int col, int row) = Editor.GetCaretPosition();
         row++;
 
-        JediWrapper.Script script = await JediWrapper.Script.MakeScriptAsync(code, filePath);
-        JediWrapper.ReturnClasses.Completion[] completions = await script.Complete(row, col);
+        await JediWrapper.Script.MakeScriptAsync(code, filePath);
+        JediWrapper.ReturnClasses.Completion[] completions = await JediWrapper.Script.Complete(row, col);
 
         if (CalledClose)
             return;
@@ -114,11 +114,6 @@ public partial class CompletionUiList {
         CalledClose = true;
         if (IsOpen)
             Hide();
-    }
-
-    public void LoadCached() {
-        if (MainListBox.Items.Count > 0)
-            Show();
     }
 
     public void MoveSelectedCompletionUp() {

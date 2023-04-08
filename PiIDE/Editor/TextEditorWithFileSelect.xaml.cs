@@ -67,7 +67,7 @@ public partial class TextEditorWithFileSelect {
             return;
         }
 
-        AddFile(filePath, openInBackground, onBoard);
+        AddFile(filePath, onBoard);
         if (!openInBackground)
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
     }
@@ -82,19 +82,19 @@ public partial class TextEditorWithFileSelect {
 
     public bool IsFileOpen(string filePath) => GetTabIndexOfOpenFile(filePath) != -1;
 
-    private void AddFile(string filePath, bool openInBackground = false, bool onBoard = false, int atIndex = -1) {
+    private void AddFile(string filePath, bool onBoard = false, int atIndex = -1) {
         TextEditor textEditor;
         EditorTabItem tabItem;
 
         if (onBoard) {
-            textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..], openInBackground) { DisableAllWrappers = openInBackground };
+            textEditor = new BoardTextEditor(filePath, filePath[LocalBoardPath.Length..]);
             ((BoardTextEditor) textEditor).StartedPythonExecutionOnBoard += (_, _) => OutputTabControl.SelectedIndex = 1;
 
             tabItem = new BoardEditorTabItem(filePath) {
                 Content = textEditor,
             };
         } else {
-            textEditor = new(filePath, openInBackground);
+            textEditor = new(filePath);
             tabItem = new(filePath) {
                 Content = textEditor,
             };
@@ -145,11 +145,7 @@ public partial class TextEditorWithFileSelect {
         if (MainTabControl.SelectedItem == null)
             return;
 
-        if (OpenTextEditor != null)
-            OpenTextEditor.DisableAllWrappers = true;
-
         OpenTextEditor = (TextEditor) ((TabItem) MainTabControl.SelectedItem).Content;
-        OpenTextEditor.DisableAllWrappers = false;
         GlobalSettings.Default.LastOpenedFilePath = OpenTextEditor.FilePath;
     }
 

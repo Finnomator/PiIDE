@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,8 +17,8 @@ public static partial class SyntaxHighlighter {
     private static readonly Regex CommentsRx = CommentsRegex();
     private static readonly Regex DefaultNumbersRx = DefaultNumbersRegex();
 
-    public static async Task<JediName[]> FindJediNamesAsync(Script script) => await script.GetNamesAsync(true, true, true);
-    public static JediName[] FindJediNames(Script script) => script.GetNames(true, true, true);
+    public static async Task<JediName[]> FindJediNamesAsync() => await Script.GetNamesAsync(true, true, true);
+    public static JediName[] FindJediNames() => Script.GetNames(true, true, true);
 
     public static MatchCollection FindKeywords(string text, int startAt = 0) => KeywordsRx.Matches(text, startAt);
     public static MatchCollection FindComments(string text, int startAt = 0) => CommentsRx.Matches(text, startAt);
@@ -97,6 +98,9 @@ public static partial class SyntaxHighlighter {
         return matches;
     }
 
+#pragma warning disable IDE0079
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+#pragma warning restore IDE0079
     public readonly struct BracketMatch {
         public int Index { get; init; }
         public char BracketChar { get; init; }
