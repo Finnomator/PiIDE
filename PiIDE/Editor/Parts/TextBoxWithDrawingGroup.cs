@@ -20,6 +20,8 @@ namespace PiIDE.Editor.Parts {
 
         private readonly Stopwatch sw = new();
 
+        private ScrollChangedEventArgs? oldScrollChangedEventArgs;
+
         // TODO: Make it work with backgrounds
 
         public TextBoxWithDrawingGroup() {
@@ -46,8 +48,9 @@ namespace PiIDE.Editor.Parts {
             TextEditor.MainScrollViewer.SizeChanged += (s, e) => Render();
 
             TextEditor.MainScrollViewer.ScrollChanged += (s, e) => {
-                if (e.VerticalChange != 0)
+                if (e.VerticalChange != 0 && e != oldScrollChangedEventArgs)
                     Render();
+                oldScrollChangedEventArgs = e;
             };
         }
 
