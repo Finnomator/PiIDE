@@ -11,7 +11,7 @@ namespace PiIDE.Editor.Parts.Explorer {
     public abstract partial class DirectoryItemBase : UserControl {
 
         public string DirectoryPath { get; private set; }
-        public int Indent { get; private set; }
+        public int Indent { get; }
 
         private bool IsExpanded;
 
@@ -24,7 +24,7 @@ namespace PiIDE.Editor.Parts.Explorer {
         private readonly FontAwesome.WPF.FontAwesome FolderClosedIcon = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Folder };
         private static readonly RotateTransform NinetyDegreeTurn = new(90);
 
-        public DirectoryItemBase(string fullPath, ExplorerBase parentExplorer) {
+        protected DirectoryItemBase(string fullPath, ExplorerBase parentExplorer) {
             InitializeComponent();
 
             DirectoryPath = fullPath;
@@ -42,7 +42,7 @@ namespace PiIDE.Editor.Parts.Explorer {
             ToolTip = DirectoryPath;
         }
 
-        public DirectoryItemBase(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) {
+        protected DirectoryItemBase(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase parentExplorer) {
             InitializeComponent();
 
             DirectoryPath = fullPath;

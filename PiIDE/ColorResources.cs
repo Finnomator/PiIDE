@@ -26,8 +26,7 @@ namespace PiIDE {
                 content = reader.ReadToEnd();
             }
 
-            Dictionary<string, string> deserialized;
-            deserialized = JsonSerializer.Deserialize<Dictionary<string, string>>(content)!;
+            Dictionary<string, string> deserialized = JsonSerializer.Deserialize<Dictionary<string, string>>(content)!;
 
             foreach (string key in deserialized.Keys) {
                 Brush converted = (Brush) Tools.BrushConverter.ConvertFromString(deserialized[key])!;

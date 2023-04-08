@@ -8,7 +8,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
     public partial class Shortcut : UserControl {
 
         private bool AllKeysReleased = true;
-        public PiIDE.Shortcut IShortcut { get; private set; }
+        public PiIDE.Shortcut IShortcut { get; }
         private List<Key> Hotkey;
 
         public Shortcut(PiIDE.Shortcut shortcut) {

@@ -121,7 +121,7 @@ namespace PiIDE {
                     case nameof(GlobalSettings.Default.TextEditorFontFamily):
                         TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
                         break;
-                };
+                }
             };
         }
 
@@ -405,7 +405,7 @@ namespace PiIDE {
 
         private void InsertCompletionAtCaret(Completion completion) {
 
-            if (completion.Complete == null || completion.Complete.Length == 0)
+            if (string.IsNullOrEmpty(completion.Complete))
                 return;
 
             int oldCaretIndex = TextEditorTextBox.CaretIndex;
@@ -523,8 +523,8 @@ namespace PiIDE {
         public void UpdatePylint(PylintMessage[] pylintMessages) {
             if (EnablePylinting && GlobalSettings.Default.PylintIsUsable) {
                 Underliner.Underline(pylintMessages, FirstVisibleLineNum, LastVisibleLineNum);
-                AmountOfErrorsLabel.Content = pylintMessages.Where(x => x.Type == "error").Count();
-                AmountOfWarningsLabel.Content = pylintMessages.Where(x => x.Type == "warning").Count();
+                AmountOfErrorsLabel.Content = pylintMessages.Count(x => x.Type == "error");
+                AmountOfWarningsLabel.Content = pylintMessages.Count(x => x.Type == "warning");
             }
         }
 

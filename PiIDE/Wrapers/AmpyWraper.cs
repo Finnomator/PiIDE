@@ -71,7 +71,7 @@ namespace PiIDE.Wrapers {
 
         public static async Task<(bool success, string[]?)> ListFilesOnBoardAsync(int comport, string dirPath = "/") {
             (bool success, string? output) = await TryRunAmpy($"--port COM{comport} ls \"{dirPath.Replace("\\", "/")}\"", true);
-            if (output == null || output.Length == 0 || !success)
+            if (string.IsNullOrEmpty(output) || !success)
                 return (false, null);
             return (true, output[1..].Trim().Split("\r\n/"));
         }

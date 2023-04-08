@@ -19,8 +19,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
 
         private void AddShortcut(PiIDE.Shortcut cut) {
 
-            if (!PiIDE.Shortcuts.ShortcutsMap.ContainsKey(cut))
-                PiIDE.Shortcuts.ShortcutsMap[cut] = PiIDE.Shortcuts.DefaultShortcutsMap[cut];
+            PiIDE.Shortcuts.ShortcutsMap.TryAdd(cut, PiIDE.Shortcuts.DefaultShortcutsMap[cut]);
 
             Grid grid = new();
             grid.ColumnDefinitions.Add(new());
@@ -48,7 +47,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
         private List<PiIDE.Shortcut> GetUnusedShortcuts() {
             List<PiIDE.Shortcut> shortcuts = new();
             foreach (PiIDE.Shortcut shortcut in PiIDE.Shortcuts.DefaultShortcuts) {
-                if (!MainStackPanel.Children.Cast<Grid>().Any(x => ((Shortcut) x.Children[0]).IShortcut == shortcut))
+                if (MainStackPanel.Children.Cast<Grid>().All(x => ((Shortcut)x.Children[0]).IShortcut != shortcut))
                     shortcuts.Add(shortcut);
             }
             return shortcuts;
@@ -67,7 +66,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
 
         private class ShortcutComboBoxItem {
 
-            public PiIDE.Shortcut Shortcut { get; init; }
+            public PiIDE.Shortcut Shortcut { get; }
             public string Content { get; init; }
 
             public ShortcutComboBoxItem(PiIDE.Shortcut shortcut) {

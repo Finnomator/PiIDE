@@ -17,7 +17,7 @@ namespace PiIDE.Editor.Parts.Explorer {
         protected string FileName;
         protected readonly string FileNameForTextBlock;
 
-        public FileItemBase(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase explorer) {
+        protected FileItemBase(string fullPath, DirectoryItemBase parentDirectory, ExplorerBase explorer) {
             InitializeComponent();
 
             FilePath = fullPath;

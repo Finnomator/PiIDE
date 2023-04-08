@@ -4,12 +4,12 @@ using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace PiIDE {
+namespace PiIDE.Editor.Parts.Panel.Terminals {
     public abstract partial class TerminalBase : UserControl {
 
         private bool RecivingErrorData;
 
-        public TerminalBase() => InitializeComponent();
+        protected TerminalBase() => InitializeComponent();
 
         protected void Exited(object? sender, EventArgs e) {
 

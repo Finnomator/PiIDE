@@ -92,7 +92,7 @@ namespace PiIDE.Wrapers {
 
                     IsBusy = true;
 
-                    WraperProcess.StandardInput.WriteLine(line);
+                    await WraperProcess.StandardInput.WriteLineAsync(line);
 
                     if (expectsOutput) {
                         string? res = await ReadOutputAsync();

@@ -5,7 +5,7 @@ using System.Windows;
 namespace PiIDE.Editor.Parts.Explorer.BoardExplorer {
     public class BoardDirectoryItem : DirectoryItemBase {
 
-        public string DirectoryPathOnBoard { get; private set; }
+        public string DirectoryPathOnBoard { get; }
 
         public static int Port => GlobalSettings.Default.SelectedCOMPort;
 

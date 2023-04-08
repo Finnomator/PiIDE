@@ -27,7 +27,7 @@ namespace PiIDE.Wrapers {
 
             pylintProcess.Start();
             string output = await pylintProcess.StandardOutput.ReadToEndAsync();
-            pylintProcess.WaitForExit();
+            await pylintProcess.WaitForExitAsync();
             try {
                 return JsonSerializer.Deserialize<PylintMessage[]>(output) ?? Array.Empty<PylintMessage>();
             } catch {

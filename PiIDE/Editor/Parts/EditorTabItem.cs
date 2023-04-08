@@ -8,8 +8,8 @@ using System.Windows.Media;
 namespace PiIDE.Editor.Parts {
     public class EditorTabItem : TabItem {
 
-        public string FilePath { get; private set; }
-        public string FileName { get; private set; }
+        public string FilePath { get; }
+        public string FileName { get; }
 
         public event EventHandler<string>? CloseTabClick;
 

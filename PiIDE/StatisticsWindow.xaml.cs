@@ -11,8 +11,8 @@ namespace PiIDE {
         private long TotalRenders;
         private long TotalCompletions;
         private const int LogLength = 7;
-        private Queue<RenderStat> RenderStats = new(LogLength);
-        private Queue<CompletionStat> CompletionStats = new(LogLength);
+        private readonly Queue<RenderStat> RenderStats = new(LogLength);
+        private readonly Queue<CompletionStat> CompletionStats = new(LogLength);
 
         public StatisticsWindow() {
             InitializeComponent();

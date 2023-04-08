@@ -57,7 +57,7 @@ namespace PiIDE.Options.Editor {
     }
 
     public class ComboBoxFontItem {
-        public FontFamily FontFamily { get; private init; }
+        public FontFamily FontFamily { get; }
         public string Content { get; private init; }
 
         public ComboBoxFontItem(FontFamily fontFamily) {

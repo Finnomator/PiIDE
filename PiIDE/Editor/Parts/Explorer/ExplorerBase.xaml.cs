@@ -16,7 +16,7 @@ namespace PiIDE.Editor.Parts.Explorer {
         public event FileClickEventHandler? FileClick;
         public void OnFileClick(FileItemBase fileItem) => FileClick?.Invoke(fileItem);
 
-        public ExplorerBase() => InitializeComponent();
+        protected ExplorerBase() => InitializeComponent();
 
         protected void AddFolder(DirectoryItemBase folder) => DirectoryItemsWrapPanel.Children.Add(folder);
 

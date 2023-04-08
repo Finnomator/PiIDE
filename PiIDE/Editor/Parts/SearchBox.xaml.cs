@@ -233,7 +233,7 @@ namespace PiIDE.Editor.Parts {
 
         public class SearchResultCollection {
 
-            public int Count { get; private set; }
+            public int Count { get; }
 
             private readonly SearchResult[] SearchResults;
 
