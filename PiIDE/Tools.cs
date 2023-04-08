@@ -131,12 +131,12 @@ public static class Tools {
         return indexes;
     }
 
-    public static int[] GetCOMPorts() => SerialPort.GetPortNames().Select(x => int.Parse(x[3..])).ToArray();
-    public static bool IsValidCOMPort(int comPort) => GetCOMPorts().Contains(comPort);
+    public static int[] GetComPorts() => SerialPort.GetPortNames().Select(x => int.Parse(x[3..])).ToArray();
+    public static bool IsValidComPort(int comPort) => GetComPorts().Contains(comPort);
 
-    public static bool EnableBoardInteractions => IsValidCOMPort(GlobalSettings.Default.SelectedCOMPort) && GlobalSettings.Default.AmpyIsUsable;
+    public static bool EnableBoardInteractions => IsValidComPort(GlobalSettings.Default.SelectedCOMPort) && GlobalSettings.Default.AmpyIsUsable;
 
-    public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
+    public static readonly FontAwesome.WPF.FontAwesome FontAwesomeLoading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
     public static readonly FontFamily[] MonospaceFonts = new FontFamily[] {
         new("Cascadia Code"),
@@ -186,7 +186,7 @@ public static class Tools {
             return _windowsScalingFactor;
         }
     }
-    public static double _windowsScalingFactor;
+    private static double _windowsScalingFactor;
 
     private static (bool success, double scalingFactor) GetWindowsScalingFactor() {
         PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);

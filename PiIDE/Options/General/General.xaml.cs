@@ -11,28 +11,28 @@ public partial class General {
 
         int port = settings.SelectedCOMPort;
         if (port >= 0) {
-            COMPortComboBox.Items.Add(new TextBlock() {
+            ComPortComboBox.Items.Add(new TextBlock() {
                 Text = $"COM{port}",
                 Tag = port
             });
-            COMPortComboBox.SelectedIndex = 1;
+            ComPortComboBox.SelectedIndex = 1;
         } else
-            COMPortComboBox.SelectedIndex = 0;
+            ComPortComboBox.SelectedIndex = 0;
     }
 
     private void COMPortComboBox_DropDownOpened(object sender, System.EventArgs e) {
-        COMPortComboBox.Items.Clear();
-        COMPortComboBox.Items.Add("<None>");
-        foreach (int port in Tools.GetCOMPorts())
-            COMPortComboBox.Items.Add(new TextBlock() {
+        ComPortComboBox.Items.Clear();
+        ComPortComboBox.Items.Add("<None>");
+        foreach (int port in Tools.GetComPorts())
+            ComPortComboBox.Items.Add(new TextBlock() {
                 Text = $"COM{port}",
                 Tag = port
             });
-        COMPortComboBox.SelectedIndex = 0;
+        ComPortComboBox.SelectedIndex = 0;
     }
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
-        int selectedCOMPort = COMPortComboBox.SelectedIndex <= 0 ? -1 : (int) ((TextBlock) COMPortComboBox.SelectedItem).Tag;
-        GlobalSettings.Default.SelectedCOMPort = selectedCOMPort;
+        int selectedComPort = ComPortComboBox.SelectedIndex <= 0 ? -1 : (int) ((TextBlock) ComPortComboBox.SelectedItem).Tag;
+        GlobalSettings.Default.SelectedCOMPort = selectedComPort;
     }
 }

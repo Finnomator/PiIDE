@@ -11,17 +11,17 @@ namespace PiIDE.Editor.Parts;
 public class TextBoxWithDrawingGroup : TextBox {
     private readonly DrawingGroup DrawingGroup = new();
     private readonly SortedList<int, Action<DrawingContext>> RenderActions = new();
-    private Typeface? cachedTypeface;
-    private readonly double cachedPixelsPerDip;
+    private Typeface? CachedTypeface;
+    private readonly double CachedPixelsPerDip;
 
     public Action<DrawingContext> DefaultRenderAction { get; init; }
     public FormattedText VisibleTextAsFormattedText { get; private set; }
 
     public TextEditor TextEditor { get; set; }
 
-    private readonly Stopwatch sw = new();
+    private readonly Stopwatch Sw = new();
 
-    private ScrollChangedEventArgs? oldScrollChangedEventArgs;
+    private ScrollChangedEventArgs? OldScrollChangedEventArgs;
 
     // TODO: Make it work with backgrounds
 
@@ -30,7 +30,7 @@ public class TextBoxWithDrawingGroup : TextBox {
         Background = null;
         CaretBrush = Brushes.White;
 
-        cachedPixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        CachedPixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
         DefaultRenderAction = _ => VisibleTextAsFormattedText!.SetForegroundBrush(CaretBrush);
 
@@ -49,9 +49,9 @@ public class TextBoxWithDrawingGroup : TextBox {
         TextEditor.MainScrollViewer.SizeChanged += (_, _) => Render();
 
         TextEditor.MainScrollViewer.ScrollChanged += (_, e) => {
-            if (e.VerticalChange != 0 && e != oldScrollChangedEventArgs)
+            if (e.VerticalChange != 0 && e != OldScrollChangedEventArgs)
                 Render();
-            oldScrollChangedEventArgs = e;
+            OldScrollChangedEventArgs = e;
         };
     }
 
@@ -59,16 +59,16 @@ public class TextBoxWithDrawingGroup : TextBox {
 
     private FormattedText GetTextAsFormattedText(string text) {
 
-        cachedTypeface ??= new Typeface(FontFamily, FontStyle, FontWeight, FontStretch);
+        CachedTypeface ??= new Typeface(FontFamily, FontStyle, FontWeight, FontStretch);
 
         return new(
             textToFormat: text,
             culture: CultureInfo.GetCultureInfo("en-us"),
             flowDirection: 0,
-            typeface: cachedTypeface,
+            typeface: CachedTypeface,
             emSize: FontSize,
             foreground: Brushes.White,
-            pixelsPerDip: cachedPixelsPerDip
+            pixelsPerDip: CachedPixelsPerDip
         );
     }
 
@@ -86,7 +86,7 @@ public class TextBoxWithDrawingGroup : TextBox {
 
         if (Tools.UpdateStats) {
 
-            sw.Restart();
+            Sw.Restart();
 
             SetVisibleTextAsFormattedText();
             using (DrawingContext dc1 = DrawingGroup.Open()) {
@@ -95,9 +95,9 @@ public class TextBoxWithDrawingGroup : TextBox {
                 dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
             }
 
-            sw.Stop();
+            Sw.Stop();
 
-            Tools.StatsWindow!.AddRenderStat(sw.ElapsedMilliseconds);
+            Tools.StatsWindow!.AddRenderStat(Sw.ElapsedMilliseconds);
 
             return;
         }

@@ -7,7 +7,7 @@ using System.Windows.Media;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 using Script = PiIDE.Wrapers.JediWraper.Script;
 
-namespace PiIDE;
+namespace PiIDE.Editor.Parts;
 
 public partial class CompletionUiList {
 
@@ -24,9 +24,9 @@ public partial class CompletionUiList {
     private readonly TextEditor Editor;
     private string EditorText => Editor.TextEditorTextBox.Text;
     private bool CalledClose;
-    private readonly LoadingState loadingState = new();
-    private readonly NoSuggestionsState noSuggestionsState = new();
-    private readonly Stopwatch sw = new();
+    private readonly LoadingState Loading = new();
+    private readonly NoSuggestionsState NoSuggestions = new();
+    private readonly Stopwatch Sw = new();
 
     public CompletionUiList(TextEditor editor) {
         InitializeComponent();
@@ -56,10 +56,10 @@ public partial class CompletionUiList {
         IsBusy = true;
 
         if (Tools.UpdateStats && Tools.StatsWindow != null) {
-            sw.Restart();
+            Sw.Restart();
             await ReloadCompletions(selectFirst);
-            sw.Stop();
-            Tools.StatsWindow.AddCompletionStat(sw.ElapsedMilliseconds);
+            Sw.Stop();
+            Tools.StatsWindow.AddCompletionStat(Sw.ElapsedMilliseconds);
         } else
             await ReloadCompletions(selectFirst);
 
@@ -131,7 +131,7 @@ public partial class CompletionUiList {
         else
             --MainListBox.SelectedIndex;
 
-        MainListBox.ScrollIntoView(SelectedCompletion);
+        MainListBox.ScrollIntoView(SelectedCompletion!);
     }
 
     public void MoveSelectedCompletionDown() {
@@ -144,7 +144,7 @@ public partial class CompletionUiList {
         else
             ++MainListBox.SelectedIndex;
 
-        MainListBox.ScrollIntoView(SelectedCompletion);
+        MainListBox.ScrollIntoView(SelectedCompletion!);
     }
 
     private void Completion_Click(object sender, RoutedEventArgs e) {
@@ -160,13 +160,13 @@ public partial class CompletionUiList {
 
     private void SetIntoLoadingState() {
         MainListBox.SelectedIndex = -1;
-        MainBorder.Child = loadingState;
+        MainBorder.Child = Loading;
         Show();
     }
 
     private void SetIntoNoSuggestionsState() {
         MainListBox.SelectedIndex = -1;
-        MainBorder.Child = noSuggestionsState;
+        MainBorder.Child = NoSuggestions;
     }
 
     private void ResetToNormalState() => MainBorder.Child = MainListBox;

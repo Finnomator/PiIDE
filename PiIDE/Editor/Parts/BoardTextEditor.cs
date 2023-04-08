@@ -83,7 +83,7 @@ public class BoardTextEditor : TextEditor {
         DisableBoardInteractions();
 
         if (!Tools.EnableBoardInteractions) {
-            ErrorMessager.PromptForCOMPort();
+            ErrorMessager.PromptForComPort();
             return;
         }
 

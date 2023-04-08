@@ -1,17 +1,17 @@
-﻿using PiIDE.Wrapers;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using PiIDE.Wrapers;
 
-namespace PiIDE;
+namespace PiIDE.Editor.Parts;
 
-public partial class PylingUnderliner {
+public partial class PylintUnderliner {
 
     private readonly TextEditor Editor;
     private Size FontSizes => Editor.TextEditorTextBoxCharacterSize;
     private PylintMessage[] CachedMessages = System.Array.Empty<PylintMessage>();
 
-    public PylingUnderliner(TextEditor editor) {
+    public PylintUnderliner(TextEditor editor) {
         InitializeComponent();
         Editor = editor;
     }
@@ -28,7 +28,7 @@ public partial class PylingUnderliner {
     private void UpdateVisualChildren(PylintMessage[] pylintMessages, int upperLineLimit, int lowerLineLimit) {
 
         MainGrid.Children.Clear();
-        VisualBrush brush = (VisualBrush) Resources["asdf"];
+        VisualBrush brush = (VisualBrush) Resources["WavyLine"];
 
         foreach (PylintMessage pylintMessage in pylintMessages) {
             int line = pylintMessage.Line;

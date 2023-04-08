@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace PiIDE.Editor.Parts;
+namespace PiIDE.Editor.Parts.Dialogues;
 
 public partial class SyncOptionsWindow {
 

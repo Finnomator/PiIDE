@@ -1,7 +1,4 @@
-﻿using PiIDE.Editor.Parts;
-using PiIDE.Editor.Parts.Dialogues;
-using PiIDE.Wrapers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,10 +6,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using PiIDE.Editor.Parts;
+using PiIDE.Editor.Parts.Dialogues;
+using PiIDE.Wrapers;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
-namespace PiIDE;
+namespace PiIDE.Editor;
 
 public partial class TextEditorWithFileSelect {
 

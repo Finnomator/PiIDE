@@ -11,7 +11,7 @@ namespace PiIDE;
 internal static class Shortcuts {
 
     // TODO: add all keys to this array
-    private static readonly Key[] _keys = Enum.GetValues(typeof(Key)).Cast<Key>().ToArray();
+    private static readonly Key[] Keys = Enum.GetValues(typeof(Key)).Cast<Key>().ToArray();
     public static Dictionary<Shortcut, List<Key>> ShortcutsMap;
     public static Dictionary<Shortcut, List<Key>> DefaultShortcutsMap = new() {
         { Shortcut.SaveFile, new() { Key.LeftCtrl, Key.S } },
@@ -24,8 +24,8 @@ internal static class Shortcuts {
     static Shortcuts() => ShortcutsMap = LoadShortcuts(Options.Editor.Shortcuts.Shortcuts.ShortcutsJsonPath);
 
     public static bool IsAnyKeyPressed() {
-        for (int i = 1; i < _keys.Length; i++) {
-            Key key = _keys[i];
+        for (int i = 1; i < Keys.Length; i++) {
+            Key key = Keys[i];
             if (Keyboard.IsKeyDown(key))
                 return true;
         }
@@ -34,8 +34,8 @@ internal static class Shortcuts {
     }
     public static bool AreKeysPressed(List<Key> keys) => keys.All(Keyboard.IsKeyDown);
     public static bool AreTheOnlyKeysPressed(List<Key> keys) {
-        for (int i = 1; i < _keys.Length; ++i) {
-            Key key = _keys[i];
+        for (int i = 1; i < Keys.Length; ++i) {
+            Key key = Keys[i];
             if (Keyboard.IsKeyDown(key) && !keys.Contains(key))
                 return false;
         }
@@ -48,8 +48,8 @@ internal static class Shortcuts {
     }
 
     public static bool IsTheOnlyKeyPressed(Key key) {
-        for (int i = 1; i < _keys.Length; i++) {
-            Key k = _keys[i];
+        for (int i = 1; i < Keys.Length; i++) {
+            Key k = Keys[i];
             if (Keyboard.IsKeyDown(k) && k != key)
                 return false;
         }

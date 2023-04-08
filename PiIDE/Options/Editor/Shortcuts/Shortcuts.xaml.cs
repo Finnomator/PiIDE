@@ -36,7 +36,7 @@ public partial class Shortcuts {
             Padding = new(7, 0, 7, 0),
         };
         button.Click += delegate {
-            PiIDE.Shortcuts.ShortcutsMap.Remove(shortcut.IShortcut);
+            PiIDE.Shortcuts.ShortcutsMap.Remove(shortcut.TheShortcut);
             MainStackPanel.Children.Remove(grid);
         };
         Grid.SetColumn(button, 1);
@@ -48,7 +48,7 @@ public partial class Shortcuts {
     private List<PiIDE.Shortcut> GetUnusedShortcuts() {
         List<PiIDE.Shortcut> shortcuts = new();
         foreach (PiIDE.Shortcut shortcut in PiIDE.Shortcuts.DefaultShortcuts) {
-            if (MainStackPanel.Children.Cast<Grid>().All(x => ((Shortcut) x.Children[0]).IShortcut != shortcut))
+            if (MainStackPanel.Children.Cast<Grid>().All(x => ((Shortcut) x.Children[0]).TheShortcut != shortcut))
                 shortcuts.Add(shortcut);
         }
         return shortcuts;

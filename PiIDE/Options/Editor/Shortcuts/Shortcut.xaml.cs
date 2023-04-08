@@ -9,14 +9,14 @@ namespace PiIDE.Options.Editor.Shortcuts;
 public partial class Shortcut {
 
     private bool AllKeysReleased = true;
-    public PiIDE.Shortcut IShortcut { get; }
+    public PiIDE.Shortcut TheShortcut { get; }
     private List<Key> Hotkey;
 
-    public Shortcut(PiIDE.Shortcut shortcut) {
+    public Shortcut(PiIDE.Shortcut theShortcut) {
         InitializeComponent();
-        IShortcut = shortcut;
-        Hotkey = PiIDE.Shortcuts.ShortcutsMap[shortcut];
-        ShortcutLabel.Content = shortcut.ToString().Humanize(LetterCasing.Title);
+        TheShortcut = theShortcut;
+        Hotkey = PiIDE.Shortcuts.ShortcutsMap[theShortcut];
+        ShortcutLabel.Content = theShortcut.ToString().Humanize(LetterCasing.Title);
         ShortcutTextBox.Text = string.Join(" + ", Hotkey);
     }
 
@@ -34,17 +34,17 @@ public partial class Shortcut {
         }
 
         ShortcutTextBox.Text = string.Join(" + ", Hotkey);
-        PiIDE.Shortcuts.ShortcutsMap[IShortcut] = Hotkey;
+        PiIDE.Shortcuts.ShortcutsMap[TheShortcut] = Hotkey;
         AllKeysReleased = false;
     }
 
     private void ShortcutTextBox_KeyUp(object sender, KeyEventArgs e) => AllKeysReleased = !PiIDE.Shortcuts.IsAnyKeyPressed();
 
     private void Reset_Click(object sender, System.Windows.RoutedEventArgs e) {
-        Hotkey = PiIDE.Shortcuts.DefaultShortcutsMap[IShortcut];
+        Hotkey = PiIDE.Shortcuts.DefaultShortcutsMap[TheShortcut];
         ShortcutTextBox.Text = string.Join(" + ", Hotkey);
-        PiIDE.Shortcuts.ShortcutsMap[IShortcut] = PiIDE.Shortcuts.ShortcutsMap[IShortcut];
+        PiIDE.Shortcuts.ShortcutsMap[TheShortcut] = PiIDE.Shortcuts.ShortcutsMap[TheShortcut];
     }
 
-    private void ShortcutTextBox_TextChanged(object sender, TextChangedEventArgs e) => ResetButton.IsEnabled = !PiIDE.Shortcuts.DefaultShortcutsMap[IShortcut].SequenceEqual(Hotkey);
+    private void ShortcutTextBox_TextChanged(object sender, TextChangedEventArgs e) => ResetButton.IsEnabled = !PiIDE.Shortcuts.DefaultShortcutsMap[TheShortcut].SequenceEqual(Hotkey);
 }

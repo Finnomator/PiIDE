@@ -14,7 +14,7 @@ public static class Icons {
 
     public static BitmapImage FileIconImg { get; } = new(new(IconsPath + "FileIcon.png", UriKind.Relative));
     private static readonly Dictionary<string, BitmapImage> CachedFileImages = new();
-    private static Dictionary<(string fileName, int resolution), BitmapImage> CachedResolutionImages = new();
+    private static readonly Dictionary<(string fileName, int resolution), BitmapImage> CachedResolutionImages = new();
 
     public static BitmapSource GetFileIcon(string filePath, bool preferCustomIcons = true) {
 

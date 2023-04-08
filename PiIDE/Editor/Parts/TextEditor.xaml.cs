@@ -1,6 +1,4 @@
-﻿using PiIDE.Editor.Parts;
-using PiIDE.Wrapers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -12,9 +10,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using PiIDE.Wrapers;
 using Completion = PiIDE.Wrapers.JediWraper.ReturnClasses.Completion;
 
-namespace PiIDE;
+namespace PiIDE.Editor.Parts;
 
 // TODO: Fix tabitems stacking. Replace with scrollbar
 
@@ -35,7 +34,7 @@ public partial class TextEditor {
     private readonly CompletionUiList CompletionList;
     private int CurrentAmountOfLines;
     private (int row, int col) LastCaretPos = (1, 1);
-    private readonly PylingUnderliner Underliner;
+    private readonly PylintUnderliner Underliner;
     private Key? LastPressedKey;
     protected int AutoSaveDelaySeconds;
     private readonly CancellationTokenSource AutoSaveCancelToken = new();

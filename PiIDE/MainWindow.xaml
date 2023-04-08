@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PiIDE"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:editor="clr-namespace:PiIDE.Editor"
         mc:Ignorable="d"
         Title="Pi IDE" Height="450" Width="800" Background="{DynamicResource WindowBackgroundBrush}" WindowStyle="SingleBorderWindow" MouseDown="Window_MouseDown" StateChanged="Window_StateChanged" >
 
@@ -51,8 +52,8 @@
                 </Button>
             </Grid>
 
-            <local:Toolbar x:Name="toolbar" HorizontalAlignment="Left"/>
-            <local:TextEditorWithFileSelect x:Name="Editor" Grid.Row="1"/>
+            <local:Toolbar x:Name="MainToolbar" HorizontalAlignment="Left"/>
+            <editor:TextEditorWithFileSelect x:Name="Editor" Grid.Row="1"/>
         </Grid>
     </Border>
 </Window>

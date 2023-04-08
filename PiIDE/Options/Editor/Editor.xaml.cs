@@ -9,7 +9,7 @@ namespace PiIDE.Options.Editor;
 
 public partial class Editor {
 
-    private readonly Regex numberChecker = new("[^0-9]+", RegexOptions.Compiled);
+    private readonly Regex NumberChecker = new("[^0-9]+", RegexOptions.Compiled);
 
     public Editor() {
         InitializeComponent();
@@ -31,7 +31,7 @@ public partial class Editor {
         CompletionsComboBox.SelectedIndex = settings.CompletionsMode;
     }
 
-    private void FontSizeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) => e.Handled = numberChecker.IsMatch(e.Text);
+    private void FontSizeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) => e.Handled = NumberChecker.IsMatch(e.Text);
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
 

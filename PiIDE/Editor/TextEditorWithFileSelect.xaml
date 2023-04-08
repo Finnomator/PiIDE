@@ -1,14 +1,16 @@
-﻿<UserControl x:Class="PiIDE.TextEditorWithFileSelect"
+﻿<UserControl x:Class="PiIDE.Editor.TextEditorWithFileSelect"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PiIDE"
-             xmlns:terminal="clr-namespace:PiIDE.Editor.Parts.Panel.Terminal"
              xmlns:localExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.LocalExplorer"
              xmlns:boardExplorer="clr-namespace:PiIDE.Editor.Parts.Explorer.BoardExplorer"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:logo="clr-namespace:PiIDE.Assets.Icons"
+             xmlns:parts="clr-namespace:PiIDE.Editor.Parts"
+             xmlns:terminals="clr-namespace:PiIDE.Editor.Parts.Panel.Terminals"
+             xmlns:panel="clr-namespace:PiIDE.Editor.Parts.Panel"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800" Background="{DynamicResource ExplorerBackgroundBrush}">
 
@@ -106,19 +108,19 @@
         <TabControl Background="{StaticResource WindowBackgroundBrush}"  Template="{DynamicResource TabControlStyle}" x:Name="OutputTabControl" TabStripPlacement="Bottom" Grid.ColumnSpan="3" Grid.Row="3">
 
             <TabItem Style="{DynamicResource TabItemStyle}" Header="Error List">
-                <local:LintMessagesWindow  x:Name="MessagesWindow" />
+                <parts:LintMessagesWindow  x:Name="MessagesWindow" />
             </TabItem>
 
             <TabItem Style="{DynamicResource TabItemStyle}" Header="Pi Terminal">
-                <terminal:BoardTerminal x:Name="PiTerminal"/>
+                <terminals:BoardTerminal x:Name="PiTerminal"/>
             </TabItem>
 
             <TabItem Style="{DynamicResource TabItemStyle}" Header="Python Terminal">
-                <terminal:PythonTerminal x:Name="PyTerminal"/>
+                <terminals:PythonTerminal x:Name="PyTerminal"/>
             </TabItem>
 
             <TabItem Style="{DynamicResource TabItemStyle}" Header="Notepad">
-                <local:NotePad/>
+                <panel:NotePad/>
             </TabItem>
 
         </TabControl>

@@ -21,7 +21,7 @@ public class JediWraper {
             private bool ReceivedOutputData;
             private string? NewOutputData;
 
-            private readonly SemaphoreSlim semaphoreSlim = new(1, 1);
+            private readonly SemaphoreSlim SemaphoreSlim = new(1, 1);
 
             public bool IsBusy { get; private set; }
 
@@ -88,7 +88,7 @@ public class JediWraper {
 
             public async Task<string?> WriteLineAsync(string line, bool expectsOutput) {
 
-                await semaphoreSlim.WaitAsync();
+                await SemaphoreSlim.WaitAsync();
 
                 IsBusy = true;
 
@@ -96,13 +96,13 @@ public class JediWraper {
 
                 if (expectsOutput) {
                     string? res = await ReadOutputAsync();
-                    semaphoreSlim.Release();
+                    SemaphoreSlim.Release();
                     IsBusy = false;
                     return res;
                 }
 
                 IsBusy = false;
-                semaphoreSlim.Release();
+                SemaphoreSlim.Release();
                 return null;
             }
 
@@ -250,11 +250,11 @@ public class JediWraper {
             [JsonPropertyName("name")]
             public required string Name { get; init; }
 
-            private string _type;
+            private string PrivateType;
             [JsonPropertyName("type")]
             public required string Type {
-                get => _type; init {
-                    _type = value;
+                get => PrivateType; init {
+                    PrivateType = value;
                     Foreground = ColorResources.HighlighterColors.GetBrush(value);
                     Icon = TypeIcons.TypeToIcon(value);
                 }
@@ -275,7 +275,7 @@ public class JediWraper {
             public FontAwesome.WPF.FontAwesome Icon { get; init; }
 
             public string VariableName { get; set; }
-            public required Script script;
+            public required Script Script;
 
             protected static T? TryConvert<T>(string? line) {
                 if (line == null)

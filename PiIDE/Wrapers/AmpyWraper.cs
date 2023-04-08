@@ -79,7 +79,7 @@ internal static class AmpyWraper {
 
     public static class FileRunner {
 
-        private static Process? RunnerProcess;
+        private static Process? _runnerProcess;
 
         public static async void BeginRunningFile(int comport, string filePath) {
             if (IsBusy) {
@@ -89,34 +89,34 @@ internal static class AmpyWraper {
 
             IsBusy = true;
 
-            using (RunnerProcess = new() { StartInfo = AmpyDefaultStartInfo }) {
-                RunnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath.Replace("\\", "/")}\"";
-                RunnerProcess.EnableRaisingEvents = true;
-                RunnerProcess.OutputDataReceived += (s, e) => AmpyOutputDataReceived?.Invoke(s, e);
-                RunnerProcess.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
-                RunnerProcess.Exited += (s, e) => AmpyExited?.Invoke(s, e);
-                RunnerProcess.Start();
-                RunnerProcess.BeginOutputReadLine();
-                RunnerProcess.BeginErrorReadLine();
-                await RunnerProcess.WaitForExitAsync();
+            using (_runnerProcess = new() { StartInfo = AmpyDefaultStartInfo }) {
+                _runnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath.Replace("\\", "/")}\"";
+                _runnerProcess.EnableRaisingEvents = true;
+                _runnerProcess.OutputDataReceived += (s, e) => AmpyOutputDataReceived?.Invoke(s, e);
+                _runnerProcess.ErrorDataReceived += (s, e) => AmpyErrorDataReceived?.Invoke(s, e);
+                _runnerProcess.Exited += (s, e) => AmpyExited?.Invoke(s, e);
+                _runnerProcess.Start();
+                _runnerProcess.BeginOutputReadLine();
+                _runnerProcess.BeginErrorReadLine();
+                await _runnerProcess.WaitForExitAsync();
             }
 
-            RunnerProcess = null;
+            _runnerProcess = null;
             IsBusy = false;
         }
 
         public static void WriteLineToRunningFileInput(string text) {
-            if (IsBusy && RunnerProcess != null)
-                RunnerProcess.StandardInput.WriteLine(text);
+            if (IsBusy && _runnerProcess != null)
+                _runnerProcess.StandardInput.WriteLine(text);
         }
 
         public static void KillProcess() {
-            if (RunnerProcess == null)
+            if (_runnerProcess == null)
                 return;
 
-            RunnerProcess.Kill();
-            RunnerProcess.Close();
-            RunnerProcess = null;
+            _runnerProcess.Kill();
+            _runnerProcess.Close();
+            _runnerProcess = null;
             IsBusy = false;
         }
     }

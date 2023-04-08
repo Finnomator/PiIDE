@@ -24,37 +24,37 @@ public static class PythonWraper {
 
     public static class AsyncFileRunner {
 
-        private static Process? process;
+        private static Process? _process;
 
         public static async void RunFileAsync(string filePath) {
-            process = new() {
+            _process = new() {
                 StartInfo = PythonDefaultStartInfo,
                 EnableRaisingEvents = true
             };
-            process.StartInfo.Arguments = $"\"{filePath}\"";
+            _process.StartInfo.Arguments = $"\"{filePath}\"";
 
-            process.OutputDataReceived += (s, e) => PythonOutputDataReceived?.Invoke(s, e);
-            process.ErrorDataReceived += (s, e) => PythonErrorDataReceived?.Invoke(s, e);
-            process.Exited += (s, e) => PythonExited?.Invoke(s, e);
+            _process.OutputDataReceived += (s, e) => PythonOutputDataReceived?.Invoke(s, e);
+            _process.ErrorDataReceived += (s, e) => PythonErrorDataReceived?.Invoke(s, e);
+            _process.Exited += (s, e) => PythonExited?.Invoke(s, e);
 
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
+            _process.Start();
+            _process.BeginErrorReadLine();
+            _process.BeginOutputReadLine();
 
-            await process.WaitForExitAsync();
-            process.Close();
-            process = null;
+            await _process.WaitForExitAsync();
+            _process.Close();
+            _process = null;
         }
 
-        public static void WriteLineToInput(string line) => process?.StandardInput.WriteLine(line);
+        public static void WriteLineToInput(string line) => _process?.StandardInput.WriteLine(line);
 
         public static void KillProcess() {
-            if (process == null)
+            if (_process == null)
                 return;
 
-            process.Kill();
-            process.Close();
-            process = null;
+            _process.Kill();
+            _process.Close();
+            _process = null;
         }
     }
 

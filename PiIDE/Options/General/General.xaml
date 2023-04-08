@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <Label Content="Pi COM Port" Foreground="White" HorizontalAlignment="Center"/>
-        <ComboBox Grid.Column="1" Foreground="White" x:Name="COMPortComboBox" VerticalContentAlignment="Center"  DropDownOpened="COMPortComboBox_DropDownOpened">
+        <ComboBox Grid.Column="1" Foreground="White" x:Name="ComPortComboBox" VerticalContentAlignment="Center"  DropDownOpened="COMPortComboBox_DropDownOpened">
             <TextBlock Text="&lt;None>"/>
         </ComboBox>
     </Grid>

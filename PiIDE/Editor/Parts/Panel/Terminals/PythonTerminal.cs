@@ -1,8 +1,7 @@
-﻿using PiIDE.Wrapers;
-using System.Windows.Input;
-using PiIDE.Editor.Parts.Panel.Terminals;
+﻿using System.Windows.Input;
+using PiIDE.Wrapers;
 
-namespace PiIDE.Editor.Parts.Panel.Terminal;
+namespace PiIDE.Editor.Parts.Panel.Terminals;
 
 public class PythonTerminal : TerminalBase {
 

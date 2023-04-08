@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 
-namespace PiIDE;
+namespace PiIDE.Options;
 
 public partial class OptionsWindow {
     public OptionsWindow() {

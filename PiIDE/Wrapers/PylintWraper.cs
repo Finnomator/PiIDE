@@ -59,16 +59,16 @@ public class PylintMessage {
     [JsonPropertyName("message-id")]
     public string MessageId { get; set; } = "";
 
-    private string _type = "";
+    private string PrivateType = "";
 
     [JsonPropertyName("type")]
     public string Type {
-        get => _type;
+        get => PrivateType;
         set {
             ForegroundColor = PylintMessageColors.MessageTypeToColor(value);
             Icon = PylintMessageIcons.MessageTypeToIcon(value);
             Icon.Foreground = PylintMessageColors.MessageTypeToColor(value);
-            _type = value;
+            PrivateType = value;
         }
     }
 

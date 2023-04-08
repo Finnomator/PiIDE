@@ -6,7 +6,7 @@ using System.Windows.Media;
 using static PiIDE.Wrapers.JediWraper;
 using JediName = PiIDE.Wrapers.JediWraper.ReturnClasses.Name;
 
-namespace PiIDE;
+namespace PiIDE.Editor.Parts;
 
 public static partial class SyntaxHighlighter {
 
