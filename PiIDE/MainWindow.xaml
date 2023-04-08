@@ -13,7 +13,7 @@
     </WindowChrome.WindowChrome>
 
     <Border Name="PaddingBorder" BorderThickness="2" BorderBrush="{StaticResource SplitterBackgroundBrush}" CornerRadius="8">
-        <Grid Panel.ZIndex="4" x:Name="MainGrid" Grid.Row="1">
+        <Grid Panel.ZIndex="4" x:Name="MainGrid">
 
             <Grid.RowDefinitions>
                 <RowDefinition Name="TitleBarRow" Height="Auto"/>

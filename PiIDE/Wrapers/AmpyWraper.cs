@@ -31,7 +31,7 @@ namespace PiIDE.Wrapers {
 
             IsBusy = true;
 
-            string? error = null;
+            string? error;
             string? output = null;
 
             using (Process p = new() { StartInfo = AmpyDefaultStartInfo }) {

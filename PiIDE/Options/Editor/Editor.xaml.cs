@@ -10,7 +10,6 @@ namespace PiIDE.Options.Editor {
     public partial class Editor : UserControl {
 
         private readonly Regex numberChecker = new("[^0-9]+", RegexOptions.Compiled);
-        private readonly ComboBoxFontItem[] comboBoxFontItems;
 
         public Editor() {
             InitializeComponent();
@@ -18,7 +17,7 @@ namespace PiIDE.Options.Editor {
             GlobalSettings settings = GlobalSettings.Default;
 
             int fontIndex = 0;
-            comboBoxFontItems = new ComboBoxFontItem[Tools.MonospaceFonts.Length];
+            ComboBoxFontItem[] comboBoxFontItems = new ComboBoxFontItem[Tools.MonospaceFonts.Length];
             for (int i = 0; i < Tools.MonospaceFonts.Length; i++) {
                 FontFamily font = Tools.MonospaceFonts[i];
                 comboBoxFontItems[i] = new(font);

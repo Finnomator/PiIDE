@@ -190,7 +190,7 @@ namespace PiIDE.Wrapers {
 
             public async Task<ReturnClasses.Completion[]> Complete(int line, int column, bool fuzzy = false) {
                 await WraperRepl.WriteLineAsync($"{CompletionsVarName} = {WraperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})", false);
-                return TryConvert<ReturnClasses.Completion>(await WraperRepl.WriteLineAsync($"print_obj(dump_completions(completions))", true));
+                return TryConvert<ReturnClasses.Completion>(await WraperRepl.WriteLineAsync("print_obj(dump_completions(completions))", true));
             }
 
             public async Task<ReturnClasses.Name[]> Infer(int line, int column, bool onlyStubs = false, bool preferStubs = false) {
@@ -232,12 +232,12 @@ namespace PiIDE.Wrapers {
 
             public async Task<ReturnClasses.Name[]> GetNamesAsync(bool allScopes = false, bool definitions = false, bool references = false) {
                 await WraperRepl.WriteLineAsync($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
-                return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync($"print_obj(dump_names(names))", true));
+                return TryConvert<ReturnClasses.Name>(await WraperRepl.WriteLineAsync("print_obj(dump_names(names))", true));
             }
 
             public ReturnClasses.Name[] GetNames(bool allScopes = false, bool definitions = false, bool references = false) {
                 WraperRepl.WriteLine($"{NamesVarName} = {WraperVariableName}.get_names(all_scopes={(allScopes ? 1 : 0)}, definitions={(definitions ? 1 : 0)}, references={(references ? 1 : 0)})", false);
-                return TryConvert<ReturnClasses.Name>(WraperRepl.WriteLine($"print_obj(dump_names(names))", true));
+                return TryConvert<ReturnClasses.Name>(WraperRepl.WriteLine("print_obj(dump_names(names))", true));
             }
         }
 

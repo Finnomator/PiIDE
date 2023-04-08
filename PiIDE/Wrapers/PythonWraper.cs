@@ -65,8 +65,8 @@ namespace PiIDE.Wrapers {
             process.BeginErrorReadLine();
             process.BeginOutputReadLine();
 
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
+            string? output = process.StandardOutput.ReadToEnd();
+            string? error = process.StandardError.ReadToEnd();
             process.WaitForExit();
             process.Close();
 

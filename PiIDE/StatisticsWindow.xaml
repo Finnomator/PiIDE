@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PiIDE"
         mc:Ignorable="d"
         WindowStyle="ToolWindow"
         Background="{StaticResource WindowBackgroundBrush}"
@@ -63,7 +62,7 @@
 
             <Label Content="Last Completions:" Foreground="White"/>
 
-            <ListView Grid.Row="1" Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastCompletionsListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}" Height="160">
+            <ListView Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" d:ItemsSource="{d:SampleData ItemCount=7}" Foreground="White" BorderBrush="{StaticResource SplitterBackgroundBrush}" Name="LastCompletionsListView"  Margin="10,0,0,0" Background="{StaticResource PanelBackgroundBrush}" Height="160">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="40">

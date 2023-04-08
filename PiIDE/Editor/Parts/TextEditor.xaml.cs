@@ -314,7 +314,7 @@ namespace PiIDE {
         private (int firstSelectedLine, int lastSelectedLine) GetSelectedLines() {
             int selectionStart = TextEditorTextBox.SelectionStart;
             int selectionLength = TextEditorTextBox.SelectionLength;
-            (int col, int row)[] lines = EditorText.GetPointsOfIndexes(new int[] { selectionStart, selectionStart + selectionLength });
+            (int col, int row)[] lines = EditorText.GetPointsOfIndexes(new[] { selectionStart, selectionStart + selectionLength });
             return (lines.Min().row, lines.Max().row);
         }
 

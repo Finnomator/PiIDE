@@ -10,7 +10,7 @@ namespace PiIDE.Editor.Parts {
     public class TextBoxWithDrawingGroup : TextBox {
         private readonly DrawingGroup DrawingGroup = new();
         private readonly SortedList<int, Action<DrawingContext>> RenderActions = new();
-        private Typeface cachedTypeface;
+        private Typeface? cachedTypeface;
         private readonly double cachedPixelsPerDip;
 
         public Action<DrawingContext> DefaultRenderAction { get; init; }

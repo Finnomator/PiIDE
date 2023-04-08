@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 namespace PiIDE.Editor.Parts {
     public class BoardEditorTabItem : EditorTabItem {
 
-        private readonly BitmapImage PiLogoBitmap = Icons.GetIcon("RaspberryPi", 16);
+        private readonly BitmapImage PiLogoBitmap = Icons.GetIcon("RaspberryPi");
 
         public BoardEditorTabItem(string localFilePath) : base(localFilePath) {
             Image piLogo = new() {

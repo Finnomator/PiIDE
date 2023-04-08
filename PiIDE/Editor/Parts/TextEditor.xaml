@@ -43,7 +43,8 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Name="InformationWrapPanel" VerticalAlignment="Top" Margin="0,2,0,3" Panel.ZIndex="1">
-            <TextBox Name="LocalFilePathTextBlock" BorderThickness="0" Background="Transparent" Text="C:\" Foreground="White" Padding="7,0,0,0" ToolTip="File Path" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
+            <TextBox Name="LocalFilePathTextBlock" BorderThickness="0" Background="Transparent" Text="C:\"
+                     Padding="7,0,0,0" ToolTip="File Path" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
 
             <WrapPanel x:Name="SavingFileStatusWrapPanel" Visibility="Collapsed" VerticalAlignment="Center">
                 <TextBlock Text="Saving File" VerticalAlignment="Center" Foreground="White" Padding="20,0,2,0"/>
@@ -57,7 +58,7 @@
             </Rectangle.Effect>
         </Rectangle>
 
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollViewer.ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3" x:Name="MainScrollViewer" PreviewMouseWheel="MainScrollViewer_PreviewMouseWheel" ScrollChanged="MainScrollViewer_ScrollChanged" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
 
             <ScrollViewer.Resources>
                 <Style TargetType="ScrollBar">

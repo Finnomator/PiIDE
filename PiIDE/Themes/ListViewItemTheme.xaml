@@ -45,8 +45,7 @@
                     <Condition Property="IsSelected" Value="True"/>
                 </MultiTrigger.Conditions>
             </MultiTrigger>
-            <Trigger Property="IsEnabled" Value="False">
-            </Trigger>
+            <Trigger Property="IsEnabled" Value="False" />
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
