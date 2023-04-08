@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:wrappers="clr-namespace:PiIDE.Wrappers"
         mc:Ignorable="d" 
         d:DesignHeight="100"
         d:DesignWidth="160"
@@ -23,9 +24,9 @@
                 <DataTemplate>
                     <Button Style="{StaticResource CleanButtonStyle}" Click="Completion_Click" HorizontalContentAlignment="Stretch">
                         <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="{Binding Icon.Icon}" Width="20" Spin="{Binding Icon.Spin}" VerticalAlignment="Center" Foreground="{Binding Foreground}"/>
+                            <fa:FontAwesome Icon="{Binding (wrappers:JediWrapper+ReturnClasses+Completion.Icon).Icon}" Width="20" Spin="{Binding (wrappers:JediWrapper+ReturnClasses+Completion.Icon).Spin}" VerticalAlignment="Center" Foreground="{Binding (wrappers:JediWrapper+ReturnClasses+Completion.Foreground)}"/>
                             <Rectangle Width="3"/>
-                            <TextBlock Text="{Binding Name}" FontFamily="Cascadia Code" Foreground="White"/>
+                            <TextBlock Text="{Binding (wrappers:JediWrapper+ReturnClasses+Completion.Name)}" FontFamily="Cascadia Code" Foreground="White"/>
                         </StackPanel>
                     </Button>
                 </DataTemplate>
