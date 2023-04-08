@@ -55,7 +55,7 @@ namespace PiIDE.Options.Editor.Shortcuts {
 
         private void Add_Click(object sender, RoutedEventArgs e) {
             if (SelectShortcutComboBox.SelectedIndex >= 0) {
-                ShortcutComboBoxItem? selectedItem = ((ShortcutComboBoxItem?) SelectShortcutComboBox.SelectedItem);
+                ShortcutComboBoxItem? selectedItem = (ShortcutComboBoxItem?) SelectShortcutComboBox.SelectedItem;
                 if (selectedItem == null)
                     return;
                 AddShortcut(selectedItem.Shortcut);

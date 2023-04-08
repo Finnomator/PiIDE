@@ -561,7 +561,7 @@ namespace PiIDE {
         }
 
         private void UserControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-            if (e.NewFocus is not ListBox && e.NewFocus != CompletionList)
+            if (e.NewFocus is not ListBox && !Equals(e.NewFocus, CompletionList))
                 CompletionList.Close();
         }
 

@@ -104,17 +104,17 @@ namespace PiIDE {
             textEditor.SavedFile += (s, e) => UpdatePylintMessages(textEditor);
             textEditor.StartedPythonExecution += (s, e) => OutputTabControl.SelectedIndex = 2;
 
-            tabItem.CloseTabClick += (s, filePath) => {
-                TextEditor? editor = GetEditorFromPath(filePath);
+            tabItem.CloseTabClick += (s, path) => {
+                TextEditor? editor = GetEditorFromPath(path);
                 if (editor == null)
                     return;
 
                 if (!editor.ContentIsSaved) {
                     MessageBoxResult msgbr = MessageBox.Show("This file is not saved. Do you want to close it anyway?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                     if (msgbr == MessageBoxResult.Yes)
-                        CloseFile(filePath);
+                        CloseFile(path);
                 } else
-                    CloseFile(filePath);
+                    CloseFile(path);
             };
 
             if (atIndex < 0)

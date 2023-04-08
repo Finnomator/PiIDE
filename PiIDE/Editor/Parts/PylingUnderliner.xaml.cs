@@ -10,26 +10,11 @@ namespace PiIDE {
 
         private readonly TextEditor Editor;
         private Size FontSizes => Editor.TextEditorTextBoxCharacterSize;
-        private readonly VisualBrush WavyLine;
         private PylintMessage[] CachedMessages = System.Array.Empty<PylintMessage>();
 
         public PylingUnderliner(TextEditor editor) {
             InitializeComponent();
             Editor = editor;
-
-            WavyLine = new() {
-                Viewbox = new Rect(0, 0, 3, 2),
-                Viewport = new Rect(0, 1, 4, 5),
-                ViewboxUnits = BrushMappingMode.Absolute,
-                TileMode = TileMode.Tile,
-                Visual = new Path() {
-                    Data = Geometry.Parse("M 0,1 C1,1 1,2 3,1"),
-                    Stroke = Brushes.Red,
-                    StrokeThickness = 0.2,
-                    StrokeEndLineCap = PenLineCap.Square,
-                    StrokeStartLineCap = PenLineCap.Square,
-                }
-            };
         }
 
         public void UpdateUnderline(int upperLineLimit, int lowerLineLimit) => UpdateVisualChildren(CachedMessages, upperLineLimit, lowerLineLimit);

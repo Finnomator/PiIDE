@@ -176,7 +176,7 @@ namespace PiIDE {
                 MainListBox.SelectedIndex = 0;
         }
 
-        private class LoadingState : Border {
+        private sealed class LoadingState : Border {
             public LoadingState() {
                 BorderThickness = new(1);
                 BorderBrush = (Brush) Application.Current.Resources["SplitterBackgroundBrush"];
@@ -191,7 +191,7 @@ namespace PiIDE {
             }
         }
 
-        private class NoSuggestionsState : Border {
+        private sealed class NoSuggestionsState : Border {
             public NoSuggestionsState() {
                 BorderThickness = new(1);
                 BorderBrush = (Brush) Application.Current.Resources["SplitterBackgroundBrush"];
