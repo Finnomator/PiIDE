@@ -15,13 +15,13 @@ public static class Tools {
     public static bool UpdateStats { get; set; }
     public static StatisticsWindow? StatsWindow { get; set; }
 
-    public readonly static BrushConverter BrushConverter = new();
+    public static readonly BrushConverter BrushConverter = new();
 
-    public readonly static string[] PythonKeywords = new string[] {
+    public static readonly string[] PythonKeywords = new string[] {
         "False", "None", "True", "and", "await", "async", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
     };
 
-    public readonly static string[] PythonExtensions = new string[] { ".py", ".pyi" };
+    public static readonly string[] PythonExtensions = new string[] { ".py", ".pyi" };
     public static bool IsPythonFile(string filePath) => IsPythonExt(Path.GetExtension(filePath));
     public static bool IsPythonExt(string ext) => PythonExtensions.Contains(ext);
 
@@ -138,7 +138,7 @@ public static class Tools {
 
     public static readonly FontAwesome.WPF.FontAwesome FontAwesome_Loading = new() { Icon = FontAwesome.WPF.FontAwesomeIcon.Spinner, Spin = true, VerticalAlignment = VerticalAlignment.Center };
 
-    public readonly static FontFamily[] MonospaceFonts = new FontFamily[] {
+    public static readonly FontFamily[] MonospaceFonts = new FontFamily[] {
         new("Cascadia Code"),
         new("Consolas"),
     };

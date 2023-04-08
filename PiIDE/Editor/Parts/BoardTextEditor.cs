@@ -68,7 +68,7 @@ public class BoardTextEditor : TextEditor {
 
     private void EnableBoardInteractions() => RunFileOnBoardButton.IsEnabled = true;
 
-    protected async override void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
+    protected override async void StopAllRunningTasksButton_Click(object sender, RoutedEventArgs e) {
         base.StopAllRunningTasksButton_Click(sender, e);
         if (Tools.EnableBoardInteractions) {
             AmpyWraper.FileRunner.KillProcess();

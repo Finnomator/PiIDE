@@ -156,7 +156,7 @@ public class JediWraper {
             Path = path;
         }
 
-        public async static Task<Script> MakeScriptAsync(string code, string path) {
+        public static async Task<Script> MakeScriptAsync(string code, string path) {
             await WraperRepl.WriteLineAsync($"{WraperVariableName} = jedi.Script(\"\"\"{code.Replace(@"\", @"\\").Replace("\r", @"\r").Replace("\n", @"\n").Replace("\"", "\\\"")}\"\"\", path=r\"{path}\")", false);
             return new(code, path);
         }

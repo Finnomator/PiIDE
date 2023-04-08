@@ -13,9 +13,9 @@ public static class PipModules {
         public bool SuprressMissingWarning { get; init; }
     }
 
-    public readonly static PipModule Ampy = new() { Name = "Ampy", PipInstallCommand = "pip install adafruit-ampy", CmdCommand = "ampy" };
-    public readonly static PipModule Pylint = new() { Name = "Pylint", PipInstallCommand = "pip install pylint", CmdCommand = "pylint" };
-    public readonly static PipModule Black = new() { Name = "Black", PipInstallCommand = "pip install black", CmdCommand = "black", SuprressMissingWarning = true };
+    public static readonly PipModule Ampy = new() { Name = "Ampy", PipInstallCommand = "pip install adafruit-ampy", CmdCommand = "ampy" };
+    public static readonly PipModule Pylint = new() { Name = "Pylint", PipInstallCommand = "pip install pylint", CmdCommand = "pylint" };
+    public static readonly PipModule Black = new() { Name = "Black", PipInstallCommand = "pip install black", CmdCommand = "black", SuprressMissingWarning = true };
 }
 
 public static class MissingModulesChecker {
