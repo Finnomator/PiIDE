@@ -17,6 +17,7 @@ public abstract partial class DirectoryItemBase {
     private bool IsExpanded;
 
     protected readonly ExplorerBase ParentExplorer;
+    protected readonly DirectoryItemBase? ParentDirectory;
     protected string DirectoryName;
     protected FileSystemWatcher? Watcher;
 
@@ -48,6 +49,7 @@ public abstract partial class DirectoryItemBase {
 
         DirectoryPath = fullPath;
         ParentExplorer = parentExplorer;
+        ParentDirectory = parentDirectory;
 
         DirectoryName = Path.GetFileName(DirectoryPath);
 
@@ -156,24 +158,22 @@ public abstract partial class DirectoryItemBase {
 
     private void RenameFromTextBox(TextBox textBox) {
 
+        RenameTextBox.Visibility = Visibility.Collapsed;
+
         string oldName = DirectoryName;
         string newName = textBox.Text;
         string newPath = Path.Combine(DirectoryPath[^newName.Length..], newName);
 
         if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1) {
             MessageBox.Show("Invalid characters in path", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            RenameTextBox.Visibility = Visibility.Collapsed;
             return;
         }
 
-        if (newName == oldName) {
-            RenameTextBox.Visibility = Visibility.Collapsed;
+        if (newName == oldName)
             return;
-        }
 
         if (Directory.Exists(newPath)) {
             MessageBox.Show("The directory already exists", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            RenameTextBox.Visibility = Visibility.Collapsed;
             return;
         }
 

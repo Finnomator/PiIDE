@@ -7,10 +7,18 @@ namespace PiIDE.Editor.Parts.Explorer.BoardExplorer;
 public class BoardDirectoryItem : DirectoryItemBase {
 
     public string DirectoryPathOnBoard { get; }
+    private new BoardDirectoryItem? ParentDirectory => (BoardDirectoryItem?) base.ParentDirectory;
 
     public static int Port => GlobalSettings.Default.SelectedCOMPort;
 
-    public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) => DirectoryPathOnBoard = directoryPathOnBoard;
+    public BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) {
+        DirectoryPathOnBoard = directoryPathOnBoard;
+
+        DirContextMenu.Items.Remove(RenameMenuItem);
+        DirContextMenu.Items.Remove(CopyMenuItem);
+        DirContextMenu.Items.Remove(DeleteMenuItem);
+        DirContextMenu.Items.Remove(CutMenuItem);
+    }
 
     private BoardDirectoryItem(string fullPath, string directoryPathOnBoard, ExplorerBase parentExplorer, BoardDirectoryItem parentDirectory) : base(fullPath, parentDirectory, parentExplorer) => DirectoryPathOnBoard = directoryPathOnBoard;
 
@@ -75,7 +83,21 @@ public class BoardDirectoryItem : DirectoryItemBase {
 
     protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
-    protected override void RenameDirectory(string oldPath, string newName) => ErrorMessages.FeatureNotSupported();
+    protected override async void RenameDirectory(string oldPath, string newName) {
+
+        if (ParentDirectory == null)
+            return;
+
+        SetStatus("Renaming");
+
+        await AmpyWrapper.RemoveDirectoryFromBoardAsync(Port, DirectoryPathOnBoard);
+
+        await AmpyWrapper.WriteToBoardAsync(Port, oldPath, Path.Combine(ParentDirectory.DirectoryPathOnBoard, newName));
+
+        base.RenameDirectory(oldPath, newName);
+
+        UnsetStatus();
+    }
 
     protected override async void AddFile_Click(object sender, RoutedEventArgs e) {
         string newFileLocalPath = Path.Combine(DirectoryPath, "new_file.py");
@@ -88,9 +110,6 @@ public class BoardDirectoryItem : DirectoryItemBase {
         if (await AmpyWrapper.CreateDirectoryAsync(Port, Path.Combine(DirectoryPathOnBoard, "NewFolder")))
             Tools.TryCreateDirectory(newDirLocalPath);
     }
-
-    // TODO: this method should not be overriden, but as long as the feature is not supported, it will
-    protected override void Rename_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
 
     public static bool CheckForBoardConnection() {
         if (!Tools.EnableBoardInteractions) {

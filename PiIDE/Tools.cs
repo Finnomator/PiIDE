@@ -261,4 +261,18 @@ public static class Tools {
             Debug.WriteLine($"{methodName ?? action.Method.Name} took {sw.ElapsedMilliseconds}ms");
         return sw.ElapsedMilliseconds;
     }
+
+    public static string GetParentDirectory(string path) {
+        char separator;
+        if (path.Contains('/'))
+            separator = '/';
+        else if (path.Contains('\\'))
+            separator = '\\';
+        else
+            throw new ArgumentException("Path does not contain any separators");
+
+        Debug.Assert(!path.Contains("\\\\") && !path.Contains("//"));
+
+        return string.Join(separator, path.Split(separator)[..^1]);
+    }
 }

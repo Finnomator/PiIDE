@@ -41,12 +41,12 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Copy" Click="Copy_Click">
+                    <MenuItem Header="Copy" Name="CopyMenuItem" Click="Copy_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="Copy" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Cut" Click="Cut_Click">
+                    <MenuItem Header="Cut" Name="CutMenuItem" Click="Cut_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="Cut" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
@@ -56,12 +56,12 @@
                             <fa:FontAwesome Icon="Paste" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Rename" Click="Rename_Click">
+                    <MenuItem Header="Rename" x:Name="RenameMenuItem" Click="Rename_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="ICursor" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Delete" Click="Delete_Click">
+                    <MenuItem Header="Delete" x:Name="DeleteMenuItem" Click="Delete_Click">
                         <MenuItem.Icon>
                             <fa:FontAwesome Icon="Remove" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Red"/>
                         </MenuItem.Icon>
