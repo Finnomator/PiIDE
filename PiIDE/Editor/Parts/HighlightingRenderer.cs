@@ -67,7 +67,7 @@ public class HighlightingRenderer {
     private List<Rect> OptimizeIndentRectsForDrawing(List<SyntaxHighlighter.IndentMatch> indentMatches) {
         List<Rect> optimized = new();
         Size charSize = Editor.TextEditorTextBoxCharacterSize;
-        double offset = Editor.GetFirstVisibleLineNum() * charSize.Height;
+        double offset = Editor.GetFirstAndLastVisibleLineNum().firstVisibleLine * charSize.Height;
         HashSet<int> optimizedIndexes = new();
 
         for (int i = 0; i < indentMatches.Count; i++) {
@@ -163,7 +163,7 @@ public class HighlightingRenderer {
 
         List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(EditorText);
         (int fvl, int lvl) = Editor.GetFirstAndLastVisibleLineNum();
-        int firstVisibleIndex = Editor.GetFirstVisibleIndex();
+        int firstVisibleIndex = Editor.GetFirstAndLastVisibleIndex().firstVisibleIndex;
 
         if (firstVisibleIndex == -1)
             return;
@@ -171,7 +171,7 @@ public class HighlightingRenderer {
         foreach (SyntaxHighlighter.BracketMatch bracket in brackets) {
             if (bracket.Row < fvl)
                 continue;
-            if (bracket.Row >= lvl - 1)
+            if (bracket.Row >= lvl)
                 break;
 
             int bci = Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);

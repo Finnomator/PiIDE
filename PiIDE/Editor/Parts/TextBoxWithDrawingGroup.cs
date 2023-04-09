@@ -20,7 +20,7 @@ public class TextBoxWithDrawingGroup : TextBox {
     public TextEditor TextEditor { get; set; } = null!;
 
     private readonly Stopwatch Sw = new();
-
+    private Point CachedFormattedTextPosition = new(2, 0);
     private ScrollChangedEventArgs? OldScrollChangedEventArgs;
 
     // TODO: Make it work with backgrounds
@@ -82,7 +82,11 @@ public class TextBoxWithDrawingGroup : TextBox {
             RenderActions.Remove(RenderActions.IndexOfValue(action));
     }
 
-    public void Render() {
+    public void Render()
+    {
+
+        CachedFormattedTextPosition.Y = TextEditor.GetFirstAndLastVisibleLineNum().firstVisibleLine *
+                                        TextEditor.TextEditorTextBoxCharacterSize.Height;
 
         if (Tools.UpdateStats) {
 
@@ -92,7 +96,7 @@ public class TextBoxWithDrawingGroup : TextBox {
             using (DrawingContext dc1 = DrawingGroup.Open()) {
                 foreach (Action<DrawingContext> action in RenderActions.Values)
                     action(dc1);
-                dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.GetFirstVisibleLineNum() * TextEditor.TextEditorTextBoxCharacterSize.Height));
+                dc1.DrawText(VisibleTextAsFormattedText, CachedFormattedTextPosition);
             }
 
             Sw.Stop();
@@ -106,7 +110,7 @@ public class TextBoxWithDrawingGroup : TextBox {
         using DrawingContext dc = DrawingGroup.Open();
         foreach (Action<DrawingContext> action in RenderActions.Values)
             action(dc);
-        dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.GetFirstVisibleLineNum() * TextEditor.TextEditorTextBoxCharacterSize.Height));
+        dc.DrawText(VisibleTextAsFormattedText, CachedFormattedTextPosition);
     }
 
     protected override void OnRender(DrawingContext drawingContext) {

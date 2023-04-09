@@ -71,8 +71,7 @@ public partial class SearchBox {
         if (AllSearchResults == null)
             return;
 
-        int fvl = ResultRenderBox.Editor.GetFirstVisibleLineNum();
-        int lvl = ResultRenderBox.Editor.GetLastVisibleLineNum();
+        (int fvl, int lvl) = ResultRenderBox.Editor.GetFirstAndLastVisibleIndex();
 
         for (int i = 0; i < AllSearchResults.Count; ++i) {
             SearchResult match = AllSearchResults[i];

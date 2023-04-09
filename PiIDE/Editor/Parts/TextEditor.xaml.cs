@@ -88,6 +88,7 @@ public partial class TextEditor {
             switch (e.PropertyName) {
                 case nameof(GlobalSettings.Default.TextEditorFontSize):
                     TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
+                    UpdatePylint();
                     break;
                 case nameof(GlobalSettings.Default.TextEditorFontFamily):
                     TextEditorTextBoxCharacterSize = MeasureTextBoxStringSize("A");
@@ -96,29 +97,13 @@ public partial class TextEditor {
         };
     }
 
-    public int GetFirstVisibleLineNum() {
-        if (TextEditorTextBoxCharacterSize.Height == 0.0)
-            return 0;
-        int line = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
-        int textLines = EditorText.CountLines();
-        return textLines < line ? textLines : line;
-    }
-
-    public int GetLastVisibleLineNum() {
-        if (TextEditorTextBoxCharacterSize.Height == 0.0)
-            return 0;
-        int lines = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) /
-                           TextEditorTextBoxCharacterSize.Height) + 1;
-        int textLines = EditorText.CountLines();
-        return textLines < lines ? textLines : lines;
-    }
-
     public (int firstVisibleLine, int lastVisibleLine) GetFirstAndLastVisibleLineNum() {
         if (TextEditorTextBoxCharacterSize.Height == 0.0)
             return (0, 0);
 
         int fvl = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
         int lvl = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
+
         int totalLines = EditorText.CountLines();
 
         if (totalLines < fvl)
@@ -126,16 +111,7 @@ public partial class TextEditor {
         if (totalLines < lvl)
             lvl = totalLines;
 
-        return (fvl, lvl);
-    }
-
-    public int GetFirstVisibleIndex() => EditorText.GetIndexOfColRow(GetFirstVisibleLineNum(), 0);
-
-    public int GetLastVisibleIndex() {
-        if (EditorText == "")
-            return 0;
-        int lvl = GetLastVisibleLineNum();
-        return EditorText.GetIndexOfColRow(lvl - 1, EditorText.GetLengthOfLine(lvl - 1));
+        return lvl <= fvl ? (fvl - 1, lvl) : (fvl, lvl);
     }
 
     public (int firstVisibleIndex, int lastVisibleIndex) GetFirstAndLastVisibleIndex() {
@@ -146,6 +122,7 @@ public partial class TextEditor {
 
         int fvi = EditorText.GetIndexOfColRow(firstVisibleLine, 0);
         int lvi = EditorText.GetIndexOfColRow(lastVisibleLine - 1, EditorText.GetLengthOfLine(lastVisibleLine - 1));
+
         return (fvi, lvi);
     }
 
@@ -540,23 +517,26 @@ public partial class TextEditor {
 
     public void UpdatePylint(PylintMessage[] pylintMessages) {
         if (EnablePylinting && GlobalSettings.Default.PylintIsUsable) {
-            Underliner.Underline(pylintMessages, GetFirstVisibleLineNum(), GetLastVisibleLineNum());
+            (int fvl, int lvl) = GetFirstAndLastVisibleLineNum();
+            Underliner.Underline(pylintMessages, fvl, lvl);
             AmountOfErrorsLabel.Content = pylintMessages.Count(x => x.Type == "error");
             AmountOfWarningsLabel.Content = pylintMessages.Count(x => x.Type == "warning");
         }
     }
 
     public void UpdatePylint() {
-        if (EnablePylinting && GlobalSettings.Default.PylintIsUsable)
-            Underliner.UpdateUnderline(GetFirstVisibleLineNum(), GetLastVisibleLineNum());
+        if (!EnablePylinting || !GlobalSettings.Default.PylintIsUsable)
+            return;
+        (int fvl, int lvl) = GetFirstAndLastVisibleLineNum();
+        Underliner.UpdateUnderline(fvl, lvl);
     }
 
     private void MainScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
         e.Handled = true;
         int deltaLines = -e.Delta / 60;
         if (deltaLines == 0 && e.Delta != 0)
-            deltaLines = e.Delta < 0 ? 1 : (-1);
-        MainScrollViewer.ScrollToVerticalOffset((GetFirstVisibleLineNum() + deltaLines) * TextEditorTextBoxCharacterSize.Height);
+            deltaLines = e.Delta < 0 ? 1 : -1;
+        MainScrollViewer.ScrollToVerticalOffset((GetFirstAndLastVisibleLineNum().firstVisibleLine + deltaLines) * TextEditorTextBoxCharacterSize.Height);
     }
 
     private void TextEditorTextBox_SelectionChanged(object sender, RoutedEventArgs e) {
