@@ -51,17 +51,27 @@ public static partial class SyntaxHighlighter {
         for (int i = 0; i < text.Length; ++i) {
             char c = text[i];
 
-            if (c == '(' || c == '[' || c == '{') {
-                ++openBrackets;
-                matches.Add(new(i, row, col, c, openBrackets));
-            } else if (c == ')' || c == ']' || c == '}') {
-                matches.Add(new(i, row, col, c, openBrackets));
-                --openBrackets;
-            } else if (c == '\n') {
-                col = 0;
-                ++row;
-            } else
-                ++col;
+            switch (c) {
+                case '(':
+                case '[':
+                case '{':
+                    ++openBrackets;
+                    matches.Add(new(i, row, col, c, openBrackets));
+                    break;
+                case ')':
+                case ']':
+                case '}':
+                    matches.Add(new(i, row, col, c, openBrackets));
+                    --openBrackets;
+                    break;
+                case '\n':
+                    col = 0;
+                    ++row;
+                    break;
+                default:
+                    ++col;
+                    break;
+            }
         }
 
         return matches;
@@ -77,18 +87,22 @@ public static partial class SyntaxHighlighter {
         for (int i = 0; i < text.Length; ++i) {
             char c = text[i];
 
-            if (c == '\n') {
-                col = 0;
-                combo = 0;
-                continueCombo = true;
-                ++row;
-            } else if (c == ' ' && continueCombo) {
-                ++combo;
-                ++col;
-            } else {
-                continueCombo = false;
-                combo = 0;
-                ++col;
+            switch (c) {
+                case '\n':
+                    col = 0;
+                    combo = 0;
+                    continueCombo = true;
+                    ++row;
+                    break;
+                case ' ' when continueCombo:
+                    ++combo;
+                    ++col;
+                    break;
+                default:
+                    continueCombo = false;
+                    combo = 0;
+                    ++col;
+                    break;
             }
 
             if (combo != 0 && combo % 4 == 0)

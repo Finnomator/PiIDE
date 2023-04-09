@@ -235,7 +235,7 @@ public static class Tools {
         return len == -1 ? text.Length - i : len - i;
     }
 
-    public static ScrollViewer FindScrollViewer(DependencyObject d) {
+    public static ScrollViewer FindScrollViewer(this DependencyObject d) {
         if (d is ScrollViewer viewer)
             return viewer;
         ScrollViewer sw = FindScrollViewer(VisualTreeHelper.GetChild(d, 0));

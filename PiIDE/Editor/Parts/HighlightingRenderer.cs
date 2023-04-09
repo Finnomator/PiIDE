@@ -59,7 +59,7 @@ public class HighlightingRenderer {
         List<Rect> rects = OptimizeIndentRectsForDrawing(SyntaxHighlighter.FindIndents(RendererFormattedText.Text));
         double lineWidth = Editor.TextEditorTextBoxCharacterSize.Width;
         foreach (Rect rect in rects) {
-            int ici = ((int) ((rect.X - 2) / (lineWidth * 4))) % SyntaxHighlighter.IndentationColors.Length;
+            int ici = (int) ((rect.X - 2) / (lineWidth * 4)) % SyntaxHighlighter.IndentationColors.Length;
             context.DrawRectangle(SyntaxHighlighter.IndentationColors[ici], null, rect);
         }
     }
@@ -96,31 +96,26 @@ public class HighlightingRenderer {
 
     private void HighlightKeywords(DrawingContext context) {
 
-        string visibleText = RendererFormattedText.Text;
-
         // The highlighting order is critical, so it overlaps the highlighted strings in comments
 
-        foreach (Match keyword in SyntaxHighlighter.FindKeywords(visibleText))
+        foreach (Match keyword in SyntaxHighlighter.FindKeywords(RendererFormattedText.Text))
             RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Keyword, keyword.Index, keyword.Length);
 
-        foreach (Match number in SyntaxHighlighter.FindNumbers(visibleText))
+        foreach (Match number in SyntaxHighlighter.FindNumbers(RendererFormattedText.Text))
             RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Number, number.Index, number.Length);
 
-        foreach (Match stringMatch in SyntaxHighlighter.FindSingleQuotedStrings(visibleText))
+        foreach (Match stringMatch in SyntaxHighlighter.FindSingleQuotedStrings(RendererFormattedText.Text))
             RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, stringMatch.Index, stringMatch.Length);
 
         HighlightTripleQuotedStrings();
 
-        foreach (Match comment in SyntaxHighlighter.FindComments(visibleText))
+        foreach (Match comment in SyntaxHighlighter.FindComments(RendererFormattedText.Text))
             RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.Comment, comment.Index, comment.Length);
     }
 
     private void HighlightTripleQuotedStrings() {
 
-        string editorText = EditorText;
-        string visibleText = RendererFormattedText.Text;
-
-        MatchCollection allStringMatches = SyntaxHighlighter.FindTripleQuotedStrings(editorText);
+        MatchCollection allStringMatches = SyntaxHighlighter.FindTripleQuotedStrings(EditorText);
         (int firstVisibleIndex, int lastVisibleIndex) = Editor.GetFirstAndLastVisibleIndex();
 
         if (firstVisibleIndex == -1 || lastVisibleIndex == -1)
@@ -141,7 +136,7 @@ public class HighlightingRenderer {
                 highlightStartIdx = 0;
 
             if (highlightEndIdx > lastVisibleIndex - firstVisibleIndex)
-                highlightEndIdx = visibleText.Length;
+                highlightEndIdx = RendererFormattedText.Text.Length;
 
             RendererFormattedText.SetForegroundBrush(ColorResources.HighlighterColors.String, highlightStartIdx, highlightEndIdx - highlightStartIdx);
         }
@@ -149,14 +144,12 @@ public class HighlightingRenderer {
 
     private void HighlightJediNames(DrawingContext context) {
 
-        string visibleText = RendererFormattedText.Text;
-
-        Script.MakeScript(visibleText, Editor.FilePath);
+        Script.MakeScript(RendererFormattedText.Text, Editor.FilePath);
         Name[] jediNames = SyntaxHighlighter.FindJediNames();
 
         int[] cols = jediNames.Select(x => x.Column).Cast<int>().ToArray();
         int[] rows = jediNames.Select(x => x.Line - 1).Cast<int>().ToArray();
-        int[] jediIndexes = visibleText.GetIndexesOfColRows(rows, cols);
+        int[] jediIndexes = RendererFormattedText.Text.GetIndexesOfColRows(rows, cols);
 
         for (int i = 0; i < jediNames.Length; i++) {
             Name jediName = jediNames[i];
