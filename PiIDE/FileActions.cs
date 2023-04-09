@@ -6,7 +6,7 @@ using System.Windows;
 namespace PiIDE;
 
 internal static class BasicFileActions {
-    public static void CopyFile(string sourcePath, string destPath) {
+    public static string CopyFile(string sourcePath, string destPath) {
         string newDestPath = destPath;
         string newDestPathWithoutExt = newDestPath[..^Path.GetExtension(newDestPath).Length];
         string newDestPathExt = Path.GetExtension(newDestPath);
@@ -19,9 +19,11 @@ internal static class BasicFileActions {
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Copy File", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        return newDestPathExt;
     }
 
-    public static void CopyDirectory(string sourceDir, string destinationDir) {
+    public static string CopyDirectory(string sourceDir, string destinationDir) {
 
         string temp = destinationDir;
         for (int i = 0; Directory.Exists(destinationDir); i++)
@@ -32,6 +34,8 @@ internal static class BasicFileActions {
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Copy Directory", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        return destinationDir;
     }
 
     private static void PCopyDirectory(string sourcePath, string targetPath) {
@@ -104,9 +108,10 @@ internal static class FileCopier {
         Copy(path, isDir);
     }
 
-    public static void Paste(string destParentDirectory) {
+    public static (string? sourceFilePath, string? newPastedFilePath) Paste(string destParentDirectory) {
 
-        Debug.Assert(_copiedPath != null);
+        if (_copiedPath == null)
+            return (null, null);
 
         string baseName = Path.GetFileName(_copiedPath);
         string destPath = Path.Combine(destParentDirectory, baseName);
@@ -115,12 +120,14 @@ internal static class FileCopier {
             if (_cut)
                 BasicFileActions.MoveDirectory(_copiedPath, destPath);
             else
-                BasicFileActions.CopyDirectory(_copiedPath, destPath);
+                destPath = BasicFileActions.CopyDirectory(_copiedPath, destPath);
         } else {
             if (_cut)
                 BasicFileActions.MoveFile(_copiedPath, destPath);
             else
-                BasicFileActions.CopyFile(_copiedPath, destPath);
+                destPath = BasicFileActions.CopyFile(_copiedPath, destPath);
         }
+
+        return (_copiedPath, destPath);
     }
 }

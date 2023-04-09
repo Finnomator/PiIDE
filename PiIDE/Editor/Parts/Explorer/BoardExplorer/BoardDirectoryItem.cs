@@ -1,4 +1,5 @@
-﻿using PiIDE.Wrappers;
+﻿using System.Diagnostics;
+using PiIDE.Wrappers;
 using System.IO;
 using System.Windows;
 
@@ -64,12 +65,6 @@ public class BoardDirectoryItem : DirectoryItemBase {
         }
     }
 
-    // TODO: Implement these features
-    // But make sure that all paths get changed correctly
-    protected override void Copy_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
-
-    protected override void Cut_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
-
     protected override async void Delete_Click(object sender, RoutedEventArgs e) {
 
         if (!CheckForBoardConnection())
@@ -81,7 +76,14 @@ public class BoardDirectoryItem : DirectoryItemBase {
         UnsetStatus();
     }
 
-    protected override void Paste_Click(object sender, RoutedEventArgs e) => ErrorMessages.FeatureNotSupported();
+    protected override async void Paste_Click(object sender, RoutedEventArgs e) {
+        (_, string? newPastedFilePath) = FileCopier.Paste(DirectoryPath);
+        if (newPastedFilePath == null)
+            return;
+        SetStatus("Pasting");
+        await AmpyWrapper.WriteToBoardAsync(Port, newPastedFilePath, Path.Combine(DirectoryPathOnBoard, Path.GetFileName(newPastedFilePath!)));
+        UnsetStatus();
+    }
 
     protected override async void RenameDirectory(string oldPath, string newName) {
 
