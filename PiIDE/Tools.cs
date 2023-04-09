@@ -86,6 +86,10 @@ public static class Tools {
     }
 
     public static int GetIndexOfColRow(this string text, int row, int col) {
+
+        if (text == "")
+            return 0;
+
         int c = 0;
         int r = 0;
         int i = 0;
@@ -102,13 +106,10 @@ public static class Tools {
                 ++c;
         }
 
-        if (text == "")
-            return 0;
-
         if (r == row && c == col)
             return i;
 
-        return -1;
+        throw new ArgumentOutOfRangeException($"{nameof(row)} {nameof(col)}");
     }
 
     public static int[] GetIndexesOfColRows(this string text, int[] rows, int[] cols) {
@@ -219,19 +220,19 @@ public static class Tools {
     public static (int row, int column)[] GetRowsAndColumns(this MatchCollection matches, string input) => input.GetPointsOfIndexes(matches.Select(x => x.Index).ToArray());
 
     public static int GetLengthOfLine(this string text, int line) {
-        int col = 0;
         int row = 0;
-        for (int i = 0; row < line && i < text.Length; i++) {
-            if (text[i] == '\n') {
-                ++row;
-                col = 0;
-            } else
-                ++col;
-        }
+        int i = 0;
 
-        if (row == line)
-            return col;
-        return -1;
+        for (; i < text.Length && row < line; ++i)
+            if (text[i] == '\n')
+                ++row;
+
+        if (row != line)
+            throw new ArgumentException(nameof(line));
+
+        int len = text.IndexOf('\n', i);
+
+        return len == -1 ? text.Length - i : len - i;
     }
 
     public static ScrollViewer FindScrollViewer(DependencyObject d) {

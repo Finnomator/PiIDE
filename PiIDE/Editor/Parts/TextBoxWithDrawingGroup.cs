@@ -55,7 +55,7 @@ public class TextBoxWithDrawingGroup : TextBox {
         };
     }
 
-    private void SetVisibleTextAsFormattedText() => VisibleTextAsFormattedText = GetTextAsFormattedText(TextEditor.VisibleText);
+    private void SetVisibleTextAsFormattedText() => VisibleTextAsFormattedText = GetTextAsFormattedText(TextEditor.GetVisibleText());
 
     private FormattedText GetTextAsFormattedText(string text) {
 
@@ -92,7 +92,7 @@ public class TextBoxWithDrawingGroup : TextBox {
             using (DrawingContext dc1 = DrawingGroup.Open()) {
                 foreach (Action<DrawingContext> action in RenderActions.Values)
                     action(dc1);
-                dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+                dc1.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.GetFirstVisibleLineNum() * TextEditor.TextEditorTextBoxCharacterSize.Height));
             }
 
             Sw.Stop();
@@ -106,7 +106,7 @@ public class TextBoxWithDrawingGroup : TextBox {
         using DrawingContext dc = DrawingGroup.Open();
         foreach (Action<DrawingContext> action in RenderActions.Values)
             action(dc);
-        dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.FirstVisibleLineNum * TextEditor.TextEditorTextBoxCharacterSize.Height));
+        dc.DrawText(VisibleTextAsFormattedText, new(2, TextEditor.GetFirstVisibleLineNum() * TextEditor.TextEditorTextBoxCharacterSize.Height));
     }
 
     protected override void OnRender(DrawingContext drawingContext) {

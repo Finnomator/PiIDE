@@ -40,26 +40,6 @@ public partial class TextEditor {
     public bool ContentLoaded { get; private set; }
 
     public string EditorText => TextEditorTextBox.Text;
-    public int FirstVisibleLineNum {
-        get {
-            if (TextEditorTextBoxCharacterSize.Height == 0.0)
-                return 0;
-            int line = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
-            int textLines = EditorText.CountLines();
-            return textLines < line ? textLines : line;
-        }
-    }
-
-    public int LastVisibleLineNum {
-        get {
-            if (TextEditorTextBoxCharacterSize.Height == 0.0)
-                return 0;
-            int lines = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
-            int textLines = EditorText.CountLines();
-            return textLines < lines ? textLines : lines;
-        }
-    }
-    public string VisibleText => string.Join('\n', EditorText.Split('\n')[FirstVisibleLineNum..LastVisibleLineNum]);
 
     public event EventHandler? StartedPythonExecution;
 
@@ -114,6 +94,64 @@ public partial class TextEditor {
                     break;
             }
         };
+    }
+
+    public int GetFirstVisibleLineNum() {
+        if (TextEditorTextBoxCharacterSize.Height == 0.0)
+            return 0;
+        int line = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+        int textLines = EditorText.CountLines();
+        return textLines < line ? textLines : line;
+    }
+
+    public int GetLastVisibleLineNum() {
+        if (TextEditorTextBoxCharacterSize.Height == 0.0)
+            return 0;
+        int lines = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) /
+                           TextEditorTextBoxCharacterSize.Height) + 1;
+        int textLines = EditorText.CountLines();
+        return textLines < lines ? textLines : lines;
+    }
+
+    public (int firstVisibleLine, int lastVisibleLine) GetFirstAndLastVisibleLineNum() {
+        if (TextEditorTextBoxCharacterSize.Height == 0.0)
+            return (0, 0);
+
+        int fvl = (int) (MainScrollViewer.VerticalOffset / TextEditorTextBoxCharacterSize.Height);
+        int lvl = (int) ((MainScrollViewer.VerticalOffset + MainScrollViewer.ActualHeight) / TextEditorTextBoxCharacterSize.Height) + 1;
+        int totalLines = EditorText.CountLines();
+
+        if (totalLines < fvl)
+            fvl = totalLines;
+        if (totalLines < lvl)
+            lvl = totalLines;
+
+        return (fvl, lvl);
+    }
+
+    public int GetFirstVisibleIndex() => EditorText.GetIndexOfColRow(GetFirstVisibleLineNum(), 0);
+
+    public int GetLastVisibleIndex() {
+        if (EditorText == "")
+            return 0;
+        int lvl = GetLastVisibleLineNum();
+        return EditorText.GetIndexOfColRow(lvl - 1, EditorText.GetLengthOfLine(lvl - 1));
+    }
+
+    public (int firstVisibleIndex, int lastVisibleIndex) GetFirstAndLastVisibleIndex() {
+        if (EditorText == "")
+            return (0, 0);
+
+        (int firstVisibleLine, int lastVisibleLine) = GetFirstAndLastVisibleLineNum();
+
+        int fvi = EditorText.GetIndexOfColRow(firstVisibleLine, 0);
+        int lvi = EditorText.GetIndexOfColRow(lastVisibleLine - 1, EditorText.GetLengthOfLine(lastVisibleLine - 1));
+        return (fvi, lvi);
+    }
+
+    public string GetVisibleText() {
+        (int fvi, int lvi) = GetFirstAndLastVisibleIndex();
+        return EditorText[fvi..lvi];
     }
 
     private void MainWindow_Activated(object? sender, EventArgs e) {
@@ -502,7 +540,7 @@ public partial class TextEditor {
 
     public void UpdatePylint(PylintMessage[] pylintMessages) {
         if (EnablePylinting && GlobalSettings.Default.PylintIsUsable) {
-            Underliner.Underline(pylintMessages, FirstVisibleLineNum, LastVisibleLineNum);
+            Underliner.Underline(pylintMessages, GetFirstVisibleLineNum(), GetLastVisibleLineNum());
             AmountOfErrorsLabel.Content = pylintMessages.Count(x => x.Type == "error");
             AmountOfWarningsLabel.Content = pylintMessages.Count(x => x.Type == "warning");
         }
@@ -510,7 +548,7 @@ public partial class TextEditor {
 
     public void UpdatePylint() {
         if (EnablePylinting && GlobalSettings.Default.PylintIsUsable)
-            Underliner.UpdateUnderline(FirstVisibleLineNum, LastVisibleLineNum);
+            Underliner.UpdateUnderline(GetFirstVisibleLineNum(), GetLastVisibleLineNum());
     }
 
     private void MainScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
@@ -518,7 +556,7 @@ public partial class TextEditor {
         int deltaLines = -e.Delta / 60;
         if (deltaLines == 0 && e.Delta != 0)
             deltaLines = e.Delta < 0 ? 1 : (-1);
-        MainScrollViewer.ScrollToVerticalOffset((FirstVisibleLineNum + deltaLines) * TextEditorTextBoxCharacterSize.Height);
+        MainScrollViewer.ScrollToVerticalOffset((GetFirstVisibleLineNum() + deltaLines) * TextEditorTextBoxCharacterSize.Height);
     }
 
     private void TextEditorTextBox_SelectionChanged(object sender, RoutedEventArgs e) {

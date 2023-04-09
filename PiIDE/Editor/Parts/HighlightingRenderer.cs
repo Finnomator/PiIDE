@@ -20,16 +20,17 @@ public class HighlightingRenderer {
     public HighlightingRenderer(TextEditor textEditor) {
         Editor = textEditor;
 
-        if (Editor.IsPythonFile) {
-            TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
-            SetRenderingAccordingToSettings();
+        if (!Editor.IsPythonFile)
+            return;
+        
+        TextRenderer.RemoveRenderAction(TextRenderer.DefaultRenderAction);
+        SetRenderingAccordingToSettings();
 
-            SyntaxHighlighterSettings.Default.PropertyChanged += (_, _) => {
-                // For some reason this event gets fired 3 times instead of once
-                SetRenderingAccordingToSettings();
-                TextRenderer.Render();
-            };
-        }
+        SyntaxHighlighterSettings.Default.PropertyChanged += (_, _) => {
+            // For some reason this event gets fired 3 times instead of once
+            SetRenderingAccordingToSettings();
+            TextRenderer.Render();
+        };
     }
 
     private void SetRenderingAccordingToSettings() {
@@ -66,7 +67,7 @@ public class HighlightingRenderer {
     private List<Rect> OptimizeIndentRectsForDrawing(List<SyntaxHighlighter.IndentMatch> indentMatches) {
         List<Rect> optimized = new();
         Size charSize = Editor.TextEditorTextBoxCharacterSize;
-        double offset = Editor.FirstVisibleLineNum * charSize.Height;
+        double offset = Editor.GetFirstVisibleLineNum() * charSize.Height;
         HashSet<int> optimizedIndexes = new();
 
         for (int i = 0; i < indentMatches.Count; i++) {
@@ -120,10 +121,7 @@ public class HighlightingRenderer {
         string visibleText = RendererFormattedText.Text;
 
         MatchCollection allStringMatches = SyntaxHighlighter.FindTripleQuotedStrings(editorText);
-        int lvl = Editor.LastVisibleLineNum;
-        int firstVisibleIndex = editorText.GetIndexOfColRow(Editor.FirstVisibleLineNum, 0);
-
-        int lastVisibleIndex = editorText.GetIndexOfColRow(lvl - 1, editorText.GetLengthOfLine(lvl - 1));
+        (int firstVisibleIndex, int lastVisibleIndex) = Editor.GetFirstAndLastVisibleIndex();
 
         if (firstVisibleIndex == -1 || lastVisibleIndex == -1)
             return;
@@ -171,9 +169,8 @@ public class HighlightingRenderer {
     private void HighlightBrackets(DrawingContext context) {
 
         List<SyntaxHighlighter.BracketMatch> brackets = SyntaxHighlighter.FindBrackets(EditorText);
-        int fvl = Editor.FirstVisibleLineNum;
-        int lvl = Editor.LastVisibleLineNum;
-        int firstVisibleIndex = EditorText.GetIndexOfColRow(fvl, 0);
+        (int fvl, int lvl) = Editor.GetFirstAndLastVisibleLineNum();
+        int firstVisibleIndex = Editor.GetFirstVisibleIndex();
 
         if (firstVisibleIndex == -1)
             return;
@@ -181,7 +178,7 @@ public class HighlightingRenderer {
         foreach (SyntaxHighlighter.BracketMatch bracket in brackets) {
             if (bracket.Row < fvl)
                 continue;
-            if (bracket.Row >= lvl)
+            if (bracket.Row >= lvl - 1)
                 break;
 
             int bci = Math.Abs(bracket.BracketIndex % SyntaxHighlighter.BracketColors.Length);
