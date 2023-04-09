@@ -43,8 +43,14 @@ public partial class TextEditorWithFileSelect {
         foreach (string path in lastOpenedBoardFiles)
             OpenFile(path, path != lastOpenedFile, true);
 
-        foreach (string path in GlobalSettings.Default.LastOpenedLocalFolderPaths)
-            AddExistingDirectory(path);
+        for (int i = GlobalSettings.Default.LastOpenedLocalFolderPaths.Count - 1; i >= 0; i--) {
+            string path = GlobalSettings.Default.LastOpenedLocalFolderPaths[i];
+            if (Directory.Exists(path))
+                AddExistingDirectory(path);
+            else
+                GlobalSettings.Default.LastOpenedLocalFolderPaths.RemoveAt(i);
+        }
+
         OpenBoardDirectory();
 
         if (Tools.EnableBoardInteractions)

@@ -51,11 +51,11 @@ public abstract partial class FileItemBase {
 
     protected void UnsetStatus() => Status.Visibility = Visibility.Collapsed;
 
-    protected virtual void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(FilePath, false);
-    protected virtual void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(FilePath, false);
+    private void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(FilePath, false);
+    private void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(FilePath, false);
     protected virtual void Delete_Click(object sender, RoutedEventArgs e) => BasicFileActions.DeleteFile(FilePath);
-    protected virtual void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(ParentDirectory.DirectoryPath);
-    protected virtual void RenameFile(string oldPath, string newPath, string newName) => BasicFileActions.RenameFile(oldPath, newName);
+    protected virtual void Paste_Click(object sender, RoutedEventArgs e) => ParentDirectory.Paste_Click(sender, e);
+    protected virtual void RenameFile(string oldPath, string newName) => BasicFileActions.RenameFile(oldPath, newName);
 
     protected virtual void Rename_Click(object sender, RoutedEventArgs e) {
         RenameTextBox.Visibility = Visibility.Visible;
@@ -79,30 +79,27 @@ public abstract partial class FileItemBase {
 
     private void RenameFromTextBox(TextBox textBox) {
 
+        RenameTextBox.Visibility = Visibility.Collapsed;
         string oldName = FileName;
         string newName = textBox.Text;
         string newPath = Path.Combine(FilePath[^newName.Length..], newName);
 
         if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1) {
             MessageBox.Show("Invalid characters in path", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            RenameTextBox.Visibility = Visibility.Collapsed;
             return;
         }
 
-        if (newName == oldName) {
-            RenameTextBox.Visibility = Visibility.Collapsed;
+        if (newName == oldName)
             return;
-        }
 
         if (Directory.Exists(newPath)) {
             MessageBox.Show("The file already exists", "Renaming Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            RenameTextBox.Visibility = Visibility.Collapsed;
             return;
         }
 
         FileName = newName;
         FileNameTextBlock.Text = FileName;
-        RenameFile(FilePath, newPath, newName);
+        RenameFile(FilePath, newName);
         FilePath = newPath;
     }
 }

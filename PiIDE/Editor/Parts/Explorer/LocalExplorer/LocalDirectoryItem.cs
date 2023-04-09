@@ -9,6 +9,11 @@ namespace PiIDE.Editor.Parts.Explorer.LocalExplorer;
 public class LocalDirectoryItem : DirectoryItemBase {
 
     public LocalDirectoryItem(string fullPath, ExplorerBase parentExplorer) : base(fullPath, parentExplorer) {
+
+        DirContextMenu.Items.Remove(DeleteMenuItem);
+        DirContextMenu.Items.Remove(CutMenuItem);
+        DirContextMenu.Items.Remove(RenameMenuItem);
+
         Init();
 
         MenuItem removeFolderMenuItem = new() {

@@ -20,7 +20,7 @@ internal static class BasicFileActions {
             MessageBox.Show(ex.Message, "Failed to Copy File", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        return newDestPathExt;
+        return newDestPath;
     }
 
     public static string CopyDirectory(string sourceDir, string destinationDir) {
@@ -108,13 +108,21 @@ internal static class FileCopier {
         Copy(path, isDir);
     }
 
-    public static (string? sourceFilePath, string? newPastedFilePath) Paste(string destParentDirectory) {
+    public static (string? sourceFilePath, string? newPastedFilePath, bool? cut, bool? wasDir) Paste(string destParentDirectory) {
 
         if (_copiedPath == null)
-            return (null, null);
+            return (null, null, null, null);
 
-        string baseName = Path.GetFileName(_copiedPath);
-        string destPath = Path.Combine(destParentDirectory, baseName);
+        string destPath = Path.Combine(destParentDirectory, Path.GetFileName(_copiedPath));
+
+        switch (_cut) {
+            case true when destPath == _copiedPath:
+                return (null, null, null, null);
+            case true when Path.GetPathRoot(_copiedPath) != Path.GetPathRoot(destPath):
+                MessageBox.Show("Cannot move files across different volumes. Use copy instead", "Cannot move file",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                break;
+        }
 
         if (_isDir) {
             if (_cut)
@@ -128,6 +136,6 @@ internal static class FileCopier {
                 destPath = BasicFileActions.CopyFile(_copiedPath, destPath);
         }
 
-        return (_copiedPath, destPath);
+        return (_copiedPath, destPath, _cut, _isDir);
     }
 }

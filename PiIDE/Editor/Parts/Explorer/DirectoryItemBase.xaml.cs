@@ -106,13 +106,13 @@ public abstract partial class DirectoryItemBase {
 
     protected virtual void RenameDirectory(string oldPath, string newName) => BasicFileActions.RenameDirectory(oldPath, newName);
 
-    protected virtual void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(DirectoryPath, true);
+    private void Copy_Click(object sender, RoutedEventArgs e) => FileCopier.Copy(DirectoryPath, true);
 
-    protected virtual void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(DirectoryPath, true);
+    private void Cut_Click(object sender, RoutedEventArgs e) => FileCopier.Cut(DirectoryPath, true);
 
     protected virtual void Delete_Click(object sender, RoutedEventArgs e) => BasicFileActions.DeleteDirectory(DirectoryPath);
 
-    protected virtual void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(DirectoryPath);
+    public virtual void Paste_Click(object sender, RoutedEventArgs e) => FileCopier.Paste(DirectoryPath);
 
     protected virtual void Rename_Click(object sender, RoutedEventArgs e) {
         RenameTextBox.Visibility = Visibility.Visible;

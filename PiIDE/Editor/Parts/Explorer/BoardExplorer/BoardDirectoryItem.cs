@@ -66,7 +66,6 @@ public class BoardDirectoryItem : DirectoryItemBase {
     }
 
     protected override async void Delete_Click(object sender, RoutedEventArgs e) {
-
         if (!CheckForBoardConnection())
             return;
 
@@ -76,12 +75,29 @@ public class BoardDirectoryItem : DirectoryItemBase {
         UnsetStatus();
     }
 
-    protected override async void Paste_Click(object sender, RoutedEventArgs e) {
-        (_, string? newPastedFilePath) = FileCopier.Paste(DirectoryPath);
+    public override async void Paste_Click(object sender, RoutedEventArgs e) {
+
+        if (!CheckForBoardConnection())
+            return;
+
+        (string? sourceFilePath, string? newPastedFilePath, bool? cut, bool? wasDir) = FileCopier.Paste(DirectoryPath);
+
         if (newPastedFilePath == null)
             return;
+
         SetStatus("Pasting");
-        await AmpyWrapper.WriteToBoardAsync(Port, newPastedFilePath, Path.Combine(DirectoryPathOnBoard, Path.GetFileName(newPastedFilePath!)));
+
+        if ((bool) cut!) {
+            if (sourceFilePath!.StartsWith("BoardFiles")) {
+                if ((bool) wasDir!)
+                    await AmpyWrapper.RemoveDirectoryFromBoardAsync(Port, sourceFilePath["BoardFiles".Length..]);
+                else
+                    await AmpyWrapper.RemoveFileFromBoardAsync(Port, sourceFilePath["BoardFiles".Length..]);
+            } else
+                MessageBox.Show("Files cannot be moved between Computer and Board, the file has been copied", "Cannot move to board", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        await AmpyWrapper.WriteToBoardAsync(Port, newPastedFilePath, Path.Combine(DirectoryPathOnBoard, Path.GetFileName(newPastedFilePath)));
         UnsetStatus();
     }
 
@@ -102,15 +118,28 @@ public class BoardDirectoryItem : DirectoryItemBase {
     }
 
     protected override async void AddFile_Click(object sender, RoutedEventArgs e) {
+
+        if (!CheckForBoardConnection())
+            return;
+
         string newFileLocalPath = Path.Combine(DirectoryPath, "new_file.py");
         if (Tools.TryCreateFile(newFileLocalPath))
             await AmpyWrapper.WriteToBoardAsync(Port, newFileLocalPath, Path.Combine(DirectoryPathOnBoard, "new_file.py"));
     }
 
     protected override async void AddFolder_Click(object sender, RoutedEventArgs e) {
+
+        if (!CheckForBoardConnection())
+            return;
+
         string newDirLocalPath = Path.Combine(DirectoryPath, "NewFolder");
         if (await AmpyWrapper.CreateDirectoryAsync(Port, Path.Combine(DirectoryPathOnBoard, "NewFolder")))
             Tools.TryCreateDirectory(newDirLocalPath);
+    }
+
+    protected override void Rename_Click(object sender, RoutedEventArgs e) {
+        if (CheckForBoardConnection())
+            base.Rename_Click(sender, e);
     }
 
     public static bool CheckForBoardConnection() {
