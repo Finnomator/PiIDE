@@ -180,7 +180,7 @@ public abstract class JediWrapper {
 
         public static async Task<ReturnClasses.Completion[]> Complete(int line, int column, bool fuzzy = false) {
             await WrapperRepl.WriteLineAsync($"{CompletionsVarName} = {WrapperVariableName}.complete({line}, {column}, fuzzy={(fuzzy ? 1 : 0)})", false);
-            return TryConvert<ReturnClasses.Completion>(await WrapperRepl.WriteLineAsync("print_obj(dump_completions(completions))", true));
+            return TryConvert<ReturnClasses.Completion>(await WrapperRepl.WriteLineAsync($"print_obj(dump_completions({CompletionsVarName}))", true));
         }
 
         public static async Task<ReturnClasses.Name[]> Infer(int line, int column, bool onlyStubs = false, bool preferStubs = false) {
