@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.HighPerformance;
 using FontAwesome.WPF;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -240,5 +242,23 @@ public static class Tools {
             return viewer;
         ScrollViewer sw = FindScrollViewer(VisualTreeHelper.GetChild(d, 0));
         return sw;
+    }
+
+    public static long Measure(Action action, string? methodName = null, bool printResult = true) {
+        Stopwatch sw = Stopwatch.StartNew();
+        action();
+        sw.Stop();
+        if (printResult)
+            Debug.WriteLine($"{methodName ?? action.Method.Name} took {sw.ElapsedMilliseconds}ms");
+        return sw.ElapsedMilliseconds;
+    }
+
+    public static async Task<long> Measure(Func<Task> action, string? methodName = null, bool printResult = true) {
+        Stopwatch sw = Stopwatch.StartNew();
+        await action();
+        sw.Stop();
+        if (printResult)
+            Debug.WriteLine($"{methodName ?? action.Method.Name} took {sw.ElapsedMilliseconds}ms");
+        return sw.ElapsedMilliseconds;
     }
 }
