@@ -12,7 +12,7 @@ internal static class AmpyWrapper {
     public static DataReceivedEventHandler? AmpyErrorDataReceived;
     public static EventHandler? AmpyExited;
 
-    public static bool IsBusy { get; private set; }
+    private static bool _isBusy;
 
     private static readonly ProcessStartInfo AmpyDefaultStartInfo = new() {
         FileName = "ampy",
@@ -25,12 +25,12 @@ internal static class AmpyWrapper {
 
     private static async Task<(bool success, string? output)> TryRunAmpy(string arguments, bool expectsOutput) {
 
-        if (IsBusy) {
+        if (_isBusy) {
             ErrorMessages.AmpyIsBusy();
             return (false, null);
         }
 
-        IsBusy = true;
+        _isBusy = true;
 
         string? error;
         string? output = null;
@@ -49,11 +49,11 @@ internal static class AmpyWrapper {
 
         if (!string.IsNullOrEmpty(error)) {
             MessageBox.Show(error, "Failed to run ampy", MessageBoxButton.OK, MessageBoxImage.Error);
-            IsBusy = false;
+            _isBusy = false;
             return (false, null);
         }
 
-        IsBusy = false;
+        _isBusy = false;
 
         return (true, output);
     }
@@ -70,10 +70,12 @@ internal static class AmpyWrapper {
     public static async Task<bool> CreateDirectoryAsync(int comport, string newDirPath)
         => (await TryRunAmpy($"--port COM{comport} mkdir \"{newDirPath.Replace("\\", "/")}\"", false)).success;
 
-    public static async Task<(bool success, string[]?)> ListFilesOnBoardAsync(int comport, string dirPath = "/") {
+    public static async Task<(bool success, string[])> ListFilesOnBoardAsync(int comport, string dirPath = "/") {
         (bool success, string? output) = await TryRunAmpy($"--port COM{comport} ls \"{dirPath.Replace("\\", "/")}\"", true);
-        if (string.IsNullOrEmpty(output) || !success)
-            return (false, null);
+        if (output == null || !success)
+            return (false, Array.Empty<string>());
+        if (output == string.Empty)
+            return (true, Array.Empty<string>());
         return (true, output[1..].Trim().Split("\r\n/"));
     }
 
@@ -82,12 +84,12 @@ internal static class AmpyWrapper {
         private static Process? _runnerProcess;
 
         public static async void BeginRunningFile(int comport, string filePath) {
-            if (IsBusy) {
+            if (_isBusy) {
                 ErrorMessages.AmpyIsBusy();
                 return;
             }
 
-            IsBusy = true;
+            _isBusy = true;
 
             using (_runnerProcess = new() { StartInfo = AmpyDefaultStartInfo }) {
                 _runnerProcess.StartInfo.Arguments = $"--port COM{comport} run \"{filePath.Replace("\\", "/")}\"";
@@ -102,11 +104,11 @@ internal static class AmpyWrapper {
             }
 
             _runnerProcess = null;
-            IsBusy = false;
+            _isBusy = false;
         }
 
         public static void WriteLineToRunningFileInput(string text) {
-            if (IsBusy && _runnerProcess != null)
+            if (_isBusy && _runnerProcess != null)
                 _runnerProcess.StandardInput.WriteLine(text);
         }
 
@@ -117,7 +119,7 @@ internal static class AmpyWrapper {
             _runnerProcess.Kill();
             _runnerProcess.Close();
             _runnerProcess = null;
-            IsBusy = false;
+            _isBusy = false;
         }
     }
 
@@ -132,14 +134,14 @@ internal static class AmpyWrapper {
 
     public static async Task<bool> DownloadDirectoryFromBoardAsync(int comport, string dirPath, string destDirPath) {
 
-        if (IsBusy) {
+        if (_isBusy) {
             ErrorMessages.AmpyIsBusy();
             return false;
         }
 
-        (bool success, string[]? subPaths) = await ListFilesOnBoardAsync(comport, dirPath);
+        (bool success, string[] subPaths) = await ListFilesOnBoardAsync(comport, dirPath);
 
-        if (subPaths == null || !success)
+        if (!success)
             return false;
 
         for (int i = 0; i < subPaths.Length && success; ++i) {
