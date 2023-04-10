@@ -6,7 +6,8 @@ using System.Windows;
 namespace PiIDE;
 
 internal static class BasicFileActions {
-    public static string CopyFile(string sourcePath, string destPath) {
+
+    public static string? CopyFile(string sourcePath, string destPath) {
         string newDestPath = destPath;
         string newDestPathWithoutExt = newDestPath[..^Path.GetExtension(newDestPath).Length];
         string newDestPathExt = Path.GetExtension(newDestPath);
@@ -16,14 +17,16 @@ internal static class BasicFileActions {
 
         try {
             File.Copy(sourcePath, newDestPath);
+
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Copy File", MessageBoxButton.OK, MessageBoxImage.Error);
+            return null;
         }
 
-        return newDestPath;
+        return null;
     }
 
-    public static string CopyDirectory(string sourceDir, string destinationDir) {
+    public static string? CopyDirectory(string sourceDir, string destinationDir) {
 
         string temp = destinationDir;
         for (int i = 0; Directory.Exists(destinationDir); i++)
@@ -33,6 +36,7 @@ internal static class BasicFileActions {
             PCopyDirectory(sourceDir, destinationDir);
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Copy Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+            return null;
         }
 
         return destinationDir;
@@ -49,46 +53,57 @@ internal static class BasicFileActions {
         }
     }
 
-    public static void DeleteDirectory(string dirPath) {
+    public static bool DeleteDirectory(string dirPath) {
         try {
             Directory.Delete(dirPath, true);
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Delete Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
+
+        return true;
     }
 
-    public static void DeleteFile(string filePath) {
+    public static bool DeleteFile(string filePath) {
         try {
             File.Delete(filePath);
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Delete File", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
+        return true;
     }
-    public static void MoveDirectory(string oldDirPath, string newDirPath) {
+
+    public static bool MoveDirectory(string oldDirPath, string newDirPath) {
         try {
             Directory.Move(oldDirPath, newDirPath);
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Move Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
+        return true;
     }
-    public static void MoveFile(string oldFilePath, string newFilePath) {
+
+    public static bool MoveFile(string oldFilePath, string newFilePath) {
         try {
             Directory.Move(oldFilePath, newFilePath);
         } catch (Exception ex) {
             MessageBox.Show(ex.Message, "Failed to Move File", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
+        return true;
     }
 
-    public static void RenameFile(string oldFilePath, string newFileName) {
+    public static bool RenameFile(string oldFilePath, string newFileName) {
         FileInfo fileInfo = new(oldFilePath);
         string newFilePath = fileInfo.Directory == null ? newFileName : Path.Combine(fileInfo.Directory.FullName, newFileName);
-        MoveFile(oldFilePath, newFilePath);
+        return MoveFile(oldFilePath, newFilePath);
     }
 
-    public static void RenameDirectory(string oldDirPath, string newDirName) {
+    public static bool RenameDirectory(string oldDirPath, string newDirName) {
         DirectoryInfo dirInfo = new(oldDirPath);
         string newDirPath = dirInfo.Parent == null ? newDirName : Path.Combine(dirInfo.Parent.FullName, newDirName);
-        MoveFile(oldDirPath, newDirPath);
+        return MoveFile(oldDirPath, newDirPath);
     }
 }
 
@@ -113,7 +128,7 @@ internal static class FileCopier {
         if (_copiedPath == null)
             return (null, null, null, null);
 
-        string destPath = Path.Combine(destParentDirectory, Path.GetFileName(_copiedPath));
+        string? destPath = Path.Combine(destParentDirectory, Path.GetFileName(_copiedPath));
 
         switch (_cut) {
             case true when destPath == _copiedPath:
@@ -121,21 +136,23 @@ internal static class FileCopier {
             case true when Path.GetPathRoot(_copiedPath) != Path.GetPathRoot(destPath):
                 MessageBox.Show("Cannot move files across different volumes. Use copy instead", "Cannot move file",
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                break;
+                return (null, null, null, null);
         }
+
+        bool success = false;
 
         if (_isDir) {
             if (_cut)
-                BasicFileActions.MoveDirectory(_copiedPath, destPath);
+                success = BasicFileActions.MoveDirectory(_copiedPath, destPath);
             else
                 destPath = BasicFileActions.CopyDirectory(_copiedPath, destPath);
         } else {
             if (_cut)
-                BasicFileActions.MoveFile(_copiedPath, destPath);
+                success = BasicFileActions.MoveFile(_copiedPath, destPath);
             else
                 destPath = BasicFileActions.CopyFile(_copiedPath, destPath);
         }
 
-        return (_copiedPath, destPath, _cut, _isDir);
+        return success ? (_copiedPath, destPath, _cut, _isDir) : (null, null, null, null);
     }
 }

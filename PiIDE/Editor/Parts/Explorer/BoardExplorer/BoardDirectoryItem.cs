@@ -82,14 +82,14 @@ public class BoardDirectoryItem : DirectoryItemBase {
 
         (string? sourceFilePath, string? newPastedFilePath, bool? cut, bool? wasDir) = FileCopier.Paste(DirectoryPath);
 
-        if (newPastedFilePath == null)
+        if (sourceFilePath == null || newPastedFilePath == null || cut == null || wasDir == null)
             return;
 
         SetStatus("Pasting");
 
-        if ((bool) cut!) {
-            if (sourceFilePath!.StartsWith("BoardFiles")) {
-                if ((bool) wasDir!)
+        if ((bool) cut) {
+            if (sourceFilePath.StartsWith("BoardFiles")) {
+                if ((bool) wasDir)
                     await AmpyWrapper.RemoveDirectoryFromBoardAsync(Port, sourceFilePath["BoardFiles".Length..]);
                 else
                     await AmpyWrapper.RemoveFileFromBoardAsync(Port, sourceFilePath["BoardFiles".Length..]);
