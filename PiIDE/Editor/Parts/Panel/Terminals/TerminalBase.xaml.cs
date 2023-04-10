@@ -70,4 +70,8 @@ public abstract partial class TerminalBase {
     });
 
     protected abstract void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e);
+
+    private void ClearButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+        OutputTextBox.Text = "";
+    }
 }

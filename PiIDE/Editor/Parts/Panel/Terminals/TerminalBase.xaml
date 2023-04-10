@@ -12,6 +12,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Clear" Style="{StaticResource CleanButtonStyle}" Foreground="White" Panel.ZIndex="1" Padding="3" Click="ClearButton_Click"/>
+
         <TextBox BorderThickness="0" Foreground="White" Background="{DynamicResource PanelBackgroundBrush}" IsReadOnly="True" x:Name="OutputTextBox" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Code"/>
 
         <Border Grid.Row="1" Background="{DynamicResource PanelBackgroundBrush}" BorderThickness="1" CornerRadius="3" BorderBrush="{StaticResource AccentBrush}">
