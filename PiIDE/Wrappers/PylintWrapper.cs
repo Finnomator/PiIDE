@@ -11,12 +11,22 @@ namespace PiIDE.Wrappers;
 internal static class PylintWrapper {
 
     public const string PylintPath = "pylint";
+    private static bool _isBusy;
+    private static bool _gotNewerRequest;
 
     public static async Task<PylintMessage[]> GetLintingAsync(string[] filePaths) {
 
-        string args = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" -j 0 \"{string.Join("\" \"", filePaths)}\"";
+        if (_isBusy) {
+            _gotNewerRequest = true;
+            return Array.Empty<PylintMessage>();
+        }
 
-        Process pylintProcess = new() {
+        _isBusy = true;
+
+        string args = $"--output-format=json --msg-template=\"{{path}}({{line}}): [{{msg_id}}{{obj}}] {{msg}}\" -j 0 \"{string.Join("\" \"", filePaths)}\"";
+        PylintMessage[] result = Array.Empty<PylintMessage>();
+
+        using (Process pylintProcess = new() {
             StartInfo = new ProcessStartInfo {
                 UseShellExecute = false,
                 FileName = PylintPath,
@@ -25,16 +35,26 @@ internal static class PylintWrapper {
                 RedirectStandardError = true,
                 CreateNoWindow = true,
             }
-        };
+        }) {
 
-        pylintProcess.Start();
-        string output = await pylintProcess.StandardOutput.ReadToEndAsync();
-        await pylintProcess.WaitForExitAsync();
-        try {
-            return JsonSerializer.Deserialize<PylintMessage[]>(output) ?? Array.Empty<PylintMessage>();
-        } catch {
-            return Array.Empty<PylintMessage>();
+            pylintProcess.Start();
+            string output = await pylintProcess.StandardOutput.ReadToEndAsync();
+            await pylintProcess.WaitForExitAsync();
+
+            try {
+                result = JsonSerializer.Deserialize<PylintMessage[]>(output) ?? Array.Empty<PylintMessage>();
+            } catch {
+                // ignored
+            }
         }
+
+        _isBusy = false;
+        if (_gotNewerRequest) {
+            _gotNewerRequest = false;
+            return await GetLintingAsync(filePaths);
+        }
+
+        return result;
     }
 }
 
