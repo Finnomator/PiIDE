@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 
-namespace PiIDE;
+namespace PiIDE.Options.Editor;
 
 public partial class StatisticsWindow {
 
