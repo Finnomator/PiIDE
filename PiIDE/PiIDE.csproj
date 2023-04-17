@@ -43,6 +43,7 @@
 		<None Remove="Options\Editor\Shortcuts\Shortcuts.json" />
 		<None Remove="Options\Editor\SyntaxHighlighter\Colors\Colors.json" />
 		<None Remove="Options\Editor\SyntaxHighlighter\Colors\DefaultColors.json" />
+		<None Remove="StartupSplashScreen.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -139,6 +140,10 @@
 	  <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
 	  <PackageReference Include="Humanizer" Version="2.14.1" />
 	  <PackageReference Include="System.IO.Ports" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <SplashScreen Include="StartupSplashScreen.png" />
 	</ItemGroup>
 
 </Project>
