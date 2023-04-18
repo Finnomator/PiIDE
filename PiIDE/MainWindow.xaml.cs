@@ -1,5 +1,7 @@
 ﻿using FontAwesome.WPF;
+using PiIDE.Options.Editor;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -27,12 +29,7 @@ public partial class MainWindow {
 
     private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
-    private async void Close_Click(object sender, RoutedEventArgs e) {
-        Editor.StopAllEditorAutoSaving();
-        await Editor.SaveAllFilesAsync();
-        GlobalSettings.Default.Save();
-        Close();
-    }
+    private void Close_Click(object sender, RoutedEventArgs e) => Close();
 
     private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
         Point relativeMousePos = e.GetPosition(TitleBarRow);
@@ -65,5 +62,11 @@ public partial class MainWindow {
         // Because the window can maximize without clicking the maximize button
         if (WindowState == WindowState.Maximized)
             MaximizeWindow();
+    }
+
+    private async void MainWindow_OnClosing(object? sender, CancelEventArgs e) {
+        Editor.StopAllEditorAutoSaving();
+        await Editor.SaveAllFilesAsync();
+        GlobalSettings.Default.Save();
     }
 }

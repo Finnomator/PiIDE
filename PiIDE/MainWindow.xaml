@@ -7,6 +7,7 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:editor="clr-namespace:PiIDE.Editor"
         mc:Ignorable="d"
+        Closing="MainWindow_OnClosing"
         Title="Pi IDE" Height="450" Width="800" Background="{DynamicResource WindowBackgroundBrush}" WindowStyle="SingleBorderWindow" MouseDown="Window_MouseDown" StateChanged="Window_StateChanged" >
 
     <WindowChrome.WindowChrome>
