@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using PiIDE.Editor;
 
 namespace PiIDE;
 
@@ -12,6 +12,7 @@ public partial class App {
     public App() {
         // GlobalSettings.Default.Reset();
         Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+        
 
         // TODO: i think this doesn't quite work
         if (GlobalSettings.Default.CallUpgrade) {
@@ -19,7 +20,6 @@ public partial class App {
             GlobalSettings.Default.CallUpgrade = false;
         }
 
-        Debug.WriteLine(TypeIcons.Instance);
 
         GlobalSettings.Default.LastOpenedBoardFilePaths ??= new();
 
