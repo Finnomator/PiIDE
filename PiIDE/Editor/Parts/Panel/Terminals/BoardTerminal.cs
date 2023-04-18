@@ -10,7 +10,6 @@ public class BoardTerminal : TerminalBase {
     public BoardTerminal() {
         AmpyWrapper.AmpyOutputDataReceived += OutputDataReceived;
         AmpyWrapper.AmpyErrorDataReceived += ErrorDataReceived;
-        AmpyWrapper.AmpyExited += Exited;
     }
 
     protected override void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {

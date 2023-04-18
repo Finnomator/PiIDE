@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -12,8 +13,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Clear" Style="{StaticResource CleanButtonStyle}" Foreground="White" Panel.ZIndex="1" Padding="3" Click="ClearButton_Click"/>
+        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="1" Margin="0,0,7,0" BorderThickness="1,0,1,1" BorderBrush="{StaticResource SplitterBackgroundBrush}" CornerRadius="0,0,1,1">
+            <Expander  BorderThickness="0" Style="{StaticResource ExpanderStyle}" >
 
+                <StackPanel>
+                    <Button  Content="Clear Output" Style="{StaticResource CleanButtonStyle}" Foreground="White"  Padding="3" Click="ClearButton_Click"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <fa:FontAwesome Icon="InfoCircle" Foreground="White" VerticalAlignment="Center"/>
+                        <Label Foreground="White" Content="Output is Buffered" Padding="3,0,0,0" VerticalContentAlignment="Center" ToolTip="Output will only be displayed every 100ms to avoid deadlocks"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Expander>
+        </Border>
         <TextBox BorderThickness="0" Foreground="White" Background="{DynamicResource PanelBackgroundBrush}" IsReadOnly="True" x:Name="OutputTextBox" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Code"/>
 
         <Border Grid.Row="1" Background="{DynamicResource PanelBackgroundBrush}" BorderThickness="1" CornerRadius="3" BorderBrush="{StaticResource AccentBrush}">

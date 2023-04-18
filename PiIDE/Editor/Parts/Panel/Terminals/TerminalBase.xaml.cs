@@ -1,6 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PiIDE.Editor.Parts.Panel.Terminals;
@@ -8,34 +9,24 @@ namespace PiIDE.Editor.Parts.Panel.Terminals;
 public abstract partial class TerminalBase {
 
     private bool ReceivingErrorData;
+    private readonly StringBuilder BufferBuilder = new();
+    private object LockObject = new();
 
-    protected TerminalBase() => InitializeComponent();
-
-    protected void Exited(object? sender, EventArgs e) {
-
-        // Happens when the cmd returns but not when all output is done
-
-        /*
-        Dispatcher.Invoke(() => {
-            OutputTextBox.Text += "-----------------------------\r\n";
-            OutputTextBox.ScrollToEnd();
-        });
-        */
+    protected TerminalBase() {
+        InitializeComponent();
+        Task.Run(BufferFlushCycle);
     }
 
     protected void ErrorDataReceived(object sender, DataReceivedEventArgs e) {
         string? data = e.Data;
 
-        if (data == null) {
+        if (data == null)
             return;
-        }
 
         ReceivingErrorData = true;
 
-        data += "\r\n";
-
         Dispatcher.Invoke(() => {
-            OutputTextBox.Text += data;
+            OutputTextBox.Text += $"{data}\n";
             OutputTextBox.ScrollToEnd();
         });
 
@@ -56,16 +47,31 @@ public abstract partial class TerminalBase {
             return;
         }
 
-        data += "\r\n";
+        lock (LockObject) {
+            BufferBuilder.Append($"{data}\n");
+        }
+    }
 
-        Dispatcher.Invoke(() => {
-            OutputTextBox.Text += data;
-            OutputTextBox.ScrollToEnd();
-        });
+    private void BufferFlushCycle() {
+        while (true) {
+
+            while (BufferBuilder.Length == 0)
+                Thread.Sleep(100);
+
+            lock (LockObject) {
+                Dispatcher.Invoke(() => {
+                    OutputTextBox.Text += BufferBuilder.ToString();
+                    OutputTextBox.ScrollToEnd();
+                });
+            }
+
+            BufferBuilder.Clear();
+            Thread.Sleep(100);
+        }
     }
 
     protected void PrintEndOfExecution(string message) => Dispatcher.Invoke(() => {
-        OutputTextBox.Text += $"--------------{message}--------------\r\n";
+        OutputTextBox.Text += $"--------------{message}--------------\n";
         OutputTextBox.ScrollToEnd();
     });
 

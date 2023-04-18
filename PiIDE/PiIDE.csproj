@@ -13,12 +13,16 @@
 	<ItemGroup>
 	  <Compile Remove="Assets\Backgrounds\**" />
 	  <Compile Remove="Assets\ColorThemes\**" />
+	  <Compile Remove="BoardFiles\**" />
 	  <EmbeddedResource Remove="Assets\Backgrounds\**" />
 	  <EmbeddedResource Remove="Assets\ColorThemes\**" />
+	  <EmbeddedResource Remove="BoardFiles\**" />
 	  <None Remove="Assets\Backgrounds\**" />
 	  <None Remove="Assets\ColorThemes\**" />
+	  <None Remove="BoardFiles\**" />
 	  <Page Remove="Assets\Backgrounds\**" />
 	  <Page Remove="Assets\ColorThemes\**" />
+	  <Page Remove="BoardFiles\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -128,11 +132,6 @@
 		  <Generator>SettingsSingleFileGenerator</Generator>
 		  <LastGenOutput>SyntaxHighlighterSettings.Designer.cs</LastGenOutput>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="BoardFiles\" />
-		<Folder Include="BoardFiles\" />
 	</ItemGroup>
 
 	<ItemGroup>

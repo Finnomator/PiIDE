@@ -8,7 +8,6 @@ public class PythonTerminal : TerminalBase {
     public PythonTerminal() {
         PythonWrapper.PythonOutputDataReceived += OutputDataReceived;
         PythonWrapper.PythonErrorDataReceived += ErrorDataReceived;
-        PythonWrapper.PythonExited += Exited;
     }
 
     protected override void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
