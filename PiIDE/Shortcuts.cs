@@ -35,6 +35,8 @@ internal static class Shortcuts {
     public static bool AreKeysPressed(List<Key> keys) => keys.All(Keyboard.IsKeyDown);
     public static bool AreTheOnlyKeysPressed(List<Key> keys) {
         for (int i = 1; i < Keys.Length; ++i) {
+            if (i is 4 or 171 or 201)
+                continue;
             Key key = Keys[i];
             if (Keyboard.IsKeyDown(key) && !keys.Contains(key))
                 return false;
