@@ -26,11 +26,14 @@ internal static class BasicFileActions {
         return null;
     }
 
-    public static string? CopyDirectory(string sourceDir, string destinationDir) {
+    public static string? CopyDirectory(string sourceDir, string destinationDir, bool renameIfExists, bool replaceIfExists) {
 
-        string temp = destinationDir;
-        for (int i = 0; Directory.Exists(destinationDir); i++)
-            destinationDir = $"{temp}{i}";
+        if (renameIfExists) {
+            string temp = destinationDir;
+            for (int i = 0; Directory.Exists(destinationDir); i++)
+                destinationDir = $"{temp}{i}";
+        } else if (Directory.Exists(destinationDir) && replaceIfExists)
+            Directory.Delete(destinationDir, true);
 
         try {
             PCopyDirectory(sourceDir, destinationDir);
@@ -145,7 +148,7 @@ internal static class FileCopier {
             if (_cut)
                 success = BasicFileActions.MoveDirectory(_copiedPath, destPath);
             else
-                destPath = BasicFileActions.CopyDirectory(_copiedPath, destPath);
+                destPath = BasicFileActions.CopyDirectory(_copiedPath, destPath, true, false);
         } else {
             if (_cut)
                 success = BasicFileActions.MoveFile(_copiedPath, destPath);

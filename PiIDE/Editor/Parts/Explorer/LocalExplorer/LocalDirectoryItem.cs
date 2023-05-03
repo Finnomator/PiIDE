@@ -92,7 +92,7 @@ public class LocalDirectoryItem : DirectoryItemBase {
         }
         SetStatus("Uploading");
         if (await AmpyWrapper.WriteToBoardAsync(GlobalSettings.Default.SelectedCOMPort, DirectoryPath, $"/{DirectoryName}"))
-            BasicFileActions.CopyDirectory(DirectoryPath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, DirectoryName));
+            BasicFileActions.CopyDirectory(DirectoryPath, Path.Combine(GlobalSettings.Default.LocalBoardFilesPath, DirectoryName), false, true);
         UnsetStatus();
     }
 }
