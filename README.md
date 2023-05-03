@@ -1,4 +1,9 @@
 # Pi IDE
+![GitHub all releases](https://img.shields.io/github/downloads/Finnomator/PiIDE/total)
+![GitHub issues](https://img.shields.io/github/issues/Finnomator/PiIDE)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Finnomator/PiIDE)
+![GitHub](https://img.shields.io/github/license/Finnomator/PiIDE)
+
 A simple and very basic IDE for Python, designed to be easy to use with Micropython and a microcontroller.
 
 ## Installation
