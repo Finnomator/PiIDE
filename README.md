@@ -14,7 +14,7 @@ Visit the [release page](https://github.com/Finnomator/PiIDE/releases) and downl
 ### Customizable Syntax Highlighting
 A customizable syntax highlighter powered by [Jedi](https://jedi.readthedocs.io/en/latest/) and [Regex](https://en.wikipedia.org/wiki/Regular_expression).
 
-![Highlighting Image](https://github.com/Finnomator/PiIDE/blob/master/Images/V1_1_0_42/Customize.png?raw=true)
+![Highlighting Image](https://github.com/Finnomator/PiIDE/blob/master/Images/V1_1_4_66/Customization.png?raw=true)
 
 ### Linting
 Python linting with [Pylint](https://readthedocs.org/projects/pylint/).
@@ -22,7 +22,7 @@ Python linting with [Pylint](https://readthedocs.org/projects/pylint/).
 ### Code Completions
 Code completions with [Jedi](https://jedi.readthedocs.io/en/latest/).
 
-![Completions Image](https://github.com/Finnomator/PiIDE/blob/master/Images/V1_1_0_42/Completions.png?raw=true)
+![Completions Image](https://github.com/Finnomator/PiIDE/blob/master/Images/V1_1_4_66/AutoCompletions.png?raw=true)
 
 ### Run Code on a Raspberry Pi
 Edit and run your [micropython](https://micropython.org/) code on a Raspberry Pi.  
